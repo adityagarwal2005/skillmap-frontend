@@ -1,0 +1,107 @@
+.create-wrapper {
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 28px 24px 60px;
+}
+
+.create-box {
+  background: var(--surface);
+  border: 1px solid var(--border-md);
+  border-radius: var(--radius-lg);
+  padding: 28px 32px;
+}
+
+.create-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-1);
+  letter-spacing: -0.4px;
+  margin-bottom: 4px;
+}
+
+.create-sub {
+  font-size: 0.875rem;
+  color: var(--text-2);
+  margin-bottom: 28px;
+}
+
+.create-form { display: flex; flex-direction: column; gap: 18px; }
+
+.create-field { display: flex; flex-direction: column; gap: 5px; position: relative; }
+
+.create-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-2);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.create-hint {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--text-3);
+}
+
+.create-input, .create-textarea, .create-select {
+  width: 100%;
+  background: var(--elevated);
+  border: 1px solid var(--border-md);
+  border-radius: var(--radius-sm);
+  padding: 10px 13px;
+  font-size: 0.875rem;
+  color: var(--text-1);
+  transition: border-color 0.15s, box-shadow 0.15s;
+  font-family: inherit;
+}
+
+.create-input:focus, .create-textarea:focus, .create-select:focus {
+  border-color: var(--navy-bright);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.08);
+}
+
+.create-input::placeholder, .create-textarea::placeholder { color: var(--text-3); }
+.create-textarea { resize: vertical; }
+
+.create-counter {
+  font-size: 0.6875rem;
+  color: var(--text-3);
+  text-align: right;
+  margin-top: -2px;
+}
+
+.create-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  padding-top: 8px;
+}
+
+.create-cancel {
+  height: 36px;
+  padding: 0 18px;
+  border: 1px solid var(--border-md);
+  border-radius: var(--radius-sm);
+  color: var(--text-2);
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.12s;
+}
+
+.create-cancel:hover { background: var(--elevated); color: var(--text-1); }
+
+.create-submit {
+  height: 36px;
+  padding: 0 22px;
+  background: #0f172a;
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+  transition: opacity 0.15s;
+}
+
+[data-theme="light"] .create-submit { background: #0f172a; }
+.create-submit:hover:not(:disabled) { opacity: 0.85; }
+.create-submit:disabled { opacity: 0.45; cursor: not-allowed; }

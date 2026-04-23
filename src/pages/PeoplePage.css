@@ -1,0 +1,214 @@
+.people-layout {
+  display: flex;
+  width: 100%;
+  min-height: calc(100vh - 54px);
+}
+
+.people-filters {
+  width: 260px;
+  flex-shrink: 0;
+  padding: 24px 16px;
+  border-right: 1px solid var(--border-md);
+  background: var(--surface);
+  position: sticky;
+  top: 54px;
+  height: calc(100vh - 54px);
+  overflow-y: auto;
+}
+
+.people-filters-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text-1);
+  letter-spacing: -0.3px;
+  margin-bottom: 20px;
+}
+
+.filter-field { margin-bottom: 18px; }
+
+.filter-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-3);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.filter-select {
+  width: 100%;
+  background: var(--elevated);
+  border: 1px solid var(--border-md);
+  border-radius: var(--radius-sm);
+  color: var(--text-1);
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 8px 11px;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.radius-btns { display: flex; flex-wrap: wrap; gap: 5px; }
+
+.radius-btn {
+  height: 28px;
+  padding: 0 11px;
+  border-radius: 20px;
+  border: 1px solid var(--border-md);
+  color: var(--text-2);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  transition: all 0.12s;
+}
+
+.radius-btn:hover { background: var(--elevated); color: var(--text-1); }
+.radius-btn.active { background: #0f172a; color: #fff; border-color: #0f172a; }
+[data-theme="light"] .radius-btn.active { background: #0f172a; }
+
+.skill-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+
+.skill-chip {
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 20px;
+  border: 1px solid var(--border-md);
+  color: var(--text-2);
+  font-size: 0.75rem;
+  font-weight: 600;
+  transition: all 0.12s;
+}
+
+.skill-chip:hover { background: var(--elevated); color: var(--text-1); }
+.skill-chip.active { background: var(--green-low); color: var(--green); border-color: var(--green); }
+
+.filter-location-text {
+  font-size: 0.8125rem;
+  color: var(--text-2);
+  background: var(--elevated);
+  padding: 8px 11px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+.filter-search-btn {
+  width: 100%;
+  height: 36px;
+  background: #0f172a;
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+  transition: opacity 0.15s;
+  margin-top: 4px;
+}
+
+[data-theme="light"] .filter-search-btn { background: #0f172a; }
+.filter-search-btn:hover:not(:disabled) { opacity: 0.85; }
+.filter-search-btn:disabled { opacity: 0.45; }
+
+.people-results {
+  flex: 1;
+  padding: 24px 28px;
+  min-width: 0;
+}
+
+.people-count {
+  font-size: 0.875rem;
+  color: var(--text-2);
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+
+.people-loading {
+  text-align: center;
+  padding: 60px;
+  color: var(--text-2);
+  font-size: 0.875rem;
+}
+
+.people-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 10px;
+}
+
+.person-card {
+  background: var(--surface);
+  border: 1px solid var(--border-md);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  animation: cardIn 0.3s ease both;
+}
+
+.person-card:hover {
+  border-color: var(--border-md);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+}
+
+.person-card-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.person-ava {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #0f172a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.person-info { flex: 1; min-width: 0; }
+
+.person-name {
+  display: block;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--text-1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.person-cat {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-3);
+}
+
+.person-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.person-footer {
+  display: flex;
+  gap: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.person-stat {
+  font-size: 0.8125rem;
+  color: var(--text-2);
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .people-filters { display: none; }
+  .people-results { padding: 16px; }
+}

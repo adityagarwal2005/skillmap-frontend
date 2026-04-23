@@ -1,0 +1,12 @@
+.edit-wrapper {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 28px 24px 60px;
+}
+
+.edit-box {
+  background: var(--surface);
+  border: 1px solid var(--border-md);
+  border-radius: var(--radius-lg);
+  padding: 28px 32px;
+}

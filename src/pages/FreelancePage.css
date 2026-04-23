@@ -1,0 +1,238 @@
+.freelance-wrapper {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 28px 24px 60px;
+}
+
+.freelance-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.freelance-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-1);
+  letter-spacing: -0.4px;
+  margin-bottom: 3px;
+}
+
+.freelance-sub {
+  font-size: 0.875rem;
+  color: var(--text-2);
+}
+
+.post-job-btn {
+  height: 36px;
+  padding: 0 18px;
+  background: #0f172a;
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+  transition: opacity 0.15s;
+  flex-shrink: 0;
+}
+
+[data-theme="light"] .post-job-btn { background: #0f172a; }
+.post-job-btn:hover { opacity: 0.85; }
+
+.freelance-loading {
+  text-align: center;
+  padding: 60px;
+  color: var(--text-2);
+  font-size: 0.875rem;
+}
+
+.wr-card {
+  background: var(--surface);
+  border: 1px solid var(--border-md);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  margin-bottom: 10px;
+  transition: border-color 0.15s;
+  animation: cardIn 0.3s ease both;
+}
+
+.wr-card:hover { border-color: var(--border-md); box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+
+.wr-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  gap: 10px;
+}
+
+.wr-poster {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wr-by {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-1);
+}
+
+.wr-time {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-3);
+  background: var(--elevated);
+  padding: 3px 9px;
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+
+.wr-desc {
+  font-size: 0.9375rem;
+  color: var(--text-1);
+  line-height: 1.55;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.wr-desc-sm {
+  font-size: 0.875rem;
+  color: var(--text-1);
+  line-height: 1.5;
+  font-weight: 500;
+  flex: 1;
+}
+
+.wr-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 14px;
+}
+
+.wr-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.wr-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.wr-pay {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text-1);
+  letter-spacing: -0.3px;
+}
+
+.wr-duration {
+  font-size: 0.8125rem;
+  color: var(--text-2);
+  font-weight: 500;
+}
+
+.wr-assigned {
+  font-size: 0.8125rem;
+  color: var(--green);
+  font-weight: 600;
+}
+
+.wr-apply-btn {
+  height: 32px;
+  padding: 0 18px;
+  background: #0f172a;
+  color: #fff;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+  transition: opacity 0.15s;
+}
+
+[data-theme="light"] .wr-apply-btn { background: #0f172a; }
+.wr-apply-btn:hover { opacity: 0.85; }
+
+.wr-owner-actions { display: flex; gap: 8px; }
+
+.wr-view-btn {
+  height: 30px;
+  padding: 0 12px;
+  background: none;
+  border: 1px solid var(--border-md);
+  border-radius: var(--radius-sm);
+  color: var(--text-2);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  transition: all 0.12s;
+}
+
+.wr-view-btn:hover { background: var(--elevated); color: var(--text-1); }
+
+.wr-close-btn {
+  height: 30px;
+  padding: 0 12px;
+  background: none;
+  border: 1px solid var(--green);
+  border-radius: var(--radius-sm);
+  color: var(--green);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  transition: all 0.12s;
+}
+
+.wr-close-btn:hover { background: var(--green-low); }
+
+.apply-job-preview {
+  background: var(--elevated);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  border: 1px solid var(--border);
+}
+
+.applicant-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px;
+  background: var(--elevated);
+  border-radius: var(--radius-md);
+}
+
+.applicant-name {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text-1);
+  cursor: pointer;
+  display: block;
+}
+
+.applicant-name:hover { text-decoration: underline; }
+
+.applicant-msg {
+  font-size: 0.8125rem;
+  color: var(--text-2);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+.hire-btn {
+  height: 30px;
+  padding: 0 14px;
+  background: var(--green);
+  color: #fff;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+  transition: opacity 0.15s;
+  flex-shrink: 0;
+}
+
+.hire-btn:hover { opacity: 0.85; }
