@@ -9,7 +9,7 @@ import './OnboardingPage.css';
 const STEPS = ['Category', 'Skills', 'Status', 'Location'];
 
 export default function OnboardingPage() {
-  const { user, loginUser } = useAuth();
+  const { user } = useAuth();
   const { showToast }       = useToast();
   const navigate            = useNavigate();
 

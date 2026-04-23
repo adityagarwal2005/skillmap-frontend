@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import { getFeed, searchFeed, getTrending } from '../api/feed';
+import { getFeed, getTrending } from '../api/feed';
 import { reactToItem } from '../api/portfolio';
 import { getUnreadCount } from '../api/notifications';
 import { PostCardSkeleton } from '../components/Skeleton';
