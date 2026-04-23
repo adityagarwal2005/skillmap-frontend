@@ -28,7 +28,7 @@ export default function CollabPage() {
   const [myPosts, setMyPosts]   = useState([]);
   const [loading, setLoading]   = useState(true);
   const [typeFilter, setTypeFilter] = useState('all');
-  const [theme, setTheme]       = useState(localStorage.getItem('theme') || 'dark');
+  const [theme, setTheme]       = useState(localStorage.getItem('theme') || 'light');
 
   const [createModal, setCreateModal]     = useState(false);
   const [applyModal, setApplyModal]       = useState(null);

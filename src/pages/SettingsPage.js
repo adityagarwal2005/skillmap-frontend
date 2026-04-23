@@ -14,7 +14,7 @@ export default function SettingsPage() {
   const { showToast }                   = useToast();
   const navigate                        = useNavigate();
 
-  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
+  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
   const [saving, setSaving] = useState({});
   const [confirmDelete, setConfirmDelete] = useState(false);
 

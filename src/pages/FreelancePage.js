@@ -30,7 +30,7 @@ export default function FreelancePage() {
   const [available, setAvailable]   = useState([]);
   const [myJobs, setMyJobs]         = useState([]);
   const [loading, setLoading]       = useState(true);
-  const [theme, setTheme]           = useState(localStorage.getItem('theme') || 'dark');
+  const [theme, setTheme]           = useState(localStorage.getItem('theme') || 'light');
 
   // Modals
   const [postModal, setPostModal]         = useState(false);

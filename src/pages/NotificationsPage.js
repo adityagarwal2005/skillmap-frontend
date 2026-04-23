@@ -39,7 +39,7 @@ export default function NotificationsPage() {
 
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading]             = useState(true);
-  const [theme, setTheme]                 = useState(localStorage.getItem('theme') || 'dark');
+  const [theme, setTheme]                 = useState(localStorage.getItem('theme') || 'light');
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);

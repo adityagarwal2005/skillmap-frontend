@@ -28,7 +28,7 @@ export default function ProfilePage() {
   const [loading, setLoading]       = useState(true);
   const [skillInput, setSkillInput] = useState('');
   const [addingSkill, setAddingSkill] = useState(false);
-  const [theme, setTheme]           = useState(localStorage.getItem('theme') || 'dark');
+  const [theme, setTheme]           = useState(localStorage.getItem('theme') || 'light');
 
   // Cert modal
   const [certModal, setCertModal]   = useState(false);

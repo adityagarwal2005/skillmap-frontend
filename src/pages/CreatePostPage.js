@@ -21,7 +21,7 @@ export default function CreatePostPage() {
     skills: '', tags: '',
   });
   const [loading, setLoading] = useState(false);
-  const [theme, setTheme]     = useState(localStorage.getItem('theme') || 'dark');
+  const [theme, setTheme]     = useState(localStorage.getItem('theme') || 'light');
 
   const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
 

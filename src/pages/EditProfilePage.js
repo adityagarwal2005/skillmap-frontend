@@ -22,7 +22,7 @@ export default function EditProfilePage() {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading]       = useState(true);
   const [saving, setSaving]         = useState(false);
-  const [theme, setTheme]           = useState(localStorage.getItem('theme') || 'dark');
+  const [theme, setTheme]           = useState(localStorage.getItem('theme') || 'light');
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);

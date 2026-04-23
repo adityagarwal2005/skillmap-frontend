@@ -25,7 +25,7 @@ export default function PostDetailPage() {
   const [editText, setEditText]       = useState('');
   const [reacted, setReacted]         = useState(false);
   const [reactionCount, setReactionCount] = useState(0);
-  const [theme, setTheme]             = useState(localStorage.getItem('theme') || 'dark');
+  const [theme, setTheme]             = useState(localStorage.getItem('theme') || 'light');
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);

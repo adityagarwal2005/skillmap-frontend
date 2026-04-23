@@ -32,7 +32,7 @@ export default function MessagesPage() {
   const [loadingConvs, setLoadingConvs]   = useState(true);
   const [loadingMsgs, setLoadingMsgs]     = useState(false);
   const [sending, setSending]             = useState(false);
-  const [theme, setTheme]                 = useState(localStorage.getItem('theme') || 'dark');
+  const [theme, setTheme]                 = useState(localStorage.getItem('theme') || 'light');
   const messagesEndRef                    = useRef(null);
   const pollRef                           = useRef(null);
 

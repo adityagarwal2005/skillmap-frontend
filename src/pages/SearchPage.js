@@ -22,7 +22,7 @@ export default function SearchPage() {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [typeFilter, setTypeFilter] = useState('all');
-  const [theme, setTheme]   = useState(localStorage.getItem('theme') || 'dark');
+  const [theme, setTheme]   = useState(localStorage.getItem('theme') || 'light');
   const [searched, setSearched] = useState(false);
 
   useEffect(() => {

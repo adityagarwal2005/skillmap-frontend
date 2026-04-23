@@ -45,7 +45,7 @@ export default function FeedPage() {
   const [q, setQ]               = useState('');
   const [tab, setTab]           = useState('for-you');
   const [active, setActive]     = useState('feed');
-  const [theme, setTheme]       = useState(localStorage.getItem('theme') || 'dark');
+  const [theme, setTheme]       = useState(localStorage.getItem('theme') || 'light');
   const [reacted, setReacted]   = useState({});
   const [unread, setUnread]     = useState(0);
 
