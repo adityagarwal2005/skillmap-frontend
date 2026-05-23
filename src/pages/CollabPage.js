@@ -3,9 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import {
-  getCollabPosts, getMyCollabPosts, createCollabPost,
+  getMyCollabPosts, createCollabPost,
   applyToCollab, getCollabApplicants, respondToCollabRequest, closeCollabPost
 } from '../api/collab';
+import API from '../api/config';
 import './FeedPage.css';
 import './CollabPage.css';
 
@@ -28,12 +29,15 @@ export default function CollabPage() {
   const [myPosts, setMyPosts]   = useState([]);
   const [loading, setLoading]   = useState(true);
   const [typeFilter, setTypeFilter] = useState('all');
+  const [skillFilter, setSkillFilter] = useState('');
+  const [radius, setRadius]         = useState(50);
+  const [userLocation, setUserLocation] = useState({ lat: '', lon: '' });
   const [theme, setTheme]       = useState(localStorage.getItem('theme') || 'light');
 
-  const [createModal, setCreateModal]     = useState(false);
-  const [applyModal, setApplyModal]       = useState(null);
+  const [createModal, setCreateModal]         = useState(false);
+  const [applyModal, setApplyModal]           = useState(null);
   const [applicantsModal, setApplicantsModal] = useState(null);
-  const [submitting, setSubmitting]       = useState(false);
+  const [submitting, setSubmitting]           = useState(false);
 
   const [createForm, setCreateForm] = useState({ title: '', description: '', collab_type: 'experience', skills: '' });
   const [applyMsg, setApplyMsg]     = useState('');
@@ -43,14 +47,30 @@ export default function CollabPage() {
     localStorage.setItem('theme', theme);
   }, [theme]);
 
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(pos => {
+        setUserLocation({ lat: pos.coords.latitude, lon: pos.coords.longitude });
+      });
+    }
+  }, []);
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { loadAll(); }, []);
 
   const loadAll = async () => {
     try {
       setLoading(true);
+      const params = {};
+      if (skillFilter)      params.skill      = skillFilter;
+      if (radius)           params.radius     = radius;
+      if (typeFilter !== 'all') params.type   = typeFilter;
+      if (userLocation.lat) {
+        params.latitude  = userLocation.lat;
+        params.longitude = userLocation.lon;
+      }
       const [bRes, mRes] = await Promise.all([
-        getCollabPosts(),
+        API.get('/collab/', { params }),
         getMyCollabPosts(),
       ]);
       setPosts(bRes.data.collab_posts || []);
@@ -111,8 +131,6 @@ export default function CollabPage() {
     } catch { showToast('Failed to close', 'error'); }
   };
 
-  const filteredPosts = typeFilter === 'all' ? posts : posts.filter(p => p.collab_type === typeFilter);
-
   return (
     <div className="app-shell">
       <header className="topbar">
@@ -157,15 +175,37 @@ export default function CollabPage() {
           )}
         </div>
 
+        {tab === 'browse' && (
+          <div className="freelance-filters">
+            <input
+              className="filter-input"
+              placeholder="Filter by skill (e.g. React, Python)"
+              value={skillFilter}
+              onChange={e => setSkillFilter(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') loadAll(); }}
+            />
+            <select className="filter-select-sm"
+              value={radius}
+              onChange={e => setRadius(e.target.value)}>
+              <option value={5}>5 km</option>
+              <option value={10}>10 km</option>
+              <option value={50}>50 km</option>
+              <option value={100}>100 km</option>
+              <option value={5000}>All India</option>
+            </select>
+            <button className="wr-view-btn" onClick={loadAll}>Search</button>
+          </div>
+        )}
+
         {loading ? (
           <div className="freelance-loading">Loading...</div>
         ) : tab === 'browse' ? (
-          filteredPosts.length === 0 ? (
+          posts.length === 0 ? (
             <div className="state-box">
-              <h3>No collab posts yet</h3>
-              <p>Be the first to start a collab!</p>
+              <h3>No collab posts found</h3>
+              <p>Try a different skill or be the first to start a collab!</p>
             </div>
-          ) : filteredPosts.map(post => (
+          ) : posts.map(post => (
             <div key={post.id} className="collab-card">
               <div className="collab-top">
                 <div className="post-ava small">{post.posted_by[0].toUpperCase()}</div>
@@ -232,8 +272,7 @@ export default function CollabPage() {
             <form onSubmit={handleCreate}>
               <div className="modal-field">
                 <label className="modal-label">Title *</label>
-                <input className="modal-input" required
-                  placeholder="What are you building?"
+                <input className="modal-input" required placeholder="What are you building?"
                   value={createForm.title}
                   onChange={e => setCreateForm({...createForm, title: e.target.value})} />
               </div>
@@ -256,8 +295,7 @@ export default function CollabPage() {
               </div>
               <div className="modal-field">
                 <label className="modal-label">Skills Needed <span style={{fontWeight:400,color:'var(--text-3)'}}>comma separated</span></label>
-                <input className="modal-input"
-                  placeholder="React, Python, Design"
+                <input className="modal-input" placeholder="React, Python, Design"
                   value={createForm.skills}
                   onChange={e => setCreateForm({...createForm, skills: e.target.value})} />
               </div>

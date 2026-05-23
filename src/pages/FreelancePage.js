@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import {
-  getAvailableWorkRequests, getMyWorkRequests,
-  createWorkRequest, respondToWorkRequest,
+  getMyWorkRequests, createWorkRequest, respondToWorkRequest,
   getWorkRequestResponses, assignWorkRequest, closeWorkRequest
 } from '../api/work';
+import API from '../api/config';
 import './FeedPage.css';
 import './FreelancePage.css';
 
@@ -31,14 +31,15 @@ export default function FreelancePage() {
   const [myJobs, setMyJobs]         = useState([]);
   const [loading, setLoading]       = useState(true);
   const [theme, setTheme]           = useState(localStorage.getItem('theme') || 'light');
+  const [skillFilter, setSkillFilter] = useState('');
+  const [radius, setRadius]           = useState(50);
+  const [userLocation, setUserLocation] = useState({ lat: '', lon: '' });
 
-  // Modals
-  const [postModal, setPostModal]         = useState(false);
-  const [applyModal, setApplyModal]       = useState(null); // work request object
-  const [applicantsModal, setApplicantsModal] = useState(null); // { wrId, applicants }
-
+  const [postModal, setPostModal]             = useState(false);
+  const [applyModal, setApplyModal]           = useState(null);
+  const [applicantsModal, setApplicantsModal] = useState(null);
   const [postForm, setPostForm] = useState({ description: '', payment_amount: '', time_limit_hours: '', skills: '' });
-  const [applyMsg, setApplyMsg] = useState('');
+  const [applyMsg, setApplyMsg]     = useState('');
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
@@ -46,14 +47,29 @@ export default function FreelancePage() {
     localStorage.setItem('theme', theme);
   }, [theme]);
 
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(pos => {
+        setUserLocation({ lat: pos.coords.latitude, lon: pos.coords.longitude });
+      });
+    }
+  }, []);
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { loadAll(); }, []);
 
   const loadAll = async () => {
     try {
       setLoading(true);
+      const params = {};
+      if (skillFilter) params.skill = skillFilter;
+      if (radius)      params.radius = radius;
+      if (userLocation.lat) {
+        params.latitude  = userLocation.lat;
+        params.longitude = userLocation.lon;
+      }
       const [avRes, myRes] = await Promise.all([
-        getAvailableWorkRequests(user.id),
+        API.get(`/work/requests/available/${user.id}/`, { params }),
         getMyWorkRequests(user.id),
       ]);
       setAvailable(avRes.data.work_requests || []);
@@ -145,18 +161,40 @@ export default function FreelancePage() {
           <button className="post-job-btn" onClick={() => setPostModal(true)}>+ Post a Job</button>
         </div>
 
-        <div className="tab-group" style={{ marginBottom: '20px' }}>
+        <div className="tab-group" style={{ marginBottom: '16px' }}>
           <button className={`tab-btn ${tab === 'available' ? 'active' : ''}`} onClick={() => setTab('available')}>Available Jobs ({available.length})</button>
           <button className={`tab-btn ${tab === 'my' ? 'active' : ''}`} onClick={() => setTab('my')}>My Posted Jobs ({myJobs.length})</button>
         </div>
+
+        {tab === 'available' && (
+          <div className="freelance-filters">
+            <input
+              className="filter-input"
+              placeholder="Filter by skill (e.g. React, Python)"
+              value={skillFilter}
+              onChange={e => setSkillFilter(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') loadAll(); }}
+            />
+            <select className="filter-select-sm"
+              value={radius}
+              onChange={e => setRadius(e.target.value)}>
+              <option value={5}>5 km</option>
+              <option value={10}>10 km</option>
+              <option value={50}>50 km</option>
+              <option value={100}>100 km</option>
+              <option value={5000}>All India</option>
+            </select>
+            <button className="wr-view-btn" onClick={loadAll}>Search</button>
+          </div>
+        )}
 
         {loading ? (
           <div className="freelance-loading">Loading...</div>
         ) : tab === 'available' ? (
           available.length === 0 ? (
             <div className="state-box">
-              <h3>No matching jobs</h3>
-              <p>Add skills to your profile to see matching work requests</p>
+              <h3>No jobs found</h3>
+              <p>Try a different skill or increase your radius</p>
             </div>
           ) : available.map(wr => (
             <div key={wr.id} className="wr-card">
@@ -204,9 +242,7 @@ export default function FreelancePage() {
                 <div className="wr-owner-actions">
                   {wr.status === 'open' && (
                     <>
-                      <button className="wr-view-btn" onClick={() => loadApplicants(wr.id)}>
-                        View Applicants
-                      </button>
+                      <button className="wr-view-btn" onClick={() => loadApplicants(wr.id)}>View Applicants</button>
                       <button className="wr-close-btn" onClick={() => handleClose(wr.id)}>Close</button>
                     </>
                   )}
@@ -235,22 +271,19 @@ export default function FreelancePage() {
               </div>
               <div className="modal-field">
                 <label className="modal-label">Payment (₹) *</label>
-                <input className="modal-input" type="number" required
-                  placeholder="e.g. 2000"
+                <input className="modal-input" type="number" required placeholder="e.g. 2000"
                   value={postForm.payment_amount}
                   onChange={e => setPostForm({...postForm, payment_amount: e.target.value})} />
               </div>
               <div className="modal-field">
                 <label className="modal-label">Time Limit (hours) *</label>
-                <input className="modal-input" type="number" required
-                  placeholder="e.g. 48"
+                <input className="modal-input" type="number" required placeholder="e.g. 48"
                   value={postForm.time_limit_hours}
                   onChange={e => setPostForm({...postForm, time_limit_hours: e.target.value})} />
               </div>
               <div className="modal-field">
                 <label className="modal-label">Skills Required * <span style={{fontWeight:400,color:'var(--text-3)'}}>comma separated</span></label>
-                <input className="modal-input" required
-                  placeholder="React, Python, Figma"
+                <input className="modal-input" required placeholder="React, Python, Figma"
                   value={postForm.skills}
                   onChange={e => setPostForm({...postForm, skills: e.target.value})} />
               </div>
