@@ -11,3 +11,6 @@ export const verifyAndRegister = (username, email, password, otp) =>
 
 export const refreshToken = (refresh) =>
   API.post('/users/token/refresh/', new URLSearchParams({ refresh }));
+
+export const register = (username, email, password) =>
+  API.post('/users/register/', new URLSearchParams({ username, email, password }));
