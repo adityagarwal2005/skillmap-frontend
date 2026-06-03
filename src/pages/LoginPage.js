@@ -56,10 +56,11 @@ export default function LoginPage() {
           </div>
           {!isLogin && (
             <div>
-              <label className="field-label">Email</label>
-              <input name="email" type="email" placeholder="you@email.com"
-                value={form.email} onChange={handleChange}
-                required className="field-input" />
+            <label className="field-label">Username or Email</label>
+            <input name="username" type="text" 
+            placeholder="yourname or you@email.com"
+            value={form.username} onChange={handleChange}
+            required className="field-input" autoComplete="username" />
             </div>
           )}
           <div>
