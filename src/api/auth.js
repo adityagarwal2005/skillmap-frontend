@@ -6,9 +6,16 @@ export const login = (username, password) =>
 export const sendOTP = (username, email) =>
   API.post('/users/send-otp/', new URLSearchParams({ username, email }));
 
-export const verifyAndRegister = (username, email, password, otp) =>
-  API.post('/users/verify-register/', new URLSearchParams({ username, email, password, otp }));
 
+
+export const verifyAndRegister = (username, email, password, otp, latitude, longitude) =>
+  API.post('/users/verify-register/', new URLSearchParams({
+    username, email, password, otp,
+    ...(latitude && { latitude }),
+    ...(longitude && { longitude }),
+  }));
+
+  
 export const refreshToken = (refresh) =>
   API.post('/users/token/refresh/', new URLSearchParams({ refresh }));
 
