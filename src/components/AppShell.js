@@ -101,11 +101,18 @@ export default function AppShell({
   }, [theme]);
 
   useEffect(() => {
-    getUnreadCount().then(r => setUnread(r.data.unread_count || 0)).catch(() => {});
     if (user?.id) {
       getUser(user.id).then(r => { setAvatar(r.data.profile_image || null); setAvatarBroken(false); }).catch(() => {});
     }
   }, [user?.id]);
+
+  // Poll the unread count so the bell badge updates without a page refresh.
+  useEffect(() => {
+    const refresh = () => getUnreadCount().then(r => setUnread(r.data.unread_count || 0)).catch(() => {});
+    refresh();
+    const id = setInterval(refresh, 30000);
+    return () => clearInterval(id);
+  }, []);
 
   const activeId = active || deriveActive(location.pathname);
 

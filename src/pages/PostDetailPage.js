@@ -7,6 +7,7 @@ import {
   editPortfolioItem, deletePortfolioItem,
 } from '../api/portfolio';
 import { getFeed } from '../api/feed';
+import { getUser } from '../api/users';
 import AppShell from '../components/AppShell';
 import { PostCardSkeleton } from '../components/Skeleton';
 import './FeedPage.css';
@@ -31,11 +32,16 @@ export default function PostDetailPage() {
   const [postForm, setPostForm]       = useState({ title: '', description: '' });
   const [savingPost, setSavingPost]   = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [myAvatar, setMyAvatar] = useState(null);
 
   const isOwn = user?.id === item?.user?.id;
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { loadAll(); }, [itemId]);
+
+  useEffect(() => {
+    if (user?.id) getUser(user.id).then(r => setMyAvatar(r.data.profile_image || null)).catch(() => {});
+  }, [user?.id]);
 
   const loadAll = async () => {
     try {
@@ -244,7 +250,11 @@ export default function PostDetailPage() {
 
               <form onSubmit={handleComment} className="comment-form">
                 <div className="comment-input-row">
-                  <div className="post-ava small">{user?.username?.[0]?.toUpperCase()}</div>
+                  <div className="post-ava small">
+                    {myAvatar
+                      ? <img className="ava-img" src={myAvatar} alt="" />
+                      : user?.username?.[0]?.toUpperCase()}
+                  </div>
                   <input
                     className="comment-input"
                     placeholder="Add a comment..."
@@ -263,7 +273,11 @@ export default function PostDetailPage() {
                 ) : comments.map(c => (
                   <div key={c.id} className="comment-card">
                     <div className="comment-top">
-                      <div className="post-ava small">{c.username[0].toUpperCase()}</div>
+                      <div className="post-ava small">
+                        {c.profile_image
+                          ? <img className="ava-img" src={c.profile_image} alt="" />
+                          : c.username[0].toUpperCase()}
+                      </div>
                       <div className="comment-meta">
                         <span className="comment-author"
                           onClick={() => navigate(`/profile/${c.user_id || ''}`)}>

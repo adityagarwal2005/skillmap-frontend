@@ -112,7 +112,11 @@ export default function MessagesPage() {
             <div key={conv.id}
               className={`conv-item ${activeConv?.id === conv.id ? 'active' : ''}`}
               onClick={() => setActiveConv(conv)}>
-              <div className="conv-ava">{conv.with?.[0]?.toUpperCase() || '?'}</div>
+              <div className="conv-ava">
+                {conv.with_avatar
+                  ? <img className="ava-img" src={conv.with_avatar} alt="" />
+                  : conv.with?.[0]?.toUpperCase() || '?'}
+              </div>
               <div className="conv-info">
                 <div className="conv-top-row">
                   <span className="conv-name">{conv.with || 'Unknown'}</span>
@@ -140,7 +144,11 @@ export default function MessagesPage() {
           ) : (
             <>
               <div className="thread-header">
-                <div className="conv-ava">{activeConv.with?.[0]?.toUpperCase() || '?'}</div>
+                <div className="conv-ava">
+                  {activeConv.with_avatar
+                    ? <img className="ava-img" src={activeConv.with_avatar} alt="" />
+                    : activeConv.with?.[0]?.toUpperCase() || '?'}
+                </div>
                 <div>
                   <div className="thread-name">{activeConv.with}</div>
                   <div className="thread-type">{activeConv.type} project</div>
@@ -159,7 +167,11 @@ export default function MessagesPage() {
                   return (
                     <div key={msg.id} className={`msg-row ${isOwn ? 'own' : 'other'}`}>
                       {!isOwn && showSender && (
-                        <div className="msg-ava">{msg.sender[0].toUpperCase()}</div>
+                        <div className="msg-ava">
+                          {msg.sender_avatar
+                            ? <img className="ava-img" src={msg.sender_avatar} alt="" />
+                            : msg.sender[0].toUpperCase()}
+                        </div>
                       )}
                       {!isOwn && !showSender && <div className="msg-ava-spacer" />}
                       <div className={`msg-bubble ${isOwn ? 'own' : ''} ${msg.sending ? 'sending' : ''}`}>
