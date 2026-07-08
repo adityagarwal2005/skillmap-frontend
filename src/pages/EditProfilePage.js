@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import { getUser, editUser, getCategories } from '../api/users';
+import { getUser, editUser, getCategories, changePassword } from '../api/users';
 import AppShell from '../components/AppShell';
 import { LinkedInIcon, GitHubIcon, InstagramIcon } from '../components/SocialIcons';
 import './FeedPage.css';
@@ -15,9 +15,12 @@ export default function EditProfilePage() {
   const navigate                        = useNavigate();
 
   const [form, setForm] = useState({
-    username: '', email: '', password: '',
+    username: '', email: '', dob: '',
     category_id: '', linkedin_url: '', github_url: '', instagram_url: '',
   });
+  const [pwd, setPwd]               = useState({ current: '', next: '' });
+  const [pwdSaving, setPwdSaving]   = useState(false);
+  const [pwdDone, setPwdDone]       = useState(false);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading]       = useState(true);
   const [saving, setSaving]         = useState(false);
@@ -34,7 +37,7 @@ export default function EditProfilePage() {
         setForm({
           username:     u.username || '',
           email:        u.email || '',
-          password:     '',
+          dob:          u.dob || '',
           category_id:  '',
           linkedin_url: u.linkedin_url || '',
           github_url:   u.github_url || '',
@@ -55,7 +58,7 @@ export default function EditProfilePage() {
       const payload = {};
       if (form.username)     payload.username     = form.username;
       if (form.email)        payload.email        = form.email;
-      if (form.password)     payload.password     = form.password;
+      if (form.dob)          payload.dob          = form.dob;
       if (form.category_id)  payload.category_id  = form.category_id;
       if (form.linkedin_url)  payload.linkedin_url  = form.linkedin_url;
       if (form.github_url)    payload.github_url    = form.github_url;
@@ -74,6 +77,23 @@ export default function EditProfilePage() {
     } catch (err) {
       showToast(err.response?.data?.error || 'Failed to update', 'error');
     } finally { setSaving(false); }
+  };
+
+  const handleChangePassword = async () => {
+    if (!pwd.current || !pwd.next) {
+      showToast('Enter your current and new password', 'error');
+      return;
+    }
+    try {
+      setPwdSaving(true);
+      await changePassword(userId, pwd.current, pwd.next);
+      setPwd({ current: '', next: '' });
+      setPwdDone(true);
+      showToast('Password updated', 'success');
+      setTimeout(() => setPwdDone(false), 3000);
+    } catch (err) {
+      showToast(err.response?.data?.error || 'Failed to update password', 'error');
+    } finally { setPwdSaving(false); }
   };
 
   if (loading) return (
@@ -122,11 +142,10 @@ export default function EditProfilePage() {
 
               <div className="edit-row">
                 <div className="edit-field">
-                  <label className="edit-label">New password <span className="edit-hint">blank = keep current</span></label>
-                  <input className="edit-input" type="password"
-                    value={form.password}
-                    onChange={e => setForm({...form, password: e.target.value})}
-                    placeholder="••••••••" />
+                  <label className="edit-label">Date of birth</label>
+                  <input className="edit-input" type="date"
+                    value={form.dob}
+                    onChange={e => setForm({...form, dob: e.target.value})} />
                 </div>
                 <div className="edit-field">
                   <label className="edit-label">Category</label>
@@ -159,6 +178,33 @@ export default function EditProfilePage() {
                   </div>
                 </div>
               ))}
+            </section>
+
+            {/* Password */}
+            <section className="edit-section">
+              <div className="edit-section-label">Password</div>
+              <p className="edit-section-hint">Enter your current password, then a new one.</p>
+              <div className="edit-row">
+                <div className="edit-field">
+                  <label className="edit-label">Current password</label>
+                  <input className="edit-input" type="password"
+                    value={pwd.current}
+                    onChange={e => setPwd({...pwd, current: e.target.value})}
+                    placeholder="••••••••" />
+                </div>
+                <div className="edit-field">
+                  <label className="edit-label">New password</label>
+                  <input className="edit-input" type="password"
+                    value={pwd.next}
+                    onChange={e => setPwd({...pwd, next: e.target.value})}
+                    placeholder="At least 6 characters" />
+                </div>
+              </div>
+              <button type="button"
+                className={`pwd-update-btn ${pwdDone ? 'is-done' : ''}`}
+                onClick={handleChangePassword} disabled={pwdSaving}>
+                {pwdSaving ? 'Updating…' : pwdDone ? 'Updated ✓' : 'Update password'}
+              </button>
             </section>
 
             <div className="edit-actions">

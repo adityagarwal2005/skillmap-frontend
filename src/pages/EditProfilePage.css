@@ -139,6 +139,22 @@
 
 .edit-input.has-icon { padding-left: 48px; }
 
+/* Password update button */
+.pwd-update-btn {
+  align-self: flex-start;
+  height: 44px;
+  padding: 0 20px;
+  border-radius: var(--radius-pill, 999px);
+  background: var(--ink, #0a0a0a);
+  color: #f5f5f7;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: transform 0.2s var(--ease-out-expo, ease), opacity 0.2s ease, background 0.2s ease;
+}
+.pwd-update-btn:hover:not(:disabled) { transform: translateY(-1px); }
+.pwd-update-btn:disabled { opacity: 0.5; cursor: default; }
+.pwd-update-btn.is-done { background: var(--green, #34c759); }
+
 /* Actions */
 .edit-actions {
   display: flex;

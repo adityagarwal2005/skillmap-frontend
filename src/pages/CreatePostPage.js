@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../context/ToastContext';
-import { createPortfolioItem } from '../api/portfolio';
+import { createPortfolioItem, addMedia } from '../api/portfolio';
 import AppShell from '../components/AppShell';
 import './FeedPage.css';
 import './CreatePostPage.css';
 
 const TYPES = ['project', 'design', 'photo', 'baked_good', 'artwork', 'video', 'other'];
+const MAX_PHOTOS = 4;
 
 export default function CreatePostPage() {
   const { showToast }        = useToast();
@@ -16,9 +17,18 @@ export default function CreatePostPage() {
     title: '', description: '', portfolio_type: 'project',
     skills: '', tags: '',
   });
+  const [photos, setPhotos]   = useState([]);   // File[]
   const [loading, setLoading] = useState(false);
 
   const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
+
+  const handlePhotos = e => {
+    const picked = Array.from(e.target.files || []);
+    setPhotos(prev => [...prev, ...picked].slice(0, MAX_PHOTOS));
+    e.target.value = ''; // allow re-selecting the same file
+  };
+
+  const removePhoto = i => setPhotos(prev => prev.filter((_, idx) => idx !== i));
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -28,7 +38,18 @@ export default function CreatePostPage() {
     }
     try {
       setLoading(true);
-      await createPortfolioItem(form);
+      const res = await createPortfolioItem(form);
+      const itemId = res.data.item_id;
+
+      // Upload each photo to the new item (Cloudinary via the media endpoint)
+      for (const file of photos) {
+        const fd = new FormData();
+        fd.append('media_type', 'image');
+        fd.append('file', file);
+        try { await addMedia(itemId, fd); }
+        catch { showToast('A photo failed to upload', 'error'); }
+      }
+
       showToast('Post created successfully!', 'success');
       navigate('/');
     } catch (err) {
@@ -86,6 +107,26 @@ export default function CreatePostPage() {
               <input name="tags" className="create-input"
                 placeholder="dashboard, ai, ecommerce"
                 value={form.tags} onChange={handleChange} />
+            </div>
+
+            <div className="create-field">
+              <label className="create-label">Photos <span className="create-hint">up to {MAX_PHOTOS} — show your work</span></label>
+              <div className="photo-grid">
+                {photos.map((file, i) => (
+                  <div className="photo-thumb" key={i}>
+                    <img src={URL.createObjectURL(file)} alt={`upload ${i + 1}`} />
+                    <button type="button" className="photo-remove"
+                      onClick={() => removePhoto(i)} aria-label="Remove photo">×</button>
+                  </div>
+                ))}
+                {photos.length < MAX_PHOTOS && (
+                  <label className="photo-add">
+                    <input type="file" accept="image/*" multiple hidden onChange={handlePhotos} />
+                    <span>＋</span>
+                    <span className="photo-add-text">Add photo</span>
+                  </label>
+                )}
+              </div>
             </div>
 
             <div className="create-actions">

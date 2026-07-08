@@ -106,6 +106,55 @@
 .create-submit:hover:not(:disabled) { opacity: 0.85; }
 .create-submit:disabled { opacity: 0.45; cursor: not-allowed; }
 
+/* Photo upload grid */
+.photo-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.photo-thumb {
+  position: relative;
+  width: 92px;
+  height: 92px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.photo-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.photo-remove {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.6);
+  color: #fff;
+  font-size: 15px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.photo-remove:hover { background: rgba(0,0,0,0.8); }
+.photo-add {
+  width: 92px;
+  height: 92px;
+  border-radius: 12px;
+  border: 1px dashed var(--border-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  cursor: pointer;
+  color: var(--text-2);
+  transition: border-color 0.18s ease, color 0.18s ease, background 0.18s ease;
+}
+.photo-add:hover { border-color: var(--text-2); color: var(--text-1); background: var(--elevated); }
+.photo-add span:first-child { font-size: 1.25rem; line-height: 1; }
+.photo-add-text { font-size: 0.6875rem; }
+
 @media (max-width: 480px) {
   .create-wrapper { padding: 20px 16px 48px; }
   .create-box { padding: 22px 20px; }

@@ -13,7 +13,6 @@ const SVG = {
 const NAV = [
   { group: 'Discover', items: [
     { id: 'home',    label: 'Home',    path: '/' },
-    { id: 'search',  label: 'Search',  path: '/search' },
     { id: 'people',  label: 'People',  path: '/people' },
   ]},
   { group: 'Work', items: [

@@ -6,6 +6,12 @@ export const getUser = (userId) =>
 export const editUser = (userId, data) =>
   API.post(`/users/${userId}/edit/`, new URLSearchParams(data));
 
+export const changePassword = (userId, currentPassword, newPassword) =>
+  API.post(`/users/${userId}/change-password/`, new URLSearchParams({
+    current_password: currentPassword,
+    new_password: newPassword,
+  }));
+
 export const deleteUser = (userId) =>
   API.delete(`/users/${userId}/delete/`);
 
