@@ -11,37 +11,46 @@ const SVG = {
   moon:   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>,
 };
 
-const NAV = [
-  { group: 'Discover', items: [
-    { id: 'home',    label: 'Home',    path: '/' },
-    { id: 'people',  label: 'People',  path: '/people' },
-  ]},
-  { group: 'Work', items: [
-    { id: 'freelance', label: 'Freelance', path: '/freelance' },
-    { id: 'collab',    label: 'Collab',    path: '/collab' },
-    { id: 'messages',  label: 'Messages',  path: '/messages' },
-  ]},
-  { group: 'You', items: [
-    { id: 'profile',       label: 'Profile',       path: null },
-    { id: 'notifications', label: 'Notifications', path: '/notifications' },
-    { id: 'settings',      label: 'Settings',      path: '/settings' },
-  ]},
-];
+const svg = (children) => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">{children}</svg>
+);
 
 const I = {
-  home:   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>,
-  people: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="M16 5.2a3 3 0 0 1 0 5.6"/><path d="M17.5 20a5.2 5.2 0 0 0-2.3-4.3"/></svg>,
-  create: <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>,
-  chat:   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8 8 0 0 1-11.5 7.2L4 20l1.3-4.5A8 8 0 1 1 21 11.5z"/></svg>,
-  user:   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/></svg>,
+  home:          svg(<><path d="M3 10.5 12 3l9 7.5" /><path d="M5 9.5V21h14V9.5" /></>),
+  people:        svg(<><circle cx="9" cy="8" r="3.2" /><path d="M3.5 20a5.5 5.5 0 0 1 11 0" /><path d="M16 5.2a3 3 0 0 1 0 5.6" /><path d="M17.5 20a5.2 5.2 0 0 0-2.3-4.3" /></>),
+  freelance:     svg(<><rect x="3" y="7.5" width="18" height="12.5" rx="2" /><path d="M8 7.5V5.5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /><path d="M3 12.5h18" /></>),
+  collab:        svg(<><path d="M12 3 3 7.5l9 4.5 9-4.5L12 3z" /><path d="M3 12.5l9 4.5 9-4.5" /><path d="M3 17l9 4.5 9-4.5" /></>),
+  messages:      svg(<path d="M21 11.5a8 8 0 0 1-11.5 7.2L4 20l1.3-4.5A8 8 0 1 1 21 11.5z" />),
+  profile:       svg(<><circle cx="12" cy="8" r="3.5" /><path d="M5.5 20a6.5 6.5 0 0 1 13 0" /></>),
+  notifications: svg(<><path d="M18 8.5a6 6 0 0 0-12 0c0 6-2.5 8-2.5 8h17S18 14.5 18 8.5z" /><path d="M13.7 21a2 2 0 0 1-3.4 0" /></>),
+  settings:      svg(<><line x1="4" y1="21" x2="4" y2="13" /><line x1="4" y1="9" x2="4" y2="3" /><line x1="12" y1="21" x2="12" y2="12" /><line x1="12" y1="8" x2="12" y2="3" /><line x1="20" y1="21" x2="20" y2="15" /><line x1="20" y1="11" x2="20" y2="3" /><line x1="1.5" y1="13" x2="6.5" y2="13" /><line x1="9.5" y1="8" x2="14.5" y2="8" /><line x1="17.5" y1="15" x2="22.5" y2="15" /></>),
+  create:        svg(<><circle cx="12" cy="12" r="9" /><path d="M12 8v8M8 12h8" /></>),
 };
+
+const NAV = [
+  { group: 'Discover', items: [
+    { id: 'home',    label: 'Home',    path: '/',       icon: I.home },
+    { id: 'people',  label: 'People',  path: '/people', icon: I.people },
+  ]},
+  { group: 'Work', items: [
+    { id: 'freelance', label: 'Freelance', path: '/freelance', icon: I.freelance },
+    { id: 'collab',    label: 'Collab',    path: '/collab',    icon: I.collab },
+    { id: 'messages',  label: 'Messages',  path: '/messages',  icon: I.messages },
+  ]},
+  { group: 'You', items: [
+    { id: 'profile',       label: 'Profile',       path: null,             icon: I.profile },
+    { id: 'notifications', label: 'Notifications', path: '/notifications', icon: I.notifications },
+    { id: 'settings',      label: 'Settings',      path: '/settings',      icon: I.settings },
+  ]},
+];
 
 const MOBILE = [
   { id: 'home',     label: 'Home',     path: '/',            icon: I.home },
   { id: 'people',   label: 'People',   path: '/people',      icon: I.people },
   { id: 'create',   label: 'Post',     path: '/create-post', icon: I.create },
-  { id: 'messages', label: 'Messages', path: '/messages',    icon: I.chat },
-  { id: 'profile',  label: 'You',      path: null,           icon: I.user },
+  { id: 'messages', label: 'Messages', path: '/messages',    icon: I.messages },
+  { id: 'profile',  label: 'You',      path: null,           icon: I.profile },
 ];
 
 function deriveActive(pathname) {
@@ -131,6 +140,11 @@ export default function AppShell({
         </form>
 
         <div className="topbar-right">
+          <button className="topbar-btn topbar-bell" aria-label="Notifications"
+            onClick={() => navigate('/notifications')}>
+            {I.notifications}
+            {unread > 0 && <span className="topbar-bell-badge">{unread > 9 ? '9+' : unread}</span>}
+          </button>
           <button className="topbar-btn" aria-label="Toggle theme"
             onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}>
             {theme === 'dark' ? SVG.sun : SVG.moon}
@@ -154,10 +168,10 @@ export default function AppShell({
                 <button key={item.id}
                   className={`sidebar-link ${activeId === item.id ? 'active' : ''}`}
                   onClick={() => handleNav(item)}>
-                  <span className="sidebar-link-dot" />
-                  {item.label}
+                  <span className="sidebar-link-ic">{item.icon}</span>
+                  <span className="sidebar-link-label">{item.label}</span>
                   {item.id === 'notifications' && unread > 0 && (
-                    <span className="sidebar-badge">{unread}</span>
+                    <span className="sidebar-badge">{unread > 9 ? '9+' : unread}</span>
                   )}
                 </button>
               ))}
