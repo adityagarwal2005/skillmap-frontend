@@ -35,7 +35,10 @@ export default function PeoplePage() {
   const [skills, setSkills]           = useState([]);
   const [results, setResults]         = useState([]);
   const [loading, setLoading]         = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore]         = useState(false);
   const [searched, setSearched]       = useState(false);
+  const [lastParams, setLastParams]   = useState(null);
 
   const [form, setForm] = useState({
     category_id: '',
@@ -91,12 +94,28 @@ export default function PeoplePage() {
         radius:      form.radius,
       };
       if (form.skills.length > 0) params.skills = form.skills.join(',');
+      setLastParams(params);
       const res = await searchUsers(params);
       setResults(res.data.results || []);
+      setHasMore(!!res.data.has_more);
     } catch {
       showToast('Search failed', 'error');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleLoadMore = async () => {
+    if (!lastParams) return;
+    setLoadingMore(true);
+    try {
+      const res = await searchUsers({ ...lastParams, offset: results.length });
+      setResults(prev => [...prev, ...(res.data.results || [])]);
+      setHasMore(!!res.data.has_more);
+    } catch {
+      showToast('Failed to load more', 'error');
+    } finally {
+      setLoadingMore(false);
     }
   };
 
@@ -208,6 +227,11 @@ export default function PeoplePage() {
                   </div>
                 ))}
               </div>
+              {hasMore && (
+                <button className="load-more-btn" onClick={handleLoadMore} disabled={loadingMore}>
+                  {loadingMore ? 'Loading…' : 'Load more'}
+                </button>
+              )}
             </>
           )}
         </main>

@@ -29,6 +29,8 @@ export default function CollabPage() {
   const [skillFilter, setSkillFilter] = useState('');
   const [radius, setRadius]         = useState(50);
   const [userLocation, setUserLocation] = useState({ lat: '', lon: '' });
+  const [hasMoreBrowse, setHasMoreBrowse] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
 
   const [createModal, setCreateModal]         = useState(false);
   const [applyModal, setApplyModal]           = useState(null);
@@ -49,25 +51,41 @@ export default function CollabPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { loadAll(); }, []);
 
+  const browseParams = () => {
+    const params = {};
+    if (skillFilter)      params.skill      = skillFilter;
+    if (radius)           params.radius     = radius;
+    if (typeFilter !== 'all') params.type   = typeFilter;
+    if (userLocation.lat) {
+      params.latitude  = userLocation.lat;
+      params.longitude = userLocation.lon;
+    }
+    return params;
+  };
+
   const loadAll = async () => {
     try {
       setLoading(true);
-      const params = {};
-      if (skillFilter)      params.skill      = skillFilter;
-      if (radius)           params.radius     = radius;
-      if (typeFilter !== 'all') params.type   = typeFilter;
-      if (userLocation.lat) {
-        params.latitude  = userLocation.lat;
-        params.longitude = userLocation.lon;
-      }
       const [bRes, mRes] = await Promise.all([
-        API.get('/collab/', { params }),
+        API.get('/collab/', { params: browseParams() }),
         getMyCollabPosts(),
       ]);
       setPosts(bRes.data.collab_posts || []);
       setMyPosts(mRes.data.collab_posts || []);
+      setHasMoreBrowse(!!bRes.data.has_more);
     } catch { showToast('Failed to load collabs', 'error'); }
     finally { setLoading(false); }
+  };
+
+  const handleLoadMoreBrowse = async () => {
+    setLoadingMore(true);
+    try {
+      const params = { ...browseParams(), offset: posts.length };
+      const res = await API.get('/collab/', { params });
+      setPosts(prev => [...prev, ...(res.data.collab_posts || [])]);
+      setHasMoreBrowse(!!res.data.has_more);
+    } catch { showToast('Failed to load more', 'error'); }
+    finally { setLoadingMore(false); }
   };
 
   const handleCreate = async e => {
@@ -202,7 +220,15 @@ export default function CollabPage() {
               </div>
             </div>
           ))
-        ) : (
+        ) : null}
+
+        {tab === 'browse' && !loading && hasMoreBrowse && (
+          <button className="load-more-btn" onClick={handleLoadMoreBrowse} disabled={loadingMore}>
+            {loadingMore ? 'Loading…' : 'Load more'}
+          </button>
+        )}
+
+        {tab === 'my' && (
           myPosts.length === 0 ? (
             <div className="state-box">
               <h3>No collab posts yet</h3>

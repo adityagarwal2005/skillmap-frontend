@@ -992,6 +992,27 @@
   border-radius: var(--radius-lg);
 }
 
+/* Shared "Load more" pagination control */
+.load-more-btn {
+  display: block;
+  margin: 18px auto 8px;
+  height: 42px;
+  padding: 0 26px;
+  border-radius: var(--radius-pill, 999px);
+  border: 1px solid var(--border-md);
+  background: var(--surface);
+  color: var(--text-1);
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s var(--ease-out-expo, ease);
+}
+.load-more-btn:hover:not(:disabled) {
+  background: var(--elevated);
+  border-color: var(--text-3);
+  transform: translateY(-1px);
+}
+.load-more-btn:disabled { opacity: 0.6; cursor: default; }
+
 .state-box h3 {
   font-size: 1.0625rem;
   font-weight: 600;

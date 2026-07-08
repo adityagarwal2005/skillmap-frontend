@@ -17,8 +17,11 @@ export default function SearchPage() {
   const [q, setQ]           = useState(searchParams.get('q') || '');
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(false);
   const [typeFilter, setTypeFilter] = useState('all');
   const [searched, setSearched] = useState(false);
+  const [activeQuery, setActiveQuery] = useState('');
 
   useEffect(() => {
     const query = searchParams.get('q');
@@ -28,18 +31,36 @@ export default function SearchPage() {
 
   const runSearch = async (query, type) => {
     if (!query.trim()) return;
+    // "@username" is just a friendly way to search by person — strip the @
+    const cleanQuery = query.trim().replace(/^@+/, '');
     try {
       setLoading(true);
       setSearched(true);
-      // "@username" is just a friendly way to search by person — strip the @
-      const params = { q: query.trim().replace(/^@+/, '') };
+      setActiveQuery(cleanQuery);
+      const params = { q: cleanQuery };
       if (type && type !== 'all') params.type = type;
       const res = await searchFeed(params);
       setResults(res.data.results || []);
+      setHasMore(!!res.data.has_more);
     } catch {
       showToast('Search failed', 'error');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleLoadMore = async () => {
+    setLoadingMore(true);
+    try {
+      const params = { q: activeQuery, offset: results.length };
+      if (typeFilter !== 'all') params.type = typeFilter;
+      const res = await searchFeed(params);
+      setResults(prev => [...prev, ...(res.data.results || [])]);
+      setHasMore(!!res.data.has_more);
+    } catch {
+      showToast('Failed to load more', 'error');
+    } finally {
+      setLoadingMore(false);
     }
   };
 
@@ -124,6 +145,12 @@ export default function SearchPage() {
             </div>
           </article>
         ))}
+
+        {!loading && searched && hasMore && (
+          <button className="load-more-btn" onClick={handleLoadMore} disabled={loadingMore}>
+            {loadingMore ? 'Loading…' : 'Load more'}
+          </button>
+        )}
       </div>
     </AppShell>
   );

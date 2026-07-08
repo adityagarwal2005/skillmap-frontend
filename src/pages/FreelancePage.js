@@ -32,6 +32,8 @@ export default function FreelancePage() {
   const [skillFilter, setSkillFilter] = useState('');
   const [radius, setRadius]           = useState(50);
   const [userLocation, setUserLocation] = useState({ lat: '', lon: '' });
+  const [hasMoreAvailable, setHasMoreAvailable] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
 
   const [postModal, setPostModal]             = useState(false);
   const [applyModal, setApplyModal]           = useState(null);
@@ -51,24 +53,40 @@ export default function FreelancePage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { loadAll(); }, []);
 
+  const availableParams = () => {
+    const params = {};
+    if (skillFilter) params.skill = skillFilter;
+    if (radius)      params.radius = radius;
+    if (userLocation.lat) {
+      params.latitude  = userLocation.lat;
+      params.longitude = userLocation.lon;
+    }
+    return params;
+  };
+
   const loadAll = async () => {
     try {
       setLoading(true);
-      const params = {};
-      if (skillFilter) params.skill = skillFilter;
-      if (radius)      params.radius = radius;
-      if (userLocation.lat) {
-        params.latitude  = userLocation.lat;
-        params.longitude = userLocation.lon;
-      }
       const [avRes, myRes] = await Promise.all([
-        API.get(`/work/requests/available/${user.id}/`, { params }),
+        API.get(`/work/requests/available/${user.id}/`, { params: availableParams() }),
         getMyWorkRequests(user.id),
       ]);
       setAvailable(avRes.data.work_requests || []);
       setMyJobs(myRes.data.work_requests || []);
+      setHasMoreAvailable(!!avRes.data.has_more);
     } catch { showToast('Failed to load jobs', 'error'); }
     finally { setLoading(false); }
+  };
+
+  const handleLoadMoreAvailable = async () => {
+    setLoadingMore(true);
+    try {
+      const params = { ...availableParams(), offset: available.length };
+      const res = await API.get(`/work/requests/available/${user.id}/`, { params });
+      setAvailable(prev => [...prev, ...(res.data.work_requests || [])]);
+      setHasMoreAvailable(!!res.data.has_more);
+    } catch { showToast('Failed to load more jobs', 'error'); }
+    finally { setLoadingMore(false); }
   };
 
   const handlePost = async e => {
@@ -196,7 +214,15 @@ export default function FreelancePage() {
               </div>
             </div>
           ))
-        ) : (
+        ) : null}
+
+        {tab === 'available' && !loading && hasMoreAvailable && (
+          <button className="load-more-btn" onClick={handleLoadMoreAvailable} disabled={loadingMore}>
+            {loadingMore ? 'Loading…' : 'Load more'}
+          </button>
+        )}
+
+        {tab === 'my' && (
           myJobs.length === 0 ? (
             <div className="state-box">
               <h3>No jobs posted yet</h3>

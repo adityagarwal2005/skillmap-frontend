@@ -15,27 +15,46 @@ export default function FeedPage() {
 
   const [items, setItems]     = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(false);
   const [tab, setTab]         = useState('for-you');
   const [reacted, setReacted] = useState({});
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { loadFeed(); }, []);
 
-  const load = async fn => {
+  const fetchPage = tab === 'for-you' ? getFeed : getTrending;
+  const dataKey = tab === 'for-you' ? 'feed' : 'trending';
+
+  const loadFeed = async () => {
     setLoading(true);
-    try { return await fn(); }
-    catch (e) { showToast('Failed to load feed', 'error'); }
+    try {
+      const r = await getFeed();
+      setItems(r.data.feed || []);
+      setHasMore(!!r.data.has_more);
+    } catch { showToast('Failed to load feed', 'error'); }
     finally { setLoading(false); }
   };
 
-  const loadFeed = async () => {
-    const r = await load(() => getFeed());
-    if (r) setItems(r.data.feed || []);
+  const loadTrending = async () => {
+    setLoading(true);
+    try {
+      const r = await getTrending();
+      setItems(r.data.trending || []);
+      setHasMore(!!r.data.has_more);
+    } catch { showToast('Failed to load feed', 'error'); }
+    finally { setLoading(false); }
   };
 
-  const loadTrending = async () => {
-    const r = await load(() => getTrending());
-    if (r) setItems(r.data.trending || []);
+  const handleLoadMore = async () => {
+    setLoadingMore(true);
+    try {
+      const r = await fetchPage({ offset: items.length });
+      const next = r.data[dataKey] || [];
+      setItems(prev => [...prev, ...next]);
+      setHasMore(!!r.data.has_more);
+    } catch { showToast('Failed to load more', 'error'); }
+    finally { setLoadingMore(false); }
   };
 
   const switchTab = t => {
@@ -156,6 +175,12 @@ export default function FeedPage() {
             </div>
           </article>
         ))}
+
+        {!loading && hasMore && (
+          <button className="load-more-btn" onClick={handleLoadMore} disabled={loadingMore}>
+            {loadingMore ? 'Loading…' : 'Load more'}
+          </button>
+        )}
       </div>
     </AppShell>
   );
