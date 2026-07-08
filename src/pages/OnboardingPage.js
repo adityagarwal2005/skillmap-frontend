@@ -179,7 +179,7 @@ export default function OnboardingPage() {
                     <span className="location-icon">📍</span>
                     <div>
                       <div className="location-label">Location captured</div>
-                      <div className="location-coords">{parseFloat(location.lat).toFixed(4)}, {parseFloat(location.lon).toFixed(4)}</div>
+                      <div className="location-coords">You're all set — only your city-level area is used</div>
                     </div>
                   </div>
                 ) : (

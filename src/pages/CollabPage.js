@@ -1,17 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import {
   getMyCollabPosts, createCollabPost,
   applyToCollab, getCollabApplicants, respondToCollabRequest, closeCollabPost
 } from '../api/collab';
 import API from '../api/config';
+import AppShell from '../components/AppShell';
 import './FeedPage.css';
 import './CollabPage.css';
-
-const SVGsun  = <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>;
-const SVGmoon = <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>;
 
 const TYPE_COLORS = {
   equity:     { bg: 'rgba(139,92,246,0.1)', color: '#8b5cf6' },
@@ -20,7 +17,6 @@ const TYPE_COLORS = {
 };
 
 export default function CollabPage() {
-  const { user, logoutUser } = useAuth();
   const { showToast }        = useToast();
   const navigate             = useNavigate();
 
@@ -32,7 +28,6 @@ export default function CollabPage() {
   const [skillFilter, setSkillFilter] = useState('');
   const [radius, setRadius]         = useState(50);
   const [userLocation, setUserLocation] = useState({ lat: '', lon: '' });
-  const [theme, setTheme]       = useState(localStorage.getItem('theme') || 'light');
 
   const [createModal, setCreateModal]         = useState(false);
   const [applyModal, setApplyModal]           = useState(null);
@@ -41,11 +36,6 @@ export default function CollabPage() {
 
   const [createForm, setCreateForm] = useState({ title: '', description: '', collab_type: 'experience', skills: '' });
   const [applyMsg, setApplyMsg]     = useState('');
-
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
-  }, [theme]);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -132,22 +122,7 @@ export default function CollabPage() {
   };
 
   return (
-    <div className="app-shell">
-      <header className="topbar">
-        <div className="topbar-brand" onClick={() => navigate('/')}>
-          <div className="topbar-icon">S</div>
-          <span className="topbar-name">SkillMap</span>
-        </div>
-        <div className="topbar-right">
-          <button className="topbar-btn" onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}>
-            {theme === 'dark' ? SVGsun : SVGmoon}
-          </button>
-          <div className="topbar-avatar">{user?.username?.[0]?.toUpperCase()}</div>
-          <span className="topbar-username">{user?.username}</span>
-          <button className="topbar-signout" onClick={logoutUser}>Sign out</button>
-        </div>
-      </header>
-
+    <AppShell active="collab">
       <div className="collab-wrapper">
         <div className="freelance-header">
           <div>
@@ -375,6 +350,6 @@ export default function CollabPage() {
           </div>
         </div>
       )}
-    </div>
+    </AppShell>
   );
 }

@@ -491,3 +491,137 @@
 }
 
 .cta-btn:hover { opacity: 0.8; }
+
+/* ── Premium profile touches ── */
+.app-shell .profile-avatar {
+  background: linear-gradient(145deg, #2c2c2e, #050505);
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 12px 28px rgba(0,0,0,0.22);
+}
+.app-shell .profile-name {
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  letter-spacing: -0.04em;
+}
+.app-shell .profile-header,
+.app-shell .profile-skills-section,
+.app-shell .review-card,
+.app-shell .cert-card { border-radius: 18px; }
+.app-shell .portfolio-card { border-radius: 16px; }
+.app-shell .section-title {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+/* ── Social links hub ── */
+.socials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.social-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  transition: transform 0.22s var(--ease-out-expo, ease),
+              box-shadow 0.22s var(--ease-out-expo, ease),
+              border-color 0.22s ease;
+}
+
+.social-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 34px rgba(0,0,0,0.14);
+  border-color: var(--border-md);
+}
+
+.social-glyph {
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  border-radius: 13px;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 11px;
+}
+.social-glyph svg { display: block; }
+
+.social-glyph.linkedin  { background: #0a66c2; }
+.social-glyph.github    { background: #181717; }
+.social-glyph.instagram {
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+}
+
+.social-meta { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+
+.social-label {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: var(--text-1);
+  letter-spacing: -0.01em;
+}
+
+.social-open {
+  font-size: 0.8125rem;
+  color: var(--text-2);
+  font-weight: 500;
+}
+
+.social-card:hover .social-open { color: var(--blue); }
+
+/* Not-connected state — visible but muted, not clickable */
+.social-card.is-disconnected {
+  cursor: default;
+  background: var(--elevated);
+  border-style: dashed;
+}
+.social-card.is-disconnected:hover {
+  transform: none;
+  box-shadow: none;
+  border-color: var(--border);
+}
+.social-card.is-disconnected .social-label { color: var(--text-2); }
+.social-card.is-disconnected .social-open { color: var(--text-3); }
+
+.social-glyph.muted {
+  background: var(--border-md) !important;
+  color: var(--text-3);
+  opacity: 0.9;
+}
+
+@media (max-width: 640px) {
+  .profile-wrapper { padding: 20px 16px 60px; }
+
+  .profile-header {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 22px 20px;
+  }
+
+  .profile-avatar-wrap { align-self: flex-start; }
+
+  .profile-owner-actions {
+    flex-direction: row;
+    width: 100%;
+  }
+
+  .status-select, .edit-profile-btn { flex: 1; }
+
+  .profile-stats { gap: 20px; }
+
+  .profile-skills-section { padding: 18px 20px; }
+
+  .add-skill-form { flex-wrap: wrap; }
+  .skill-input { max-width: none; }
+
+  .portfolio-grid { grid-template-columns: 1fr; }
+}

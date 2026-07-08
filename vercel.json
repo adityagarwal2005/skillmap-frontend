@@ -1,1 +1,6 @@
-{"rewrites":[{"source":"/(.*)","destination":"/index.html"}]}
+{
+  "buildCommand": "CI=false npm run build",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}

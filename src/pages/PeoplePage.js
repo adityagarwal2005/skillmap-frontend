@@ -1,14 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { searchUsers, getCategories, getCategorySkills } from '../api/users';
+import AppShell from '../components/AppShell';
 import './FeedPage.css';
 import './PeoplePage.css';
-
-const SVGsun  = <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>;
-const SVGmoon = <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>;
-const SVGsearch = <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>;
 
 const RADII = [
   { label: '1 km',   value: 1 },
@@ -31,7 +27,6 @@ const STATUS_COLORS = {
 };
 
 export default function PeoplePage() {
-  const { user, logoutUser } = useAuth();
   const { showToast }        = useToast();
   const navigate             = useNavigate();
 
@@ -40,7 +35,6 @@ export default function PeoplePage() {
   const [results, setResults]         = useState([]);
   const [loading, setLoading]         = useState(false);
   const [searched, setSearched]       = useState(false);
-  const [theme, setTheme]             = useState(localStorage.getItem('theme') || 'light');
 
   const [form, setForm] = useState({
     category_id: '',
@@ -49,11 +43,6 @@ export default function PeoplePage() {
     latitude: '',
     longitude: '',
   });
-
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
-  }, [theme]);
 
   useEffect(() => {
     getCategories().then(r => setCategories(r.data.categories || [])).catch(() => {});
@@ -111,29 +100,7 @@ export default function PeoplePage() {
   };
 
   return (
-    <div className="app-shell">
-      <header className="topbar">
-        <div className="topbar-brand" onClick={() => navigate('/')}>
-          <div className="topbar-icon">S</div>
-          <span className="topbar-name">SkillMap</span>
-        </div>
-        <form className="topbar-search" onSubmit={e => e.preventDefault()}>
-          <span className="topbar-search-icon">{SVGsearch}</span>
-          <input className="topbar-search-input" placeholder="Search skills, people, projects..."
-            onKeyDown={e => { if (e.key === 'Enter') navigate(`/search?q=${e.target.value}`); }} />
-          <button type="button" className="topbar-search-btn"
-            onClick={e => { const v = e.target.previousSibling?.value; if (v) navigate(`/search?q=${v}`); }}>Go</button>
-        </form>
-        <div className="topbar-right">
-          <button className="topbar-btn" onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}>
-            {theme === 'dark' ? SVGsun : SVGmoon}
-          </button>
-          <div className="topbar-avatar">{user?.username?.[0]?.toUpperCase()}</div>
-          <span className="topbar-username">{user?.username}</span>
-          <button className="topbar-signout" onClick={logoutUser}>Sign out</button>
-        </div>
-      </header>
-
+    <AppShell active="people">
       <div className="people-layout">
         {/* Filters sidebar */}
         <aside className="people-filters">
@@ -181,7 +148,7 @@ export default function PeoplePage() {
             <div className="filter-field">
               <label className="filter-label">Location</label>
               <p className="filter-location-text">
-                {form.latitude ? `📍 ${parseFloat(form.latitude).toFixed(4)}, ${parseFloat(form.longitude).toFixed(4)}` : 'Getting your location...'}
+                {form.latitude ? '📍 Using your current location' : 'Getting your location…'}
               </p>
             </div>
 
@@ -238,6 +205,6 @@ export default function PeoplePage() {
           )}
         </main>
       </div>
-    </div>
+    </AppShell>
   );
 }

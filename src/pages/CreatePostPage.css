@@ -105,3 +105,10 @@
 [data-theme="light"] .create-submit { background: #0f172a; }
 .create-submit:hover:not(:disabled) { opacity: 0.85; }
 .create-submit:disabled { opacity: 0.45; cursor: not-allowed; }
+
+@media (max-width: 480px) {
+  .create-wrapper { padding: 20px 16px 48px; }
+  .create-box { padding: 22px 20px; }
+  .create-actions { flex-direction: column-reverse; }
+  .create-cancel, .create-submit { width: 100%; }
+}

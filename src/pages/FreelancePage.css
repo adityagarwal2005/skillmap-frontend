@@ -273,3 +273,12 @@
   font-family: inherit;
   cursor: pointer;
 }
+
+@media (max-width: 600px) {
+  .freelance-wrapper { padding: 20px 16px 48px; }
+  .freelance-header { flex-wrap: wrap; gap: 12px; }
+  .post-job-btn { width: 100%; }
+  .wr-card { padding: 16px; }
+  .wr-footer { flex-wrap: wrap; }
+  .filter-input { min-width: 0; width: 100%; }
+}

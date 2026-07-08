@@ -189,3 +189,11 @@
   margin-left: 39px;
   margin-top: 4px;
 }
+
+@media (max-width: 600px) {
+  .detail-wrapper { padding: 20px 16px 48px; }
+  .detail-card { padding: 18px; }
+  .comments-section { padding: 16px 18px; }
+  .comment-text, .comment-edit-row { margin-left: 0; }
+  .detail-reactions { gap: 6px; }
+}

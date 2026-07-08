@@ -86,3 +86,9 @@
   font-family: inherit;
   cursor: pointer;
 }
+
+@media (max-width: 600px) {
+  .collab-wrapper { padding: 20px 16px 48px; }
+  .collab-card { padding: 16px; }
+  .filter-input { min-width: 0; width: 100%; }
+}

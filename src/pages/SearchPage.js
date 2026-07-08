@@ -1,19 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { searchFeed } from '../api/feed';
 import { PostCardSkeleton } from '../components/Skeleton';
+import AppShell from '../components/AppShell';
 import './FeedPage.css';
 import './SearchPage.css';
 
 const TYPES = ['all', 'project', 'design', 'photo', 'baked_good', 'artwork', 'video'];
-const SVGsun  = <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>;
-const SVGmoon = <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>;
-const SVGsearch = <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>;
 
 export default function SearchPage() {
-  const { user, logoutUser } = useAuth();
   const { showToast }        = useToast();
   const navigate             = useNavigate();
   const [searchParams]       = useSearchParams();
@@ -22,13 +18,7 @@ export default function SearchPage() {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [typeFilter, setTypeFilter] = useState('all');
-  const [theme, setTheme]   = useState(localStorage.getItem('theme') || 'light');
   const [searched, setSearched] = useState(false);
-
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
-  }, [theme]);
 
   useEffect(() => {
     const query = searchParams.get('q');
@@ -41,7 +31,8 @@ export default function SearchPage() {
     try {
       setLoading(true);
       setSearched(true);
-      const params = { q: query };
+      // "@username" is just a friendly way to search by person — strip the @
+      const params = { q: query.trim().replace(/^@+/, '') };
       if (type && type !== 'all') params.type = type;
       const res = await searchFeed(params);
       setResults(res.data.results || []);
@@ -63,30 +54,10 @@ export default function SearchPage() {
   };
 
   return (
-    <div className="app-shell">
-      <header className="topbar">
-        <div className="topbar-brand" onClick={() => navigate('/')}>
-          <div className="topbar-icon">S</div>
-          <span className="topbar-name">SkillMap</span>
-        </div>
-        <form onSubmit={handleSearch} className="topbar-search">
-          <span className="topbar-search-icon">{SVGsearch}</span>
-          <input className="topbar-search-input"
-            placeholder="Search skills, people, projects..."
-            value={q} onChange={e => setQ(e.target.value)} />
-          <button type="submit" className="topbar-search-btn">Go</button>
-        </form>
-        <div className="topbar-right">
-          <button className="topbar-btn"
-            onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}>
-            {theme === 'dark' ? SVGsun : SVGmoon}
-          </button>
-          <div className="topbar-avatar">{user?.username?.[0]?.toUpperCase()}</div>
-          <span className="topbar-username">{user?.username}</span>
-          <button className="topbar-signout" onClick={logoutUser}>Sign out</button>
-        </div>
-      </header>
-
+    <AppShell active="search"
+      searchValue={q}
+      onSearchChange={setQ}
+      onSearchSubmit={handleSearch}>
       <div className="search-wrapper">
         <div className="search-header">
           <h1 className="search-heading">
@@ -101,6 +72,9 @@ export default function SearchPage() {
               </button>
             ))}
           </div>
+          <p className="search-hint">
+            Tip: search <strong>@username</strong> to find a specific person
+          </p>
         </div>
 
         {loading ? (
@@ -151,6 +125,6 @@ export default function SearchPage() {
           </article>
         ))}
       </div>
-    </div>
+    </AppShell>
   );
 }

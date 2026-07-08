@@ -5,6 +5,262 @@
   background: var(--bg2);
 }
 
+/* ── Dark editorial chrome (scoped to feed for now) ── */
+.app-shell.app-shell { background: var(--ink, #0a0a0a); }
+
+.app-shell .topbar {
+  background: rgba(10,10,10,0.72);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.app-shell .topbar-name,
+.app-shell .topbar-username { color: #f5f5f7; }
+.app-shell .topbar-icon { background: #f5f5f7; color: #0a0a0a; }
+.app-shell .topbar-search-input {
+  background: rgba(255,255,255,0.06);
+  color: #f5f5f7;
+}
+.app-shell .topbar-search-input:focus {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.2);
+  box-shadow: none;
+}
+.app-shell .topbar-search-input::placeholder { color: rgba(245,245,247,0.4); }
+.app-shell .topbar-search-btn { background: #f5f5f7; color: #0a0a0a; }
+.app-shell .topbar-btn { color: rgba(245,245,247,0.65); }
+.app-shell .topbar-btn:hover { background: rgba(255,255,255,0.08); color: #fff; }
+.app-shell .topbar-avatar { background: #f5f5f7; color: #0a0a0a; }
+.app-shell .topbar-signout {
+  border-color: rgba(255,255,255,0.2);
+  color: rgba(245,245,247,0.72);
+}
+.app-shell .topbar-signout:hover { background: rgba(255,255,255,0.08); color: #fff; }
+
+/* ── Steel content panels: every page's content floats on the dark chrome ── */
+/* Content columns are transparent — the steel comes from .app-main behind them.
+   They just sit above the fixed robot. */
+.app-shell .feed-main,
+.app-shell .profile-wrapper,
+.app-shell .search-wrapper,
+.app-shell .settings-wrapper,
+.app-shell .notif-wrapper,
+.app-shell .freelance-wrapper,
+.app-shell .collab-wrapper,
+.app-shell .detail-wrapper,
+.app-shell .create-wrapper,
+.app-shell .edit-wrapper,
+.app-shell .people-layout,
+.app-shell .messages-layout {
+  position: relative;
+  z-index: 2;
+}
+
+/* Editorial "//" motif on every page's title, tying them to the feed */
+.app-shell .search-heading,
+.app-shell .settings-title,
+.app-shell .notif-title,
+.app-shell .freelance-title,
+.app-shell .create-title,
+.app-shell .convs-title,
+.app-shell .people-filters-title { letter-spacing: -0.02em; }
+
+.app-shell .search-heading::before,
+.app-shell .settings-title::before,
+.app-shell .notif-title::before,
+.app-shell .freelance-title::before,
+.app-shell .create-title::before,
+.app-shell .convs-title::before,
+.app-shell .people-filters-title::before {
+  content: "// ";
+  font-family: var(--font-mono, monospace);
+  font-weight: 500;
+  color: var(--text-3);
+}
+
+/* ══════════════════════════════════════════════════════════
+   PREMIUM PASS — shared polish applied across every page
+   ══════════════════════════════════════════════════════════ */
+
+/* Bigger, tighter editorial page titles */
+.app-shell .search-heading,
+.app-shell .notif-title,
+.app-shell .freelance-title,
+.app-shell .create-title,
+.app-shell .settings-title {
+  font-size: clamp(1.6rem, 2.4vw, 2.1rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+}
+
+/* Content cards — consistent soft-lift interaction everywhere */
+.app-shell .portfolio-card,
+.app-shell .person-card,
+.app-shell .wr-card,
+.app-shell .collab-card,
+.app-shell .review-card,
+.app-shell .cert-card,
+.app-shell .notif-card {
+  transition: transform 0.24s var(--ease-out-expo, ease),
+              box-shadow 0.24s var(--ease-out-expo, ease),
+              border-color 0.24s ease;
+}
+.app-shell .portfolio-card:hover,
+.app-shell .person-card:hover,
+.app-shell .wr-card:hover,
+.app-shell .collab-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 34px rgba(0,0,0,0.13);
+  border-color: var(--border-md);
+}
+
+/* Primary actions — unify to true ink black, pill, with a premium lift */
+.app-shell .post-job-btn,
+.app-shell .wr-apply-btn,
+.app-shell .filter-search-btn,
+.app-shell .settings-save-btn,
+.app-shell .create-submit,
+.app-shell .cta-btn,
+.app-shell .skill-add-btn,
+.app-shell .comment-submit,
+.app-shell .msg-send-btn,
+.app-shell .hire-btn,
+.app-shell .add-cert-btn {
+  background: var(--ink, #0a0a0a);
+  color: #f5f5f7;
+  border-radius: var(--radius-pill, 999px);
+  border: 1px solid transparent;
+  transition: transform 0.2s var(--ease-out-expo, ease),
+              box-shadow 0.2s var(--ease-out-expo, ease),
+              opacity 0.2s ease;
+}
+.app-shell .post-job-btn:hover:not(:disabled),
+.app-shell .wr-apply-btn:hover:not(:disabled),
+.app-shell .filter-search-btn:hover:not(:disabled),
+.app-shell .settings-save-btn:hover:not(:disabled),
+.app-shell .create-submit:hover:not(:disabled),
+.app-shell .cta-btn:hover:not(:disabled),
+.app-shell .skill-add-btn:hover:not(:disabled),
+.app-shell .comment-submit:hover:not(:disabled),
+.app-shell .msg-send-btn:hover:not(:disabled),
+.app-shell .hire-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.22);
+  opacity: 1;
+}
+/* add-cert is a dashed ghost button — keep it ghost, just pill it */
+.app-shell .add-cert-btn { background: none; color: var(--text-2); }
+
+/* Secondary / outline actions — pill + smooth */
+.app-shell .edit-profile-btn,
+.app-shell .wr-view-btn,
+.app-shell .wr-close-btn,
+.app-shell .create-cancel,
+.app-shell .notif-read-all,
+.app-shell .status-select {
+  border-radius: var(--radius-pill, 999px);
+  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+}
+
+/* Inputs — softer, with a focus ring that feels considered */
+.app-shell .create-input,
+.app-shell .create-textarea,
+.app-shell .create-select,
+.app-shell .settings-input,
+.app-shell .filter-input,
+.app-shell .filter-select,
+.app-shell .comment-input,
+.app-shell .msg-input,
+.app-shell .skill-input,
+.app-shell .modal-input,
+.app-shell .modal-textarea {
+  border-radius: 12px;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+.app-shell .create-input:focus,
+.app-shell .create-textarea:focus,
+.app-shell .create-select:focus,
+.app-shell .settings-input:focus,
+.app-shell .filter-input:focus,
+.app-shell .comment-input:focus,
+.app-shell .msg-input:focus,
+.app-shell .skill-input:focus,
+.app-shell .modal-input:focus,
+.app-shell .modal-textarea:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 4px rgba(0,113,227,0.12);
+}
+
+/* Tags & pills — crisper */
+.app-shell .tag,
+.app-shell .mini-tag,
+.app-shell .skill-tag,
+.app-shell .profile-status-badge { letter-spacing: -0.01em; }
+
+/* Modals — deeper, more premium elevation */
+.app-shell .modal-box {
+  border-radius: 24px;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.35), 0 8px 24px rgba(0,0,0,0.2);
+}
+
+/* Avatars — subtle ink gradient instead of flat navy */
+.app-shell .person-ava,
+.app-shell .conv-ava,
+.app-shell .msg-ava,
+.app-shell .review-avatar,
+.app-shell .post-ava {
+  background: linear-gradient(145deg, #2c2c2e, #0a0a0a);
+  color: #f5f5f7;
+  border: none;
+}
+
+/* Empty / zero states — more considered */
+.app-shell .state-box,
+.app-shell .empty-state {
+  border-radius: 20px;
+  border-style: dashed;
+}
+
+/* ── Wider content — fill the steel from the rail to the right edge ── */
+.app-shell .profile-wrapper,
+.app-shell .search-wrapper,
+.app-shell .notif-wrapper,
+.app-shell .freelance-wrapper,
+.app-shell .collab-wrapper,
+.app-shell .detail-wrapper {
+  max-width: none;
+  width: 100%;
+  padding-left: clamp(24px, 4vw, 60px);
+  padding-right: clamp(24px, 4vw, 60px);
+}
+/* Forms & settings stay readable, just a touch wider (full-width inputs read poorly) */
+.app-shell .settings-wrapper { max-width: 960px; }
+.app-shell .create-wrapper   { max-width: 780px; }
+.app-shell .edit-wrapper     { max-width: 720px; }
+
+/* ── Larger editorial names & titles ── */
+.app-shell .post-title,
+.app-shell .collab-title {
+  font-size: clamp(1.3rem, 1.9vw, 1.7rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.18;
+}
+.app-shell .post-author { font-size: 1.0625rem; font-weight: 700; letter-spacing: -0.01em; }
+.app-shell .wr-desc {
+  font-size: clamp(1.15rem, 1.6vw, 1.45rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-1);
+  line-height: 1.3;
+}
+.app-shell .wr-desc-sm { font-size: 1.0625rem; font-weight: 600; }
+.app-shell .wr-by,
+.app-shell .person-name,
+.app-shell .conv-name,
+.app-shell .thread-name { font-size: 1.0625rem; font-weight: 700; }
+.app-shell .portfolio-card-title { font-size: 1.2rem; }
+.app-shell .wr-pay { font-size: 1.3rem; }
+
 /* ── Topbar ── */
 .topbar {
   position: sticky;
@@ -175,54 +431,102 @@
   min-height: calc(100vh - 52px);
 }
 
+/* The steel surface itself — fills the whole area from the rail to the right
+   edge, full height. Content columns sit inside it (transparent). Palette is
+   locked to light here so everything inside stays readable in any theme. */
+.app-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--steel-solid);
+  box-shadow: inset 1px 0 0 rgba(0,0,0,0.06);
+  --bg: #ffffff;
+  --bg2: #fbfbfd;
+  --surface: #ffffff;
+  --elevated: #f4f4f6;
+  --border: rgba(0,0,0,0.08);
+  --border-md: rgba(0,0,0,0.12);
+  --text-1: #1d1d1f;
+  --text-2: #6e6e73;
+  --text-3: #a0a0a6;
+  --accent: #1d1d1f;
+  --accent-low: rgba(0,0,0,0.05);
+  --navy: #1d1d1f;
+  --navy-bright: #1d1d1f;
+  color: var(--text-1);
+}
+
 /* ── Sidebar ── */
 .sidebar {
-  width: 210px;
+  width: 244px;
   flex-shrink: 0;
-  padding: 20px 8px;
+  padding: 28px 14px;
   position: sticky;
   top: 52px;
   height: calc(100vh - 52px);
   overflow-y: auto;
-  background: var(--surface);
-  border-right: 1px solid var(--border);
+  background: #0a0a0a;
+  border-right: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  flex-direction: column;
 }
 
-.sidebar-group { margin-bottom: 24px; }
+.sidebar-group { margin-bottom: 22px; }
+
+/* Dark-rail colour overrides */
+.sidebar .sidebar-group-label { color: rgba(245,245,247,0.4); }
+
+.sidebar-post-btn {
+  margin-top: auto;
+  width: 100%;
+  height: 46px;
+  border: 1px solid rgba(255,255,255,0.22);
+  border-radius: var(--radius-pill, 999px);
+  color: #f5f5f7;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  transition: background var(--dur, 0.25s) var(--ease-out-expo, ease),
+              color var(--dur, 0.25s) var(--ease-out-expo, ease);
+}
+
+.sidebar-post-btn:hover { background: #f5f5f7; color: #0a0a0a; }
 
 .sidebar-group-label {
+  font-family: var(--font-mono, monospace);
   font-size: 0.6875rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--text-3);
-  letter-spacing: 0.6px;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   padding: 0 10px;
-  margin-bottom: 3px;
+  margin-bottom: 5px;
 }
 
 .sidebar-link {
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: 10px;
   width: 100%;
-  padding: 7px 10px;
-  border-radius: 8px;
-  font-size: 0.9rem;
+  padding: 9px 12px;
+  border-radius: 10px;
+  font-size: 0.9375rem;
   font-weight: 400;
-  color: var(--text-2);
-  transition: all 0.15s;
+  color: rgba(245,245,247,0.6);
+  transition: all 0.18s var(--ease-out-expo, ease);
   text-align: left;
   position: relative;
 }
 
 .sidebar-link:hover {
-  background: var(--elevated);
-  color: var(--text-1);
+  background: rgba(255,255,255,0.06);
+  color: #ffffff;
 }
 
 .sidebar-link.active {
-  background: var(--elevated);
-  color: var(--text-1);
+  background: rgba(255,255,255,0.1);
+  color: #ffffff;
   font-weight: 600;
 }
 
@@ -253,53 +557,134 @@
 }
 
 /* ── Feed Main ── */
-.feed-main {
+/* Steel content panel floating on the dark chrome */
+.app-shell .feed-main {
+  position: relative;
+  z-index: 2;
   flex: 1;
   min-width: 0;
-  max-width: 640px;
-  padding: 28px 32px;
-  border-right: 1px solid var(--border);
-  margin: 0 auto;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 44px clamp(24px, 4vw, 60px) 80px;
 }
 
-.feed-toprow {
+/* Hero robot — sits on the dark chrome to the right of the panel */
+.feed-robot {
+  position: fixed;
+  right: -3vw;
+  bottom: 0;
+  height: 72vh;
+  max-height: 780px;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.97;
+  filter: drop-shadow(0 18px 40px rgba(0,0,0,0.28));
+  animation: robotIn 0.9s var(--ease-out-expo, ease) both;
+}
+
+@keyframes robotIn {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (max-width: 1280px) { .feed-robot { display: none; } }
+
+/* Text inside the steel panel is always dark ink, independent of theme */
+.app-shell .feed-main,
+.app-shell .feed-main .post-title,
+.app-shell .feed-main .post-author { color: #14141a; }
+
+.feed-hero {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 20px;
+  gap: 32px;
+  margin-bottom: 28px;
 }
 
 .feed-heading {
-  font-size: 1.375rem;
-  font-weight: 700;
-  color: var(--text-1);
-  letter-spacing: -0.5px;
+  font-size: clamp(2.75rem, 6vw, 4.5rem);
+  font-weight: 800;
+  color: #14141a;
+  letter-spacing: -0.04em;
+  line-height: 0.9;
+  text-transform: uppercase;
 }
 
+.feed-heading-kicker { display: block; }
+
+/* Dark promo card, top-right of the hero */
+.feed-promo {
+  position: relative;
+  flex-shrink: 0;
+  width: 208px;
+  min-height: 176px;
+  background: var(--ink, #0a0a0a);
+  border-radius: 16px;
+  padding: 18px 20px;
+  color: #f5f5f7;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+}
+
+.feed-promo-arrow {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  font-size: 1.15rem;
+  line-height: 1;
+  color: #f5f5f7;
+}
+
+.feed-promo-title {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.feed-promo-meta {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.625rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(245,245,247,0.5);
+}
+
+/* Underline tab row */
 .tab-group {
   display: flex;
-  gap: 2px;
-  background: var(--elevated);
-  border-radius: 9px;
-  padding: 3px;
+  gap: 26px;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+  margin-bottom: 26px;
 }
 
 .tab-btn {
-  height: 26px;
-  padding: 0 14px;
-  font-size: 0.8125rem;
+  position: relative;
+  padding: 0 0 12px;
+  font-size: 0.9375rem;
   font-weight: 500;
-  color: var(--text-2);
-  border-radius: 7px;
-  transition: all 0.15s;
-  letter-spacing: -0.1px;
+  color: rgba(20,20,26,0.5);
+  transition: color 0.18s var(--ease-out-expo, ease);
 }
 
-.tab-btn.active {
-  background: var(--surface);
-  color: var(--text-1);
-  font-weight: 600;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+.tab-btn:hover { color: rgba(20,20,26,0.8); }
+
+.tab-btn.active { color: #14141a; font-weight: 600; }
+
+.tab-btn.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: #14141a;
 }
 
 /* ── Post Card ── */
@@ -309,7 +694,7 @@
   border-radius: var(--radius-lg);
   padding: 20px 22px;
   margin-bottom: 10px;
-  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s var(--ease-out-expo, ease);
   cursor: pointer;
   animation: cardIn 0.4s cubic-bezier(0.25,0.46,0.45,0.94) both;
 }
@@ -322,6 +707,7 @@
 .post-card:hover {
   box-shadow: var(--shadow-md);
   border-color: var(--border-md);
+  transform: translateY(-2px);
 }
 
 .post-top {
@@ -364,17 +750,20 @@
 .post-author:hover { color: var(--blue); }
 
 .post-author-cat {
-  font-size: 0.8125rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
   color: var(--text-3);
   display: block;
-  margin-top: 1px;
+  margin-top: 2px;
 }
 
 .post-type-badge {
+  font-family: var(--font-mono, monospace);
   font-size: 0.6875rem;
-  font-weight: 600;
+  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.1em;
   color: var(--text-2);
   background: var(--elevated);
   padding: 4px 10px;
@@ -704,6 +1093,17 @@
 @media (max-width: 1100px) { .right-panel { display: none; } }
 @media (max-width: 768px) {
   .sidebar { display: none; }
-  .feed-main { padding: 16px; max-width: 100%; }
   .topbar { padding: 0 16px; }
+  .feed-main { padding: 16px; max-width: 100%; }
+  .app-shell .feed-main {
+    margin: 0;
+    border: none;
+    border-radius: 0;
+    padding: 24px 18px 60px;
+    max-width: 100%;
+    box-shadow: none;
+  }
+  .feed-hero { flex-direction: column; gap: 20px; }
+  .feed-promo { width: 100%; min-height: 140px; }
+  .feed-heading { font-size: clamp(2.25rem, 11vw, 3.25rem); }
 }

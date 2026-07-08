@@ -37,3 +37,18 @@
 .type-filter-btn:hover { background: var(--elevated); color: var(--text-1); }
 .type-filter-btn.active { background: #0f172a; color: #fff; border-color: #0f172a; }
 [data-theme="light"] .type-filter-btn.active { background: #0f172a; }
+
+.search-hint {
+  margin-top: 12px;
+  font-size: 0.8125rem;
+  color: var(--text-2);
+}
+.search-hint strong {
+  font-family: var(--font-mono, monospace);
+  font-weight: 600;
+  color: var(--text-1);
+}
+
+@media (max-width: 480px) {
+  .search-wrapper { padding: 16px 16px 48px; }
+}
