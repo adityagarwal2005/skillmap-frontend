@@ -92,6 +92,7 @@ export default function AppShell({
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
   const [unread, setUnread] = useState(0);
   const [avatar, setAvatar] = useState(null);
+  const [avatarBroken, setAvatarBroken] = useState(false);
   const [q, setQ] = useState('');
 
   useEffect(() => {
@@ -102,7 +103,7 @@ export default function AppShell({
   useEffect(() => {
     getUnreadCount().then(r => setUnread(r.data.unread_count || 0)).catch(() => {});
     if (user?.id) {
-      getUser(user.id).then(r => setAvatar(r.data.profile_image || null)).catch(() => {});
+      getUser(user.id).then(r => { setAvatar(r.data.profile_image || null); setAvatarBroken(false); }).catch(() => {});
     }
   }, [user?.id]);
 
@@ -150,8 +151,8 @@ export default function AppShell({
             {theme === 'dark' ? SVG.sun : SVG.moon}
           </button>
           <div className="topbar-avatar" onClick={() => navigate(`/profile/${user?.id}`)}>
-            {avatar
-              ? <img className="ava-img" src={avatar} alt="" />
+            {avatar && !avatarBroken
+              ? <img className="ava-img" src={avatar} alt="" onError={() => setAvatarBroken(true)} />
               : user?.username?.[0]?.toUpperCase()}
           </div>
           <span className="topbar-username">{user?.username}</span>

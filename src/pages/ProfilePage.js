@@ -26,6 +26,7 @@ export default function ProfilePage() {
   const [loading, setLoading]       = useState(true);
   const [skillInput, setSkillInput] = useState('');
   const [addingSkill, setAddingSkill] = useState(false);
+  const [avatarBroken, setAvatarBroken] = useState(false);
 
   const isOwn = authUser?.id === parseInt(userId);
 
@@ -41,6 +42,7 @@ export default function ProfilePage() {
       ]);
       setProfile(uRes.data);
       setPortfolio(pRes.data.items || []);
+      setAvatarBroken(false);
     } catch {
       showToast('Failed to load profile', 'error');
     } finally {
@@ -110,8 +112,9 @@ export default function ProfilePage() {
             <div className="profile-header">
               <div className="profile-avatar-wrap">
                 <div className="profile-avatar">
-                  {profile.profile_image
-                    ? <img className="ava-img" src={profile.profile_image} alt={profile.username} />
+                  {profile.profile_image && !avatarBroken
+                    ? <img className="ava-img" src={profile.profile_image} alt={profile.username}
+                        onError={() => setAvatarBroken(true)} />
                     : profile.username[0].toUpperCase()}
                 </div>
                 {profile.status !== 'not_available' && <span className="profile-status-dot" />}
