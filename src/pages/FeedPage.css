@@ -80,16 +80,19 @@
    PREMIUM PASS — shared polish applied across every page
    ══════════════════════════════════════════════════════════ */
 
-/* Bigger, tighter editorial page titles */
+/* Bigger, tighter editorial page titles — matches the Feed hero's scale so
+   every page reads with the same bold weight, not just Home. */
 .app-shell .search-heading,
 .app-shell .notif-title,
 .app-shell .freelance-title,
 .app-shell .create-title,
-.app-shell .settings-title {
-  font-size: clamp(1.6rem, 2.4vw, 2.1rem);
+.app-shell .settings-title,
+.app-shell .edit-title {
+  font-size: clamp(2.5rem, 5.5vw, 4.25rem);
   font-weight: 800;
-  letter-spacing: -0.035em;
-  line-height: 1.05;
+  letter-spacing: -0.04em;
+  line-height: 0.92;
+  text-transform: uppercase;
 }
 
 /* Content cards — consistent soft-lift interaction everywhere */

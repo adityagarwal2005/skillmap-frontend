@@ -22,11 +22,10 @@
 .edit-head { margin-bottom: 26px; }
 
 .edit-title {
-  font-size: clamp(1.6rem, 2.4vw, 2rem);
-  font-weight: 800;
-  letter-spacing: -0.035em;
+  /* font-size/weight/letter-spacing/line-height come from the shared
+     editorial-heading rule in FeedPage.css, so every page title matches
+     the Feed hero's scale. */
   color: var(--text-1);
-  line-height: 1.05;
 }
 .edit-title::before {
   content: "// ";
