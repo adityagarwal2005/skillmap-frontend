@@ -7,11 +7,19 @@ import {
   editPortfolioItem, deletePortfolioItem,
 } from '../api/portfolio';
 import { getFeed } from '../api/feed';
-import { getUser } from '../api/users';
+import { getUser, reportContent } from '../api/users';
 import AppShell from '../components/AppShell';
 import { PostCardSkeleton } from '../components/Skeleton';
 import './FeedPage.css';
 import './PostDetailPage.css';
+
+const REPORT_REASONS = [
+  { value: 'spam',          label: 'Spam' },
+  { value: 'harassment',    label: 'Harassment or bullying' },
+  { value: 'inappropriate', label: 'Inappropriate content' },
+  { value: 'scam',          label: 'Scam or fraud' },
+  { value: 'other',         label: 'Other' },
+];
 
 export default function PostDetailPage() {
   const { itemId }           = useParams();
@@ -33,6 +41,10 @@ export default function PostDetailPage() {
   const [savingPost, setSavingPost]   = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [myAvatar, setMyAvatar] = useState(null);
+  const [reportModal, setReportModal] = useState(false);
+  const [reportReason, setReportReason] = useState('spam');
+  const [reportDetails, setReportDetails] = useState('');
+  const [submittingReport, setSubmittingReport] = useState(false);
 
   const isOwn = user?.id === item?.user?.id;
 
@@ -133,6 +145,21 @@ export default function PostDetailPage() {
     } catch { showToast('Failed to delete comment', 'error'); }
   };
 
+  const handleSubmitReport = async () => {
+    try {
+      setSubmittingReport(true);
+      await reportContent('post', itemId, reportReason, reportDetails);
+      showToast('Report submitted. Thanks for helping keep SkillMap safe.', 'success');
+      setReportModal(false);
+      setReportDetails('');
+      setReportReason('spam');
+    } catch (err) {
+      showToast(err.response?.data?.error || 'Failed to submit report', 'error');
+    } finally {
+      setSubmittingReport(false);
+    }
+  };
+
   return (
     <AppShell active="home">
       <div className="detail-wrapper">
@@ -176,7 +203,12 @@ export default function PostDetailPage() {
                     </div>
                   )
                 )}
-                {!isOwn && <span className="post-type-badge">{item.portfolio_type}</span>}
+                {!isOwn && (
+                  <div className="detail-owner-actions">
+                    <span className="post-type-badge">{item.portfolio_type}</span>
+                    <button className="detail-edit-btn" onClick={() => setReportModal(true)}>Report</button>
+                  </div>
+                )}
               </div>
 
               {postEditing ? (
@@ -319,6 +351,35 @@ export default function PostDetailPage() {
           </>
         )}
       </div>
+
+      {reportModal && (
+        <div className="modal-overlay" onClick={() => setReportModal(false)}>
+          <div className="modal-box" onClick={e => e.stopPropagation()}>
+            <h2 className="modal-title">Report this post</h2>
+            <div className="modal-field">
+              <label className="modal-label">Reason</label>
+              <select className="modal-input" value={reportReason}
+                onChange={e => setReportReason(e.target.value)}>
+                {REPORT_REASONS.map(r => (
+                  <option key={r.value} value={r.value}>{r.label}</option>
+                ))}
+              </select>
+            </div>
+            <div className="modal-field">
+              <label className="modal-label">Details (optional)</label>
+              <textarea className="modal-textarea" rows={3}
+                placeholder="Anything that helps us understand the issue…"
+                value={reportDetails} onChange={e => setReportDetails(e.target.value)} />
+            </div>
+            <div className="modal-actions">
+              <button type="button" className="modal-cancel" onClick={() => setReportModal(false)}>Cancel</button>
+              <button type="button" className="modal-submit" onClick={handleSubmitReport} disabled={submittingReport}>
+                {submittingReport ? 'Submitting…' : 'Submit report'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </AppShell>
   );
 }

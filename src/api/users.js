@@ -23,6 +23,20 @@ export const uploadAvatar = (userId, file) => {
 export const deleteUser = (userId) =>
   API.delete(`/users/${userId}/delete/`);
 
+export const blockUser = (userId) =>
+  API.post(`/users/${userId}/block/`);
+
+export const unblockUser = (userId) =>
+  API.post(`/users/${userId}/unblock/`);
+
+export const getBlockedUsers = () =>
+  API.get('/users/blocked/');
+
+export const reportContent = (reportType, targetId, reason, details = '') =>
+  API.post('/reports/create/', new URLSearchParams({
+    report_type: reportType, target_id: targetId, reason, details,
+  }));
+
 export const updateStatus = (status) =>
   API.post('/users/status/update/', new URLSearchParams({ status }));
 

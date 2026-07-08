@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import { deleteUser, updateStatus } from '../api/users';
+import { deleteUser, updateStatus, getBlockedUsers, unblockUser } from '../api/users';
 import AppShell from '../components/AppShell';
 import './FeedPage.css';
 import './SettingsPage.css';
@@ -15,11 +15,24 @@ export default function SettingsPage() {
   const [theme, setTheme]       = useState(localStorage.getItem('theme') || 'light');
   const [status, setStatus]     = useState('not_available');
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [blockedUsers, setBlockedUsers] = useState([]);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('theme', theme);
   }, [theme]);
+
+  useEffect(() => {
+    getBlockedUsers().then(r => setBlockedUsers(r.data.blocked_users || [])).catch(() => {});
+  }, []);
+
+  const handleUnblock = async (blockedUserId) => {
+    try {
+      await unblockUser(blockedUserId);
+      setBlockedUsers(prev => prev.filter(b => b.id !== blockedUserId));
+      showToast('Unblocked', 'success');
+    } catch { showToast('Failed to unblock', 'error'); }
+  };
 
   const handleStatusChange = async e => {
     const val = e.target.value;
@@ -90,6 +103,31 @@ export default function SettingsPage() {
                 onClick={() => setTheme('dark')}>Dark</button>
             </div>
           </div>
+        </div>
+
+        {/* Privacy & Safety */}
+        <div className="settings-section">
+          <h2 className="settings-section-title">Privacy & safety</h2>
+          {blockedUsers.length === 0 ? (
+            <div className="settings-row">
+              <div className="settings-row-info">
+                <span className="settings-row-label">Blocked users</span>
+                <span className="settings-row-sub">You haven't blocked anyone</span>
+              </div>
+            </div>
+          ) : (
+            blockedUsers.map(b => (
+              <div className="settings-row" key={b.id}>
+                <div className="settings-row-info">
+                  <span className="settings-row-label">{b.username}</span>
+                  <span className="settings-row-sub">Blocked</span>
+                </div>
+                <button className="settings-save-btn" onClick={() => handleUnblock(b.id)}>
+                  Unblock
+                </button>
+              </div>
+            ))
+          )}
         </div>
 
         {/* Danger Zone */}

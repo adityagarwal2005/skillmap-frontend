@@ -2,7 +2,10 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import { getUser, addSkill, removeSkill, updateStatus, getUserPortfolio } from '../api/users';
+import {
+  getUser, addSkill, removeSkill, updateStatus, getUserPortfolio,
+  blockUser, unblockUser, getBlockedUsers, reportContent,
+} from '../api/users';
 import { ProfileHeaderSkeleton } from '../components/Skeleton';
 import AppShell from '../components/AppShell';
 import { LinkedInIcon, GitHubIcon, InstagramIcon } from '../components/SocialIcons';
@@ -13,6 +16,14 @@ const SOCIALS = [
   { key: 'linkedin_url',  label: 'LinkedIn',  brand: 'linkedin',  icon: LinkedInIcon },
   { key: 'github_url',    label: 'GitHub',    brand: 'github',    icon: GitHubIcon },
   { key: 'instagram_url', label: 'Instagram', brand: 'instagram', icon: InstagramIcon },
+];
+
+const REPORT_REASONS = [
+  { value: 'spam',          label: 'Spam' },
+  { value: 'harassment',    label: 'Harassment or bullying' },
+  { value: 'inappropriate', label: 'Inappropriate content' },
+  { value: 'scam',          label: 'Scam or fraud' },
+  { value: 'other',         label: 'Other' },
 ];
 
 export default function ProfilePage() {
@@ -27,6 +38,12 @@ export default function ProfilePage() {
   const [skillInput, setSkillInput] = useState('');
   const [addingSkill, setAddingSkill] = useState(false);
   const [avatarBroken, setAvatarBroken] = useState(false);
+  const [isBlocked, setIsBlocked] = useState(false);
+  const [blocking, setBlocking] = useState(false);
+  const [reportModal, setReportModal] = useState(false);
+  const [reportReason, setReportReason] = useState('spam');
+  const [reportDetails, setReportDetails] = useState('');
+  const [submittingReport, setSubmittingReport] = useState(false);
 
   const isOwn = authUser?.id === parseInt(userId);
 
@@ -47,6 +64,48 @@ export default function ProfilePage() {
       showToast('Failed to load profile', 'error');
     } finally {
       setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isOwn) return;
+    getBlockedUsers()
+      .then(r => setIsBlocked((r.data.blocked_users || []).some(b => b.id === parseInt(userId))))
+      .catch(() => {});
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId, isOwn]);
+
+  const handleToggleBlock = async () => {
+    try {
+      setBlocking(true);
+      if (isBlocked) {
+        await unblockUser(userId);
+        setIsBlocked(false);
+        showToast(`Unblocked ${profile.username}`, 'success');
+      } else {
+        await blockUser(userId);
+        setIsBlocked(true);
+        showToast(`Blocked ${profile.username}`, 'success');
+      }
+    } catch (err) {
+      showToast(err.response?.data?.error || 'Failed to update block', 'error');
+    } finally {
+      setBlocking(false);
+    }
+  };
+
+  const handleSubmitReport = async () => {
+    try {
+      setSubmittingReport(true);
+      await reportContent('user', userId, reportReason, reportDetails);
+      showToast('Report submitted. Thanks for helping keep SkillMap safe.', 'success');
+      setReportModal(false);
+      setReportDetails('');
+      setReportReason('spam');
+    } catch (err) {
+      showToast(err.response?.data?.error || 'Failed to submit report', 'error');
+    } finally {
+      setSubmittingReport(false);
     }
   };
 
@@ -146,7 +205,7 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              {isOwn && (
+              {isOwn ? (
                 <div className="profile-owner-actions">
                   <select className="status-select" value={profile.status} onChange={handleStatusChange}>
                     <option value="not_available">Not Available</option>
@@ -155,6 +214,16 @@ export default function ProfilePage() {
                   </select>
                   <button className="edit-profile-btn" onClick={() => navigate(`/profile/${userId}/edit`)}>
                     Edit Profile
+                  </button>
+                </div>
+              ) : (
+                <div className="profile-owner-actions">
+                  <button className="edit-profile-btn" onClick={() => setReportModal(true)}>
+                    Report
+                  </button>
+                  <button className={`edit-profile-btn ${isBlocked ? '' : 'is-danger'}`}
+                    onClick={handleToggleBlock} disabled={blocking}>
+                    {blocking ? '…' : isBlocked ? 'Unblock' : 'Block'}
                   </button>
                 </div>
               )}
@@ -249,6 +318,35 @@ export default function ProfilePage() {
           </>
         )}
       </div>
+
+      {reportModal && (
+        <div className="modal-overlay" onClick={() => setReportModal(false)}>
+          <div className="modal-box" onClick={e => e.stopPropagation()}>
+            <h2 className="modal-title">Report {profile?.username}</h2>
+            <div className="modal-field">
+              <label className="modal-label">Reason</label>
+              <select className="modal-input" value={reportReason}
+                onChange={e => setReportReason(e.target.value)}>
+                {REPORT_REASONS.map(r => (
+                  <option key={r.value} value={r.value}>{r.label}</option>
+                ))}
+              </select>
+            </div>
+            <div className="modal-field">
+              <label className="modal-label">Details (optional)</label>
+              <textarea className="modal-textarea" rows={3}
+                placeholder="Anything that helps us understand the issue…"
+                value={reportDetails} onChange={e => setReportDetails(e.target.value)} />
+            </div>
+            <div className="modal-actions">
+              <button type="button" className="modal-cancel" onClick={() => setReportModal(false)}>Cancel</button>
+              <button type="button" className="modal-submit" onClick={handleSubmitReport} disabled={submittingReport}>
+                {submittingReport ? 'Submitting…' : 'Submit report'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </AppShell>
   );
 }

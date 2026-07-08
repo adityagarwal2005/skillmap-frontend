@@ -167,6 +167,10 @@
 
 .edit-profile-btn:hover { background: var(--elevated); color: var(--text-1); }
 
+.edit-profile-btn.is-danger { color: var(--red, #ff3b30); border-color: rgba(255,59,48,0.3); }
+.edit-profile-btn.is-danger:hover { background: rgba(255,59,48,0.08); color: var(--red, #ff3b30); }
+.edit-profile-btn:disabled { opacity: 0.6; cursor: default; }
+
 /* Skills */
 .profile-skills-section {
   background: var(--surface);
