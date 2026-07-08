@@ -70,6 +70,15 @@ export default function SettingsPage() {
               Edit →
             </button>
           </div>
+          <div className="settings-row">
+            <div className="settings-row-info">
+              <span className="settings-row-label">Sign out</span>
+              <span className="settings-row-sub">Sign out of SkillMap on this device</span>
+            </div>
+            <button className="settings-save-btn" onClick={() => { logoutUser(); navigate('/login'); }}>
+              Sign out
+            </button>
+          </div>
         </div>
 
         {/* Availability */}

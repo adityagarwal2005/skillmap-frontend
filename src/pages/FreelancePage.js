@@ -53,6 +53,12 @@ export default function FreelancePage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { loadAll(); }, []);
 
+  // Geolocation resolves asynchronously — the first loadAll() above often
+  // fires before it's ready, so radius filtering gets silently skipped.
+  // Re-run once we actually have a location, so distance filtering applies.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { if (userLocation.lat) loadAll(); }, [userLocation.lat]);
+
   const availableParams = () => {
     const params = {};
     if (skillFilter) params.skill = skillFilter;

@@ -148,6 +148,10 @@ export default function AppShell({
         </form>
 
         <div className="topbar-right">
+          <button className="topbar-btn topbar-mobile-search" aria-label="Search"
+            onClick={() => navigate('/search')}>
+            {SVG.search}
+          </button>
           <button className="topbar-btn topbar-bell" aria-label="Notifications"
             onClick={() => navigate('/notifications')}>
             {I.notifications}

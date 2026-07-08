@@ -27,12 +27,7 @@
      the Feed hero's scale. */
   color: var(--text-1);
 }
-.edit-title::before {
-  content: "// ";
-  font-family: var(--font-mono, monospace);
-  font-weight: 500;
-  color: var(--text-3);
-}
+/* "// " prefix + color now come from the shared rule in FeedPage.css */
 
 .edit-sub {
   font-size: 0.9375rem;

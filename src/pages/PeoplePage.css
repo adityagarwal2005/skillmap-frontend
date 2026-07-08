@@ -209,6 +209,15 @@
 }
 
 @media (max-width: 768px) {
-  .people-filters { display: none; }
+  /* Stack the filters above results instead of hiding them — the sidebar
+     was fully unusable on mobile before (no way to search at all). */
+  .people-layout { flex-direction: column; }
+  .people-filters {
+    width: 100%;
+    position: static;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--border-md);
+  }
   .people-results { padding: 16px; }
 }

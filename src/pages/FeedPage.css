@@ -69,11 +69,12 @@
 .app-shell .freelance-title::before,
 .app-shell .create-title::before,
 .app-shell .convs-title::before,
-.app-shell .people-filters-title::before {
+.app-shell .people-filters-title::before,
+.app-shell .edit-title::before {
   content: "// ";
   font-family: var(--font-mono, monospace);
   font-weight: 500;
-  color: var(--text-3);
+  color: var(--text-1);
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -365,6 +366,9 @@
 }
 
 .topbar-search-btn:hover { opacity: 0.75; }
+
+/* Compact search icon — desktop hides it (the full bar shows instead) */
+.topbar-mobile-search { display: none; }
 
 .topbar-right {
   display: flex;
@@ -1248,7 +1252,18 @@
 @media (max-width: 1100px) { .right-panel { display: none; } }
 @media (max-width: 768px) {
   .sidebar { display: none; }
-  .topbar { padding: 0 16px; }
+  .topbar { padding: 0 12px; gap: 8px; }
+
+  /* Collapse the topbar to logo + essential icons — the full search bar,
+     brand text, username, and sign-out no longer fit next to each other
+     on a phone and were forcing horizontal scroll on every page. */
+  .topbar-name,
+  .topbar-search,
+  .topbar-username,
+  .topbar-signout { display: none; }
+  .topbar-mobile-search { display: flex; }
+  .topbar-right { gap: 4px; }
+
   .feed-main { padding: 16px; max-width: 100%; }
   .app-shell .feed-main {
     margin: 0;

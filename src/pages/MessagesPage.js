@@ -90,7 +90,7 @@ export default function MessagesPage() {
 
   return (
     <AppShell active="messages">
-      <div className="messages-layout">
+      <div className={`messages-layout ${activeConv ? 'has-active-conv' : ''}`}>
         {/* Conversation List */}
         <aside className="convs-panel">
           <div className="convs-header">
@@ -144,6 +144,8 @@ export default function MessagesPage() {
           ) : (
             <>
               <div className="thread-header">
+                <button className="thread-back-btn" aria-label="Back to conversations"
+                  onClick={() => setActiveConv(null)}>←</button>
                 <div className="conv-ava">
                   {activeConv.with_avatar
                     ? <img className="ava-img" src={activeConv.with_avatar} alt="" />

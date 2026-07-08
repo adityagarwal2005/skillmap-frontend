@@ -165,6 +165,15 @@
   flex-shrink: 0;
 }
 
+/* Only shown on mobile, where list and thread aren't side by side */
+.thread-back-btn {
+  display: none;
+  font-size: 1.25rem;
+  color: var(--text-2);
+  padding: 4px 8px 4px 0;
+  flex-shrink: 0;
+}
+
 .thread-name {
   font-size: 0.9375rem;
   font-weight: 700;
@@ -305,6 +314,14 @@
 .msg-send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
 @media (max-width: 768px) {
-  .convs-panel { width: 100%; display: none; }
-  .thread-panel { display: flex; }
+  /* Show the conversation list by default (full width); switch to the
+     thread only once one is actually selected, with a Back button to
+     return — was previously always showing an unreachable empty thread
+     with the list permanently hidden. */
+  .convs-panel { width: 100%; }
+  .thread-panel { display: none; }
+  .thread-back-btn { display: inline-flex; }
+
+  .messages-layout.has-active-conv .convs-panel { display: none; }
+  .messages-layout.has-active-conv .thread-panel { display: flex; }
 }
