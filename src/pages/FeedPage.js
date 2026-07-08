@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../context/ToastContext';
 import { getFeed, getTrending } from '../api/feed';
+import { getDiscoverPeople } from '../api/users';
 import { reactToItem } from '../api/portfolio';
 import { PostCardSkeleton } from '../components/Skeleton';
 import AppShell from '../components/AppShell';
@@ -19,9 +20,17 @@ export default function FeedPage() {
   const [hasMore, setHasMore] = useState(false);
   const [tab, setTab]         = useState('for-you');
   const [reacted, setReacted] = useState({});
+  const [people, setPeople]   = useState([]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { loadFeed(); }, []);
+
+  // People to discover — keeps the feed from ever looking empty on day one.
+  useEffect(() => {
+    getDiscoverPeople({ limit: 12 })
+      .then(r => setPeople(r.data.results || []))
+      .catch(() => {});
+  }, []);
 
   const fetchPage = tab === 'for-you' ? getFeed : getTrending;
   const dataKey = tab === 'for-you' ? 'feed' : 'trending';
@@ -96,6 +105,29 @@ export default function FeedPage() {
           <button className={`tab-btn ${tab === 'trending' ? 'active' : ''}`}
             onClick={() => switchTab('trending')}>Trending</button>
         </div>
+
+        {people.length > 0 && (
+          <section className="discover-strip">
+            <div className="discover-head">
+              <h2 className="discover-title">Discover people</h2>
+              <button className="discover-all" onClick={() => navigate('/people')}>See all →</button>
+            </div>
+            <div className="discover-row">
+              {people.map(p => (
+                <button key={p.id} className="discover-card"
+                  onClick={() => navigate(`/profile/${p.id}`)}>
+                  <div className="discover-ava">
+                    {p.profile_image
+                      ? <img className="ava-img" src={p.profile_image} alt="" />
+                      : p.username[0].toUpperCase()}
+                  </div>
+                  <span className="discover-name">{p.username}</span>
+                  <span className="discover-cat">{p.category || 'Independent'}</span>
+                </button>
+              ))}
+            </div>
+          </section>
+        )}
 
         {loading ? (
           <div className="loading-row">

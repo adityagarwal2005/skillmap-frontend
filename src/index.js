@@ -15,3 +15,12 @@ root.render(
     </ToastProvider>
   </AuthProvider>
 );
+
+// Register the service worker so SkillMap is installable ("Add to Home Screen")
+// and loads fast on repeat visits. Production only — the CRA dev server serves
+// its own assets, and a SW would cache stale files during development.
+if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
+}

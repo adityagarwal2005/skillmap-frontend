@@ -43,6 +43,9 @@ export const updateStatus = (status) =>
 export const searchUsers = (params) =>
   API.get('/users/search/', { params });
 
+export const getDiscoverPeople = (params = {}) =>
+  API.get('/users/discover/', { params });
+
 export const getCategories = () =>
   API.get('/categories/');
 

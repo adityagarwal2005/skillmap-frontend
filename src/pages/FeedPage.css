@@ -785,6 +785,141 @@
 .type-filter-btn.active { background: #0f172a; color: #fff; border-color: #0f172a; }
 [data-theme="light"] .type-filter-btn.active { background: #0f172a; }
 
+/* ── "Finish your profile" nudge (app-wide, dismissible) ── */
+.profile-nudge {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin: 18px auto 0;
+  max-width: 900px;
+  padding: 14px 18px;
+  background: #0f172a;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.14);
+  animation: cardIn 0.3s ease both;
+}
+
+.profile-nudge-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.profile-nudge-text strong { font-size: 0.9375rem; font-weight: 800; color: #fff; letter-spacing: -0.01em; }
+.profile-nudge-text span { font-size: 0.8125rem; color: rgba(245,245,247,0.72); }
+
+.profile-nudge-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+.profile-nudge-cta {
+  height: 34px;
+  padding: 0 16px;
+  background: #fff;
+  color: #0a0a0a;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  border-radius: var(--radius-pill, 999px);
+  transition: opacity 0.15s;
+}
+.profile-nudge-cta:hover { opacity: 0.85; }
+
+.profile-nudge-x {
+  width: 30px;
+  height: 30px;
+  font-size: 1.25rem;
+  line-height: 1;
+  color: rgba(245,245,247,0.6);
+  border-radius: 50%;
+  transition: background 0.15s, color 0.15s;
+}
+.profile-nudge-x:hover { background: rgba(255,255,255,0.12); color: #fff; }
+
+/* ── Discover people strip (keeps the feed alive on day one) ── */
+.discover-strip { margin: 4px 0 22px; }
+
+.discover-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.discover-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #14141a;
+  letter-spacing: -0.02em;
+}
+
+.discover-all {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-2);
+  transition: color 0.12s;
+}
+.discover-all:hover { color: #14141a; }
+
+.discover-row {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+.discover-row::-webkit-scrollbar { display: none; }
+
+.discover-card {
+  flex: 0 0 auto;
+  width: 132px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 7px;
+  padding: 18px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: transform 0.18s var(--ease-out-expo, ease), box-shadow 0.18s, border-color 0.15s;
+  animation: cardIn 0.3s ease both;
+}
+
+.discover-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.12);
+  border-color: var(--border-md);
+}
+
+.discover-ava {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: #0f172a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+  font-size: 20px;
+  overflow: hidden;
+}
+
+.discover-name {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #14141a;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.discover-cat {
+  font-size: 0.6875rem;
+  color: var(--text-3);
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* ── Post Card ── */
 .post-card {
   background: var(--surface);

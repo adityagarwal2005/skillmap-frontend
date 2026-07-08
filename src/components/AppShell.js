@@ -94,6 +94,10 @@ export default function AppShell({
   const [avatar, setAvatar] = useState(null);
   const [avatarBroken, setAvatarBroken] = useState(false);
   const [q, setQ] = useState('');
+  const [profile, setProfile] = useState(null);
+  const [nudgeDismissed, setNudgeDismissed] = useState(
+    () => localStorage.getItem('smNudgeDismissed') === '1'
+  );
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -102,7 +106,11 @@ export default function AppShell({
 
   useEffect(() => {
     if (user?.id) {
-      getUser(user.id).then(r => { setAvatar(r.data.profile_image || null); setAvatarBroken(false); }).catch(() => {});
+      getUser(user.id).then(r => {
+        setAvatar(r.data.profile_image || null);
+        setAvatarBroken(false);
+        setProfile(r.data);
+      }).catch(() => {});
     }
   }, [user?.id]);
 
@@ -115,6 +123,27 @@ export default function AppShell({
   }, []);
 
   const activeId = active || deriveActive(location.pathname);
+
+  // "Finish your profile" nudge — surfaces for anyone missing a category,
+  // skills, or a photo (e.g. users whose category was cleared in the campus
+  // migration). Hidden while they're actually editing, and dismissible.
+  const missing = profile ? [
+    !profile.category ? 'a category' : null,
+    (profile.skills || []).length === 0 ? 'skills' : null,
+    !profile.profile_image ? 'a photo' : null,
+  ].filter(Boolean) : [];
+  const onEditFlow = location.pathname.includes('/edit') ||
+                     location.pathname.startsWith('/onboarding');
+  const showNudge = missing.length > 0 && !nudgeDismissed && !onEditFlow;
+
+  const dismissNudge = () => {
+    setNudgeDismissed(true);
+    localStorage.setItem('smNudgeDismissed', '1');
+  };
+
+  const missingText = missing.length === 1
+    ? missing[0]
+    : `${missing.slice(0, -1).join(', ')} and ${missing[missing.length - 1]}`;
 
   const handleNav = (item) => {
     if (item.id === 'profile') { navigate(`/profile/${user?.id}`); return; }
@@ -195,6 +224,22 @@ export default function AppShell({
         </nav>
 
         <main className="app-main">
+          {showNudge && (
+            <div className="profile-nudge">
+              <div className="profile-nudge-text">
+                <strong>Complete your profile</strong>
+                <span>Add {missingText} so people can find and reach you.</span>
+              </div>
+              <div className="profile-nudge-actions">
+                <button className="profile-nudge-cta"
+                  onClick={() => navigate(`/profile/${user?.id}/edit`)}>
+                  Finish now
+                </button>
+                <button className="profile-nudge-x" onClick={dismissNudge}
+                  aria-label="Dismiss">×</button>
+              </div>
+            </div>
+          )}
           {children}
         </main>
       </div>
