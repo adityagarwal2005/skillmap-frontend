@@ -6,6 +6,13 @@ export const login = (username, password) =>
 export const sendOTP = (username, email) =>
   API.post('/users/send-otp/', new URLSearchParams({ username, email }));
 
+// Passwordless login: send a code to an existing account, then verify it.
+export const sendLoginOTP = (email) =>
+  API.post('/users/login/send-otp/', new URLSearchParams({ email }));
+
+export const verifyLoginOTP = (email, otp) =>
+  API.post('/users/login/verify-otp/', new URLSearchParams({ email, otp }));
+
 
 
 export const verifyAndRegister = (username, email, password, otp, latitude, longitude) =>

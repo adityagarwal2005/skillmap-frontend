@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { login, sendOTP, verifyAndRegister } from '../api/auth';
+import {
+  login, sendOTP, verifyAndRegister, sendLoginOTP, verifyLoginOTP,
+} from '../api/auth';
 import './LoginPage.css';
 
 export default function LoginPage() {
-  const [isLogin, setIsLogin]   = useState(true);
-  const [step, setStep]         = useState(1);
+  const [mode, setMode]         = useState('login'); // 'login' | 'otp' | 'register'
+  const [step, setStep]         = useState(1);       // used by 'otp' and 'register'
   const [form, setForm]         = useState({ identifier: '', email: '', password: '', otp: '' });
   const [location, setLocation] = useState({ lat: '', lon: '' });
   const [error, setError]       = useState('');
@@ -23,26 +25,50 @@ export default function LoginPage() {
 
   const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
 
+  const switchMode = m => {
+    setMode(m);
+    setStep(1);
+    setError('');
+    setSuccess('');
+    setForm(f => ({ ...f, otp: '', password: '' }));
+  };
+
+  const signIn = (res) => {
+    const { access, refresh, user_id } = res.data;
+    loginUser(
+      { id: user_id, username: res.data.username || form.identifier || form.email },
+      access, refresh,
+    );
+  };
+
   const handleSubmit = async e => {
     e.preventDefault();
     setError('');
     setLoading(true);
     try {
-      if (isLogin) {
-        const res = await login(form.identifier, form.password);
-        const { access, refresh, user_id } = res.data;
-        loginUser({ id: user_id, username: res.data.username || form.identifier }, access, refresh);
-      } else if (step === 1) {
-        await sendOTP(form.identifier, form.email);
-        setSuccess(`Verification code sent to ${form.email}`);
-        setStep(2);
-      } else {
-        const res = await verifyAndRegister(
-          form.identifier, form.email, form.password, form.otp,
-          location.lat, location.lon
-        );
-        const { access, refresh, user_id } = res.data;
-        loginUser({ id: user_id, username: res.data.username || form.identifier }, access, refresh);
+      if (mode === 'login') {
+        signIn(await login(form.identifier, form.password));
+
+      } else if (mode === 'otp') {
+        if (step === 1) {
+          await sendLoginOTP(form.email);
+          setSuccess(`Login code sent to ${form.email}`);
+          setStep(2);
+        } else {
+          signIn(await verifyLoginOTP(form.email, form.otp));
+        }
+
+      } else { // register
+        if (step === 1) {
+          await sendOTP(form.identifier, form.email);
+          setSuccess(`Verification code sent to ${form.email}`);
+          setStep(2);
+        } else {
+          signIn(await verifyAndRegister(
+            form.identifier, form.email, form.password, form.otp,
+            location.lat, location.lon,
+          ));
+        }
       }
     } catch (err) {
       setError(err.response?.data?.error || 'Something went wrong');
@@ -50,6 +76,22 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
+
+  const heading =
+    mode === 'login' ? 'Sign in'
+    : mode === 'otp' ? (step === 1 ? 'Log in with a code' : 'Enter your code')
+    : (step === 1 ? 'Create account' : 'Verify your email');
+
+  const sub =
+    mode === 'login' ? 'Welcome back — your feed is waiting.'
+    : mode === 'otp' ? (step === 1 ? "We'll email you a one-time login code." : `Enter the 6-digit code sent to ${form.email}`)
+    : (step === 1 ? 'Join skilled people across India.' : `Enter the 6-digit code sent to ${form.email}`);
+
+  const submitLabel =
+    loading ? 'Please wait…'
+    : mode === 'login' ? 'Sign in'
+    : mode === 'otp' ? (step === 1 ? 'Send login code' : 'Verify & sign in')
+    : (step === 1 ? 'Send verification code' : 'Create account');
 
   return (
     <div className="login-page">
@@ -80,20 +122,15 @@ export default function LoginPage() {
           <span className="login-wordmark-name">SkillMap</span>
         </div>
 
-        <h1 className="login-heading">
-          {isLogin ? 'Sign in' : step === 1 ? 'Create account' : 'Verify email'}
-        </h1>
-        <p className="login-sub">
-          {isLogin ? 'Welcome back — your feed is waiting.'
-            : step === 1 ? 'Join skilled people across India.'
-            : `Enter the 6-digit code sent to ${form.email}`}
-        </p>
+        <h1 className="login-heading">{heading}</h1>
+        <p className="login-sub">{sub}</p>
 
         {error   && <div className="login-error">{error}</div>}
         {success && <div className="login-success">{success}</div>}
 
         <form onSubmit={handleSubmit} className="login-form">
-          {isLogin && (
+          {/* Password login */}
+          {mode === 'login' && (
             <>
               <div>
                 <label className="field-label">Username or Email</label>
@@ -111,7 +148,18 @@ export default function LoginPage() {
             </>
           )}
 
-          {!isLogin && step === 1 && (
+          {/* OTP login — step 1: email */}
+          {mode === 'otp' && step === 1 && (
+            <div>
+              <label className="field-label">Email</label>
+              <input name="email" type="email" placeholder="you@email.com"
+                value={form.email} onChange={handleChange}
+                required className="field-input" autoFocus />
+            </div>
+          )}
+
+          {/* Register — step 1: details */}
+          {mode === 'register' && step === 1 && (
             <>
               <div>
                 <label className="field-label">Username</label>
@@ -134,7 +182,8 @@ export default function LoginPage() {
             </>
           )}
 
-          {!isLogin && step === 2 && (
+          {/* OTP code entry (shared by otp-login step 2 & register step 2) */}
+          {(mode === 'otp' || mode === 'register') && step === 2 && (
             <div>
               <label className="field-label">Verification Code</label>
               <input name="otp" type="text" placeholder="000000"
@@ -151,10 +200,7 @@ export default function LoginPage() {
           )}
 
           <button type="submit" className="login-submit" disabled={loading}>
-            {loading ? 'Please wait...'
-              : isLogin ? 'Sign in'
-              : step === 1 ? 'Send verification code'
-              : 'Create account'}
+            {submitLabel}
           </button>
         </form>
 
@@ -164,13 +210,23 @@ export default function LoginPage() {
           <div className="login-divider-line" />
         </div>
 
-        <p className="login-toggle">
-          {isLogin ? "Don't have an account? " : 'Already have an account? '}
-          <span className="login-toggle-link"
-            onClick={() => { setIsLogin(!isLogin); setStep(1); setError(''); setSuccess(''); }}>
-            {isLogin ? 'Sign up' : 'Sign in'}
-          </span>
-        </p>
+        {/* Alternate options */}
+        {mode === 'login' ? (
+          <div className="login-alt-options">
+            <button type="button" className="login-alt-btn" onClick={() => switchMode('otp')}>
+              Log in with a one-time code
+            </button>
+            <button type="button" className="login-alt-btn" onClick={() => switchMode('register')}>
+              Create an account
+            </button>
+          </div>
+        ) : (
+          <p className="login-toggle">
+            <span className="login-toggle-link" onClick={() => switchMode('login')}>
+              ← Back to password sign-in
+            </span>
+          </p>
+        )}
 
         <p className="login-footer">
           By continuing, you agree to SkillMap's Terms of Service.

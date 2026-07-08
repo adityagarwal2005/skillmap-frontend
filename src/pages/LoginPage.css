@@ -233,6 +233,31 @@
 .login-divider-line { flex: 1; height: 1px; background: var(--border); }
 .login-divider-text { font-size: 0.8125rem; color: var(--text-3); }
 
+.login-alt-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.login-alt-btn {
+  width: 100%;
+  height: 46px;
+  border: 1px solid var(--border-md);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--text-1);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s var(--ease-out-expo, ease);
+}
+
+.login-alt-btn:hover {
+  background: var(--elevated);
+  border-color: var(--text-3);
+  transform: translateY(-1px);
+}
+
 .login-toggle {
   text-align: center;
   font-size: 0.9375rem;
