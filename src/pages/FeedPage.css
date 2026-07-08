@@ -424,6 +424,15 @@
   color: var(--text-1);
 }
 
+/* Profile photo filling any avatar circle (topbar, feed, people, profile) */
+.ava-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+  display: block;
+}
+
 /* ── Body ── */
 .app-body {
   display: flex;

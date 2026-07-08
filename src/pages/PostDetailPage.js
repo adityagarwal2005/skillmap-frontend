@@ -2,7 +2,10 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import { getComments, addComment, editComment, deleteComment, reactToItem } from '../api/portfolio';
+import {
+  getComments, addComment, editComment, deleteComment, reactToItem,
+  editPortfolioItem, deletePortfolioItem,
+} from '../api/portfolio';
 import { getFeed } from '../api/feed';
 import AppShell from '../components/AppShell';
 import './FeedPage.css';
@@ -23,6 +26,12 @@ export default function PostDetailPage() {
   const [editText, setEditText]       = useState('');
   const [reacted, setReacted]         = useState(false);
   const [reactionCount, setReactionCount] = useState(0);
+  const [postEditing, setPostEditing] = useState(false);
+  const [postForm, setPostForm]       = useState({ title: '', description: '' });
+  const [savingPost, setSavingPost]   = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+
+  const isOwn = user?.id === item?.user?.id;
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { loadAll(); }, [itemId]);
@@ -51,6 +60,38 @@ export default function PostDetailPage() {
       setReacted(prev => !prev);
       setReactionCount(prev => reacted ? prev - 1 : prev + 1);
     } catch { showToast('Failed to react', 'error'); }
+  };
+
+  const startEdit = () => {
+    setPostForm({ title: item.title, description: item.description });
+    setPostEditing(true);
+  };
+
+  const handleSavePost = async () => {
+    if (!postForm.title.trim() || !postForm.description.trim()) {
+      showToast('Title and description are required', 'error');
+      return;
+    }
+    try {
+      setSavingPost(true);
+      await editPortfolioItem(itemId, {
+        title: postForm.title,
+        description: postForm.description,
+      });
+      setPostEditing(false);
+      showToast('Post updated', 'success');
+      loadAll();
+    } catch (err) {
+      showToast(err.response?.data?.error || 'Failed to update post', 'error');
+    } finally { setSavingPost(false); }
+  };
+
+  const handleDeletePost = async () => {
+    try {
+      await deletePortfolioItem(itemId);
+      showToast('Post deleted', 'success');
+      navigate('/');
+    } catch { showToast('Failed to delete post', 'error'); }
   };
 
   const handleComment = async e => {
@@ -101,7 +142,9 @@ export default function PostDetailPage() {
               <div className="post-top">
                 <div className="post-ava"
                   onClick={() => navigate(`/profile/${item.user.id}`)}>
-                  {item.user.username[0].toUpperCase()}
+                  {item.user.profile_image
+                    ? <img className="ava-img" src={item.user.profile_image} alt="" />
+                    : item.user.username[0].toUpperCase()}
                 </div>
                 <div className="post-meta">
                   <span className="post-author"
@@ -112,11 +155,46 @@ export default function PostDetailPage() {
                     {item.user.category || 'Independent'}
                   </span>
                 </div>
-                <span className="post-type-badge">{item.portfolio_type}</span>
+                {isOwn && !postEditing && (
+                  confirmDelete ? (
+                    <div className="detail-owner-actions">
+                      <span className="detail-confirm-text">Delete?</span>
+                      <button className="detail-del-btn" onClick={handleDeletePost}>Yes</button>
+                      <button className="detail-edit-btn" onClick={() => setConfirmDelete(false)}>No</button>
+                    </div>
+                  ) : (
+                    <div className="detail-owner-actions">
+                      <button className="detail-edit-btn" onClick={startEdit}>Edit</button>
+                      <button className="detail-del-btn" onClick={() => setConfirmDelete(true)}>Delete</button>
+                    </div>
+                  )
+                )}
+                {!isOwn && <span className="post-type-badge">{item.portfolio_type}</span>}
               </div>
 
-              <h1 className="detail-title">{item.title}</h1>
-              <p className="detail-desc">{item.description}</p>
+              {postEditing ? (
+                <div className="detail-edit">
+                  <input className="detail-edit-title"
+                    value={postForm.title} maxLength={100}
+                    onChange={e => setPostForm({ ...postForm, title: e.target.value })}
+                    placeholder="Title" />
+                  <textarea className="detail-edit-desc"
+                    value={postForm.description} maxLength={200} rows={3}
+                    onChange={e => setPostForm({ ...postForm, description: e.target.value })}
+                    placeholder="Description" />
+                  <div className="detail-edit-actions">
+                    <button className="create-cancel" onClick={() => setPostEditing(false)}>Cancel</button>
+                    <button className="create-submit" onClick={handleSavePost} disabled={savingPost}>
+                      {savingPost ? 'Saving…' : 'Save'}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <h1 className="detail-title">{item.title}</h1>
+                  <p className="detail-desc">{item.description}</p>
+                </>
+              )}
 
               {item.media?.map(m =>
                 m.media_type === 'image' && m.url ? (

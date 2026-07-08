@@ -104,7 +104,11 @@ export default function ProfilePage() {
             {/* Header */}
             <div className="profile-header">
               <div className="profile-avatar-wrap">
-                <div className="profile-avatar">{profile.username[0].toUpperCase()}</div>
+                <div className="profile-avatar">
+                  {profile.profile_image
+                    ? <img className="ava-img" src={profile.profile_image} alt={profile.username} />
+                    : profile.username[0].toUpperCase()}
+                </div>
                 {profile.status !== 'not_available' && <span className="profile-status-dot" />}
               </div>
 

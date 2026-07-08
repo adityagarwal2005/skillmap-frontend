@@ -139,6 +139,43 @@
 
 .edit-input.has-icon { padding-left: 48px; }
 
+/* Avatar upload */
+.avatar-edit {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.avatar-edit-preview {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: linear-gradient(145deg, #2c2c2e, #0a0a0a);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  font-weight: 600;
+  border: 1px solid var(--border);
+}
+.avatar-edit-preview img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.avatar-edit-btn {
+  height: 40px;
+  padding: 0 18px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--border-md);
+  border-radius: var(--radius-pill, 999px);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-1);
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease;
+}
+.avatar-edit-btn:hover { background: var(--elevated); border-color: var(--text-3); }
+
 /* Password update button */
 .pwd-update-btn {
   align-self: flex-start;

@@ -95,7 +95,9 @@ export default function FeedPage() {
             <div className="post-top">
               <div className="post-ava"
                 onClick={e => { e.stopPropagation(); navigate(`/profile/${item.user.id}`); }}>
-                {item.user.username[0].toUpperCase()}
+                {item.user.profile_image
+                  ? <img className="ava-img" src={item.user.profile_image} alt="" />
+                  : item.user.username[0].toUpperCase()}
               </div>
               <div className="post-meta">
                 <span className="post-author"

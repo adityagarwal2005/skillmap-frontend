@@ -12,6 +12,14 @@ export const changePassword = (userId, currentPassword, newPassword) =>
     new_password: newPassword,
   }));
 
+export const uploadAvatar = (userId, file) => {
+  const fd = new FormData();
+  fd.append('profile_image', file);
+  return API.post(`/users/${userId}/edit/`, fd, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+};
+
 export const deleteUser = (userId) =>
   API.delete(`/users/${userId}/delete/`);
 

@@ -180,7 +180,11 @@ export default function PeoplePage() {
                   <div key={person.id} className="person-card"
                     onClick={() => navigate(`/profile/${person.id}`)}>
                     <div className="person-card-top">
-                      <div className="person-ava">{person.username[0].toUpperCase()}</div>
+                      <div className="person-ava">
+                        {person.profile_image
+                          ? <img className="ava-img" src={person.profile_image} alt="" />
+                          : person.username[0].toUpperCase()}
+                      </div>
                       <div className="person-info">
                         <span className="person-name">{person.username}</span>
                         <span className="person-cat">{person.category || 'Independent'}</span>

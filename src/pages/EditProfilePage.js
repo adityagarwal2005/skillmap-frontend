@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import { getUser, editUser, getCategories, changePassword } from '../api/users';
+import { getUser, editUser, getCategories, changePassword, uploadAvatar } from '../api/users';
 import AppShell from '../components/AppShell';
 import { LinkedInIcon, GitHubIcon, InstagramIcon } from '../components/SocialIcons';
 import './FeedPage.css';
@@ -21,6 +21,8 @@ export default function EditProfilePage() {
   const [pwd, setPwd]               = useState({ current: '', next: '' });
   const [pwdSaving, setPwdSaving]   = useState(false);
   const [pwdDone, setPwdDone]       = useState(false);
+  const [avatar, setAvatar]         = useState(null);
+  const [avatarSaving, setAvatarSaving] = useState(false);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading]       = useState(true);
   const [saving, setSaving]         = useState(false);
@@ -43,6 +45,7 @@ export default function EditProfilePage() {
           github_url:   u.github_url || '',
           instagram_url: u.instagram_url || '',
         });
+        setAvatar(u.profile_image || null);
         setCategories(cRes.data.categories || []);
       } catch { showToast('Failed to load profile', 'error'); }
       finally { setLoading(false); }
@@ -77,6 +80,20 @@ export default function EditProfilePage() {
     } catch (err) {
       showToast(err.response?.data?.error || 'Failed to update', 'error');
     } finally { setSaving(false); }
+  };
+
+  const handleAvatar = async e => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    setAvatar(URL.createObjectURL(file)); // instant preview
+    try {
+      setAvatarSaving(true);
+      await uploadAvatar(userId, file);
+      showToast('Photo updated', 'success');
+    } catch (err) {
+      showToast(err.response?.data?.error || 'Failed to upload photo', 'error');
+    } finally { setAvatarSaving(false); }
   };
 
   const handleChangePassword = async () => {
@@ -120,6 +137,22 @@ export default function EditProfilePage() {
           </header>
 
           <form onSubmit={handleSubmit} className="edit-form">
+            {/* Photo */}
+            <section className="edit-section">
+              <div className="edit-section-label">Photo</div>
+              <div className="avatar-edit">
+                <div className="avatar-edit-preview">
+                  {avatar
+                    ? <img src={avatar} alt="avatar" />
+                    : (form.username[0] || '?').toUpperCase()}
+                </div>
+                <label className="avatar-edit-btn">
+                  <input type="file" accept="image/*" hidden onChange={handleAvatar} />
+                  {avatarSaving ? 'Uploading…' : 'Change photo'}
+                </label>
+              </div>
+            </section>
+
             {/* Account */}
             <section className="edit-section">
               <div className="edit-section-label">Account</div>

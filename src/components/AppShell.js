@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getUnreadCount } from '../api/notifications';
+import { getUser } from '../api/users';
 import '../pages/FeedPage.css';
 
 const SVG = {
@@ -81,6 +82,7 @@ export default function AppShell({
 
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
   const [unread, setUnread] = useState(0);
+  const [avatar, setAvatar] = useState(null);
   const [q, setQ] = useState('');
 
   useEffect(() => {
@@ -90,7 +92,10 @@ export default function AppShell({
 
   useEffect(() => {
     getUnreadCount().then(r => setUnread(r.data.unread_count || 0)).catch(() => {});
-  }, []);
+    if (user?.id) {
+      getUser(user.id).then(r => setAvatar(r.data.profile_image || null)).catch(() => {});
+    }
+  }, [user?.id]);
 
   const activeId = active || deriveActive(location.pathname);
 
@@ -131,7 +136,9 @@ export default function AppShell({
             {theme === 'dark' ? SVG.sun : SVG.moon}
           </button>
           <div className="topbar-avatar" onClick={() => navigate(`/profile/${user?.id}`)}>
-            {user?.username?.[0]?.toUpperCase()}
+            {avatar
+              ? <img className="ava-img" src={avatar} alt="" />
+              : user?.username?.[0]?.toUpperCase()}
           </div>
           <span className="topbar-username">{user?.username}</span>
           <button className="topbar-signout" onClick={logoutUser}>Sign out</button>
