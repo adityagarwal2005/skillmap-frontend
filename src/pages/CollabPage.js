@@ -7,6 +7,7 @@ import {
 } from '../api/collab';
 import API from '../api/config';
 import AppShell from '../components/AppShell';
+import { PostCardSkeleton } from '../components/Skeleton';
 import './FeedPage.css';
 import './CollabPage.css';
 
@@ -173,7 +174,7 @@ export default function CollabPage() {
         )}
 
         {loading ? (
-          <div className="freelance-loading">Loading...</div>
+          <div className="loading-row"><PostCardSkeleton /><PostCardSkeleton /><PostCardSkeleton /></div>
         ) : tab === 'browse' ? (
           posts.length === 0 ? (
             <div className="state-box">

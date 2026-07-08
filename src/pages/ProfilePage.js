@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import { getUser, addSkill, removeSkill, updateStatus } from '../api/users';
+import { getUser, addSkill, removeSkill, updateStatus, getUserPortfolio } from '../api/users';
 import { ProfileHeaderSkeleton } from '../components/Skeleton';
 import AppShell from '../components/AppShell';
 import { LinkedInIcon, GitHubIcon, InstagramIcon } from '../components/SocialIcons';
@@ -22,6 +22,7 @@ export default function ProfilePage() {
   const navigate                = useNavigate();
 
   const [profile, setProfile]       = useState(null);
+  const [portfolio, setPortfolio]   = useState([]);
   const [loading, setLoading]       = useState(true);
   const [skillInput, setSkillInput] = useState('');
   const [addingSkill, setAddingSkill] = useState(false);
@@ -34,8 +35,12 @@ export default function ProfilePage() {
   const loadProfile = async () => {
     try {
       setLoading(true);
-      const uRes = await getUser(userId);
+      const [uRes, pRes] = await Promise.all([
+        getUser(userId),
+        getUserPortfolio(userId).catch(() => ({ data: { items: [] } })),
+      ]);
       setProfile(uRes.data);
+      setPortfolio(pRes.data.items || []);
     } catch {
       showToast('Failed to load profile', 'error');
     } finally {
@@ -122,12 +127,12 @@ export default function ProfilePage() {
                 <p className="profile-category">{profile.category || 'Independent'}</p>
                 <div className="profile-stats">
                   <div className="profile-stat">
-                    <span className="profile-stat-val">{profile.skills?.length || 0}</span>
-                    <span className="profile-stat-label">Skills</span>
+                    <span className="profile-stat-val">{portfolio.length}</span>
+                    <span className="profile-stat-label">Work</span>
                   </div>
                   <div className="profile-stat">
-                    <span className="profile-stat-val">{links.length}</span>
-                    <span className="profile-stat-label">Links</span>
+                    <span className="profile-stat-val">{profile.skills?.length || 0}</span>
+                    <span className="profile-stat-label">Skills</span>
                   </div>
                   {memberSince && (
                     <div className="profile-stat">
@@ -203,6 +208,39 @@ export default function ProfilePage() {
                     {addingSkill ? '...' : 'Add'}
                   </button>
                 </form>
+              )}
+            </div>
+
+            {/* Work */}
+            <div className="profile-skills-section">
+              <h3 className="section-title">Work</h3>
+              {portfolio.length === 0 ? (
+                <p className="no-skills">
+                  {isOwn ? "You haven't posted any work yet." : 'No work posted yet.'}
+                </p>
+              ) : (
+                <div className="portfolio-grid">
+                  {portfolio.map(p => (
+                    <div key={p.id} className="portfolio-card"
+                      onClick={() => navigate(`/post/${p.id}`)}>
+                      {p.media?.[0]?.url && p.media[0].media_type === 'image' && (
+                        <img src={p.media[0].url} alt={p.title} className="portfolio-card-img" />
+                      )}
+                      <div className="portfolio-card-body">
+                        <div className="portfolio-card-top">
+                          <span className="portfolio-type">{p.portfolio_type}</span>
+                          {p.verified && <span className="verified-dot">✓ Verified</span>}
+                        </div>
+                        <h3 className="portfolio-card-title">{p.title}</h3>
+                        <p className="portfolio-card-desc">{p.description}</p>
+                        <div className="portfolio-card-footer">
+                          <span className="portfolio-card-stat">🔥 {p.reactions}</span>
+                          <span className="portfolio-card-stat">💬 {p.comments}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
           </>

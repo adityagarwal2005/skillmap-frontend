@@ -8,6 +8,7 @@ import {
 } from '../api/work';
 import API from '../api/config';
 import AppShell from '../components/AppShell';
+import { PostCardSkeleton } from '../components/Skeleton';
 import './FeedPage.css';
 import './FreelancePage.css';
 
@@ -166,7 +167,7 @@ export default function FreelancePage() {
         )}
 
         {loading ? (
-          <div className="freelance-loading">Loading...</div>
+          <div className="loading-row"><PostCardSkeleton /><PostCardSkeleton /><PostCardSkeleton /></div>
         ) : tab === 'available' ? (
           available.length === 0 ? (
             <div className="state-box">

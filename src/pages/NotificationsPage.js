@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useToast } from '../context/ToastContext';
 import { getNotifications, markAsRead, markAllAsRead } from '../api/notifications';
 import AppShell from '../components/AppShell';
+import { PostCardSkeleton } from '../components/Skeleton';
 import './FeedPage.css';
 import './NotificationsPage.css';
 
@@ -79,7 +80,7 @@ export default function NotificationsPage() {
         </div>
 
         {loading ? (
-          <div className="notif-loading">Loading...</div>
+          <div className="loading-row"><PostCardSkeleton /><PostCardSkeleton /></div>
         ) : notifications.length === 0 ? (
           <div className="state-box">
             <h3>No notifications yet</h3>

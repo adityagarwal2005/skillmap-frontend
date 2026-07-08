@@ -114,17 +114,27 @@ export default function FeedPage() {
             <h2 className="post-title">{item.title}</h2>
             <p className="post-desc">{item.description}</p>
 
-            {item.media?.map(m =>
-              m.media_type === 'image' && m.url ? (
-                <img key={m.id} src={m.url} alt={item.title} className="post-img" />
-              ) : m.media_type === 'link' && m.url ? (
-                <a key={m.id} href={m.url} target="_blank" rel="noreferrer"
-                  className="post-ext-link"
-                  onClick={e => e.stopPropagation()}>
-                  {SVGext} View project
-                </a>
-              ) : null
-            )}
+            {(() => {
+              const imgs = (item.media || []).filter(m => m.media_type === 'image' && m.url);
+              const links = (item.media || []).filter(m => m.media_type === 'link' && m.url);
+              return (
+                <>
+                  {imgs.length > 0 && (
+                    <div className={`post-gallery count-${Math.min(imgs.length, 4)}`}>
+                      {imgs.slice(0, 4).map(m => (
+                        <img key={m.id} src={m.url} alt={item.title} className="post-gallery-img" />
+                      ))}
+                    </div>
+                  )}
+                  {links.map(m => (
+                    <a key={m.id} href={m.url} target="_blank" rel="noreferrer"
+                      className="post-ext-link" onClick={e => e.stopPropagation()}>
+                      {SVGext} View project
+                    </a>
+                  ))}
+                </>
+              );
+            })()}
 
             {(item.skills.length > 0 || item.tags.length > 0) && (
               <div className="post-tags">

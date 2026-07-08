@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useToast } from '../context/ToastContext';
 import { searchUsers, getCategories, getCategorySkills } from '../api/users';
 import AppShell from '../components/AppShell';
+import { PostCardSkeleton } from '../components/Skeleton';
 import './FeedPage.css';
 import './PeoplePage.css';
 
@@ -166,7 +167,9 @@ export default function PeoplePage() {
               <p>Select a category and radius to start searching</p>
             </div>
           ) : loading ? (
-            <div className="people-loading">Searching...</div>
+            <div className="people-grid">
+              <PostCardSkeleton /><PostCardSkeleton /><PostCardSkeleton /><PostCardSkeleton />
+            </div>
           ) : results.length === 0 ? (
             <div className="state-box">
               <h3>No people found</h3>

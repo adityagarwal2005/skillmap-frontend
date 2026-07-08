@@ -823,6 +823,36 @@
 
 .post-ext-link:hover { background: rgba(0,113,227,0.08); }
 
+/* Multi-photo gallery */
+.post-gallery {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.post-gallery.count-1 { grid-template-columns: 1fr; }
+.post-gallery.count-2,
+.post-gallery.count-3,
+.post-gallery.count-4 { grid-template-columns: 1fr 1fr; }
+
+.post-gallery-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  aspect-ratio: 4 / 3;
+}
+.post-gallery.count-1 .post-gallery-img {
+  aspect-ratio: 16 / 10;
+  max-height: 340px;
+}
+/* 3 photos: first spans full width on top */
+.post-gallery.count-3 .post-gallery-img:first-child {
+  grid-column: 1 / -1;
+  aspect-ratio: 16 / 9;
+}
+
 .post-tags {
   display: flex;
   flex-wrap: wrap;
