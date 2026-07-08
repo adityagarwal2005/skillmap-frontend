@@ -1090,6 +1090,44 @@
 .star-btn.active { color: #ff9f0a; }
 .star-btn:hover  { transform: scale(1.1); }
 
+/* ── Mobile bottom navigation ── */
+.mobile-nav { display: none; }
+
+@media (max-width: 768px) {
+  .mobile-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 300;
+    justify-content: space-around;
+    align-items: center;
+    background: rgba(10,10,10,0.92);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding: 8px 6px calc(8px + env(safe-area-inset-bottom, 0px));
+  }
+  .mobile-nav-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    flex: 1;
+    color: rgba(245,245,247,0.55);
+    font-size: 0.625rem;
+    font-weight: 500;
+    transition: color 0.15s ease;
+  }
+  .mobile-nav-btn.active { color: #ffffff; }
+  .mobile-nav-btn.is-create { color: rgba(245,245,247,0.9); }
+
+  /* keep page content clear of the fixed bar */
+  .app-main { padding-bottom: 88px; }
+  .messages-layout { height: calc(100vh - 52px - 72px); }
+}
+
 @media (max-width: 1100px) { .right-panel { display: none; } }
 @media (max-width: 768px) {
   .sidebar { display: none; }

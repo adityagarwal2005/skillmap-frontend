@@ -27,6 +27,22 @@ const NAV = [
   ]},
 ];
 
+const I = {
+  home:   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>,
+  people: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="M16 5.2a3 3 0 0 1 0 5.6"/><path d="M17.5 20a5.2 5.2 0 0 0-2.3-4.3"/></svg>,
+  create: <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>,
+  chat:   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8 8 0 0 1-11.5 7.2L4 20l1.3-4.5A8 8 0 1 1 21 11.5z"/></svg>,
+  user:   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/></svg>,
+};
+
+const MOBILE = [
+  { id: 'home',     label: 'Home',     path: '/',            icon: I.home },
+  { id: 'people',   label: 'People',   path: '/people',      icon: I.people },
+  { id: 'create',   label: 'Post',     path: '/create-post', icon: I.create },
+  { id: 'messages', label: 'Messages', path: '/messages',    icon: I.chat },
+  { id: 'profile',  label: 'You',      path: null,           icon: I.user },
+];
+
 function deriveActive(pathname) {
   if (pathname === '/') return 'home';
   if (pathname.startsWith('/search'))        return 'search';
@@ -149,6 +165,18 @@ export default function AppShell({
           {children}
         </main>
       </div>
+
+      {/* Bottom tab bar — mobile only (CSS hides it on desktop) */}
+      <nav className="mobile-nav">
+        {MOBILE.map(item => (
+          <button key={item.id}
+            className={`mobile-nav-btn ${activeId === item.id ? 'active' : ''} ${item.id === 'create' ? 'is-create' : ''}`}
+            onClick={() => handleNav(item)}>
+            {item.icon}
+            <span>{item.label}</span>
+          </button>
+        ))}
+      </nav>
 
       {robot && (
         <img className="feed-robot" src="/robot.png" alt="" aria-hidden="true"

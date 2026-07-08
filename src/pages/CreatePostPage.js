@@ -96,7 +96,7 @@ export default function CreatePostPage() {
             </div>
 
             <div className="create-field">
-              <label className="create-label">Skills used <span className="create-hint">comma separated — must exist in your profile</span></label>
+              <label className="create-label">Skills used <span className="create-hint">comma separated — unknown ones become tags</span></label>
               <input name="skills" className="create-input"
                 placeholder="React, Python, Figma"
                 value={form.skills} onChange={handleChange} />
