@@ -4,24 +4,28 @@
   padding: 28px 24px 60px;
 }
 
+/* Stack the hero vertically like the Feed page — the big editorial heading
+   sits on its own line (no button crammed next to it), the subtitle under it,
+   then the primary action. A row layout collided the huge title with the
+   action button and the tabs below. */
 .freelance-header {
   display: flex;
+  flex-direction: column;
   align-items: flex-start;
-  justify-content: space-between;
-  margin-bottom: 20px;
+  gap: 14px;
+  margin-bottom: 24px;
 }
 
+/* font-size/weight/spacing come from the shared editorial-heading rule in
+   FeedPage.css so this matches the Feed hero's scale. */
 .freelance-title {
-  font-size: 1.25rem;
-  font-weight: 800;
   color: var(--text-1);
-  letter-spacing: -0.4px;
-  margin-bottom: 3px;
 }
 
 .freelance-sub {
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   color: var(--text-2);
+  margin-top: 6px;
 }
 
 .post-job-btn {

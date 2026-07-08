@@ -71,9 +71,11 @@
 .app-shell .convs-title::before,
 .app-shell .people-filters-title::before,
 .app-shell .edit-title::before {
+  /* Same font + weight as the heading so "// TITLE" reads as one tight unit,
+     exactly like the Feed hero's "// FEED" (was monospace, which blew the
+     space between // and the word wide open at large sizes). */
   content: "// ";
-  font-family: var(--font-mono, monospace);
-  font-weight: 500;
+  font-weight: inherit;
   color: var(--text-1);
 }
 
@@ -756,6 +758,31 @@
   height: 2px;
   background: #14141a;
 }
+
+/* ── Pill filter buttons (Search + Collab type filters) ──
+   Shared here in FeedPage.css (loaded on every page) so pages that use them
+   don't have to import SearchPage.css just to get their styles. */
+.type-filters {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.type-filter-btn {
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border-md);
+  background: none;
+  color: var(--text-2);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  transition: all 0.12s;
+}
+
+.type-filter-btn:hover { background: var(--elevated); color: var(--text-1); }
+.type-filter-btn.active { background: #0f172a; color: #fff; border-color: #0f172a; }
+[data-theme="light"] .type-filter-btn.active { background: #0f172a; }
 
 /* ── Post Card ── */
 .post-card {

@@ -16,27 +16,8 @@
   margin-bottom: 12px;
 }
 
-.type-filters {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.type-filter-btn {
-  height: 28px;
-  padding: 0 12px;
-  border-radius: 20px;
-  border: 1px solid var(--border-md);
-  background: none;
-  color: var(--text-2);
-  font-size: 0.8125rem;
-  font-weight: 600;
-  transition: all 0.12s;
-}
-
-.type-filter-btn:hover { background: var(--elevated); color: var(--text-1); }
-.type-filter-btn.active { background: #0f172a; color: #fff; border-color: #0f172a; }
-[data-theme="light"] .type-filter-btn.active { background: #0f172a; }
+/* .type-filters / .type-filter-btn now live in FeedPage.css (shared, loaded
+   on every page) so Collab gets them too. */
 
 .search-hint {
   margin-top: 12px;

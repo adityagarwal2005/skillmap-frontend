@@ -9,6 +9,7 @@ import API from '../api/config';
 import AppShell from '../components/AppShell';
 import { PostCardSkeleton } from '../components/Skeleton';
 import './FeedPage.css';
+import './FreelancePage.css';   // Collab reuses .freelance-header/.wr-* card styles
 import './CollabPage.css';
 
 const TYPE_COLORS = {
