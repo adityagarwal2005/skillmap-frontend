@@ -48,7 +48,7 @@
 .app-shell .detail-wrapper,
 .app-shell .create-wrapper,
 .app-shell .edit-wrapper,
-.app-shell .people-layout,
+.app-shell .people-wrapper,
 .app-shell .messages-layout {
   position: relative;
   z-index: 2;
@@ -61,7 +61,7 @@
 .app-shell .freelance-title,
 .app-shell .create-title,
 .app-shell .convs-title,
-.app-shell .people-filters-title { letter-spacing: -0.02em; }
+.app-shell .people-heading { letter-spacing: -0.02em; }
 
 .app-shell .search-heading::before,
 .app-shell .settings-title::before,
@@ -69,7 +69,7 @@
 .app-shell .freelance-title::before,
 .app-shell .create-title::before,
 .app-shell .convs-title::before,
-.app-shell .people-filters-title::before,
+.app-shell .people-heading::before,
 .app-shell .edit-title::before {
   /* Same font + weight as the heading so "// TITLE" reads as one tight unit,
      exactly like the Feed hero's "// FEED" (was monospace, which blew the
@@ -90,7 +90,8 @@
 .app-shell .freelance-title,
 .app-shell .create-title,
 .app-shell .settings-title,
-.app-shell .edit-title {
+.app-shell .edit-title,
+.app-shell .people-heading {
   font-size: clamp(2.5rem, 5.5vw, 4.25rem);
   font-weight: 800;
   letter-spacing: -0.04em;

@@ -1,59 +1,105 @@
-.people-layout {
-  display: flex;
-  width: 100%;
-  min-height: calc(100vh - 54px);
+/* Centered editorial column — same rhythm as the Feed / Search pages. */
+.people-wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 28px 24px 60px;
 }
 
-.people-filters {
-  width: 260px;
-  flex-shrink: 0;
-  padding: 24px 16px;
-  border-right: 1px solid var(--border-md);
+.people-hero { margin-bottom: 22px; }
+
+/* .people-heading font-size/weight come from the shared editorial-heading
+   rule in FeedPage.css (with the "// " prefix), so it matches the Feed hero. */
+.people-heading { color: var(--text-1); }
+
+.people-sub {
+  font-size: 0.9375rem;
+  color: var(--text-2);
+  line-height: 1.55;
+  margin-top: 10px;
+  max-width: 560px;
+}
+
+/* ── Search + filters card ── */
+.people-search {
   background: var(--surface);
-  position: sticky;
-  top: 54px;
-  height: calc(100vh - 54px);
-  overflow-y: auto;
+  border: 1px solid var(--border-md);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
 }
 
-.people-filters-title {
-  font-size: 1rem;
-  font-weight: 800;
-  color: var(--text-1);
-  letter-spacing: -0.3px;
-  margin-bottom: 20px;
+.people-search-row {
+  position: relative;
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
 
-.filter-field { margin-bottom: 18px; }
-
-.filter-label {
-  display: block;
-  font-size: 0.75rem;
-  font-weight: 700;
+.people-search-icon {
+  position: absolute;
+  left: 14px;
+  font-size: 1.05rem;
   color: var(--text-3);
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  margin-bottom: 8px;
+  pointer-events: none;
 }
 
-.filter-select {
-  width: 100%;
+.people-search-input {
+  flex: 1;
+  height: 46px;
   background: var(--elevated);
   border: 1px solid var(--border-md);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
+  padding: 0 14px 0 38px;
+  font-size: 0.9375rem;
   color: var(--text-1);
-  font-size: 0.875rem;
-  font-weight: 500;
-  padding: 8px 11px;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.people-search-input:focus { border-color: var(--text-1); background: var(--surface); }
+.people-search-input::placeholder { color: var(--text-3); }
+
+.people-search-btn {
+  height: 46px;
+  padding: 0 26px;
+  background: #0f172a;
+  color: #fff;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  border-radius: var(--radius-md);
+  transition: opacity 0.15s;
+  flex-shrink: 0;
+}
+
+.people-search-btn:hover:not(:disabled) { opacity: 0.85; }
+.people-search-btn:disabled { opacity: 0.45; }
+
+.people-filter-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.people-cat-select {
+  height: 34px;
+  background: var(--elevated);
+  border: 1px solid var(--border-md);
+  border-radius: 20px;
+  color: var(--text-1);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0 14px;
   font-family: inherit;
   cursor: pointer;
 }
 
-.radius-btns { display: flex; flex-wrap: wrap; gap: 5px; }
+.radius-btns { display: flex; flex-wrap: wrap; gap: 6px; }
 
 .radius-btn {
-  height: 28px;
-  padding: 0 11px;
+  height: 34px;
+  padding: 0 13px;
   border-radius: 20px;
   border: 1px solid var(--border-md);
   color: var(--text-2);
@@ -64,17 +110,21 @@
 
 .radius-btn:hover { background: var(--elevated); color: var(--text-1); }
 .radius-btn.active { background: #0f172a; color: #fff; border-color: #0f172a; }
-[data-theme="light"] .radius-btn.active { background: #0f172a; }
 
-.skill-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.people-skill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 14px;
+}
 
 .skill-chip {
-  height: 26px;
-  padding: 0 10px;
+  height: 30px;
+  padding: 0 12px;
   border-radius: 20px;
   border: 1px solid var(--border-md);
   color: var(--text-2);
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   font-weight: 600;
   transition: all 0.12s;
 }
@@ -82,83 +132,52 @@
 .skill-chip:hover { background: var(--elevated); color: var(--text-1); }
 .skill-chip.active { background: var(--green-low); color: var(--green); border-color: var(--green); }
 
-.filter-location-text {
+.people-loc-note {
   font-size: 0.8125rem;
-  color: var(--text-2);
-  background: var(--elevated);
-  padding: 8px 11px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--border);
+  color: var(--text-3);
+  margin-top: 14px;
 }
 
-.filter-search-btn {
-  width: 100%;
-  height: 36px;
-  background: #0f172a;
-  color: #fff;
-  font-size: 0.875rem;
-  font-weight: 700;
-  border-radius: var(--radius-sm);
-  transition: opacity 0.15s;
-  margin-top: 4px;
-}
-
-[data-theme="light"] .filter-search-btn { background: #0f172a; }
-.filter-search-btn:hover:not(:disabled) { opacity: 0.85; }
-.filter-search-btn:disabled { opacity: 0.45; }
-
-.people-results {
-  flex: 1;
-  padding: 24px 28px;
-  min-width: 0;
-}
-
+/* ── Results ── */
 .people-count {
   font-size: 0.875rem;
   color: var(--text-2);
   margin-bottom: 16px;
-  font-weight: 500;
-}
-
-.people-loading {
-  text-align: center;
-  padding: 60px;
-  color: var(--text-2);
-  font-size: 0.875rem;
+  font-weight: 600;
 }
 
 .people-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 12px;
 }
 
 .person-card {
   background: var(--surface);
   border: 1px solid var(--border-md);
   border-radius: var(--radius-lg);
-  padding: 16px;
+  padding: 18px;
   cursor: pointer;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  transition: transform 0.18s var(--ease-out-expo, ease), box-shadow 0.18s, border-color 0.15s;
   animation: cardIn 0.3s ease both;
 }
 
 .person-card:hover {
+  transform: translateY(-2px);
   border-color: var(--border-md);
-  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
 }
 
 .person-card-top {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 12px;
-  flex-wrap: wrap;
+  gap: 11px;
+  margin-bottom: 13px;
 }
 
 .person-ava {
-  width: 36px;
-  height: 36px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   background: #0f172a;
   display: flex;
@@ -166,8 +185,9 @@
   justify-content: center;
   color: #fff;
   font-weight: 700;
-  font-size: 13px;
+  font-size: 15px;
   flex-shrink: 0;
+  overflow: hidden;
 }
 
 .person-info { flex: 1; min-width: 0; }
@@ -186,38 +206,33 @@
   display: block;
   font-size: 0.75rem;
   color: var(--text-3);
+  margin-top: 1px;
 }
 
 .person-skills {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
-  margin-bottom: 10px;
+  gap: 5px;
+  margin-bottom: 12px;
 }
 
 .person-footer {
   display: flex;
-  gap: 12px;
-  padding-top: 10px;
+  gap: 14px;
+  padding-top: 12px;
   border-top: 1px solid var(--border);
 }
 
 .person-stat {
   font-size: 0.8125rem;
   color: var(--text-2);
-  font-weight: 500;
+  font-weight: 600;
 }
 
-@media (max-width: 768px) {
-  /* Stack the filters above results instead of hiding them — the sidebar
-     was fully unusable on mobile before (no way to search at all). */
-  .people-layout { flex-direction: column; }
-  .people-filters {
-    width: 100%;
-    position: static;
-    height: auto;
-    border-right: none;
-    border-bottom: 1px solid var(--border-md);
-  }
-  .people-results { padding: 16px; }
+@media (max-width: 600px) {
+  .people-wrapper { padding: 22px 16px 60px; }
+  .people-search-row { flex-wrap: wrap; }
+  .people-search-input { min-width: 0; }
+  .people-search-btn { width: 100%; }
+  .people-grid { grid-template-columns: 1fr; }
 }
