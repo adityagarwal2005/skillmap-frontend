@@ -312,7 +312,8 @@
 
 .topbar-search {
   flex: 1;
-  max-width: 380px;
+  max-width: none;
+  margin-right: 8px;
   position: relative;
   display: flex;
   align-items: center;
