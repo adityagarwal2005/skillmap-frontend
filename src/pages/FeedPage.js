@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../context/ToastContext';
+import { useAuth } from '../context/AuthContext';
 import { getFeed, getTrending } from '../api/feed';
 import { getDiscoverPeople } from '../api/users';
 import { reactToItem, createStatusPost } from '../api/portfolio';
@@ -12,6 +13,7 @@ const SVGext = <svg width="11" height="11" viewBox="0 0 24 24" fill="none" strok
 
 export default function FeedPage() {
   const { showToast }         = useToast();
+  const { user }              = useAuth();
   const navigate              = useNavigate();
 
   const [items, setItems]     = useState([]);
@@ -23,6 +25,15 @@ export default function FeedPage() {
   const [people, setPeople]   = useState([]);
   const [statusText, setStatusText] = useState('');
   const [posting, setPosting] = useState(false);
+  const [showWelcome, setShowWelcome] = useState(
+    () => localStorage.getItem('smWelcomeSeen') !== '1'
+  );
+
+  const dismissWelcome = () => {
+    setShowWelcome(false);
+    localStorage.setItem('smWelcomeSeen', '1');
+  };
+  const welcomeGo = (path) => { dismissWelcome(); navigate(path); };
 
   const handlePostStatus = async e => {
     e.preventDefault();
@@ -249,6 +260,45 @@ export default function FeedPage() {
           </button>
         )}
       </div>
+
+      {showWelcome && (
+        <div className="welcome-overlay" onClick={dismissWelcome}>
+          <div className="welcome-card" onClick={e => e.stopPropagation()}>
+            <div className="welcome-badge">S</div>
+            <h2 className="welcome-title">Welcome to SkillMap 👋</h2>
+            <p className="welcome-sub">Your campus talent network. Here are 3 quick ways to start:</p>
+
+            <button className="welcome-step" onClick={() => welcomeGo(`/profile/${user?.id}/edit`)}>
+              <span className="welcome-step-num">1</span>
+              <span className="welcome-step-text">
+                <span className="welcome-step-name">Complete your profile</span>
+                <span className="welcome-step-desc">Add a category, skills, and a photo so people can find you</span>
+              </span>
+              <span className="welcome-step-arrow">→</span>
+            </button>
+
+            <button className="welcome-step" onClick={() => welcomeGo('/people')}>
+              <span className="welcome-step-num">2</span>
+              <span className="welcome-step-text">
+                <span className="welcome-step-name">Find people on campus</span>
+                <span className="welcome-step-desc">Search by name or skill, and message anyone</span>
+              </span>
+              <span className="welcome-step-arrow">→</span>
+            </button>
+
+            <button className="welcome-step" onClick={dismissWelcome}>
+              <span className="welcome-step-num">3</span>
+              <span className="welcome-step-text">
+                <span className="welcome-step-name">Post an update</span>
+                <span className="welcome-step-desc">Share what you're working on or looking for</span>
+              </span>
+              <span className="welcome-step-arrow">→</span>
+            </button>
+
+            <button className="welcome-skip" onClick={dismissWelcome}>Maybe later</button>
+          </div>
+        </div>
+      )}
     </AppShell>
   );
 }

@@ -1,28 +1,27 @@
-/* Floating messenger card on the steel surface — matches the elevated,
-   rounded panels used across the rest of the app instead of a flat full-bleed
-   split. */
+/* Full-bleed messenger — fills the whole content area (no floating card /
+   wasted margins), like a real chat app. */
 .messages-layout {
   display: flex;
-  max-width: 1080px;
-  width: calc(100% - 40px);
-  margin: 20px auto;
-  height: calc(100vh - 54px - 40px);
+  width: 100%;
+  height: calc(100vh - 54px);
   background: var(--surface);
-  border: 1px solid var(--border-md);
-  border-radius: var(--radius-lg);
   overflow: hidden;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.1);
 }
 
 /* ── Conversations panel ── */
 .convs-panel {
-  width: 320px;
+  width: 340px;
   flex-shrink: 0;
   border-right: 1px solid var(--border);
   background: var(--surface);
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+}
+
+/* Roomier list on big screens so the left column doesn't look thin */
+@media (min-width: 1400px) {
+  .convs-panel { width: 380px; }
 }
 
 .convs-header {
