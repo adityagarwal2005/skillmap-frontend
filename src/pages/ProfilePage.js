@@ -14,10 +14,17 @@ import { LinkedInIcon, GitHubIcon, InstagramIcon } from '../components/SocialIco
 import './FeedPage.css';
 import './ProfilePage.css';
 
+const WhatsAppIcon = (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-2.9.8.8-2.8-.2-.3A8 8 0 1 1 12 20zm4.4-6c-.2-.1-1.4-.7-1.6-.8s-.4-.1-.5.1-.6.8-.8 1-.3.2-.5.1a6.5 6.5 0 0 1-3.2-2.8c-.2-.4.2-.4.6-1.2a.4.4 0 0 0 0-.4l-.8-1.9c-.2-.5-.4-.4-.5-.4h-.5a.9.9 0 0 0-.7.3A2.8 2.8 0 0 0 6.8 10c0 1.6 1.2 3.2 1.4 3.4s2.3 3.6 5.6 5c.8.3 1.4.5 1.9.4.6-.1 1.4-.6 1.6-1.1s.2-1 .1-1.1-.3-.2-.6-.3z"/>
+  </svg>
+);
+
 const SOCIALS = [
   { key: 'linkedin_url',  label: 'LinkedIn',  brand: 'linkedin',  icon: LinkedInIcon },
   { key: 'github_url',    label: 'GitHub',    brand: 'github',    icon: GitHubIcon },
   { key: 'instagram_url', label: 'Instagram', brand: 'instagram', icon: InstagramIcon },
+  { key: 'whatsapp',      label: 'WhatsApp',  brand: 'whatsapp',  icon: WhatsAppIcon },
 ];
 
 const REPORT_REASONS = [
@@ -332,7 +339,10 @@ export default function ProfilePage() {
               <h3 className="section-title">My accounts</h3>
               <div className="socials-grid">
                 {SOCIALS.map(s => {
-                  const url = profile[s.key];
+                  const raw = profile[s.key];
+                  const url = s.key === 'whatsapp'
+                    ? (raw ? `https://wa.me/${String(raw).replace(/\D/g, '')}` : null)
+                    : raw;
                   return url ? (
                     <a key={s.key} href={url} target="_blank" rel="noreferrer"
                       className="social-card">

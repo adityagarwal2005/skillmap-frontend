@@ -16,7 +16,7 @@ export default function EditProfilePage() {
 
   const [form, setForm] = useState({
     username: '', email: '', dob: '', headline: '', bio: '',
-    category_id: '', linkedin_url: '', github_url: '', instagram_url: '',
+    category_id: '', linkedin_url: '', github_url: '', instagram_url: '', whatsapp: '',
   });
   const [pwd, setPwd]               = useState({ current: '', next: '' });
   const [pwdSaving, setPwdSaving]   = useState(false);
@@ -46,6 +46,7 @@ export default function EditProfilePage() {
           linkedin_url: u.linkedin_url || '',
           github_url:   u.github_url || '',
           instagram_url: u.instagram_url || '',
+          whatsapp:     u.whatsapp || '',
         });
         setAvatar(u.profile_image || null);
         setCategories(cRes.data.categories || []);
@@ -68,7 +69,8 @@ export default function EditProfilePage() {
       if (form.linkedin_url)  payload.linkedin_url  = form.linkedin_url;
       if (form.github_url)    payload.github_url    = form.github_url;
       if (form.instagram_url) payload.instagram_url = form.instagram_url;
-      // Always send headline/bio so they can also be cleared.
+      // Always send these so they can also be cleared.
+      payload.whatsapp = form.whatsapp;
       payload.headline = form.headline;
       payload.bio      = form.bio;
 
@@ -215,10 +217,13 @@ export default function EditProfilePage() {
               </div>
             </section>
 
-            {/* Social links */}
+            {/* Social & contact links */}
             <section className="edit-section">
-              <div className="edit-section-label">Social links</div>
-              <p className="edit-section-hint">These show up as clickable cards on your profile — how people get to know you.</p>
+              <div className="edit-section-label">Social &amp; contact</div>
+              <p className="edit-section-hint">
+                At least one of LinkedIn, Instagram, or WhatsApp is <strong>required</strong> to
+                post or accept work — it's how people verify who they're dealing with.
+              </p>
 
               {socials.map(s => (
                 <div className="edit-field" key={s.key}>
@@ -232,6 +237,14 @@ export default function EditProfilePage() {
                   </div>
                 </div>
               ))}
+
+              <div className="edit-field">
+                <label className="edit-label">WhatsApp number</label>
+                <input className="edit-input" type="tel"
+                  value={form.whatsapp}
+                  onChange={e => setForm({...form, whatsapp: e.target.value})}
+                  placeholder="e.g. 919876543210 (with country code)" />
+              </div>
             </section>
 
             {/* Password */}
