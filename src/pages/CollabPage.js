@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useToast } from '../context/ToastContext';
 import {
   getMyCollabPosts, createCollabPost,
@@ -41,6 +41,8 @@ export default function CollabPage() {
   const [createForm, setCreateForm] = useState({ title: '', description: '', collab_type: 'experience', skills: '' });
   const [applyMsg, setApplyMsg]     = useState('');
 
+  const [searchParams] = useSearchParams();
+
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(pos => {
@@ -48,6 +50,11 @@ export default function CollabPage() {
       });
     }
   }, []);
+
+  // Opened from the "Post" chooser (/collab?new=1) → jump straight to the form.
+  useEffect(() => {
+    if (searchParams.get('new') === '1') setCreateModal(true);
+  }, [searchParams]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { loadAll(); }, []);

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import {
@@ -42,6 +42,8 @@ export default function FreelancePage() {
   const [applyMsg, setApplyMsg]     = useState('');
   const [submitting, setSubmitting] = useState(false);
 
+  const [searchParams] = useSearchParams();
+
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(pos => {
@@ -49,6 +51,11 @@ export default function FreelancePage() {
       });
     }
   }, []);
+
+  // Opened from the "Post" chooser (/freelance?new=1) → jump straight to the form.
+  useEffect(() => {
+    if (searchParams.get('new') === '1') setPostModal(true);
+  }, [searchParams]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { loadAll(); }, []);

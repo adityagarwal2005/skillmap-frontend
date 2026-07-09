@@ -98,6 +98,7 @@ export default function AppShell({
   const [nudgeDismissed, setNudgeDismissed] = useState(
     () => localStorage.getItem('smNudgeDismissed') === '1'
   );
+  const [showPostSheet, setShowPostSheet] = useState(false);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -147,7 +148,13 @@ export default function AppShell({
 
   const handleNav = (item) => {
     if (item.id === 'profile') { navigate(`/profile/${user?.id}`); return; }
+    if (item.id === 'create') { setShowPostSheet(true); return; }
     if (item.path) navigate(item.path);
+  };
+
+  const choosePost = (path) => {
+    setShowPostSheet(false);
+    navigate(path);
   };
 
   const handleSearchSubmit = (e) => {
@@ -218,7 +225,7 @@ export default function AppShell({
               ))}
             </div>
           ))}
-          <button className="sidebar-post-btn" onClick={() => navigate('/create-post')}>
+          <button className="sidebar-post-btn" onClick={() => setShowPostSheet(true)}>
             + Post work
           </button>
         </nav>
@@ -259,6 +266,47 @@ export default function AppShell({
       {robot && (
         <img className="feed-robot" src="/robot.png" alt="" aria-hidden="true"
           onError={e => { e.currentTarget.style.display = 'none'; }} />
+      )}
+
+      {showPostSheet && (
+        <div className="post-sheet-overlay" onClick={() => setShowPostSheet(false)}>
+          <div className="post-sheet" onClick={e => e.stopPropagation()}>
+            <div className="post-sheet-grip" />
+            <h2 className="post-sheet-title">What do you want to post?</h2>
+            <p className="post-sheet-sub">Pick where this goes.</p>
+
+            <button className="post-option" onClick={() => choosePost('/create-post')}>
+              <span className="post-option-ic">{I.create}</span>
+              <span className="post-option-text">
+                <span className="post-option-name">Post your work</span>
+                <span className="post-option-desc">Share a project to your profile and the feed</span>
+              </span>
+              <span className="post-option-arrow">→</span>
+            </button>
+
+            <button className="post-option" onClick={() => choosePost('/freelance?new=1')}>
+              <span className="post-option-ic">{I.freelance}</span>
+              <span className="post-option-text">
+                <span className="post-option-name">Post a freelance job</span>
+                <span className="post-option-desc">Hire someone for paid work</span>
+              </span>
+              <span className="post-option-arrow">→</span>
+            </button>
+
+            <button className="post-option" onClick={() => choosePost('/collab?new=1')}>
+              <span className="post-option-ic">{I.collab}</span>
+              <span className="post-option-text">
+                <span className="post-option-name">Start a collab</span>
+                <span className="post-option-desc">Find teammates to build something together</span>
+              </span>
+              <span className="post-option-arrow">→</span>
+            </button>
+
+            <button className="post-sheet-cancel" onClick={() => setShowPostSheet(false)}>
+              Cancel
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );
