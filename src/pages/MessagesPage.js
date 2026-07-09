@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { getConversations, sendMessage, getMessages } from '../api/work';
@@ -30,6 +31,7 @@ export default function MessagesPage() {
   const [sending, setSending]             = useState(false);
   const messagesEndRef                    = useRef(null);
   const pollRef                           = useRef(null);
+  const [searchParams]                    = useSearchParams();
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { loadConversations(); }, []);
@@ -51,7 +53,14 @@ export default function MessagesPage() {
     try {
       setLoadingConvs(true);
       const res = await getConversations();
-      setConversations(res.data.conversations || []);
+      const convs = res.data.conversations || [];
+      setConversations(convs);
+      // Opened from a profile's "Message" button (/messages?c=<id>) → auto-open it.
+      const cid = searchParams.get('c');
+      if (cid) {
+        const match = convs.find(cv => String(cv.id) === String(cid));
+        if (match) setActiveConv(match);
+      }
     } catch { showToast('Failed to load conversations', 'error'); }
     finally { setLoadingConvs(false); }
   };
@@ -153,7 +162,9 @@ export default function MessagesPage() {
                 </div>
                 <div>
                   <div className="thread-name">{activeConv.with}</div>
-                  <div className="thread-type">{activeConv.type} project</div>
+                  <div className="thread-type">
+                    {activeConv.type === 'direct' ? 'Direct message' : `${activeConv.type} project`}
+                  </div>
                 </div>
               </div>
 

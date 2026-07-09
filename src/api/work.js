@@ -33,6 +33,9 @@ export const respondToWorkProposal = (proposalId, status) =>
 export const getConversations = () =>
   API.get('/conversations/');
 
+export const startConversation = (userId) =>
+  API.post(`/conversations/start/${userId}/`);
+
 export const sendMessage = (convId, text) =>
   API.post(`/conversations/${convId}/send/`, new URLSearchParams({ text }));
 

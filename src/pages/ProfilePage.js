@@ -6,6 +6,7 @@ import {
   getUser, addSkill, removeSkill, updateStatus, getUserPortfolio,
   blockUser, unblockUser, getBlockedUsers, reportContent,
 } from '../api/users';
+import { startConversation } from '../api/work';
 import { ProfileHeaderSkeleton } from '../components/Skeleton';
 import AppShell from '../components/AppShell';
 import { LinkedInIcon, GitHubIcon, InstagramIcon } from '../components/SocialIcons';
@@ -141,6 +142,19 @@ export default function ProfilePage() {
     } catch { showToast('Failed to update status', 'error'); }
   };
 
+  const [messaging, setMessaging] = useState(false);
+  const handleMessage = async () => {
+    try {
+      setMessaging(true);
+      const r = await startConversation(userId);
+      navigate(`/messages?c=${r.data.conversation_id}`);
+    } catch (err) {
+      showToast(err.response?.data?.error || 'Could not start chat', 'error');
+    } finally {
+      setMessaging(false);
+    }
+  };
+
   const handleShare = async () => {
     const url = `${window.location.origin}/profile/${userId}`;
     // Native share sheet on mobile; clipboard copy everywhere else.
@@ -237,6 +251,12 @@ export default function ProfilePage() {
                 </div>
               ) : (
                 <div className="profile-owner-actions">
+                  {!isBlocked && (
+                    <button className="edit-profile-btn profile-msg-btn"
+                      onClick={handleMessage} disabled={messaging}>
+                      {messaging ? '…' : '💬 Message'}
+                    </button>
+                  )}
                   <button className="edit-profile-btn profile-share-btn" onClick={handleShare}>
                     ↗ Share
                   </button>

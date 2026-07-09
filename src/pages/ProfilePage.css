@@ -186,13 +186,16 @@
 .edit-profile-btn.is-danger:hover { background: rgba(255,59,48,0.08); color: var(--red, #ff3b30); }
 .edit-profile-btn:disabled { opacity: 0.6; cursor: default; }
 
-.profile-share-btn {
+.profile-msg-btn {
   background: #0f172a;
   border-color: #0f172a;
   color: #fff;
   font-weight: 700;
 }
-.profile-share-btn:hover { background: #0f172a; color: #fff; opacity: 0.85; }
+.profile-msg-btn:hover { background: #0f172a; color: #fff; opacity: 0.85; }
+.profile-msg-btn:disabled { opacity: 0.6; }
+
+.profile-share-btn { font-weight: 600; }
 
 /* Skills */
 .profile-skills-section {
