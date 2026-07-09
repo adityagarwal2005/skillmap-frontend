@@ -7,6 +7,7 @@ import {
   blockUser, unblockUser, getBlockedUsers, reportContent,
 } from '../api/users';
 import { startConversation } from '../api/work';
+import { endorseSkill } from '../api/users';
 import { ProfileHeaderSkeleton } from '../components/Skeleton';
 import AppShell from '../components/AppShell';
 import { LinkedInIcon, GitHubIcon, InstagramIcon } from '../components/SocialIcons';
@@ -142,6 +143,19 @@ export default function ProfilePage() {
     } catch { showToast('Failed to update status', 'error'); }
   };
 
+  const [endorsing, setEndorsing] = useState('');
+  const handleEndorse = async (skill) => {
+    try {
+      setEndorsing(skill);
+      await endorseSkill(userId, skill);
+      loadProfile();
+    } catch (err) {
+      showToast(err.response?.data?.error || 'Could not endorse', 'error');
+    } finally {
+      setEndorsing('');
+    }
+  };
+
   const [messaging, setMessaging] = useState(false);
   const handleMessage = async () => {
     try {
@@ -232,6 +246,12 @@ export default function ProfilePage() {
                       <span className="profile-stat-label">Since</span>
                     </div>
                   )}
+                  {isOwn && (
+                    <div className="profile-stat">
+                      <span className="profile-stat-val">{profile.profile_views ?? 0}</span>
+                      <span className="profile-stat-label">Views</span>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -312,10 +332,20 @@ export default function ProfilePage() {
             <div className="profile-skills-section">
               <h3 className="section-title">Skills</h3>
               <div className="skills-list">
-                {profile.skills?.map(skill => (
-                  <span key={skill} className="skill-tag">
-                    {skill}
-                    {isOwn && <button className="skill-remove" onClick={() => handleRemoveSkill(skill)}>×</button>}
+                {(profile.skills_detail || (profile.skills || []).map(n => ({ name: n, endorsements: 0, endorsed_by_me: false }))).map(sk => (
+                  <span key={sk.name} className={`skill-tag ${sk.endorsements > 0 ? 'has-endorse' : ''}`}>
+                    {sk.name}
+                    {sk.endorsements > 0 && <span className="skill-endorse-count">{sk.endorsements}</span>}
+                    {isOwn ? (
+                      <button className="skill-remove" onClick={() => handleRemoveSkill(sk.name)}>×</button>
+                    ) : (
+                      <button className={`skill-endorse-btn ${sk.endorsed_by_me ? 'active' : ''}`}
+                        disabled={endorsing === sk.name}
+                        title={sk.endorsed_by_me ? 'Remove endorsement' : 'Endorse this skill'}
+                        onClick={() => handleEndorse(sk.name)}>
+                        {sk.endorsed_by_me ? '✓' : '+'}
+                      </button>
+                    )}
                   </span>
                 ))}
                 {profile.skills?.length === 0 && <span className="no-skills">No skills added yet</span>}
