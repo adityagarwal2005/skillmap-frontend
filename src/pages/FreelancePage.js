@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
@@ -20,6 +20,17 @@ function timeLeft(expiresAt) {
   return `${Math.floor(hrs / 24)}d left`;
 }
 
+function postedAgo(createdAt) {
+  if (!createdAt) return '';
+  const secs = Math.floor((Date.now() - new Date(createdAt).getTime()) / 1000);
+  if (secs < 60)   return 'just now';
+  const mins = Math.floor(secs / 60);
+  if (mins < 60)   return `${mins} min${mins > 1 ? 's' : ''} ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24)    return `${hrs}h ago`;
+  return `${Math.floor(hrs / 24)}d ago`;
+}
+
 export default function FreelancePage() {
   const { user }             = useAuth();
   const { showToast }        = useToast();
@@ -34,6 +45,9 @@ export default function FreelancePage() {
   const [userLocation, setUserLocation] = useState({ lat: '', lon: '' });
   const [hasMoreAvailable, setHasMoreAvailable] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [newIds, setNewIds] = useState(() => new Set());   // freshly-arrived jobs to flash
+  const seenIds = useRef(new Set());                        // every job id we've shown
+  const pollRef = useRef(null);
 
   const [postModal, setPostModal]             = useState(false);
   const [applyModal, setApplyModal]           = useState(null);
@@ -84,12 +98,38 @@ export default function FreelancePage() {
         API.get(`/work/requests/available/${user.id}/`, { params: availableParams() }),
         getMyWorkRequests(user.id),
       ]);
-      setAvailable(avRes.data.work_requests || []);
+      const av = avRes.data.work_requests || [];
+      setAvailable(av);
       setMyJobs(myRes.data.work_requests || []);
       setHasMoreAvailable(!!avRes.data.has_more);
+      // Baseline of what we've seen — a full (re)load never flashes anything.
+      seenIds.current = new Set(av.map(j => j.id));
+      setNewIds(new Set());
     } catch { showToast('Failed to load jobs', 'error'); }
     finally { setLoading(false); }
   };
+
+  // Live board: quietly poll for brand-new jobs while viewing Available, and
+  // flash any that weren't there before. No WebSocket — just a 15s poll.
+  useEffect(() => {
+    if (tab !== 'available') return undefined;
+    const poll = async () => {
+      try {
+        const res = await API.get(`/work/requests/available/${user.id}/`, { params: availableParams() });
+        const fresh = res.data.work_requests || [];
+        const arrived = fresh.filter(j => !seenIds.current.has(j.id));
+        if (arrived.length) {
+          arrived.forEach(j => seenIds.current.add(j.id));
+          setAvailable(prev => [...arrived, ...prev]);
+          setNewIds(prev => { const n = new Set(prev); arrived.forEach(j => n.add(j.id)); return n; });
+          showToast(`${arrived.length} new job${arrived.length > 1 ? 's' : ''} posted`, 'success');
+        }
+      } catch { /* silent — polling shouldn't nag */ }
+    };
+    pollRef.current = setInterval(poll, 15000);
+    return () => clearInterval(pollRef.current);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tab, skillFilter, radius, userLocation.lat]);
 
   const handleLoadMoreAvailable = async () => {
     setLoadingMore(true);
@@ -170,9 +210,14 @@ export default function FreelancePage() {
           <button className="post-job-btn" onClick={() => setPostModal(true)}>+ Post a Job</button>
         </div>
 
-        <div className="tab-group" style={{ marginBottom: '16px' }}>
-          <button className={`tab-btn ${tab === 'available' ? 'active' : ''}`} onClick={() => setTab('available')}>Available Jobs ({available.length})</button>
-          <button className={`tab-btn ${tab === 'my' ? 'active' : ''}`} onClick={() => setTab('my')}>My Posted Jobs ({myJobs.length})</button>
+        <div className="wr-tabs-row">
+          <div className="tab-group">
+            <button className={`tab-btn ${tab === 'available' ? 'active' : ''}`} onClick={() => setTab('available')}>Available Jobs ({available.length})</button>
+            <button className={`tab-btn ${tab === 'my' ? 'active' : ''}`} onClick={() => setTab('my')}>My Posted Jobs ({myJobs.length})</button>
+          </div>
+          {tab === 'available' && (
+            <span className="wr-live"><span className="wr-live-dot" />Live</span>
+          )}
         </div>
 
         {tab === 'available' && (
@@ -206,13 +251,17 @@ export default function FreelancePage() {
               <p>Try a different skill or increase your radius</p>
             </div>
           ) : available.map(wr => (
-            <div key={wr.id} className="wr-card">
+            <div key={wr.id} className={`wr-card ${newIds.has(wr.id) ? 'is-new' : ''}`}>
               <div className="wr-top">
                 <div className="wr-poster">
                   <div className="post-ava small">{wr.created_by[0].toUpperCase()}</div>
                   <span className="wr-by">{wr.created_by}</span>
+                  {newIds.has(wr.id) && <span className="wr-new-badge">NEW</span>}
                 </div>
-                <span className="wr-time">{timeLeft(wr.expires_at)}</span>
+                <div className="wr-top-right">
+                  {wr.created_at && <span className="wr-posted">{postedAgo(wr.created_at)}</span>}
+                  <span className="wr-time">{timeLeft(wr.expires_at)}</span>
+                </div>
               </div>
               <p className="wr-desc">{wr.description}</p>
               <div className="wr-skills">
@@ -222,6 +271,9 @@ export default function FreelancePage() {
                 <div className="wr-meta">
                   <span className="wr-pay">₹{wr.payment_amount}</span>
                   <span className="wr-duration">{wr.time_limit_hours}h project</span>
+                  {wr.responses_count > 0 && (
+                    <span className="wr-heat">🔥 {wr.responses_count} applied</span>
+                  )}
                 </div>
                 <button className="wr-apply-btn" onClick={() => setApplyModal(wr)}>Apply</button>
               </div>
