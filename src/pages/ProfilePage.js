@@ -7,7 +7,7 @@ import {
   blockUser, unblockUser, getBlockedUsers, reportContent,
 } from '../api/users';
 import { startConversation } from '../api/work';
-import { endorseSkill } from '../api/users';
+import { endorseSkill, addReview } from '../api/users';
 import { ProfileHeaderSkeleton } from '../components/Skeleton';
 import AppShell from '../components/AppShell';
 import { LinkedInIcon, GitHubIcon, InstagramIcon } from '../components/SocialIcons';
@@ -143,6 +143,26 @@ export default function ProfilePage() {
     } catch { showToast('Failed to update status', 'error'); }
   };
 
+  const [rateModal, setRateModal] = useState(false);
+  const [rateStars, setRateStars] = useState(5);
+  const [rateComment, setRateComment] = useState('');
+  const [submittingRate, setSubmittingRate] = useState(false);
+  const handleSubmitRate = async () => {
+    try {
+      setSubmittingRate(true);
+      await addReview(userId, { rating: rateStars, comment: rateComment });
+      showToast('Thanks for your rating!', 'success');
+      setRateModal(false);
+      setRateComment('');
+      setRateStars(5);
+      loadProfile();
+    } catch (err) {
+      showToast(err.response?.data?.error || 'Could not submit rating', 'error');
+    } finally {
+      setSubmittingRate(false);
+    }
+  };
+
   const [endorsing, setEndorsing] = useState('');
   const handleEndorse = async (skill) => {
     try {
@@ -252,6 +272,12 @@ export default function ProfilePage() {
                       <span className="profile-stat-label">Views</span>
                     </div>
                   )}
+                  {profile.review_count > 0 && (
+                    <div className="profile-stat">
+                      <span className="profile-stat-val">★ {profile.rating?.toFixed(1)}</span>
+                      <span className="profile-stat-label">Rating ({profile.review_count})</span>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -279,6 +305,9 @@ export default function ProfilePage() {
                   )}
                   <button className="edit-profile-btn profile-share-btn" onClick={handleShare}>
                     ↗ Share
+                  </button>
+                  <button className="edit-profile-btn" onClick={() => setRateModal(true)}>
+                    ★ Rate
                   </button>
                   <button className="edit-profile-btn" onClick={() => setReportModal(true)}>
                     Report
@@ -421,6 +450,33 @@ export default function ProfilePage() {
               <button type="button" className="modal-cancel" onClick={() => setReportModal(false)}>Cancel</button>
               <button type="button" className="modal-submit" onClick={handleSubmitReport} disabled={submittingReport}>
                 {submittingReport ? 'Submitting…' : 'Submit report'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {rateModal && (
+        <div className="modal-overlay" onClick={() => setRateModal(false)}>
+          <div className="modal-box" onClick={e => e.stopPropagation()}>
+            <h2 className="modal-title">Rate {profile?.username}</h2>
+            <div className="rate-stars">
+              {[1, 2, 3, 4, 5].map(n => (
+                <button key={n} type="button"
+                  className={`rate-star ${n <= rateStars ? 'on' : ''}`}
+                  onClick={() => setRateStars(n)}>★</button>
+              ))}
+            </div>
+            <div className="modal-field">
+              <label className="modal-label">Comment (optional)</label>
+              <textarea className="modal-textarea" rows={3}
+                placeholder="How was working with them?"
+                value={rateComment} onChange={e => setRateComment(e.target.value)} />
+            </div>
+            <div className="modal-actions">
+              <button type="button" className="modal-cancel" onClick={() => setRateModal(false)}>Cancel</button>
+              <button type="button" className="modal-submit" onClick={handleSubmitRate} disabled={submittingRate}>
+                {submittingRate ? 'Submitting…' : 'Submit rating'}
               </button>
             </div>
           </div>

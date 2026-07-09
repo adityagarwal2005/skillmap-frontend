@@ -934,6 +934,54 @@
   }
 }
 
+/* ── Quick status composer ── */
+.status-composer {
+  display: flex;
+  gap: 10px;
+  margin: 0 0 20px;
+  padding: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border-md);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+.status-composer-input {
+  flex: 1;
+  height: 42px;
+  background: var(--elevated);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  padding: 0 14px;
+  font-size: 0.9375rem;
+  color: #14141a;
+  transition: border-color 0.15s, background 0.15s;
+}
+.status-composer-input:focus { background: var(--surface); border-color: var(--border-md); }
+.status-composer-input::placeholder { color: var(--text-3); }
+
+.status-composer-btn {
+  height: 42px;
+  padding: 0 22px;
+  background: #0f172a;
+  color: #fff;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  border-radius: var(--radius-md);
+  transition: opacity 0.15s;
+  flex-shrink: 0;
+}
+.status-composer-btn:hover:not(:disabled) { opacity: 0.85; }
+.status-composer-btn:disabled { opacity: 0.45; }
+
+.post-status-text {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #14141a;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+}
+
 /* ── Discover people strip (keeps the feed alive on day one) ── */
 .discover-strip { margin: 4px 0 22px; }
 

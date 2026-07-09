@@ -276,6 +276,17 @@
 
 .no-skills { font-size: 0.9375rem; color: var(--text-3); }
 
+/* Rating modal stars */
+.rate-stars { display: flex; gap: 6px; margin-bottom: 16px; }
+.rate-star {
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--border-md);
+  transition: color 0.12s, transform 0.12s;
+}
+.rate-star:hover { transform: scale(1.1); }
+.rate-star.on { color: #ff9f0a; }
+
 .add-skill-form { display: flex; gap: 8px; }
 
 .skill-input {

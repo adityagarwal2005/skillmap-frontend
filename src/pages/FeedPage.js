@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useToast } from '../context/ToastContext';
 import { getFeed, getTrending } from '../api/feed';
 import { getDiscoverPeople } from '../api/users';
-import { reactToItem } from '../api/portfolio';
+import { reactToItem, createStatusPost } from '../api/portfolio';
 import { PostCardSkeleton } from '../components/Skeleton';
 import AppShell from '../components/AppShell';
 import './FeedPage.css';
@@ -21,6 +21,23 @@ export default function FeedPage() {
   const [tab, setTab]         = useState('for-you');
   const [reacted, setReacted] = useState({});
   const [people, setPeople]   = useState([]);
+  const [statusText, setStatusText] = useState('');
+  const [posting, setPosting] = useState(false);
+
+  const handlePostStatus = async e => {
+    e.preventDefault();
+    const text = statusText.trim();
+    if (!text) return;
+    try {
+      setPosting(true);
+      await createStatusPost(text);
+      setStatusText('');
+      showToast('Posted to the feed', 'success');
+      if (tab === 'for-you') loadFeed(); else switchTab('for-you');
+    } catch (err) {
+      showToast(err.response?.data?.error || 'Failed to post', 'error');
+    } finally { setPosting(false); }
+  };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { loadFeed(); }, []);
@@ -106,6 +123,17 @@ export default function FeedPage() {
             onClick={() => switchTab('trending')}>Trending</button>
         </div>
 
+        <form className="status-composer" onSubmit={handlePostStatus}>
+          <input className="status-composer-input"
+            placeholder="Share a quick update — looking for a teammate, a skill, anything…"
+            maxLength={200}
+            value={statusText}
+            onChange={e => setStatusText(e.target.value)} />
+          <button type="submit" className="status-composer-btn" disabled={posting || !statusText.trim()}>
+            {posting ? '…' : 'Post'}
+          </button>
+        </form>
+
         {people.length > 0 && (
           <section className="discover-strip">
             <div className="discover-head">
@@ -159,11 +187,18 @@ export default function FeedPage() {
                   {item.user.category || 'Independent'}
                 </span>
               </div>
-              <span className="post-type-badge">{item.portfolio_type}</span>
+              {item.portfolio_type !== 'status' &&
+                <span className="post-type-badge">{item.portfolio_type}</span>}
             </div>
 
-            <h2 className="post-title">{item.title}</h2>
-            <p className="post-desc">{item.description}</p>
+            {item.portfolio_type === 'status' ? (
+              <p className="post-status-text">{item.description || item.title}</p>
+            ) : (
+              <>
+                <h2 className="post-title">{item.title}</h2>
+                <p className="post-desc">{item.description}</p>
+              </>
+            )}
 
             {(() => {
               const imgs = (item.media || []).filter(m => m.media_type === 'image' && m.url);

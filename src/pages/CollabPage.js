@@ -106,7 +106,13 @@ export default function CollabPage() {
     e.preventDefault();
     try {
       setSubmitting(true);
-      await createCollabPost(createForm);
+      // Attach the poster's location so the post can be found by radius.
+      const payload = { ...createForm };
+      if (userLocation.lat) {
+        payload.latitude = userLocation.lat;
+        payload.longitude = userLocation.lon;
+      }
+      await createCollabPost(payload);
       showToast('Collab post created!', 'success');
       setCreateModal(false);
       setCreateForm({ title: '', description: '', collab_type: 'experience', skills: '' });
