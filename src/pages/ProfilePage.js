@@ -141,6 +141,21 @@ export default function ProfilePage() {
     } catch { showToast('Failed to update status', 'error'); }
   };
 
+  const handleShare = async () => {
+    const url = `${window.location.origin}/profile/${userId}`;
+    // Native share sheet on mobile; clipboard copy everywhere else.
+    if (navigator.share) {
+      try { await navigator.share({ title: `${profile.username} on SkillMap`, url }); } catch {}
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      showToast('Profile link copied!', 'success');
+    } catch {
+      showToast('Could not copy link', 'error');
+    }
+  };
+
   const statusLabel = {
     open_to_freelance: 'Open to Freelance',
     open_to_work:      'Open to Work',
@@ -216,9 +231,15 @@ export default function ProfilePage() {
                   <button className="edit-profile-btn" onClick={() => navigate(`/profile/${userId}/edit`)}>
                     Edit Profile
                   </button>
+                  <button className="edit-profile-btn profile-share-btn" onClick={handleShare}>
+                    ↗ Share
+                  </button>
                 </div>
               ) : (
                 <div className="profile-owner-actions">
+                  <button className="edit-profile-btn profile-share-btn" onClick={handleShare}>
+                    ↗ Share
+                  </button>
                   <button className="edit-profile-btn" onClick={() => setReportModal(true)}>
                     Report
                   </button>
