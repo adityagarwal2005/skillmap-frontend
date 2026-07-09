@@ -187,6 +187,7 @@ export default function ProfilePage() {
                   </span>
                 </div>
                 <p className="profile-category">{profile.category || 'Independent'}</p>
+                {profile.headline && <p className="profile-headline">{profile.headline}</p>}
                 <div className="profile-stats">
                   <div className="profile-stat">
                     <span className="profile-stat-val">{portfolio.length}</span>
@@ -228,6 +229,13 @@ export default function ProfilePage() {
                 </div>
               )}
             </div>
+
+            {profile.bio && (
+              <div className="profile-skills-section">
+                <h3 className="section-title">About</h3>
+                <p className="profile-bio">{profile.bio}</p>
+              </div>
+            )}
 
             {/* Social accounts — the identity hub */}
             <div className="profile-skills-section">

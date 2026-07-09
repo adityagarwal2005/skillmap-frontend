@@ -15,7 +15,7 @@ export default function EditProfilePage() {
   const navigate                        = useNavigate();
 
   const [form, setForm] = useState({
-    username: '', email: '', dob: '',
+    username: '', email: '', dob: '', headline: '', bio: '',
     category_id: '', linkedin_url: '', github_url: '', instagram_url: '',
   });
   const [pwd, setPwd]               = useState({ current: '', next: '' });
@@ -40,6 +40,8 @@ export default function EditProfilePage() {
           username:     u.username || '',
           email:        u.email || '',
           dob:          u.dob || '',
+          headline:     u.headline || '',
+          bio:          u.bio || '',
           category_id:  '',
           linkedin_url: u.linkedin_url || '',
           github_url:   u.github_url || '',
@@ -66,6 +68,9 @@ export default function EditProfilePage() {
       if (form.linkedin_url)  payload.linkedin_url  = form.linkedin_url;
       if (form.github_url)    payload.github_url    = form.github_url;
       if (form.instagram_url) payload.instagram_url = form.instagram_url;
+      // Always send headline/bio so they can also be cleared.
+      payload.headline = form.headline;
+      payload.bio      = form.bio;
 
       await editUser(userId, payload);
 
@@ -171,6 +176,22 @@ export default function EditProfilePage() {
                   value={form.email}
                   onChange={e => setForm({...form, email: e.target.value})}
                   placeholder="you@email.com" />
+              </div>
+
+              <div className="edit-field">
+                <label className="edit-label">Headline</label>
+                <input className="edit-input" maxLength={120}
+                  value={form.headline}
+                  onChange={e => setForm({...form, headline: e.target.value})}
+                  placeholder="e.g. 2nd-yr CSE · React & IoT" />
+              </div>
+
+              <div className="edit-field">
+                <label className="edit-label">Bio</label>
+                <textarea className="edit-input edit-textarea" rows={3}
+                  value={form.bio}
+                  onChange={e => setForm({...form, bio: e.target.value})}
+                  placeholder="A sentence or two about what you do and what you're looking for." />
               </div>
 
               <div className="edit-row">

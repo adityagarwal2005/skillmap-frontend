@@ -100,6 +100,21 @@
   font-weight: 400;
 }
 
+.profile-headline {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-1);
+  margin: -6px 0 12px;
+  line-height: 1.4;
+}
+
+.profile-bio {
+  font-size: 0.9375rem;
+  color: var(--text-1);
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
 .profile-links { display: flex; gap: 8px; margin-bottom: 18px; }
 
 .profile-link {

@@ -99,6 +99,13 @@
   font-family: inherit;
   transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
 }
+.edit-textarea {
+  height: auto;
+  min-height: 84px;
+  padding: 12px 15px;
+  line-height: 1.5;
+  resize: vertical;
+}
 .edit-input::placeholder { color: var(--text-3); }
 .edit-input:focus {
   background: var(--surface);

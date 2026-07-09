@@ -16,6 +16,55 @@
   margin-bottom: 12px;
 }
 
+/* Inline search bar — the page owns its own input now instead of relying on
+   the topbar search (which is hidden on mobile). */
+.search-inline {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.search-inline-icon {
+  position: absolute;
+  left: 14px;
+  color: var(--text-3);
+  display: flex;
+  pointer-events: none;
+}
+
+.search-inline-input {
+  flex: 1;
+  height: 48px;
+  background: var(--elevated);
+  border: 1px solid var(--border-md);
+  border-radius: var(--radius-md);
+  padding: 0 14px 0 42px;
+  font-size: 0.9375rem;
+  color: var(--text-1);
+  transition: border-color 0.15s, background 0.15s;
+}
+.search-inline-input:focus { border-color: var(--text-1); background: var(--surface); }
+.search-inline-input::placeholder { color: var(--text-3); }
+
+.search-inline-btn {
+  height: 48px;
+  padding: 0 22px;
+  background: #0f172a;
+  color: #fff;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  border-radius: var(--radius-md);
+  transition: opacity 0.15s;
+  flex-shrink: 0;
+}
+.search-inline-btn:hover { opacity: 0.85; }
+
+@media (max-width: 600px) {
+  .search-inline-btn { padding: 0 16px; }
+}
+
 /* .type-filters / .type-filter-btn now live in FeedPage.css (shared, loaded
    on every page) so Collab gets them too. */
 

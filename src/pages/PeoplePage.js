@@ -223,6 +223,7 @@ export default function PeoplePage() {
                     <div className="person-info">
                       <span className="person-name">{person.username}</span>
                       <span className="person-cat">{person.category || 'Independent'}</span>
+                      {person.headline && <span className="person-headline">{person.headline}</span>}
                     </div>
                     <span className={`profile-status-badge ${STATUS_COLORS[person.status] || 'status-gray'}`}>
                       {STATUS_LABELS[person.status] || 'Not Available'}
