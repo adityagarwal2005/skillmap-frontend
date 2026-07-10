@@ -4,12 +4,9 @@ import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
 import { getFeed, getTrending } from '../api/feed';
 import { getDiscoverPeople } from '../api/users';
-import { reactToItem, createStatusPost } from '../api/portfolio';
 import { PostCardSkeleton } from '../components/Skeleton';
 import AppShell from '../components/AppShell';
 import './FeedPage.css';
-
-const SVGext = <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>;
 
 export default function FeedPage() {
   const { showToast }         = useToast();
@@ -21,10 +18,7 @@ export default function FeedPage() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(false);
   const [tab, setTab]         = useState('for-you');
-  const [reacted, setReacted] = useState({});
   const [people, setPeople]   = useState([]);
-  const [statusText, setStatusText] = useState('');
-  const [posting, setPosting] = useState(false);
   const [showWelcome, setShowWelcome] = useState(
     () => localStorage.getItem('smWelcomeSeen') !== '1'
   );
@@ -34,21 +28,6 @@ export default function FeedPage() {
     localStorage.setItem('smWelcomeSeen', '1');
   };
   const welcomeGo = (path) => { dismissWelcome(); navigate(path); };
-
-  const handlePostStatus = async e => {
-    e.preventDefault();
-    const text = statusText.trim();
-    if (!text) return;
-    try {
-      setPosting(true);
-      await createStatusPost(text);
-      setStatusText('');
-      showToast('Posted to the feed', 'success');
-      if (tab === 'for-you') loadFeed(); else switchTab('for-you');
-    } catch (err) {
-      showToast(err.response?.data?.error || 'Failed to post', 'error');
-    } finally { setPosting(false); }
-  };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { loadFeed(); }, []);
@@ -99,19 +78,6 @@ export default function FeedPage() {
     t === 'for-you' ? loadFeed() : loadTrending();
   };
 
-  const handleReact = async (e, itemId) => {
-    e.stopPropagation();
-    try {
-      await reactToItem(itemId, 'fire');
-      setReacted(prev => ({ ...prev, [itemId]: !prev[itemId] }));
-      setItems(prev => prev.map(i =>
-        i.id === itemId
-          ? { ...i, reactions: reacted[itemId] ? i.reactions - 1 : i.reactions + 1 }
-          : i
-      ));
-    } catch { showToast('Failed to react', 'error'); }
-  };
-
   return (
     <AppShell active="home" robot>
       <div className="feed-main">
@@ -133,17 +99,6 @@ export default function FeedPage() {
           <button className={`tab-btn ${tab === 'trending' ? 'active' : ''}`}
             onClick={() => switchTab('trending')}>Trending</button>
         </div>
-
-        <form className="status-composer" onSubmit={handlePostStatus}>
-          <input className="status-composer-input"
-            placeholder="Share a quick update — looking for a teammate, a skill, anything…"
-            maxLength={200}
-            value={statusText}
-            onChange={e => setStatusText(e.target.value)} />
-          <button type="submit" className="status-composer-btn" disabled={posting || !statusText.trim()}>
-            {posting ? '…' : 'Post'}
-          </button>
-        </form>
 
         {people.length > 0 && (
           <section className="discover-strip">
@@ -174,85 +129,73 @@ export default function FeedPage() {
           </div>
         ) : items.length === 0 ? (
           <div className="state-box">
-            <h3>Nothing here yet</h3>
-            <p>Add skills to your profile to personalise your feed.</p>
+            <h3>No open opportunities yet</h3>
+            <p>Post a freelance job or start a collab — or check back soon.</p>
+            <div className="state-box-actions">
+              <button className="opp-cta" onClick={() => navigate('/freelance?new=1')}>Post a job</button>
+              <button className="opp-cta ghost" onClick={() => navigate('/collab?new=1')}>Start a collab</button>
+            </div>
           </div>
-        ) : items.map((item, i) => (
-          <article key={item.id} className="post-card"
-            style={{ animationDelay: `${i * 40}ms` }}
-            onClick={() => navigate(`/post/${item.id}`)}>
+        ) : items.map((item, i) => {
+          const to = item.kind === 'freelance' ? '/freelance' : '/collab';
+          return (
+            <article key={`${item.kind}-${item.id}`} className={`opp-card ${item.kind}`}
+              style={{ animationDelay: `${i * 40}ms` }}
+              onClick={() => navigate(to)}>
 
-            <div className="post-top">
-              <div className="post-ava"
-                onClick={e => { e.stopPropagation(); navigate(`/profile/${item.user.id}`); }}>
-                {item.user.profile_image
-                  ? <img className="ava-img" src={item.user.profile_image} alt="" />
-                  : item.user.username[0].toUpperCase()}
-              </div>
-              <div className="post-meta">
-                <span className="post-author"
+              <div className="post-top">
+                <div className="post-ava"
                   onClick={e => { e.stopPropagation(); navigate(`/profile/${item.user.id}`); }}>
-                  {item.user.username}
-                </span>
-                <span className="post-author-cat">
-                  {item.user.category || 'Independent'}
+                  {item.user.profile_image
+                    ? <img className="ava-img" src={item.user.profile_image} alt="" />
+                    : item.user.username[0].toUpperCase()}
+                </div>
+                <div className="post-meta">
+                  <span className="post-author"
+                    onClick={e => { e.stopPropagation(); navigate(`/profile/${item.user.id}`); }}>
+                    {item.user.username}
+                  </span>
+                  <span className="post-author-cat">{item.user.category || 'Independent'}</span>
+                </div>
+                <span className={`opp-kind ${item.kind}`}>
+                  {item.kind === 'freelance' ? 'Freelance' : 'Collab'}
                 </span>
               </div>
-              {item.portfolio_type !== 'status' &&
-                <span className="post-type-badge">{item.portfolio_type}</span>}
-            </div>
 
-            {item.portfolio_type === 'status' ? (
-              <p className="post-status-text">{item.description || item.title}</p>
-            ) : (
-              <>
-                <h2 className="post-title">{item.title}</h2>
-                <p className="post-desc">{item.description}</p>
-              </>
-            )}
+              <h2 className="opp-title">{item.title}</h2>
+              {item.kind === 'collab' && item.description && item.description !== item.title && (
+                <p className="opp-desc">{item.description}</p>
+              )}
 
-            {(() => {
-              const imgs = (item.media || []).filter(m => m.media_type === 'image' && m.url);
-              const links = (item.media || []).filter(m => m.media_type === 'link' && m.url);
-              return (
-                <>
-                  {imgs.length > 0 && (
-                    <div className={`post-gallery count-${Math.min(imgs.length, 4)}`}>
-                      {imgs.slice(0, 4).map(m => (
-                        <img key={m.id} src={m.url} alt={item.title} className="post-gallery-img" />
-                      ))}
-                    </div>
+              {item.skills?.length > 0 && (
+                <div className="post-tags">
+                  {item.skills.map(s => <span key={s} className="tag tag-skill">{s}</span>)}
+                </div>
+              )}
+
+              <div className="opp-footer">
+                <div className="opp-meta">
+                  {item.kind === 'freelance' ? (
+                    <>
+                      <span className="opp-pay">₹{item.payment_amount}</span>
+                      {item.time_limit_hours && <span className="opp-sub">{item.time_limit_hours}h</span>}
+                      {item.responses_count > 0 && <span className="opp-heat">🔥 {item.responses_count} applied</span>}
+                    </>
+                  ) : (
+                    <>
+                      <span className="opp-ctype">{item.collab_type}</span>
+                      {item.applicants > 0 && <span className="opp-heat">🔥 {item.applicants} applied</span>}
+                    </>
                   )}
-                  {links.map(m => (
-                    <a key={m.id} href={m.url} target="_blank" rel="noreferrer"
-                      className="post-ext-link" onClick={e => e.stopPropagation()}>
-                      {SVGext} View project
-                    </a>
-                  ))}
-                </>
-              );
-            })()}
-
-            {(item.skills.length > 0 || item.tags.length > 0) && (
-              <div className="post-tags">
-                {item.skills.map(s => <span key={s} className="tag tag-skill">{s}</span>)}
-                {item.tags.map(t => <span key={t} className="tag tag-plain">{t}</span>)}
+                  {item.distance_km != null && <span className="opp-sub">📍 {item.distance_km} km</span>}
+                </div>
+                <button className="opp-cta" onClick={e => { e.stopPropagation(); navigate(to); }}>
+                  {item.kind === 'freelance' ? 'View job' : 'View collab'}
+                </button>
               </div>
-            )}
-
-            <div className="post-actions">
-              <button className={`action-btn fire ${reacted[item.id] ? 'reacted' : ''}`}
-                onClick={e => handleReact(e, item.id)}>
-                🔥 {item.reactions}
-              </button>
-              <button className="action-btn"
-                onClick={e => { e.stopPropagation(); navigate(`/post/${item.id}`); }}>
-                💬 {item.comments}
-              </button>
-              {item.verified && <span className="verified-pill">✓ Verified</span>}
-            </div>
-          </article>
-        ))}
+            </article>
+          );
+        })}
 
         {!loading && hasMore && (
           <button className="load-more-btn" onClick={handleLoadMore} disabled={loadingMore}>

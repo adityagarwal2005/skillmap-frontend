@@ -275,15 +275,6 @@ export default function AppShell({
             <h2 className="post-sheet-title">What do you want to post?</h2>
             <p className="post-sheet-sub">Pick where this goes.</p>
 
-            <button className="post-option" onClick={() => choosePost('/create-post')}>
-              <span className="post-option-ic">{I.create}</span>
-              <span className="post-option-text">
-                <span className="post-option-name">Post your work</span>
-                <span className="post-option-desc">Share a project to your profile and the feed</span>
-              </span>
-              <span className="post-option-arrow">→</span>
-            </button>
-
             <button className="post-option" onClick={() => choosePost('/freelance?new=1')}>
               <span className="post-option-ic">{I.freelance}</span>
               <span className="post-option-text">
