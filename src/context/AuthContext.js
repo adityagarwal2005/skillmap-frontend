@@ -8,9 +8,16 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const savedUser = localStorage.getItem('user');
-    if (savedUser) setUser(JSON.parse(savedUser));
-    setLoading(false);
+    try {
+      const savedUser = localStorage.getItem('user');
+      if (savedUser) setUser(JSON.parse(savedUser));
+    } catch {
+      // Corrupted stored user — clear it rather than getting stuck on the
+      // loading screen forever.
+      localStorage.removeItem('user');
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   const loginUser = (userData, accessToken, refreshToken) => {

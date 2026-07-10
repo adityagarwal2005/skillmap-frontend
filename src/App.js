@@ -3,21 +3,38 @@ import { Suspense, lazy } from 'react';
 import { useAuth } from './context/AuthContext';
 
 // Lazy-loaded routes — each page ships as its own chunk, so the app boots fast.
-const LoginPage        = lazy(() => import('./pages/LoginPage'));
-const FeedPage         = lazy(() => import('./pages/FeedPage'));
-const ProfilePage      = lazy(() => import('./pages/ProfilePage'));
-const CreatePostPage   = lazy(() => import('./pages/CreatePostPage'));
-const PostDetailPage   = lazy(() => import('./pages/PostDetailPage'));
-const PeoplePage       = lazy(() => import('./pages/PeoplePage'));
-const FreelancePage    = lazy(() => import('./pages/FreelancePage'));
-const CollabPage       = lazy(() => import('./pages/CollabPage'));
-const MessagesPage     = lazy(() => import('./pages/MessagesPage'));
-const NotificationsPage = lazy(() => import('./pages/NotificationsPage'));
-const SettingsPage     = lazy(() => import('./pages/SettingsPage'));
-const SearchPage       = lazy(() => import('./pages/SearchPage'));
-const OnboardingPage   = lazy(() => import('./pages/OnboardingPage'));
-const EditProfilePage  = lazy(() => import('./pages/EditProfilePage'));
-const ApplicationsPage = lazy(() => import('./pages/ApplicationsPage'));
+// lazyRetry: if a chunk fails to load (usually because a new build shipped and
+// the old hashed chunk is gone), reload once to fetch the fresh build instead
+// of leaving the user stuck on a blank screen. The 10s guard prevents a reload
+// loop if it's a real, persistent failure.
+const lazyRetry = (importer) => lazy(() =>
+  importer().catch((err) => {
+    const key = 'chunk-reload-at';
+    const last = Number(sessionStorage.getItem(key) || 0);
+    if (Date.now() - last > 10000) {
+      sessionStorage.setItem(key, String(Date.now()));
+      window.location.reload();
+      return new Promise(() => {}); // keep Suspense pending until the reload
+    }
+    throw err;
+  })
+);
+
+const LoginPage        = lazyRetry(() => import('./pages/LoginPage'));
+const FeedPage         = lazyRetry(() => import('./pages/FeedPage'));
+const ProfilePage      = lazyRetry(() => import('./pages/ProfilePage'));
+const CreatePostPage   = lazyRetry(() => import('./pages/CreatePostPage'));
+const PostDetailPage   = lazyRetry(() => import('./pages/PostDetailPage'));
+const PeoplePage       = lazyRetry(() => import('./pages/PeoplePage'));
+const FreelancePage    = lazyRetry(() => import('./pages/FreelancePage'));
+const CollabPage       = lazyRetry(() => import('./pages/CollabPage'));
+const MessagesPage     = lazyRetry(() => import('./pages/MessagesPage'));
+const NotificationsPage = lazyRetry(() => import('./pages/NotificationsPage'));
+const SettingsPage     = lazyRetry(() => import('./pages/SettingsPage'));
+const SearchPage       = lazyRetry(() => import('./pages/SearchPage'));
+const OnboardingPage   = lazyRetry(() => import('./pages/OnboardingPage'));
+const EditProfilePage  = lazyRetry(() => import('./pages/EditProfilePage'));
+const ApplicationsPage = lazyRetry(() => import('./pages/ApplicationsPage'));
 
 const Loader = () => (
   <div style={{

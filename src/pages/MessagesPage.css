@@ -4,6 +4,7 @@
   display: flex;
   width: 100%;
   height: calc(100vh - 54px);
+  height: calc(100dvh - 54px);   /* dvh accounts for the mobile browser toolbar */
   background: var(--surface);
   overflow: hidden;
 }
@@ -409,6 +410,7 @@ video.msg-media { cursor: default; }
     margin: 0;
     /* leave room for the 52px topbar + 72px fixed mobile bottom nav */
     height: calc(100vh - 52px - 72px);
+    height: calc(100dvh - 52px - 72px);
     border: none;
     border-radius: 0;
     box-shadow: none;

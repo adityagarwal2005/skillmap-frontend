@@ -2,6 +2,10 @@ import axios from 'axios';
 
 const API = axios.create({
   baseURL: process.env.REACT_APP_API_URL || 'http://127.0.0.1:8000',
+  // Generous, but never infinite — the free-tier backend can cold-start for
+  // ~50s, yet a truly dead request must fail (and resolve the page's spinner)
+  // instead of buffering forever.
+  timeout: 90000,
 });
 
 API.interceptors.request.use((config) => {
