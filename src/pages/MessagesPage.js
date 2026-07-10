@@ -39,7 +39,8 @@ export default function MessagesPage() {
   useEffect(() => {
     if (activeConv) {
       loadMessages(activeConv.id);
-      pollRef.current = setInterval(() => loadMessages(activeConv.id), 5000);
+      // Near-real-time: poll the open thread every 2.5s on both people's screens.
+      pollRef.current = setInterval(() => loadMessages(activeConv.id), 2500);
     }
     return () => clearInterval(pollRef.current);
   // eslint-disable-next-line react-hooks/exhaustive-deps
