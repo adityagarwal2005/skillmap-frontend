@@ -45,9 +45,11 @@ export default function CollabPage() {
 
   useEffect(() => {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(pos => {
-        setUserLocation({ lat: pos.coords.latitude, lon: pos.coords.longitude });
-      });
+      navigator.geolocation.getCurrentPosition(
+        pos => setUserLocation({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
+        () => {},
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      );
     }
   }, []);
 
@@ -201,10 +203,11 @@ export default function CollabPage() {
             <select className="filter-select-sm"
               value={radius}
               onChange={e => setRadius(e.target.value)}>
+              <option value={0.5}>0.5 km</option>
+              <option value={1}>1 km</option>
               <option value={5}>5 km</option>
               <option value={10}>10 km</option>
               <option value={50}>50 km</option>
-              <option value={100}>100 km</option>
               <option value={5000}>All India</option>
             </select>
             <button className="wr-view-btn" onClick={loadAll}>Search</button>
@@ -228,6 +231,7 @@ export default function CollabPage() {
                   style={{ background: TYPE_COLORS[post.collab_type]?.bg, color: TYPE_COLORS[post.collab_type]?.color }}>
                   {post.collab_type}
                 </span>
+                {post.distance_km != null && <span className="wr-time">📍 {post.distance_km} km</span>}
               </div>
               <h3 className="collab-title">{post.title}</h3>
               <p className="wr-desc">{post.description}</p>

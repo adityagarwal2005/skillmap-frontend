@@ -309,6 +309,7 @@
 
 .msg-input {
   flex: 1;
+  min-width: 0;            /* let it shrink so the Send button stays on-screen */
   height: 44px;
   background: var(--elevated);
   border: 1px solid var(--border-md);

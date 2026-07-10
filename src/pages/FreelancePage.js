@@ -60,9 +60,11 @@ export default function FreelancePage() {
 
   useEffect(() => {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(pos => {
-        setUserLocation({ lat: pos.coords.latitude, lon: pos.coords.longitude });
-      });
+      navigator.geolocation.getCurrentPosition(
+        pos => setUserLocation({ lat: pos.coords.latitude, lon: pos.coords.longitude }),
+        () => {},
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      );
     }
   }, []);
 
@@ -232,10 +234,11 @@ export default function FreelancePage() {
             <select className="filter-select-sm"
               value={radius}
               onChange={e => setRadius(e.target.value)}>
+              <option value={0.5}>0.5 km</option>
+              <option value={1}>1 km</option>
               <option value={5}>5 km</option>
               <option value={10}>10 km</option>
               <option value={50}>50 km</option>
-              <option value={100}>100 km</option>
               <option value={5000}>All India</option>
             </select>
             <button className="wr-view-btn" onClick={loadAll}>Search</button>
@@ -271,6 +274,7 @@ export default function FreelancePage() {
                 <div className="wr-meta">
                   <span className="wr-pay">₹{wr.payment_amount}</span>
                   <span className="wr-duration">{wr.time_limit_hours}h project</span>
+                  {wr.distance_km != null && <span className="wr-duration">📍 {wr.distance_km} km</span>}
                   {wr.responses_count > 0 && (
                     <span className="wr-heat">🔥 {wr.responses_count} applied</span>
                   )}

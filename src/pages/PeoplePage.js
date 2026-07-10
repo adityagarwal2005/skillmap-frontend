@@ -52,9 +52,11 @@ export default function PeoplePage() {
   useEffect(() => {
     getCategories().then(r => setCategories(r.data.categories || [])).catch(() => {});
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(pos => {
-        setForm(f => ({ ...f, latitude: pos.coords.latitude, longitude: pos.coords.longitude }));
-      });
+      navigator.geolocation.getCurrentPosition(
+        pos => setForm(f => ({ ...f, latitude: pos.coords.latitude, longitude: pos.coords.longitude })),
+        () => {},
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      );
     }
   }, []);
 

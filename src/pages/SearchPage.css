@@ -36,6 +36,7 @@
 
 .search-inline-input {
   flex: 1;
+  min-width: 0;            /* let it shrink so the Search button stays on-screen */
   height: 48px;
   background: var(--elevated);
   border: 1px solid var(--border-md);
