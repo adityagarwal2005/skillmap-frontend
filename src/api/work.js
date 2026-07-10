@@ -30,6 +30,9 @@ export const getMyProposals = () =>
 export const respondToWorkProposal = (proposalId, status) =>
   API.post(`/work/proposals/${proposalId}/respond/`, new URLSearchParams({ status }));
 
+export const getMyApplications = () =>
+  API.get('/my-applications/');
+
 export const getConversations = () =>
   API.get('/conversations/');
 

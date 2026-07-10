@@ -26,6 +26,7 @@ const I = {
   notifications: svg(<><path d="M18 8.5a6 6 0 0 0-12 0c0 6-2.5 8-2.5 8h17S18 14.5 18 8.5z" /><path d="M13.7 21a2 2 0 0 1-3.4 0" /></>),
   settings:      svg(<><line x1="4" y1="21" x2="4" y2="13" /><line x1="4" y1="9" x2="4" y2="3" /><line x1="12" y1="21" x2="12" y2="12" /><line x1="12" y1="8" x2="12" y2="3" /><line x1="20" y1="21" x2="20" y2="15" /><line x1="20" y1="11" x2="20" y2="3" /><line x1="1.5" y1="13" x2="6.5" y2="13" /><line x1="9.5" y1="8" x2="14.5" y2="8" /><line x1="17.5" y1="15" x2="22.5" y2="15" /></>),
   create:        svg(<><circle cx="12" cy="12" r="9" /><path d="M12 8v8M8 12h8" /></>),
+  applications:  svg(<><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" /><path d="M14 3v6h6" /><path d="M9 14l2 2 4-4" /></>),
 };
 
 const NAV = [
@@ -40,6 +41,7 @@ const NAV = [
   ]},
   { group: 'You', items: [
     { id: 'profile',       label: 'Profile',       path: null,             icon: I.profile },
+    { id: 'applications',  label: 'Applications',  path: '/applications',  icon: I.applications },
     { id: 'notifications', label: 'Notifications', path: '/notifications', icon: I.notifications },
     { id: 'settings',      label: 'Settings',      path: '/settings',      icon: I.settings },
   ]},
@@ -61,6 +63,7 @@ function deriveActive(pathname) {
   if (pathname.startsWith('/collab'))        return 'collab';
   if (pathname.startsWith('/messages'))      return 'messages';
   if (pathname.startsWith('/profile'))       return 'profile';
+  if (pathname.startsWith('/applications'))  return 'applications';
   if (pathname.startsWith('/notifications')) return 'notifications';
   if (pathname.startsWith('/settings'))      return 'settings';
   return '';

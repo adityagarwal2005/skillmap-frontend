@@ -298,6 +298,9 @@ export default function ProfilePage() {
                   <button className="edit-profile-btn" onClick={() => navigate(`/profile/${userId}/edit`)}>
                     Edit Profile
                   </button>
+                  <button className="edit-profile-btn" onClick={() => navigate('/applications')}>
+                    📋 Applications
+                  </button>
                   <button className="edit-profile-btn profile-share-btn" onClick={handleShare}>
                     ↗ Share
                   </button>

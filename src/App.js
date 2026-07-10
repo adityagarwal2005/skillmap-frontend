@@ -17,6 +17,7 @@ const SettingsPage     = lazy(() => import('./pages/SettingsPage'));
 const SearchPage       = lazy(() => import('./pages/SearchPage'));
 const OnboardingPage   = lazy(() => import('./pages/OnboardingPage'));
 const EditProfilePage  = lazy(() => import('./pages/EditProfilePage'));
+const ApplicationsPage = lazy(() => import('./pages/ApplicationsPage'));
 
 const Loader = () => (
   <div style={{
@@ -50,6 +51,7 @@ function App() {
           <Route path="/notifications"            element={user ? <NotificationsPage /> : <Navigate to="/login" />} />
           <Route path="/settings"                 element={user ? <SettingsPage /> : <Navigate to="/login" />} />
           <Route path="/search"                   element={user ? <SearchPage /> : <Navigate to="/login" />} />
+          <Route path="/applications"             element={user ? <ApplicationsPage /> : <Navigate to="/login" />} />
           <Route path="*"                         element={<Navigate to={user ? "/" : "/login"} />} />
         </Routes>
       </Suspense>
