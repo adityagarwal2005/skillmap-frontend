@@ -39,8 +39,12 @@ export const getConversations = () =>
 export const startConversation = (userId) =>
   API.post(`/conversations/start/${userId}/`);
 
-export const sendMessage = (convId, text) =>
-  API.post(`/conversations/${convId}/send/`, new URLSearchParams({ text }));
+export const sendMessage = (convId, text, media) => {
+  const fd = new FormData();
+  fd.append('text', text || '');
+  if (media) fd.append('media', media);
+  return API.post(`/conversations/${convId}/send/`, fd);
+};
 
 export const getMessages = (convId) =>
   API.get(`/conversations/${convId}/messages/`);

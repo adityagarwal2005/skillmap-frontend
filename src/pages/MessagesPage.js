@@ -26,6 +26,7 @@ export default function MessagesPage() {
   const [activeConv, setActiveConv]       = useState(null);
   const [messages, setMessages]           = useState([]);
   const [text, setText]                   = useState('');
+  const [file, setFile]                   = useState(null);
   const [loadingConvs, setLoadingConvs]   = useState(true);
   const [loadingMsgs, setLoadingMsgs]     = useState(false);
   const [sending, setSending]             = useState(false);
@@ -77,15 +78,22 @@ export default function MessagesPage() {
 
   const handleSend = async e => {
     e.preventDefault();
-    if (!text.trim() || !activeConv) return;
+    if ((!text.trim() && !file) || !activeConv) return;
     const msgText = text.trim();
+    const media = file;
     setText('');
-    // Optimistic
-    const tempMsg = { id: Date.now(), sender: user.username, text: msgText, created_at: new Date().toISOString(), sending: true };
+    setFile(null);
+    // Optimistic (local preview for media)
+    const tempMsg = {
+      id: Date.now(), sender: user.username, text: msgText,
+      media_url: media ? URL.createObjectURL(media) : null,
+      media_type: media ? (media.type.startsWith('video') ? 'video' : 'image') : null,
+      created_at: new Date().toISOString(), sending: true,
+    };
     setMessages(prev => [...prev, tempMsg]);
     try {
       setSending(true);
-      await sendMessage(activeConv.id, msgText);
+      await sendMessage(activeConv.id, msgText, media);
       await loadMessages(activeConv.id);
     } catch {
       showToast('Failed to send message', 'error');
@@ -192,7 +200,13 @@ export default function MessagesPage() {
                         {!isOwn && showSender && (
                           <span className="msg-sender">{msg.sender}</span>
                         )}
-                        <p className="msg-text">{msg.text}</p>
+                        {msg.media_url && (
+                          msg.media_type === 'video'
+                            ? <video className="msg-media" src={msg.media_url} controls playsInline />
+                            : <img className="msg-media" src={msg.media_url} alt=""
+                                onClick={() => window.open(msg.media_url, '_blank')} />
+                        )}
+                        {msg.text && <p className="msg-text">{msg.text}</p>}
                         <span className="msg-time">{timeAgo(msg.created_at)}</span>
                       </div>
                     </div>
@@ -201,7 +215,24 @@ export default function MessagesPage() {
                 <div ref={messagesEndRef} />
               </div>
 
+              {file && (
+                <div className="msg-attach-preview">
+                  {file.type.startsWith('video')
+                    ? <video className="msg-attach-thumb" src={URL.createObjectURL(file)} />
+                    : <img className="msg-attach-thumb" src={URL.createObjectURL(file)} alt="" />}
+                  <span className="msg-attach-name">{file.name}</span>
+                  <button type="button" className="msg-attach-x" onClick={() => setFile(null)}>×</button>
+                </div>
+              )}
               <form className="msg-input-bar" onSubmit={handleSend}>
+                <label className="msg-attach-btn" title="Attach image or video">
+                  <input type="file" accept="image/*,video/*" hidden
+                    onChange={e => { if (e.target.files[0]) setFile(e.target.files[0]); e.target.value = ''; }} />
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21.44 11.05l-9.19 9.19a5 5 0 0 1-7.07-7.07l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95L9.88 18.6a1.5 1.5 0 0 1-2.12-2.12l8.49-8.49" />
+                  </svg>
+                </label>
                 <input
                   className="msg-input"
                   placeholder={`Message ${activeConv.with}...`}
@@ -210,7 +241,7 @@ export default function MessagesPage() {
                   onKeyDown={handleKeyDown}
                   maxLength={500}
                 />
-                <button type="submit" className="msg-send-btn" disabled={sending || !text.trim()}>
+                <button type="submit" className="msg-send-btn" disabled={sending || (!text.trim() && !file)}>
                   Send
                 </button>
               </form>
