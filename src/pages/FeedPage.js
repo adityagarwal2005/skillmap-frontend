@@ -167,6 +167,16 @@ export default function FeedPage() {
                 <p className="opp-desc">{item.description}</p>
               )}
 
+              {item.media && (
+                <div className="post-media">
+                  {item.media_type === 'video'
+                    ? <video className="post-media-el" src={item.media} controls playsInline
+                        onClick={e => e.stopPropagation()} />
+                    : <img className="post-media-el" src={item.media} alt=""
+                        onClick={e => { e.stopPropagation(); window.open(item.media, '_blank'); }} />}
+                </div>
+              )}
+
               {item.skills?.length > 0 && (
                 <div className="post-tags">
                   {item.skills.map(s => <span key={s} className="tag tag-skill">{s}</span>)}

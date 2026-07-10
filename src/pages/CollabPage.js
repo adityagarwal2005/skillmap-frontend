@@ -39,6 +39,7 @@ export default function CollabPage() {
   const [submitting, setSubmitting]           = useState(false);
 
   const [createForm, setCreateForm] = useState({ title: '', description: '', collab_type: 'experience', skills: '' });
+  const [collabMedia, setCollabMedia] = useState(null);
   const [applyMsg, setApplyMsg]     = useState('');
 
   const [searchParams] = useSearchParams();
@@ -114,10 +115,12 @@ export default function CollabPage() {
         payload.latitude = userLocation.lat;
         payload.longitude = userLocation.lon;
       }
+      if (collabMedia) payload.media = collabMedia;
       await createCollabPost(payload);
       showToast('Collab post created!', 'success');
       setCreateModal(false);
       setCreateForm({ title: '', description: '', collab_type: 'experience', skills: '' });
+      setCollabMedia(null);
       loadAll();
     } catch (err) {
       showToast(err.response?.data?.error || 'Failed to create', 'error');
@@ -235,6 +238,14 @@ export default function CollabPage() {
               </div>
               <h3 className="collab-title">{post.title}</h3>
               <p className="wr-desc">{post.description}</p>
+              {post.media && (
+                <div className="post-media">
+                  {post.media_type === 'video'
+                    ? <video className="post-media-el" src={post.media} controls playsInline />
+                    : <img className="post-media-el" src={post.media} alt=""
+                        onClick={() => window.open(post.media, '_blank')} />}
+                </div>
+              )}
               <div className="wr-skills">
                 {post.skills_needed?.map(s => <span key={s} className="tag tag-skill">{s}</span>)}
               </div>
@@ -271,6 +282,14 @@ export default function CollabPage() {
               </div>
               <h3 className="collab-title">{post.title}</h3>
               <p className="wr-desc">{post.description}</p>
+              {post.media && (
+                <div className="post-media">
+                  {post.media_type === 'video'
+                    ? <video className="post-media-el" src={post.media} controls playsInline />
+                    : <img className="post-media-el" src={post.media} alt=""
+                        onClick={() => window.open(post.media, '_blank')} />}
+                </div>
+              )}
               <div className="wr-skills">
                 {post.skills_needed?.map(s => <span key={s} className="tag tag-skill">{s}</span>)}
               </div>
@@ -324,6 +343,21 @@ export default function CollabPage() {
                 <input className="modal-input" placeholder="React, Python, Design"
                   value={createForm.skills}
                   onChange={e => setCreateForm({...createForm, skills: e.target.value})} />
+              </div>
+              <div className="modal-field">
+                <label className="modal-label">Image / video <span style={{fontWeight:400,color:'var(--text-3)'}}>optional</span></label>
+                {collabMedia ? (
+                  <div className="post-media-chip">
+                    <span className="post-media-chip-name">{collabMedia.name}</span>
+                    <button type="button" onClick={() => setCollabMedia(null)}>×</button>
+                  </div>
+                ) : (
+                  <label className="post-media-pick">
+                    <input type="file" accept="image/*,video/*" hidden
+                      onChange={e => { if (e.target.files[0]) setCollabMedia(e.target.files[0]); e.target.value=''; }} />
+                    + Attach image or video
+                  </label>
+                )}
               </div>
               <div className="modal-actions">
                 <button type="button" className="modal-cancel" onClick={() => setCreateModal(false)}>Cancel</button>

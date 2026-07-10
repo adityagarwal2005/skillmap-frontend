@@ -1,7 +1,17 @@
 import API from './config';
 
+const bodyFor = (data) => {
+  if (data && data.media instanceof File) {
+    const fd = new FormData();
+    Object.entries(data).forEach(([k, v]) => { if (v !== undefined && v !== null) fd.append(k, v); });
+    return fd;
+  }
+  const { media, ...rest } = data || {};
+  return new URLSearchParams(rest);
+};
+
 export const createWorkRequest = (data) =>
-  API.post('/work/requests/create/', new URLSearchParams(data));
+  API.post('/work/requests/create/', bodyFor(data));
 
 export const getMyWorkRequests = (userId) =>
   API.get(`/work/requests/user/${userId}/`);

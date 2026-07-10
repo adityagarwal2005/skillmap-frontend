@@ -53,6 +53,7 @@ export default function FreelancePage() {
   const [applyModal, setApplyModal]           = useState(null);
   const [applicantsModal, setApplicantsModal] = useState(null);
   const [postForm, setPostForm] = useState({ description: '', payment_amount: '', time_limit_hours: '', skills: '' });
+  const [jobMedia, setJobMedia] = useState(null);
   const [applyMsg, setApplyMsg]     = useState('');
   const [submitting, setSubmitting] = useState(false);
 
@@ -154,10 +155,12 @@ export default function FreelancePage() {
         payload.latitude = userLocation.lat;
         payload.longitude = userLocation.lon;
       }
+      if (jobMedia) payload.media = jobMedia;
       await createWorkRequest(payload);
       showToast('Job posted!', 'success');
       setPostModal(false);
       setPostForm({ description: '', payment_amount: '', time_limit_hours: '', skills: '' });
+      setJobMedia(null);
       loadAll();
     } catch (err) {
       showToast(err.response?.data?.error || 'Failed to post job', 'error');
@@ -273,6 +276,14 @@ export default function FreelancePage() {
                 </div>
               </div>
               <p className="wr-desc">{wr.description}</p>
+              {wr.media && (
+                <div className="post-media">
+                  {wr.media_type === 'video'
+                    ? <video className="post-media-el" src={wr.media} controls playsInline />
+                    : <img className="post-media-el" src={wr.media} alt=""
+                        onClick={() => window.open(wr.media, '_blank')} />}
+                </div>
+              )}
               <div className="wr-skills">
                 {wr.skills?.map(s => <span key={s} className="tag tag-skill">{s}</span>)}
               </div>
@@ -365,6 +376,21 @@ export default function FreelancePage() {
                 <input className="modal-input" required placeholder="React, Python, Figma"
                   value={postForm.skills}
                   onChange={e => setPostForm({...postForm, skills: e.target.value})} />
+              </div>
+              <div className="modal-field">
+                <label className="modal-label">Image / video <span style={{fontWeight:400,color:'var(--text-3)'}}>optional</span></label>
+                {jobMedia ? (
+                  <div className="post-media-chip">
+                    <span className="post-media-chip-name">{jobMedia.name}</span>
+                    <button type="button" onClick={() => setJobMedia(null)}>×</button>
+                  </div>
+                ) : (
+                  <label className="post-media-pick">
+                    <input type="file" accept="image/*,video/*" hidden
+                      onChange={e => { if (e.target.files[0]) setJobMedia(e.target.files[0]); e.target.value=''; }} />
+                    + Attach image or video
+                  </label>
+                )}
               </div>
               <div className="modal-actions">
                 <button type="button" className="modal-cancel" onClick={() => setPostModal(false)}>Cancel</button>
