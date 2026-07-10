@@ -359,4 +359,9 @@
 
   .messages-layout.has-active-conv .convs-panel { display: none; }
   .messages-layout.has-active-conv .thread-panel { display: flex; }
+
+  /* Tighter input bar so the Send button always fits on narrow screens. */
+  .msg-input-bar { padding: 12px 12px calc(12px + env(safe-area-inset-bottom, 0px)); gap: 8px; }
+  .msg-input { min-width: 0; padding: 0 14px; }
+  .msg-send-btn { padding: 0 16px; }
 }

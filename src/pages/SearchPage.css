@@ -63,7 +63,9 @@
 .search-inline-btn:hover { opacity: 0.85; }
 
 @media (max-width: 600px) {
-  .search-inline-btn { padding: 0 16px; }
+  .search-inline { max-width: 100%; }
+  .search-inline-input { min-width: 0; padding: 0 12px 0 38px; }
+  .search-inline-btn { padding: 0 14px; }
 }
 
 /* .type-filters / .type-filter-btn now live in FeedPage.css (shared, loaded

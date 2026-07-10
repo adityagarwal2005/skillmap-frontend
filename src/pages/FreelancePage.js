@@ -148,7 +148,13 @@ export default function FreelancePage() {
     e.preventDefault();
     try {
       setSubmitting(true);
-      await createWorkRequest(postForm);
+      // Attach the poster's live location so the job is findable by radius.
+      const payload = { ...postForm };
+      if (userLocation.lat) {
+        payload.latitude = userLocation.lat;
+        payload.longitude = userLocation.lon;
+      }
+      await createWorkRequest(payload);
       showToast('Job posted!', 'success');
       setPostModal(false);
       setPostForm({ description: '', payment_amount: '', time_limit_hours: '', skills: '' });

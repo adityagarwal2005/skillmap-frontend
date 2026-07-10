@@ -3,7 +3,7 @@
    cache when offline); cache-first for static build assets. Deliberately does
    NOT cache API calls (anything under /users, /feed, etc. on the API host is a
    different origin anyway and is left to the network). */
-const CACHE = 'skillmap-v1';
+const CACHE = 'skillmap-v2';
 const APP_SHELL = ['/', '/index.html', '/manifest.json', '/favicon.ico'];
 
 self.addEventListener('install', (event) => {
