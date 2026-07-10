@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { deleteUser, updateStatus, getBlockedUsers, unblockUser } from '../api/users';
+import { pushSupported, isPushEnabled, enablePush, disablePush } from '../push';
 import AppShell from '../components/AppShell';
 import './FeedPage.css';
 import './SettingsPage.css';
@@ -16,6 +17,27 @@ export default function SettingsPage() {
   const [status, setStatus]     = useState('not_available');
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [blockedUsers, setBlockedUsers] = useState([]);
+  const [pushOn, setPushOn] = useState(false);
+  const [pushBusy, setPushBusy] = useState(false);
+
+  useEffect(() => { isPushEnabled().then(setPushOn).catch(() => {}); }, []);
+
+  const handleTogglePush = async () => {
+    setPushBusy(true);
+    try {
+      if (pushOn) {
+        await disablePush();
+        setPushOn(false);
+        showToast('Push notifications turned off', 'success');
+      } else {
+        await enablePush();
+        setPushOn(true);
+        showToast('Push notifications on — we’ll ping you even when the app is closed', 'success');
+      }
+    } catch (err) {
+      showToast(err.message || 'Could not change push setting', 'error');
+    } finally { setPushBusy(false); }
+  };
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -80,6 +102,24 @@ export default function SettingsPage() {
             </button>
           </div>
         </div>
+
+        {/* Notifications */}
+        {pushSupported() && (
+          <div className="settings-section">
+            <h2 className="settings-section-title">Notifications</h2>
+            <div className="settings-row">
+              <div className="settings-row-info">
+                <span className="settings-row-label">Push notifications</span>
+                <span className="settings-row-sub">
+                  Get pinged for messages, applications, and matching jobs — even when the app is closed.
+                </span>
+              </div>
+              <button className="settings-save-btn" onClick={handleTogglePush} disabled={pushBusy}>
+                {pushBusy ? '…' : pushOn ? 'Turn off' : 'Turn on'}
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Availability */}
         <div className="settings-section">
