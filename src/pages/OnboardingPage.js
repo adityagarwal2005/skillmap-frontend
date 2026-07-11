@@ -69,8 +69,8 @@ export default function OnboardingPage() {
   };
 
   const canNext = () => {
-    if (step === 0) return true;
-    if (step === 1) return true;
+    if (step === 0) return !!selectedCat;
+    if (step === 1) return skills.length > 0;
     if (step === 2) return true;
     if (step === 3) return true;
     return false;
@@ -194,12 +194,15 @@ export default function OnboardingPage() {
 
         {/* Actions */}
         <div className="onboard-actions">
-          <button className="onboard-skip" onClick={() => {
-            if (step < STEPS.length - 1) setStep(s => s + 1);
-            else navigate('/');
-          }}>
-            Skip
-          </button>
+          {/* Category and Skills are required — only Status/Location can be skipped */}
+          {step >= 2 ? (
+            <button className="onboard-skip" onClick={() => {
+              if (step < STEPS.length - 1) setStep(s => s + 1);
+              else navigate('/');
+            }}>
+              Skip
+            </button>
+          ) : <span />}
           <div style={{ display: 'flex', gap: '10px' }}>
             {step > 0 && (
               <button className="create-cancel" onClick={() => setStep(s => s - 1)}>Back</button>

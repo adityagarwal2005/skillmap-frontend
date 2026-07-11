@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../context/ToastContext';
 import { createPortfolioItem, addMedia } from '../api/portfolio';
+import { prepareMediaFile } from '../utils/mediaUpload';
 import AppShell from '../components/AppShell';
 import './FeedPage.css';
 import './CreatePostPage.css';
@@ -22,10 +23,16 @@ export default function CreatePostPage() {
 
   const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handlePhotos = e => {
+  const handlePhotos = async e => {
     const picked = Array.from(e.target.files || []);
-    setPhotos(prev => [...prev, ...picked].slice(0, MAX_PHOTOS));
     e.target.value = ''; // allow re-selecting the same file
+    const room = MAX_PHOTOS - photos.length;
+    const prepared = [];
+    for (const file of picked.slice(0, room)) {
+      const result = await prepareMediaFile(file, showToast);
+      if (result) prepared.push(result);
+    }
+    setPhotos(prev => [...prev, ...prepared].slice(0, MAX_PHOTOS));
   };
 
   const removePhoto = i => setPhotos(prev => prev.filter((_, idx) => idx !== i));

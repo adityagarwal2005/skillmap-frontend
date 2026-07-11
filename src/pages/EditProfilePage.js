@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { getUser, editUser, getCategories, changePassword, uploadAvatar } from '../api/users';
+import { prepareMediaFile } from '../utils/mediaUpload';
 import AppShell from '../components/AppShell';
 import { LinkedInIcon, GitHubIcon, InstagramIcon } from '../components/SocialIcons';
 import './FeedPage.css';
@@ -93,10 +94,12 @@ export default function EditProfilePage() {
     const file = e.target.files?.[0];
     e.target.value = '';
     if (!file) return;
-    setAvatar(URL.createObjectURL(file)); // instant preview
+    const prepared = await prepareMediaFile(file, showToast, { maxDimension: 800 });
+    if (!prepared) return;
+    setAvatar(URL.createObjectURL(prepared)); // instant preview
     try {
       setAvatarSaving(true);
-      await uploadAvatar(userId, file);
+      await uploadAvatar(userId, prepared);
       showToast('Photo updated', 'success');
     } catch (err) {
       showToast(err.response?.data?.error || 'Failed to upload photo', 'error');

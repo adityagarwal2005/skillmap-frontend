@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useToast } from '../context/ToastContext';
+import { prepareMediaFile } from '../utils/mediaUpload';
 import {
   getMyCollabPosts, createCollabPost,
   applyToCollab, getCollabApplicants, respondToCollabRequest, closeCollabPost
@@ -350,7 +351,12 @@ export default function CollabPage() {
                 ) : (
                   <label className="post-media-pick">
                     <input type="file" accept="image/*,video/*" hidden
-                      onChange={e => { if (e.target.files[0]) setCollabMedia(e.target.files[0]); e.target.value=''; }} />
+                      onChange={async e => {
+                        const f = e.target.files[0]; e.target.value = '';
+                        if (!f) return;
+                        const prepared = await prepareMediaFile(f, showToast);
+                        if (prepared) setCollabMedia(prepared);
+                      }} />
                     + Attach image or video
                   </label>
                 )}

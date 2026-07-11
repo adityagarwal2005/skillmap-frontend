@@ -6,14 +6,17 @@ import './components/Skeleton.css';
 import App from './App';
 import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
+import ErrorBoundary from './components/ErrorBoundary';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <AuthProvider>
-    <ToastProvider>
-      <App />
-    </ToastProvider>
-  </AuthProvider>
+  <ErrorBoundary>
+    <AuthProvider>
+      <ToastProvider>
+        <App />
+      </ToastProvider>
+    </AuthProvider>
+  </ErrorBoundary>
 );
 
 // Register the service worker so SkillMap is installable ("Add to Home Screen")

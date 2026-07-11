@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
+import { prepareMediaFile } from '../utils/mediaUpload';
 import {
   getMyWorkRequests, createWorkRequest, respondToWorkRequest,
   getWorkRequestResponses, assignWorkRequest, closeWorkRequest, completeWorkRequest
@@ -449,7 +450,12 @@ export default function FreelancePage() {
                 ) : (
                   <label className="post-media-pick">
                     <input type="file" accept="image/*,video/*" hidden
-                      onChange={e => { if (e.target.files[0]) setJobMedia(e.target.files[0]); e.target.value=''; }} />
+                      onChange={async e => {
+                        const f = e.target.files[0]; e.target.value = '';
+                        if (!f) return;
+                        const prepared = await prepareMediaFile(f, showToast);
+                        if (prepared) setJobMedia(prepared);
+                      }} />
                     + Attach image or video
                   </label>
                 )}

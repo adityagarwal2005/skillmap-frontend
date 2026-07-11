@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
+import { prepareMediaFile } from '../utils/mediaUpload';
 import { getConversations, sendMessage, getMessages } from '../api/work';
 import { ConversationSkeleton } from '../components/Skeleton';
 import AppShell from '../components/AppShell';
@@ -227,7 +228,12 @@ export default function MessagesPage() {
               <form className="msg-input-bar" onSubmit={handleSend}>
                 <label className="msg-attach-btn" title="Attach image or video">
                   <input type="file" accept="image/*,video/*" hidden
-                    onChange={e => { if (e.target.files[0]) setFile(e.target.files[0]); e.target.value = ''; }} />
+                    onChange={async e => {
+                      const f = e.target.files[0]; e.target.value = '';
+                      if (!f) return;
+                      const prepared = await prepareMediaFile(f, showToast);
+                      if (prepared) setFile(prepared);
+                    }} />
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                     strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M21.44 11.05l-9.19 9.19a5 5 0 0 1-7.07-7.07l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95L9.88 18.6a1.5 1.5 0 0 1-2.12-2.12l8.49-8.49" />
