@@ -15,11 +15,12 @@ export const verifyLoginOTP = (email, otp) =>
 
 
 
-export const verifyAndRegister = (username, email, password, otp, latitude, longitude) =>
+export const verifyAndRegister = (username, email, password, otp, latitude, longitude, referredBy) =>
   API.post('/users/verify-register/', new URLSearchParams({
     username, email, password, otp,
     ...(latitude && { latitude }),
     ...(longitude && { longitude }),
+    ...(referredBy && { referred_by: referredBy }),
   }));
 
   

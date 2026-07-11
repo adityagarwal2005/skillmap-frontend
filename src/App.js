@@ -35,6 +35,7 @@ const SearchPage       = lazyRetry(() => import('./pages/SearchPage'));
 const OnboardingPage   = lazyRetry(() => import('./pages/OnboardingPage'));
 const EditProfilePage  = lazyRetry(() => import('./pages/EditProfilePage'));
 const ApplicationsPage = lazyRetry(() => import('./pages/ApplicationsPage'));
+const JoinPage         = lazyRetry(() => import('./pages/JoinPage'));
 
 const Loader = () => (
   <div style={{
@@ -55,6 +56,7 @@ function App() {
       <Suspense fallback={<Loader />}>
         <Routes>
           <Route path="/login"                    element={user ? <Navigate to="/" /> : <LoginPage />} />
+          <Route path="/join/:username"           element={user ? <Navigate to="/" /> : <JoinPage />} />
           <Route path="/onboarding"               element={user ? <OnboardingPage /> : <Navigate to="/login" />} />
           <Route path="/"                         element={user ? <FeedPage /> : <Navigate to="/login" />} />
           <Route path="/profile/:userId"          element={user ? <ProfilePage /> : <Navigate to="/login" />} />

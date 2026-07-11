@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../context/ToastContext';
-import { getMyApplications } from '../api/work';
+import { getMyApplications, completeWorkRequest } from '../api/work';
 import AppShell from '../components/AppShell';
 import { PostCardSkeleton } from '../components/Skeleton';
 import './FeedPage.css';
+import './FreelancePage.css';   // reuses .wr-view-btn/.wr-close-btn/.wr-waiting for the complete/rate row
 import './ApplicationsPage.css';
 
 const STATUS_LABEL = {
@@ -36,14 +37,33 @@ export default function ApplicationsPage() {
   const [apps, setApps]       = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter]   = useState('all');   // all | freelance | collab
+  const [completingId, setCompletingId] = useState(null);
 
-  useEffect(() => {
+  const loadApps = () => {
     getMyApplications()
       .then(r => setApps(r.data.applications || []))
       .catch(() => showToast('Failed to load applications', 'error'))
       .finally(() => setLoading(false));
+  };
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  useEffect(() => { loadApps(); }, []);
+
+  const handleCompleteJob = async (wrId) => {
+    try {
+      setCompletingId(wrId);
+      const res = await completeWorkRequest(wrId);
+      showToast(
+        res.data.status === 'closed'
+          ? 'Job complete on both sides — go rate each other!'
+          : 'Marked complete — waiting for the other side to confirm',
+        'success'
+      );
+      loadApps();
+    } catch (err) {
+      showToast(err.response?.data?.error || 'Failed to mark complete', 'error');
+    } finally { setCompletingId(null); }
+  };
 
   const shown = apps.filter(a => filter === 'all' || a.kind === filter);
 
@@ -97,6 +117,23 @@ export default function ApplicationsPage() {
                 )}
                 <span className="app-ago">Applied {ago(a.applied_at)}</span>
               </div>
+
+              {a.kind === 'freelance' && a.status === 'accepted' && (
+                <div className="app-complete-row" onClick={e => e.stopPropagation()}>
+                  {a.wr_status === 'closed' ? (
+                    <button className="wr-view-btn" onClick={() => navigate(`/profile/${a.posted_by_id}`)}>
+                      ★ Rate {a.posted_by}
+                    </button>
+                  ) : a.completed_by_worker ? (
+                    <span className="wr-waiting">Waiting for {a.posted_by} to confirm…</span>
+                  ) : (
+                    <button className="wr-close-btn" onClick={() => handleCompleteJob(a.id)}
+                      disabled={completingId === a.id}>
+                      {completingId === a.id ? '…' : 'Mark Complete'}
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           ))
         )}

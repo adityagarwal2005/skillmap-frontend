@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import { deleteUser, updateStatus, getBlockedUsers, unblockUser } from '../api/users';
+import { deleteUser, updateStatus, getBlockedUsers, unblockUser, getMyReferrals } from '../api/users';
 import { pushSupported, isPushEnabled, enablePush, disablePush } from '../push';
 import AppShell from '../components/AppShell';
 import './FeedPage.css';
@@ -19,8 +19,35 @@ export default function SettingsPage() {
   const [blockedUsers, setBlockedUsers] = useState([]);
   const [pushOn, setPushOn] = useState(false);
   const [pushBusy, setPushBusy] = useState(false);
+  const [referrals, setReferrals] = useState([]);
+  const [copiedInvite, setCopiedInvite] = useState(false);
 
   useEffect(() => { isPushEnabled().then(setPushOn).catch(() => {}); }, []);
+
+  useEffect(() => {
+    getMyReferrals().then(r => setReferrals(r.data.referrals || [])).catch(() => {});
+  }, []);
+
+  const inviteLink = `${window.location.origin}/join/${user?.username || ''}`;
+
+  const handleCopyInvite = async () => {
+    try {
+      await navigator.clipboard.writeText(inviteLink);
+      setCopiedInvite(true);
+      showToast('Invite link copied!', 'success');
+      setTimeout(() => setCopiedInvite(false), 2000);
+    } catch {
+      showToast('Could not copy link', 'error');
+    }
+  };
+
+  const handleShareInvite = async () => {
+    if (navigator.share) {
+      try { await navigator.share({ title: 'Join me on SkillMap', url: inviteLink }); } catch {}
+      return;
+    }
+    handleCopyInvite();
+  };
 
   const handleTogglePush = async () => {
     setPushBusy(true);
@@ -78,6 +105,39 @@ export default function SettingsPage() {
       <div className="settings-wrapper">
         <button className="profile-back" onClick={() => navigate(-1)}>← Back</button>
         <h1 className="settings-title">Settings</h1>
+
+        {/* Invite friends — every user is a growth channel */}
+        <div className="settings-section invite-section">
+          <h2 className="settings-section-title">Invite friends</h2>
+          <p className="invite-sub">
+            Share your link — when someone joins using it, they show up here.
+          </p>
+          <div className="invite-link-row">
+            <input className="invite-link-input" readOnly value={inviteLink}
+              onFocus={e => e.target.select()} />
+            <button className="settings-save-btn" onClick={handleCopyInvite}>
+              {copiedInvite ? 'Copied ✓' : 'Copy'}
+            </button>
+            <button className="settings-save-btn" onClick={handleShareInvite}>Share</button>
+          </div>
+          {referrals.length > 0 && (
+            <div className="invite-list">
+              <span className="invite-count">
+                {referrals.length} {referrals.length === 1 ? 'person' : 'people'} joined using your invite
+              </span>
+              <div className="invite-avatars">
+                {referrals.slice(0, 8).map(r => (
+                  <div key={r.id} className="invite-ava" title={r.username}
+                    onClick={() => navigate(`/profile/${r.id}`)}>
+                    {r.profile_image
+                      ? <img className="ava-img" src={r.profile_image} alt="" />
+                      : r.username[0].toUpperCase()}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Profile & account — everything editable lives on one page now */}
         <div className="settings-section">

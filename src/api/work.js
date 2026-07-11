@@ -31,6 +31,9 @@ export const assignWorkRequest = (wrId, assigneeId) =>
 export const closeWorkRequest = (wrId) =>
   API.post(`/work/requests/${wrId}/close/`);
 
+export const completeWorkRequest = (wrId) =>
+  API.post(`/work/requests/${wrId}/complete/`);
+
 export const sendWorkProposal = (receiverId, data) =>
   API.post(`/work/proposals/send/${receiverId}/`, new URLSearchParams(data));
 

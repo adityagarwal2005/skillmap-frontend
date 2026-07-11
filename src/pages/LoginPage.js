@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
   login, sendOTP, verifyAndRegister, sendLoginOTP, verifyLoginOTP,
@@ -6,7 +7,10 @@ import {
 import './LoginPage.css';
 
 export default function LoginPage() {
-  const [mode, setMode]         = useState('login'); // 'login' | 'otp' | 'register'
+  const [searchParams] = useSearchParams();
+  // Land straight in the sign-up form when arriving via an invite link
+  // (/join/:username -> /login?mode=register).
+  const [mode, setMode]         = useState(searchParams.get('mode') === 'register' ? 'register' : 'login'); // 'login' | 'otp' | 'register'
   const [step, setStep]         = useState(1);       // used by 'otp' and 'register'
   const [form, setForm]         = useState({ identifier: '', email: '', password: '', otp: '' });
   const [location, setLocation] = useState({ lat: '', lon: '' });
@@ -64,10 +68,12 @@ export default function LoginPage() {
           setSuccess(`Verification code sent to ${form.email}`);
           setStep(2);
         } else {
+          const referredBy = localStorage.getItem('smReferredBy') || '';
           signIn(await verifyAndRegister(
             form.identifier, form.email, form.password, form.otp,
-            location.lat, location.lon,
+            location.lat, location.lon, referredBy,
           ));
+          localStorage.removeItem('smReferredBy');
         }
       }
     } catch (err) {

@@ -46,6 +46,9 @@ export const searchUsers = (params) =>
 export const getDiscoverPeople = (params = {}) =>
   API.get('/users/discover/', { params });
 
+export const getMyReferrals = () =>
+  API.get('/users/referrals/');
+
 export const endorseSkill = (userId, skill) =>
   API.post(`/users/${userId}/endorse/`, new URLSearchParams({ skill }));
 

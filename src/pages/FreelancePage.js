@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import {
   getMyWorkRequests, createWorkRequest, respondToWorkRequest,
-  getWorkRequestResponses, assignWorkRequest, closeWorkRequest
+  getWorkRequestResponses, assignWorkRequest, closeWorkRequest, completeWorkRequest
 } from '../api/work';
 import API from '../api/config';
 import AppShell from '../components/AppShell';
@@ -204,9 +204,26 @@ export default function FreelancePage() {
   const handleClose = async (wrId) => {
     try {
       await closeWorkRequest(wrId);
-      showToast('Job closed. Portfolio item created!', 'success');
+      showToast('Job closed', 'success');
       loadAll();
     } catch { showToast('Failed to close job', 'error'); }
+  };
+
+  const [completingId, setCompletingId] = useState(null);
+  const handleCompleteJob = async (wrId) => {
+    try {
+      setCompletingId(wrId);
+      const res = await completeWorkRequest(wrId);
+      showToast(
+        res.data.status === 'closed'
+          ? 'Job complete on both sides — go rate each other!'
+          : 'Marked complete — waiting for the other side to confirm',
+        'success'
+      );
+      loadAll();
+    } catch (err) {
+      showToast(err.response?.data?.error || 'Failed to mark complete', 'error');
+    } finally { setCompletingId(null); }
   };
 
   const statusColor = { open: 'status-green', assigned: 'status-orange', closed: 'status-gray' };
@@ -353,7 +370,19 @@ export default function FreelancePage() {
                     </>
                   )}
                   {wr.status === 'assigned' && (
-                    <button className="wr-close-btn" onClick={() => handleClose(wr.id)}>Mark Complete</button>
+                    wr.completed_by_poster ? (
+                      <span className="wr-waiting">Waiting for {wr.assigned_to} to confirm…</span>
+                    ) : (
+                      <button className="wr-close-btn" onClick={() => handleCompleteJob(wr.id)}
+                        disabled={completingId === wr.id}>
+                        {completingId === wr.id ? '…' : 'Mark Complete'}
+                      </button>
+                    )
+                  )}
+                  {wr.status === 'closed' && wr.assigned_to_id && (
+                    <button className="wr-view-btn" onClick={() => navigate(`/profile/${wr.assigned_to_id}`)}>
+                      ★ Rate {wr.assigned_to}
+                    </button>
                   )}
                 </div>
               </div>

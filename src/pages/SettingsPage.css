@@ -172,3 +172,67 @@
   .settings-input { width: 100%; }
   .settings-row-action { width: 100%; }
 }
+
+/* ── Invite friends ── */
+.invite-section { padding: 16px 20px 18px; }
+
+.invite-sub {
+  font-size: 0.8125rem;
+  color: var(--text-2);
+  margin: 2px 0 14px;
+  line-height: 1.5;
+}
+
+.invite-link-row {
+  display: flex;
+  gap: 8px;
+}
+
+.invite-link-input {
+  flex: 1;
+  min-width: 0;
+  height: 38px;
+  background: var(--elevated);
+  border: 1px solid var(--border-md);
+  border-radius: var(--radius-sm);
+  padding: 0 12px;
+  font-size: 0.8125rem;
+  color: var(--text-2);
+}
+
+.invite-list {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.invite-count {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-2);
+  margin-bottom: 10px;
+}
+
+.invite-avatars { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.invite-ava {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #0f172a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+@media (max-width: 600px) {
+  .invite-link-row { flex-wrap: wrap; }
+  .invite-link-input { width: 100%; flex-basis: 100%; }
+}
