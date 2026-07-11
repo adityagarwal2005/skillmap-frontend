@@ -15,6 +15,7 @@ export default function OnboardingPage() {
 
   const [step, setStep]             = useState(0);
   const [categories, setCategories] = useState([]);
+  const [categoriesFailed, setCategoriesFailed] = useState(false);
   const [selectedCat, setSelectedCat] = useState(null);
   const [skillInput, setSkillInput] = useState('');
   const [skills, setSkills]         = useState([]);
@@ -23,11 +24,14 @@ export default function OnboardingPage() {
   const [saving, setSaving]         = useState(false);
   const [gettingLoc, setGettingLoc] = useState(false);
 
-  useEffect(() => {
+  const loadCategories = () => {
+    setCategoriesFailed(false);
     getCategories()
       .then(r => setCategories(r.data.categories || []))
-      .catch(() => {});
-  }, []);
+      .catch(() => setCategoriesFailed(true));
+  };
+
+  useEffect(() => { loadCategories(); }, []);
 
   const addLocalSkill = () => {
     const s = skillInput.trim();
@@ -69,7 +73,9 @@ export default function OnboardingPage() {
   };
 
   const canNext = () => {
-    if (step === 0) return !!selectedCat;
+    // Don't trap the user on a backend hiccup — only enforce a pick when
+    // categories actually loaded.
+    if (step === 0) return !!selectedCat || categoriesFailed;
     if (step === 1) return skills.length > 0;
     if (step === 2) return true;
     if (step === 3) return true;
@@ -112,15 +118,22 @@ export default function OnboardingPage() {
             <>
               <h2 className="onboard-title">What best describes you?</h2>
               <p className="onboard-sub">Pick your primary category — you can change this later</p>
-              <div className="category-grid">
-                {categories.map(c => (
-                  <button key={c.id}
-                    className={`category-card ${selectedCat?.id === c.id ? 'selected' : ''}`}
-                    onClick={() => setSelectedCat(c)}>
-                    <span className="category-name">{c.name}</span>
-                  </button>
-                ))}
-              </div>
+              {categoriesFailed ? (
+                <div className="no-skills" style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'flex-start' }}>
+                  <span>Couldn't load categories — you can skip this for now and set it later in Settings.</span>
+                  <button type="button" className="create-cancel" onClick={loadCategories}>Try again</button>
+                </div>
+              ) : (
+                <div className="category-grid">
+                  {categories.map(c => (
+                    <button key={c.id}
+                      className={`category-card ${selectedCat?.id === c.id ? 'selected' : ''}`}
+                      onClick={() => setSelectedCat(c)}>
+                      <span className="category-name">{c.name}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
             </>
           )}
 
