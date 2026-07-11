@@ -1164,6 +1164,29 @@
   text-overflow: ellipsis;
 }
 
+/* ── "Near me" quick filter chip (Collab / Freelance) ── */
+.near-me-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 15px;
+  margin-bottom: 12px;
+  background: var(--elevated);
+  border: 1px solid var(--border-md);
+  border-radius: 999px;
+  color: var(--text-2);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  transition: all 0.15s;
+}
+.near-me-chip:hover { border-color: var(--text-1); color: var(--text-1); }
+.near-me-chip.active {
+  background: #0f172a;
+  border-color: #0f172a;
+  color: #fff;
+}
+
 /* ── Media on posts (collab / freelance / feed) ── */
 .post-media { margin: 4px 0 12px; }
 .post-media-el {

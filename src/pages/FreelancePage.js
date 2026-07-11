@@ -83,10 +83,11 @@ export default function FreelancePage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { if (userLocation.lat) loadAll(); }, [userLocation.lat]);
 
-  const availableParams = () => {
+  const availableParams = (radiusOverride) => {
     const params = {};
     if (skillFilter) params.skill = skillFilter;
-    if (radius)      params.radius = radius;
+    const r = radiusOverride ?? radius;
+    if (r)           params.radius = r;
     if (userLocation.lat) {
       params.latitude  = userLocation.lat;
       params.longitude = userLocation.lon;
@@ -94,11 +95,11 @@ export default function FreelancePage() {
     return params;
   };
 
-  const loadAll = async () => {
+  const loadAll = async (radiusOverride) => {
     try {
       setLoading(true);
       const [avRes, myRes] = await Promise.all([
-        API.get(`/work/requests/available/${user.id}/`, { params: availableParams() }),
+        API.get(`/work/requests/available/${user.id}/`, { params: availableParams(radiusOverride) }),
         getMyWorkRequests(user.id),
       ]);
       const av = avRes.data.work_requests || [];
@@ -232,26 +233,41 @@ export default function FreelancePage() {
         </div>
 
         {tab === 'available' && (
-          <div className="freelance-filters">
-            <input
-              className="filter-input"
-              placeholder="Filter by skill (e.g. React, Python)"
-              value={skillFilter}
-              onChange={e => setSkillFilter(e.target.value)}
-              onKeyDown={e => { if (e.key === 'Enter') loadAll(); }}
-            />
-            <select className="filter-select-sm"
-              value={radius}
-              onChange={e => setRadius(e.target.value)}>
-              <option value={0.5}>0.5 km</option>
-              <option value={1}>1 km</option>
-              <option value={5}>5 km</option>
-              <option value={10}>10 km</option>
-              <option value={50}>50 km</option>
-              <option value={100}>100 km</option>
-            </select>
-            <button className="wr-view-btn" onClick={loadAll}>Search</button>
-          </div>
+          <>
+            <button
+              className={`near-me-chip ${Number(radius) === 5 ? 'active' : ''}`}
+              onClick={() => {
+                if (!userLocation.lat) {
+                  showToast('Turn on location to use Near me', 'error');
+                  return;
+                }
+                const next = Number(radius) === 5 ? 50 : 5;
+                setRadius(next);
+                loadAll(next);
+              }}>
+              📍 Near me (5km)
+            </button>
+            <div className="freelance-filters">
+              <input
+                className="filter-input"
+                placeholder="Filter by skill (e.g. React, Python)"
+                value={skillFilter}
+                onChange={e => setSkillFilter(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter') loadAll(); }}
+              />
+              <select className="filter-select-sm"
+                value={radius}
+                onChange={e => setRadius(e.target.value)}>
+                <option value={0.5}>0.5 km</option>
+                <option value={1}>1 km</option>
+                <option value={5}>5 km</option>
+                <option value={10}>10 km</option>
+                <option value={50}>50 km</option>
+                <option value={100}>100 km</option>
+              </select>
+              <button className="wr-view-btn" onClick={() => loadAll()}>Search</button>
+            </div>
+          </>
         )}
 
         {loading ? (
