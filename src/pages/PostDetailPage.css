@@ -86,12 +86,8 @@
   gap: 10px;
 }
 
-.post-ava.small {
-  width: 30px;
-  height: 30px;
-  font-size: 11px;
-  flex-shrink: 0;
-}
+/* .post-ava.small now lives in FeedPage.css (shared — Collab/Freelance use
+   it too, for the poster/applicant avatar in compact rows). */
 
 .comment-input {
   flex: 1;

@@ -288,6 +288,78 @@
 
 .onboard-skip:hover { color: var(--text-2); }
 
+/* Skill picker (step 1) + Back button — these classes were copy-pasted from
+   CreatePostPage/ProfilePage during development but never actually styled
+   here, and Onboarding is a standalone page (like Login) that doesn't import
+   any other page's CSS. Rendered as bare unstyled input/buttons/text. */
+.skill-input-row { display: flex; gap: 10px; }
+
+.create-input {
+  height: 42px;
+  background: var(--elevated);
+  border: 1px solid var(--border-md);
+  border-radius: var(--radius-md);
+  padding: 0 14px;
+  font-size: 0.9375rem;
+  color: var(--text-1);
+  transition: border-color 0.15s;
+}
+.create-input:focus { border-color: var(--text-1); }
+.create-input::placeholder { color: var(--text-3); }
+
+.create-submit {
+  height: 42px;
+  padding: 0 22px;
+  background: #0f172a;
+  color: #fff;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  border-radius: var(--radius-md);
+  transition: opacity 0.15s;
+  flex-shrink: 0;
+}
+[data-theme="light"] .create-submit { background: #0f172a; }
+.create-submit:hover:not(:disabled) { opacity: 0.85; }
+.create-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.create-cancel {
+  height: 42px;
+  padding: 0 22px;
+  background: none;
+  border: 1px solid var(--border-md);
+  border-radius: var(--radius-md);
+  color: var(--text-1);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  transition: background 0.15s;
+}
+.create-cancel:hover { background: var(--elevated); }
+
+.skills-list { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.skill-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-1);
+  background: var(--elevated);
+  border: 1px solid var(--border);
+  padding: 5px 13px;
+  border-radius: 20px;
+}
+
+.skill-remove {
+  color: var(--text-3);
+  font-size: 14px;
+  line-height: 1;
+  transition: color 0.12s;
+}
+.skill-remove:hover { color: var(--red); }
+
+.no-skills { font-size: 0.9375rem; color: var(--text-3); }
+
 @media (max-width: 480px) {
   .onboard-page { padding: 16px; }
   .onboard-card { padding: 26px 22px; }

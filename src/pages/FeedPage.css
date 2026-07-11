@@ -1374,6 +1374,15 @@ video.post-media-el { cursor: default; object-fit: contain; background: #000; }
 
 .post-ava:hover { opacity: 0.7; }
 
+/* Compact variant — poster/applicant avatar rows on Collab/Freelance, and
+   comment avatars on Post Detail. Was stranded in PostDetailPage.css only. */
+.post-ava.small {
+  width: 30px;
+  height: 30px;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
 .post-meta { flex: 1; min-width: 0; }
 
 .post-author {
@@ -1557,6 +1566,38 @@ video.post-media-el { cursor: default; object-fit: contain; background: #000; }
   border-radius: 20px;
   letter-spacing: 0.2px;
 }
+
+/* Shared "← Back" link — used on Profile, Create Post, Post Detail, Edit
+   Profile, Settings. Was defined only in ProfilePage.css, so it rendered as
+   a bare unstyled link on the other 4 pages (none of them import
+   ProfilePage.css). Moved here since every page that uses it imports
+   FeedPage.css. */
+.profile-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--blue);
+  margin-bottom: 24px;
+  padding: 6px 0;
+  transition: opacity 0.15s;
+}
+.profile-back:hover { opacity: 0.7; }
+
+/* Shared status pill — used on Profile, People, Collab, Freelance. Was
+   defined only in ProfilePage.css, so it rendered as bare unstyled text
+   (no pill shape, no color) on the other 3 pages. */
+.profile-status-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 11px;
+  border-radius: 20px;
+  letter-spacing: 0.1px;
+}
+.status-green  { background: var(--green-low); color: var(--green); }
+.status-orange { background: rgba(255,159,10,0.1); color: #ff9f0a; }
+.status-gray   { background: var(--elevated); color: var(--text-3); }
 
 /* ── States ── */
 .state-box {
