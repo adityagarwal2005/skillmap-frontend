@@ -95,9 +95,6 @@ export default function ApplicationsPage() {
                 {a.kind === 'freelance' && a.payment_amount != null && (
                   <span className="app-pay">₹{a.payment_amount}</span>
                 )}
-                {a.kind === 'collab' && a.collab_type && (
-                  <span className="opp-ctype">{a.collab_type}</span>
-                )}
                 <span className="app-ago">Applied {ago(a.applied_at)}</span>
               </div>
             </div>

@@ -193,7 +193,6 @@ export default function FeedPage() {
                     </>
                   ) : (
                     <>
-                      <span className="opp-ctype">{item.collab_type}</span>
                       {item.applicants > 0 && <span className="opp-heat">🔥 {item.applicants} applied</span>}
                     </>
                   )}

@@ -52,7 +52,7 @@ export default function FreelancePage() {
   const [postModal, setPostModal]             = useState(false);
   const [applyModal, setApplyModal]           = useState(null);
   const [applicantsModal, setApplicantsModal] = useState(null);
-  const [postForm, setPostForm] = useState({ description: '', payment_amount: '', time_limit_hours: '', skills: '' });
+  const [postForm, setPostForm] = useState({ description: '', payment_amount: '', time_limit_hours: '', skills: '', range_km: 50 });
   const [jobMedia, setJobMedia] = useState(null);
   const [applyMsg, setApplyMsg]     = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -159,7 +159,7 @@ export default function FreelancePage() {
       await createWorkRequest(payload);
       showToast('Job posted!', 'success');
       setPostModal(false);
-      setPostForm({ description: '', payment_amount: '', time_limit_hours: '', skills: '' });
+      setPostForm({ description: '', payment_amount: '', time_limit_hours: '', skills: '', range_km: 50 });
       setJobMedia(null);
       loadAll();
     } catch (err) {
@@ -248,7 +248,7 @@ export default function FreelancePage() {
               <option value={5}>5 km</option>
               <option value={10}>10 km</option>
               <option value={50}>50 km</option>
-              <option value={5000}>All India</option>
+              <option value={100}>100 km</option>
             </select>
             <button className="wr-view-btn" onClick={loadAll}>Search</button>
           </div>
@@ -376,6 +376,19 @@ export default function FreelancePage() {
                 <input className="modal-input" required placeholder="React, Python, Figma"
                   value={postForm.skills}
                   onChange={e => setPostForm({...postForm, skills: e.target.value})} />
+              </div>
+              <div className="modal-field">
+                <label className="modal-label">Visible within</label>
+                <select className="modal-input"
+                  value={postForm.range_km}
+                  onChange={e => setPostForm({...postForm, range_km: e.target.value})}>
+                  <option value={0.5}>0.5 km</option>
+                  <option value={1}>1 km</option>
+                  <option value={5}>5 km</option>
+                  <option value={10}>10 km</option>
+                  <option value={50}>50 km</option>
+                  <option value={100}>100 km</option>
+                </select>
               </div>
               <div className="modal-field">
                 <label className="modal-label">Image / video <span style={{fontWeight:400,color:'var(--text-3)'}}>optional</span></label>

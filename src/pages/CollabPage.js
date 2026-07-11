@@ -12,12 +12,6 @@ import './FeedPage.css';
 import './FreelancePage.css';   // Collab reuses .freelance-header/.wr-* card styles
 import './CollabPage.css';
 
-const TYPE_COLORS = {
-  equity:     { bg: 'rgba(139,92,246,0.1)', color: '#8b5cf6' },
-  experience: { bg: 'rgba(59,130,246,0.1)', color: '#3b82f6' },
-  paid:       { bg: 'rgba(16,185,129,0.08)', color: '#10b981' },
-};
-
 export default function CollabPage() {
   const { showToast }        = useToast();
   const navigate             = useNavigate();
@@ -26,7 +20,6 @@ export default function CollabPage() {
   const [posts, setPosts]       = useState([]);
   const [myPosts, setMyPosts]   = useState([]);
   const [loading, setLoading]   = useState(true);
-  const [typeFilter, setTypeFilter] = useState('all');
   const [skillFilter, setSkillFilter] = useState('');
   const [radius, setRadius]         = useState(50);
   const [userLocation, setUserLocation] = useState({ lat: '', lon: '' });
@@ -38,7 +31,7 @@ export default function CollabPage() {
   const [applicantsModal, setApplicantsModal] = useState(null);
   const [submitting, setSubmitting]           = useState(false);
 
-  const [createForm, setCreateForm] = useState({ title: '', description: '', collab_type: 'experience', skills: '' });
+  const [createForm, setCreateForm] = useState({ title: '', description: '', skills: '', range_km: 50 });
   const [collabMedia, setCollabMedia] = useState(null);
   const [applyMsg, setApplyMsg]     = useState('');
 
@@ -72,7 +65,6 @@ export default function CollabPage() {
     const params = {};
     if (skillFilter)      params.skill      = skillFilter;
     if (radius)           params.radius     = radius;
-    if (typeFilter !== 'all') params.type   = typeFilter;
     if (userLocation.lat) {
       params.latitude  = userLocation.lat;
       params.longitude = userLocation.lon;
@@ -119,7 +111,7 @@ export default function CollabPage() {
       await createCollabPost(payload);
       showToast('Collab post created!', 'success');
       setCreateModal(false);
-      setCreateForm({ title: '', description: '', collab_type: 'experience', skills: '' });
+      setCreateForm({ title: '', description: '', skills: '', range_km: 50 });
       setCollabMedia(null);
       loadAll();
     } catch (err) {
@@ -181,17 +173,6 @@ export default function CollabPage() {
             <button className={`tab-btn ${tab === 'browse' ? 'active' : ''}`} onClick={() => setTab('browse')}>Browse ({posts.length})</button>
             <button className={`tab-btn ${tab === 'my' ? 'active' : ''}`} onClick={() => setTab('my')}>My Posts ({myPosts.length})</button>
           </div>
-          {tab === 'browse' && (
-            <div className="type-filters">
-              {['all', 'equity', 'experience', 'paid'].map(t => (
-                <button key={t}
-                  className={`type-filter-btn ${typeFilter === t ? 'active' : ''}`}
-                  onClick={() => setTypeFilter(t)}>
-                  {t.charAt(0).toUpperCase() + t.slice(1)}
-                </button>
-              ))}
-            </div>
-          )}
         </div>
 
         {tab === 'browse' && (
@@ -211,7 +192,7 @@ export default function CollabPage() {
               <option value={5}>5 km</option>
               <option value={10}>10 km</option>
               <option value={50}>50 km</option>
-              <option value={5000}>All India</option>
+              <option value={100}>100 km</option>
             </select>
             <button className="wr-view-btn" onClick={loadAll}>Search</button>
           </div>
@@ -230,10 +211,6 @@ export default function CollabPage() {
               <div className="collab-top">
                 <div className="post-ava small">{post.posted_by[0].toUpperCase()}</div>
                 <span className="wr-by">{post.posted_by}</span>
-                <span className="collab-type-badge"
-                  style={{ background: TYPE_COLORS[post.collab_type]?.bg, color: TYPE_COLORS[post.collab_type]?.color }}>
-                  {post.collab_type}
-                </span>
                 {post.distance_km != null && <span className="wr-time">📍 {post.distance_km} km</span>}
               </div>
               <h3 className="collab-title">{post.title}</h3>
@@ -272,10 +249,6 @@ export default function CollabPage() {
           ) : myPosts.map(post => (
             <div key={post.id} className="collab-card">
               <div className="collab-top">
-                <span className="collab-type-badge"
-                  style={{ background: TYPE_COLORS[post.collab_type]?.bg, color: TYPE_COLORS[post.collab_type]?.color }}>
-                  {post.collab_type}
-                </span>
                 <span className={`profile-status-badge ${post.status === 'open' ? 'status-green' : 'status-gray'}`}>
                   {post.status}
                 </span>
@@ -329,20 +302,23 @@ export default function CollabPage() {
                   onChange={e => setCreateForm({...createForm, description: e.target.value})} />
               </div>
               <div className="modal-field">
-                <label className="modal-label">Type *</label>
-                <select className="modal-input"
-                  value={createForm.collab_type}
-                  onChange={e => setCreateForm({...createForm, collab_type: e.target.value})}>
-                  <option value="experience">Experience (no pay)</option>
-                  <option value="equity">Equity</option>
-                  <option value="paid">Paid</option>
-                </select>
-              </div>
-              <div className="modal-field">
                 <label className="modal-label">Skills Needed <span style={{fontWeight:400,color:'var(--text-3)'}}>comma separated</span></label>
                 <input className="modal-input" placeholder="React, Python, Design"
                   value={createForm.skills}
                   onChange={e => setCreateForm({...createForm, skills: e.target.value})} />
+              </div>
+              <div className="modal-field">
+                <label className="modal-label">Visible within</label>
+                <select className="modal-input"
+                  value={createForm.range_km}
+                  onChange={e => setCreateForm({...createForm, range_km: e.target.value})}>
+                  <option value={0.5}>0.5 km</option>
+                  <option value={1}>1 km</option>
+                  <option value={5}>5 km</option>
+                  <option value={10}>10 km</option>
+                  <option value={50}>50 km</option>
+                  <option value={100}>100 km</option>
+                </select>
               </div>
               <div className="modal-field">
                 <label className="modal-label">Image / video <span style={{fontWeight:400,color:'var(--text-3)'}}>optional</span></label>

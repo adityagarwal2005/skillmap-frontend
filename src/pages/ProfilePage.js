@@ -259,14 +259,18 @@ export default function ProfilePage() {
                 <p className="profile-category">{profile.category || 'Independent'}</p>
                 {profile.headline && <p className="profile-headline">{profile.headline}</p>}
                 <div className="profile-stats">
-                  <div className="profile-stat">
-                    <span className="profile-stat-val">{portfolio.length}</span>
-                    <span className="profile-stat-label">Work</span>
-                  </div>
-                  <div className="profile-stat">
-                    <span className="profile-stat-val">{profile.skills?.length || 0}</span>
-                    <span className="profile-stat-label">Skills</span>
-                  </div>
+                  {(isOwn || portfolio.length > 0) && (
+                    <div className="profile-stat">
+                      <span className="profile-stat-val">{portfolio.length}</span>
+                      <span className="profile-stat-label">Work</span>
+                    </div>
+                  )}
+                  {(isOwn || (profile.skills?.length || 0) > 0) && (
+                    <div className="profile-stat">
+                      <span className="profile-stat-val">{profile.skills?.length || 0}</span>
+                      <span className="profile-stat-label">Skills</span>
+                    </div>
+                  )}
                   {memberSince && (
                     <div className="profile-stat">
                       <span className="profile-stat-val">{memberSince}</span>
@@ -370,7 +374,10 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            {/* Skills */}
+            {/* Skills — hidden on other people's profiles while empty, so a new
+                platform doesn't read as a ghost town; still shown to the owner
+                so they can manage their own skills. */}
+            {(isOwn || (profile.skills?.length || 0) > 0) && (
             <div className="profile-skills-section">
               <h3 className="section-title">Skills</h3>
               <div className="skills-list">
@@ -403,8 +410,10 @@ export default function ProfilePage() {
                 </form>
               )}
             </div>
+            )}
 
-            {/* Work */}
+            {/* Work — same ghost-town guard as Skills above. */}
+            {(isOwn || portfolio.length > 0) && (
             <div className="profile-skills-section">
               <h3 className="section-title">Work</h3>
               {portfolio.length === 0 ? (
@@ -436,6 +445,7 @@ export default function ProfilePage() {
                 </div>
               )}
             </div>
+            )}
           </>
         )}
       </div>

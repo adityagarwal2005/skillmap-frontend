@@ -99,7 +99,7 @@ export default function PeoplePage() {
   const handleSearch = async e => {
     e.preventDefault();
     if (!query.trim() && !form.category_id && form.skills.length === 0) {
-      showToast('Type a name or skill, or pick a category', 'error');
+      showToast('Type a username, or pick a category', 'error');
       return;
     }
     try {
@@ -137,8 +137,7 @@ export default function PeoplePage() {
         <div className="people-hero">
           <h1 className="people-heading">Find People</h1>
           <p className="people-sub">
-            Discover skilled people on campus — search by name, skill, or keyword,
-            or browse by category.
+            Discover people on campus — search by username, or browse by category.
           </p>
         </div>
 
@@ -147,7 +146,7 @@ export default function PeoplePage() {
             <span className="people-search-icon" aria-hidden="true">⌕</span>
             <input
               className="people-search-input"
-              placeholder="Search by name, skill, or keyword…"
+              placeholder="Search by username…"
               value={query}
               onChange={e => setQuery(e.target.value)}
             />
@@ -198,7 +197,7 @@ export default function PeoplePage() {
         {!searched ? (
           <div className="state-box">
             <h3>Find skilled people near you</h3>
-            <p>Search by name or skill, or pick a category to start browsing.</p>
+            <p>Search by username, or pick a category to start browsing.</p>
           </div>
         ) : loading ? (
           <div className="people-grid">
