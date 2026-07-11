@@ -293,7 +293,11 @@ export default function FreelancePage() {
           available.length === 0 ? (
             <div className="state-box">
               <h3>No jobs found</h3>
-              <p>Try a different skill or increase your radius</p>
+              <p>Try a different skill, increase your radius — or be the first to post one.</p>
+              <div className="state-box-actions">
+                <button className="opp-cta" onClick={() => setPostModal(true)}>+ Post a Job</button>
+                <button className="opp-cta ghost" onClick={() => navigate('/collab')}>Browse collabs instead</button>
+              </div>
             </div>
           ) : available.map(wr => (
             <div key={wr.id} className={`wr-card ${newIds.has(wr.id) ? 'is-new' : ''}`}>

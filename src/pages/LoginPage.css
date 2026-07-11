@@ -280,6 +280,8 @@
   color: var(--text-3);
   line-height: 1.6;
 }
+.login-footer a { color: var(--text-2); text-decoration: underline; }
+.login-footer a:hover { color: var(--text-1); }
 
 .login-success {
   background: rgba(52,199,89,0.06);

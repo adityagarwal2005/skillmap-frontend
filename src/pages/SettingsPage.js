@@ -239,6 +239,23 @@ export default function SettingsPage() {
           )}
         </div>
 
+        {/* Legal */}
+        <div className="settings-section">
+          <h2 className="settings-section-title">Legal</h2>
+          <div className="settings-row">
+            <div className="settings-row-info">
+              <span className="settings-row-label">Terms of Service</span>
+            </div>
+            <button className="settings-save-btn" onClick={() => navigate('/terms')}>View</button>
+          </div>
+          <div className="settings-row">
+            <div className="settings-row-info">
+              <span className="settings-row-label">Privacy Policy</span>
+            </div>
+            <button className="settings-save-btn" onClick={() => navigate('/privacy')}>View</button>
+          </div>
+        </div>
+
         {/* Danger Zone */}
         <div className="settings-section danger-zone">
           <h2 className="settings-section-title danger-title">Danger Zone</h2>

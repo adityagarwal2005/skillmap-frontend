@@ -220,7 +220,11 @@ export default function CollabPage() {
           posts.length === 0 ? (
             <div className="state-box">
               <h3>No collab posts found</h3>
-              <p>Try a different skill or be the first to start a collab!</p>
+              <p>Try a different skill, increase your range — or be the first to start one.</p>
+              <div className="state-box-actions">
+                <button className="opp-cta" onClick={() => setCreateModal(true)}>+ Start a Collab</button>
+                <button className="opp-cta ghost" onClick={() => navigate('/freelance')}>Browse jobs instead</button>
+              </div>
             </div>
           ) : posts.map(post => (
             <div key={post.id} className="collab-card">

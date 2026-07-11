@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
   login, sendOTP, verifyAndRegister, sendLoginOTP, verifyLoginOTP,
@@ -235,7 +235,8 @@ export default function LoginPage() {
         )}
 
         <p className="login-footer">
-          By continuing, you agree to SkillMap's Terms of Service.
+          By continuing, you agree to SkillMap's <Link to="/terms">Terms of Service</Link> and{' '}
+          <Link to="/privacy">Privacy Policy</Link>.
         </p>
       </div>
       </div>
