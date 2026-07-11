@@ -116,6 +116,21 @@ a { text-decoration: none; color: inherit; }
   --steel-panel: linear-gradient(157deg, var(--steel-1) 0%, var(--steel-2) 55%, var(--steel-3) 100%);
 }
 
+/* Dark equivalents of the steel content-panel surface above. Placed after the
+   :root block (not inside the earlier [data-theme="dark"] block) so it
+   actually wins the cascade — :root and [data-theme="dark"] have equal
+   selector specificity, so whichever is declared LAST in the file wins;
+   putting it earlier would have been silently overridden by the :root
+   values below it. Without this, the main content area stayed light-gray
+   even with the theme toggle set to dark. */
+[data-theme="dark"] {
+  --steel-1:     #232325;
+  --steel-2:     #1c1c1e;
+  --steel-3:     #202022;
+  --steel-solid: #161618;
+  --steel-panel: linear-gradient(157deg, var(--steel-1) 0%, var(--steel-2) 55%, var(--steel-3) 100%);
+}
+
 /* Editorial rendering polish */
 body { text-rendering: optimizeLegibility; }
 
