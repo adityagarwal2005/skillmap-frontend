@@ -267,7 +267,7 @@ export default function EditProfilePage() {
                   <input className="edit-input" type="password"
                     value={pwd.next}
                     onChange={e => setPwd({...pwd, next: e.target.value})}
-                    placeholder="At least 6 characters" />
+                    placeholder="At least 8 characters" />
                 </div>
               </div>
               <button type="button"
