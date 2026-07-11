@@ -13,6 +13,11 @@ export const sendLoginOTP = (email) =>
 export const verifyLoginOTP = (email, otp) =>
   API.post('/users/login/verify-otp/', new URLSearchParams({ email, otp }));
 
+// Forgot password: reuses sendLoginOTP to email the code, then this sets
+// the new password directly once the code checks out.
+export const resetPasswordWithOTP = (email, otp, newPassword) =>
+  API.post('/users/password/reset/', new URLSearchParams({ email, otp, new_password: newPassword }));
+
 
 
 export const verifyAndRegister = (username, email, password, otp, latitude, longitude, referredBy) =>

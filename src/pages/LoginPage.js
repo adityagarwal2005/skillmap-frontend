@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
-  login, sendOTP, verifyAndRegister, sendLoginOTP, verifyLoginOTP,
+  login, sendOTP, verifyAndRegister, sendLoginOTP, verifyLoginOTP, resetPasswordWithOTP,
 } from '../api/auth';
 import './LoginPage.css';
 
@@ -10,9 +10,9 @@ export default function LoginPage() {
   const [searchParams] = useSearchParams();
   // Land straight in the sign-up form when arriving via an invite link
   // (/join/:username -> /login?mode=register).
-  const [mode, setMode]         = useState(searchParams.get('mode') === 'register' ? 'register' : 'login'); // 'login' | 'otp' | 'register'
-  const [step, setStep]         = useState(1);       // used by 'otp' and 'register'
-  const [form, setForm]         = useState({ identifier: '', email: '', password: '', otp: '' });
+  const [mode, setMode]         = useState(searchParams.get('mode') === 'register' ? 'register' : 'login'); // 'login' | 'otp' | 'register' | 'forgot'
+  const [step, setStep]         = useState(1);       // used by 'otp', 'register' and 'forgot'
+  const [form, setForm]         = useState({ identifier: '', email: '', password: '', otp: '', newPassword: '' });
   const [location, setLocation] = useState({ lat: '', lon: '' });
   const [error, setError]       = useState('');
   const [success, setSuccess]   = useState('');
@@ -34,7 +34,7 @@ export default function LoginPage() {
     setStep(1);
     setError('');
     setSuccess('');
-    setForm(f => ({ ...f, otp: '', password: '' }));
+    setForm(f => ({ ...f, otp: '', password: '', newPassword: '' }));
   };
 
   const signIn = (res) => {
@@ -62,6 +62,15 @@ export default function LoginPage() {
           signIn(await verifyLoginOTP(form.email, form.otp));
         }
 
+      } else if (mode === 'forgot') {
+        if (step === 1) {
+          await sendLoginOTP(form.email);
+          setSuccess(`Reset code sent to ${form.email}`);
+          setStep(2);
+        } else {
+          signIn(await resetPasswordWithOTP(form.email, form.otp, form.newPassword));
+        }
+
       } else { // register
         if (step === 1) {
           await sendOTP(form.identifier, form.email);
@@ -86,17 +95,20 @@ export default function LoginPage() {
   const heading =
     mode === 'login' ? 'Sign in'
     : mode === 'otp' ? (step === 1 ? 'Log in with a code' : 'Enter your code')
+    : mode === 'forgot' ? (step === 1 ? 'Reset your password' : 'Choose a new password')
     : (step === 1 ? 'Create account' : 'Verify your email');
 
   const sub =
     mode === 'login' ? 'Welcome back — your feed is waiting.'
     : mode === 'otp' ? (step === 1 ? "We'll email you a one-time login code." : `Enter the 6-digit code sent to ${form.email}`)
+    : mode === 'forgot' ? (step === 1 ? "We'll email you a code to reset your password." : `Enter the 6-digit code sent to ${form.email}`)
     : (step === 1 ? 'Join skilled people across India.' : `Enter the 6-digit code sent to ${form.email}`);
 
   const submitLabel =
     loading ? 'Please wait…'
     : mode === 'login' ? 'Sign in'
     : mode === 'otp' ? (step === 1 ? 'Send login code' : 'Verify & sign in')
+    : mode === 'forgot' ? (step === 1 ? 'Send reset code' : 'Reset password')
     : (step === 1 ? 'Send verification code' : 'Create account');
 
   return (
@@ -150,12 +162,15 @@ export default function LoginPage() {
                 <input name="password" type="password" placeholder="••••••••"
                   value={form.password} onChange={handleChange}
                   required className="field-input" />
+                <p className="otp-resend">
+                  <span onClick={() => switchMode('forgot')}>Forgot password?</span>
+                </p>
               </div>
             </>
           )}
 
-          {/* OTP login — step 1: email */}
-          {mode === 'otp' && step === 1 && (
+          {/* OTP login / forgot-password — step 1: email */}
+          {(mode === 'otp' || mode === 'forgot') && step === 1 && (
             <div>
               <label className="field-label">Email</label>
               <input name="email" type="email" placeholder="you@email.com"
@@ -188,14 +203,22 @@ export default function LoginPage() {
             </>
           )}
 
-          {/* OTP code entry (shared by otp-login step 2 & register step 2) */}
-          {(mode === 'otp' || mode === 'register') && step === 2 && (
+          {/* OTP code entry (shared by otp-login, forgot-password & register step 2) */}
+          {(mode === 'otp' || mode === 'register' || mode === 'forgot') && step === 2 && (
             <div>
               <label className="field-label">Verification Code</label>
               <input name="otp" type="text" placeholder="000000"
                 value={form.otp} onChange={handleChange}
                 required className="field-input otp-input"
                 maxLength={6} autoFocus />
+              {mode === 'forgot' && (
+                <div style={{ marginTop: '14px' }}>
+                  <label className="field-label">New password</label>
+                  <input name="newPassword" type="password" placeholder="••••••••"
+                    value={form.newPassword} onChange={handleChange}
+                    required className="field-input" />
+                </div>
+              )}
               <p className="otp-resend">
                 Didn't get it?{' '}
                 <span onClick={() => { setStep(1); setSuccess(''); setError(''); }}>
