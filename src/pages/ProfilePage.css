@@ -697,10 +697,14 @@
 
   .profile-owner-actions {
     flex-direction: row;
+    flex-wrap: wrap;
     width: 100%;
   }
 
-  .status-select, .edit-profile-btn { flex: 1; }
+  /* Wrap 2-per-row so a crowded action row (Add friend / Accept / Decline /
+     Message / Share / Rate / Report / Block) stays fully on-screen instead of
+     spilling off the right edge. */
+  .status-select, .edit-profile-btn { flex: 1 1 calc(50% - 4px); }
 
   .profile-stats { gap: 20px; }
 
