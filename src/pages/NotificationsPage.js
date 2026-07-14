@@ -97,7 +97,7 @@ export default function NotificationsPage() {
                 className={`notif-card ${!n.is_read ? 'unread' : ''}`}
                 onClick={() => handleRead(n.id)}>
                 <div className="notif-icon">
-                  {TYPE_ICONS[n.notification_type] || '🔔'}
+                  {TYPE_ICONS[n.type] || '🔔'}
                 </div>
                 <div className="notif-body">
                   <p className="notif-message">{n.message}</p>
