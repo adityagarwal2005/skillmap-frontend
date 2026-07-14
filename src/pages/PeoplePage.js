@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../context/ToastContext';
-import { searchUsers, getCategories, getCategorySkills } from '../api/users';
+import {
+  searchUsers, getCategories, getCategorySkills,
+  getFriendRequests, respondFriendRequest, sendFriendRequest,
+} from '../api/users';
 import AppShell from '../components/AppShell';
 import { PostCardSkeleton } from '../components/Skeleton';
 import './FeedPage.css';
@@ -40,6 +43,9 @@ export default function PeoplePage() {
   const [searched, setSearched]       = useState(false);
   const [lastParams, setLastParams]   = useState(null);
   const [query, setQuery]             = useState('');
+  const [friendReqs, setFriendReqs]   = useState([]);   // incoming friend requests
+  const [cardStatus, setCardStatus]   = useState({});   // per-person status override
+  const [friendBusyId, setFriendBusyId] = useState(null);
 
   const [form, setForm] = useState({
     category_id: '',
@@ -51,6 +57,7 @@ export default function PeoplePage() {
 
   useEffect(() => {
     getCategories().then(r => setCategories(r.data.categories || [])).catch(() => {});
+    getFriendRequests().then(r => setFriendReqs(r.data.requests || [])).catch(() => {});
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         pos => setForm(f => ({ ...f, latitude: pos.coords.latitude, longitude: pos.coords.longitude })),
@@ -131,9 +138,100 @@ export default function PeoplePage() {
     }
   };
 
+  const statusOf = (person) => cardStatus[person.id] || person.friendship_status || 'none';
+
+  const handleAddFriend = async (e, person) => {
+    e.stopPropagation();
+    try {
+      setFriendBusyId(person.id);
+      const r = await sendFriendRequest(person.id);
+      setCardStatus(s => ({ ...s, [person.id]: r.data.status }));
+      showToast(r.data.message || 'Friend request sent', 'success');
+    } catch (err) {
+      showToast(err.response?.data?.error || 'Could not send request', 'error');
+    } finally { setFriendBusyId(null); }
+  };
+
+  const handleRespondReq = async (person, action) => {
+    try {
+      setFriendBusyId(person.id);
+      await respondFriendRequest(person.id, action);
+      setFriendReqs(prev => prev.filter(r => r.id !== person.id));
+      setCardStatus(s => ({ ...s, [person.id]: action === 'accept' ? 'friends' : 'none' }));
+      showToast(
+        action === 'accept' ? `You and ${person.username} are now friends` : 'Request declined',
+        'success'
+      );
+    } catch (err) {
+      showToast(err.response?.data?.error || 'Something went wrong', 'error');
+    } finally { setFriendBusyId(null); }
+  };
+
+  const FriendButton = ({ person }) => {
+    const st = statusOf(person);
+    const busy = friendBusyId === person.id;
+    if (st === 'friends') {
+      return <span className="person-friend-btn is-friends">✓ Friends</span>;
+    }
+    if (st === 'request_sent') {
+      return <span className="person-friend-btn is-pending">Requested</span>;
+    }
+    if (st === 'request_received') {
+      return (
+        <button className="person-friend-btn is-accept" disabled={busy}
+          onClick={e => { e.stopPropagation(); handleRespondReq(person, 'accept'); }}>
+          {busy ? '…' : '✓ Accept'}
+        </button>
+      );
+    }
+    return (
+      <button className="person-friend-btn" disabled={busy}
+        onClick={e => handleAddFriend(e, person)}>
+        {busy ? '…' : '＋ Add friend'}
+      </button>
+    );
+  };
+
   return (
     <AppShell active="people">
       <div className="people-wrapper">
+        {friendReqs.length > 0 && (
+          <div className="friend-reqs">
+            <h2 className="friend-reqs-title">
+              Friend requests <span className="friend-reqs-count">{friendReqs.length}</span>
+            </h2>
+            <div className="friend-reqs-list">
+              {friendReqs.map(req => (
+                <div key={req.id} className="friend-req-card">
+                  <div className="friend-req-person" onClick={() => navigate(`/profile/${req.id}`)}>
+                    <div className="person-ava">
+                      {req.profile_image
+                        ? <img className="ava-img" src={req.profile_image} alt="" />
+                        : req.username[0].toUpperCase()}
+                    </div>
+                    <div className="friend-req-info">
+                      <span className="person-name">{req.username}</span>
+                      {req.headline && <span className="person-headline">{req.headline}</span>}
+                    </div>
+                  </div>
+                  <div className="friend-req-actions">
+                    <button className="person-friend-btn is-accept"
+                      disabled={friendBusyId === req.id}
+                      onClick={() => handleRespondReq(req, 'accept')}>
+                      {friendBusyId === req.id ? '…' : 'Accept'}
+                    </button>
+                    <button className="person-friend-btn is-decline"
+                      disabled={friendBusyId === req.id}
+                      onClick={() => handleRespondReq(req, 'reject')}>
+                      Decline
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <div className="people-hero">
           <h1 className="people-heading">Find People</h1>
           <p className="people-sub">
@@ -242,6 +340,9 @@ export default function PeoplePage() {
                     <span className="person-stat">
                       📍 {person.distance_km != null ? `${person.distance_km} km` : '—'}
                     </span>
+                  </div>
+                  <div className="person-card-actions">
+                    <FriendButton person={person} />
                   </div>
                 </div>
               ))}

@@ -15,6 +15,10 @@ const TYPE_ICONS = {
   message:           '💬',
   reaction:          '🔥',
   comment:           '💬',
+  referral:          '🎉',
+  job_complete:      '🏁',
+  friend_request:    '👋',
+  friend_accepted:   '🤝',
 };
 
 function timeAgo(dateStr) {

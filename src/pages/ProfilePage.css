@@ -178,6 +178,35 @@
 
 .profile-share-btn { font-weight: 600; }
 
+/* Friend button states */
+.profile-friend-btn {
+  background: #4f7cff;
+  border-color: #4f7cff;
+  color: #fff;
+  font-weight: 700;
+}
+.profile-friend-btn:hover { background: #4f7cff; color: #fff; opacity: 0.88; }
+.profile-friend-btn.is-pending {
+  background: none;
+  border-color: var(--border-md);
+  color: var(--text-2);
+  font-weight: 600;
+}
+.profile-friend-btn.is-pending:hover { background: var(--elevated); color: var(--text-1); }
+.profile-friend-btn.is-friends {
+  background: var(--elevated);
+  border-color: var(--border-md);
+  color: var(--text-1);
+  font-weight: 600;
+}
+.profile-friend-btn.is-accept {
+  background: #22a559;
+  border-color: #22a559;
+  color: #fff;
+  font-weight: 700;
+}
+.profile-friend-btn.is-accept:hover { background: #22a559; color: #fff; opacity: 0.88; }
+
 /* Skills */
 .profile-skills-section {
   background: var(--surface);

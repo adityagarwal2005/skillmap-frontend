@@ -5,6 +5,7 @@ import { useToast } from '../context/ToastContext';
 import {
   getUser, addSkill, removeSkill, updateStatus, getUserPortfolio,
   blockUser, unblockUser, getBlockedUsers, reportContent,
+  sendFriendRequest, respondFriendRequest, removeFriend,
 } from '../api/users';
 import { startConversation } from '../api/work';
 import { endorseSkill, addReview } from '../api/users';
@@ -49,6 +50,8 @@ export default function ProfilePage() {
   const [avatarBroken, setAvatarBroken] = useState(false);
   const [isBlocked, setIsBlocked] = useState(false);
   const [blocking, setBlocking] = useState(false);
+  const [friendStatus, setFriendStatus] = useState('none'); // none|request_sent|request_received|friends|self
+  const [friendBusy, setFriendBusy] = useState(false);
   const [reportModal, setReportModal] = useState(false);
   const [reportReason, setReportReason] = useState('spam');
   const [reportDetails, setReportDetails] = useState('');
@@ -67,6 +70,7 @@ export default function ProfilePage() {
         getUserPortfolio(userId).catch(() => ({ data: { items: [] } })),
       ]);
       setProfile(uRes.data);
+      setFriendStatus(uRes.data.friendship_status || 'none');
       setPortfolio(pRes.data.items || []);
       setAvatarBroken(false);
     } catch {
@@ -181,6 +185,40 @@ export default function ProfilePage() {
     } finally {
       setEndorsing('');
     }
+  };
+
+  const handleAddFriend = async () => {
+    try {
+      setFriendBusy(true);
+      const r = await sendFriendRequest(userId);
+      setFriendStatus(r.data.status || 'request_sent');
+      showToast(r.data.message || 'Friend request sent', 'success');
+    } catch (err) {
+      showToast(err.response?.data?.error || 'Could not send request', 'error');
+    } finally { setFriendBusy(false); }
+  };
+
+  const handleAcceptFriend = async () => {
+    try {
+      setFriendBusy(true);
+      await respondFriendRequest(userId, 'accept');
+      setFriendStatus('friends');
+      showToast(`You and ${profile.username} are now friends`, 'success');
+    } catch (err) {
+      showToast(err.response?.data?.error || 'Could not accept', 'error');
+    } finally { setFriendBusy(false); }
+  };
+
+  const handleRemoveFriend = async (declined) => {
+    try {
+      setFriendBusy(true);
+      if (declined) await respondFriendRequest(userId, 'reject');
+      else await removeFriend(userId);
+      setFriendStatus('none');
+      showToast(declined ? 'Request declined' : 'Removed', 'success');
+    } catch (err) {
+      showToast(err.response?.data?.error || 'Something went wrong', 'error');
+    } finally { setFriendBusy(false); }
   };
 
   const [messaging, setMessaging] = useState(false);
@@ -311,6 +349,38 @@ export default function ProfilePage() {
                 </div>
               ) : (
                 <div className="profile-owner-actions">
+                  {!isBlocked && friendStatus === 'request_received' && (
+                    <>
+                      <button className="edit-profile-btn profile-friend-btn is-accept"
+                        onClick={handleAcceptFriend} disabled={friendBusy}>
+                        {friendBusy ? '…' : '✓ Accept friend'}
+                      </button>
+                      <button className="edit-profile-btn"
+                        onClick={() => handleRemoveFriend(true)} disabled={friendBusy}>
+                        Decline
+                      </button>
+                    </>
+                  )}
+                  {!isBlocked && friendStatus === 'none' && (
+                    <button className="edit-profile-btn profile-friend-btn"
+                      onClick={handleAddFriend} disabled={friendBusy}>
+                      {friendBusy ? '…' : '＋ Add friend'}
+                    </button>
+                  )}
+                  {!isBlocked && friendStatus === 'request_sent' && (
+                    <button className="edit-profile-btn profile-friend-btn is-pending"
+                      onClick={() => handleRemoveFriend(false)} disabled={friendBusy}
+                      title="Cancel request">
+                      {friendBusy ? '…' : 'Requested ✓'}
+                    </button>
+                  )}
+                  {!isBlocked && friendStatus === 'friends' && (
+                    <button className="edit-profile-btn profile-friend-btn is-friends"
+                      onClick={() => handleRemoveFriend(false)} disabled={friendBusy}
+                      title="Remove friend">
+                      {friendBusy ? '…' : '✓ Friends'}
+                    </button>
+                  )}
                   {!isBlocked && (
                     <button className="edit-profile-btn profile-msg-btn"
                       onClick={handleMessage} disabled={messaging}>

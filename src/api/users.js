@@ -52,6 +52,22 @@ export const getMyReferrals = () =>
 export const endorseSkill = (userId, skill) =>
   API.post(`/users/${userId}/endorse/`, new URLSearchParams({ skill }));
 
+// ── Friends ──
+export const sendFriendRequest = (userId) =>
+  API.post(`/users/${userId}/friend/`);
+
+export const respondFriendRequest = (userId, action) => // action: 'accept' | 'reject'
+  API.post(`/users/${userId}/friend/respond/`, new URLSearchParams({ action }));
+
+export const removeFriend = (userId) =>
+  API.post(`/users/${userId}/friend/remove/`);
+
+export const getFriendRequests = () =>
+  API.get('/users/friend-requests/');
+
+export const getFriends = () =>
+  API.get('/users/friends/');
+
 export const getCategories = () =>
   API.get('/categories/');
 

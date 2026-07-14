@@ -240,10 +240,107 @@
   font-weight: 600;
 }
 
+/* Per-card friend button */
+.person-card-actions {
+  margin-top: 12px;
+}
+.person-friend-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 34px;
+  width: 100%;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid #4f7cff;
+  background: #4f7cff;
+  color: #fff;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.person-friend-btn:hover { opacity: 0.88; }
+.person-friend-btn:disabled { opacity: 0.6; cursor: default; }
+.person-friend-btn.is-pending {
+  background: none;
+  border-color: var(--border-md);
+  color: var(--text-2);
+  font-weight: 600;
+  cursor: default;
+}
+.person-friend-btn.is-friends {
+  background: var(--elevated);
+  border-color: var(--border-md);
+  color: var(--text-1);
+  font-weight: 600;
+  cursor: default;
+}
+.person-friend-btn.is-accept { background: #22a559; border-color: #22a559; }
+.person-friend-btn.is-decline {
+  background: none;
+  border-color: var(--border-md);
+  color: var(--text-2);
+  font-weight: 600;
+  width: auto;
+}
+
+/* Friend-requests inbox at the top of People */
+.friend-reqs {
+  margin-bottom: 22px;
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--panel, var(--elevated));
+}
+.friend-reqs-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-1);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.friend-reqs-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  background: #4f7cff;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.friend-reqs-list { display: flex; flex-direction: column; gap: 10px; }
+.friend-req-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.friend-req-person {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  min-width: 0;
+}
+.friend-req-info { display: flex; flex-direction: column; min-width: 0; }
+.friend-req-actions { display: flex; gap: 8px; }
+.friend-req-actions .person-friend-btn { width: auto; padding: 0 18px; }
+
 @media (max-width: 600px) {
   .people-wrapper { padding: 22px 16px 60px; }
   .people-search-row { flex-wrap: wrap; }
   .people-search-input { min-width: 0; }
   .people-search-btn { width: 100%; }
   .people-grid { grid-template-columns: 1fr; }
+  .friend-req-card { flex-direction: column; align-items: stretch; }
+  .friend-req-actions { justify-content: stretch; }
+  .friend-req-actions .person-friend-btn { flex: 1; }
 }
