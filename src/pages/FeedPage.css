@@ -1846,9 +1846,13 @@ video.post-media-el { cursor: default; object-fit: contain; background: #000; }
   .mobile-nav-btn.active { color: #ffffff; }
   .mobile-nav-btn.is-create { color: rgba(245,245,247,0.9); }
 
-  /* keep page content clear of the fixed bar */
+  /* keep page content clear of the fixed bar — 88px matches the nav's real
+     footprint (padding + safe-area-inset-bottom on notched phones); this used
+     to say 72px here specifically, leaving a bare gray gap above the nav on
+     the Messages page that every other page didn't have. */
   .app-main { padding-bottom: 88px; }
-  .messages-layout { height: calc(100vh - 52px - 72px); }
+  .messages-layout { height: calc(100vh - 52px - 88px); }
+  .messages-layout { height: calc(100dvh - 52px - 88px); }
 }
 
 @media (max-width: 1100px) { .right-panel { display: none; } }

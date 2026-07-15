@@ -102,6 +102,17 @@ export default function AppShell({
     () => localStorage.getItem('smNudgeDismissed') === '1'
   );
   const [showPostSheet, setShowPostSheet] = useState(false);
+  // FeedPage's first-login welcome modal covers this same top-of-page area —
+  // without this the two rendered stacked on top of each other, illegibly.
+  const [welcomePending, setWelcomePending] = useState(
+    () => localStorage.getItem('smWelcomeSeen') !== '1'
+  );
+
+  useEffect(() => {
+    const onWelcomeDismissed = () => setWelcomePending(false);
+    window.addEventListener('sm:welcome-dismissed', onWelcomeDismissed);
+    return () => window.removeEventListener('sm:welcome-dismissed', onWelcomeDismissed);
+  }, []);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -138,7 +149,10 @@ export default function AppShell({
   ].filter(Boolean) : [];
   const onEditFlow = location.pathname.includes('/edit') ||
                      location.pathname.startsWith('/onboarding');
-  const showNudge = missing.length > 0 && !nudgeDismissed && !onEditFlow;
+  // The welcome modal only ever renders on the feed route ('/'), so only
+  // suppress the nudge there — no reason to hold it back on other pages.
+  const welcomeShowing = location.pathname === '/' && welcomePending;
+  const showNudge = missing.length > 0 && !nudgeDismissed && !onEditFlow && !welcomeShowing;
 
   const dismissNudge = () => {
     setNudgeDismissed(true);

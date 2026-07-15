@@ -30,22 +30,31 @@
 }
 
 .people-search-row {
-  position: relative;
   display: flex;
   gap: 10px;
   align-items: center;
 }
 
+/* Icon centers on the input specifically — not the whole row — so it stays
+   put even when the row wraps (button drops to its own line on mobile). */
+.people-search-input-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
 .people-search-icon {
   position: absolute;
   left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
   font-size: 1.05rem;
   color: var(--text-3);
   pointer-events: none;
 }
 
 .people-search-input {
-  flex: 1;
+  width: 100%;
   height: 46px;
   background: var(--elevated);
   border: 1px solid var(--border-md);
@@ -273,7 +282,7 @@
 @media (max-width: 600px) {
   .people-wrapper { padding: 22px 16px 60px; }
   .people-search-row { flex-wrap: wrap; }
-  .people-search-input { min-width: 0; }
+  .people-search-input-wrap { min-width: 100%; }
   .people-search-btn { width: 100%; }
   .people-grid { grid-template-columns: 1fr; }
   .friend-req-card { flex-direction: column; align-items: stretch; }

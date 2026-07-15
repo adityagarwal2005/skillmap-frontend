@@ -26,6 +26,9 @@ export default function FeedPage() {
   const dismissWelcome = () => {
     setShowWelcome(false);
     localStorage.setItem('smWelcomeSeen', '1');
+    // Let AppShell know it can show the "complete your profile" nudge now —
+    // both were popping up stacked on top of each other on first login.
+    window.dispatchEvent(new Event('sm:welcome-dismissed'));
   };
   const welcomeGo = (path) => { dismissWelcome(); navigate(path); };
 

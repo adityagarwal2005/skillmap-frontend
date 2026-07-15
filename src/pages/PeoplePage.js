@@ -178,13 +178,15 @@ export default function PeoplePage() {
 
         <form className="people-search" onSubmit={handleSearch}>
           <div className="people-search-row">
-            <span className="people-search-icon" aria-hidden="true">⌕</span>
-            <input
-              className="people-search-input"
-              placeholder="Search by username…"
-              value={query}
-              onChange={e => setQuery(e.target.value)}
-            />
+            <div className="people-search-input-wrap">
+              <span className="people-search-icon" aria-hidden="true">⌕</span>
+              <input
+                className="people-search-input"
+                placeholder="Search by username…"
+                value={query}
+                onChange={e => setQuery(e.target.value)}
+              />
+            </div>
             <button type="submit" className="people-search-btn" disabled={loading}>
               {loading ? 'Searching…' : 'Search'}
             </button>
