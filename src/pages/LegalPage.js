@@ -52,10 +52,11 @@ function TermsContent() {
 
       <h2>5. Location & identity</h2>
       <p>
-        Some features (finding nearby people, radius-filtered jobs/collabs) use your device
-        location, which you can decline — those features just won't work as well. To help people
-        verify who they're dealing with, posting or applying to freelance/collab work requires at
-        least one contact link (LinkedIn, Instagram, or WhatsApp) on your profile.
+        Some features (radius-filtered jobs/collabs) use your device location, which you can
+        decline — those features just won't work as well. Finding people by username doesn't use
+        location at all. To help people verify who they're dealing with, posting or applying to
+        freelance/collab work requires at least one connected account (GitHub, LinkedIn, or
+        Instagram) on your profile.
       </p>
 
       <h2>6. Account deletion</h2>

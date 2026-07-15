@@ -224,7 +224,7 @@ export default function EditProfilePage() {
             <section className="edit-section">
               <div className="edit-section-label">Social &amp; contact</div>
               <p className="edit-section-hint">
-                At least one of LinkedIn, Instagram, or WhatsApp is <strong>required</strong> to
+                At least one of GitHub, LinkedIn, or Instagram is <strong>required</strong> to
                 post or accept work — it's how people verify who they're dealing with.
               </p>
 

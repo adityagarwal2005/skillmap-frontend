@@ -358,6 +358,29 @@
 }
 .skill-remove:hover { color: var(--red); }
 
+/* Connect-an-account step (step 2) */
+.connect-fields { display: flex; flex-direction: column; gap: 12px; }
+
+.connect-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.connect-field-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border-radius: var(--radius-md);
+  background: var(--elevated);
+  color: var(--text-2);
+}
+
+.connect-field .create-input { flex: 1; }
+
 .no-skills { font-size: 0.9375rem; color: var(--text-3); }
 
 @media (max-width: 480px) {

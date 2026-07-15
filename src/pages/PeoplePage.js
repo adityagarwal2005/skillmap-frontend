@@ -2,21 +2,13 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../context/ToastContext';
 import {
-  searchUsers, getCategories, getCategorySkills,
+  searchUsers,
   getFriendRequests, respondFriendRequest, sendFriendRequest,
 } from '../api/users';
 import AppShell from '../components/AppShell';
 import { PostCardSkeleton } from '../components/Skeleton';
 import './FeedPage.css';
 import './PeoplePage.css';
-
-const RADII = [
-  { label: '1 km',   value: 1 },
-  { label: '5 km',   value: 5 },
-  { label: '10 km',  value: 10 },
-  { label: '50 km',  value: 50 },
-  { label: 'India',  value: 5000 },
-];
 
 const STATUS_LABELS = {
   open_to_freelance: 'Open to Freelance',
@@ -34,87 +26,31 @@ export default function PeoplePage() {
   const { showToast }        = useToast();
   const navigate             = useNavigate();
 
-  const [categories, setCategories]   = useState([]);
-  const [skills, setSkills]           = useState([]);
   const [results, setResults]         = useState([]);
   const [loading, setLoading]         = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore]         = useState(false);
   const [searched, setSearched]       = useState(false);
-  const [lastParams, setLastParams]   = useState(null);
   const [query, setQuery]             = useState('');
   const [friendReqs, setFriendReqs]   = useState([]);   // incoming friend requests
   const [cardStatus, setCardStatus]   = useState({});   // per-person status override
   const [friendBusyId, setFriendBusyId] = useState(null);
 
-  const [form, setForm] = useState({
-    category_id: '',
-    radius: 10,
-    skills: [],
-    latitude: '',
-    longitude: '',
-  });
-
   useEffect(() => {
-    getCategories().then(r => setCategories(r.data.categories || [])).catch(() => {});
     getFriendRequests().then(r => setFriendReqs(r.data.requests || [])).catch(() => {});
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        pos => setForm(f => ({ ...f, latitude: pos.coords.latitude, longitude: pos.coords.longitude })),
-        () => {},
-        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-      );
-    }
   }, []);
-
-  const handleCategoryChange = async e => {
-    const catId = e.target.value;
-    setForm(f => ({ ...f, category_id: catId, skills: [] }));
-    if (catId) {
-      try {
-        const res = await getCategorySkills(catId);
-        setSkills(res.data.skills || []);
-      } catch { setSkills([]); }
-    } else {
-      setSkills([]);
-    }
-  };
-
-  const toggleSkill = skill => {
-    setForm(f => ({
-      ...f,
-      skills: f.skills.includes(skill)
-        ? f.skills.filter(s => s !== skill)
-        : [...f.skills, skill],
-    }));
-  };
-
-  const buildParams = () => {
-    const q = query.trim();
-    const params = { radius: form.radius };
-    if (q) params.q = q;
-    if (form.category_id) params.category_id = form.category_id;
-    if (form.skills.length > 0) params.skills = form.skills.join(',');
-    // Location is optional — only send it (for distance/radius) when we have it.
-    if (form.latitude && form.longitude) {
-      params.latitude = form.latitude;
-      params.longitude = form.longitude;
-    }
-    return params;
-  };
 
   const handleSearch = async e => {
     e.preventDefault();
-    if (!query.trim() && !form.category_id && form.skills.length === 0) {
-      showToast('Type a username, or pick a category', 'error');
+    const q = query.trim();
+    if (!q) {
+      showToast('Type a username to search', 'error');
       return;
     }
     try {
       setLoading(true);
       setSearched(true);
-      const params = buildParams();
-      setLastParams(params);
-      const res = await searchUsers(params);
+      const res = await searchUsers({ q });
       setResults(res.data.results || []);
       setHasMore(!!res.data.has_more);
     } catch {
@@ -125,10 +61,11 @@ export default function PeoplePage() {
   };
 
   const handleLoadMore = async () => {
-    if (!lastParams) return;
+    const q = query.trim();
+    if (!q) return;
     setLoadingMore(true);
     try {
-      const res = await searchUsers({ ...lastParams, offset: results.length });
+      const res = await searchUsers({ q, offset: results.length });
       setResults(prev => [...prev, ...(res.data.results || [])]);
       setHasMore(!!res.data.has_more);
     } catch {
@@ -235,7 +172,7 @@ export default function PeoplePage() {
         <div className="people-hero">
           <h1 className="people-heading">Find People</h1>
           <p className="people-sub">
-            Discover people on campus — search by username, or browse by category.
+            Search for anyone on SkillMap by username — anywhere, no location needed.
           </p>
         </div>
 
@@ -252,50 +189,12 @@ export default function PeoplePage() {
               {loading ? 'Searching…' : 'Search'}
             </button>
           </div>
-
-          <div className="people-filter-row">
-            <select className="people-cat-select"
-              value={form.category_id} onChange={handleCategoryChange}>
-              <option value="">All categories</option>
-              {categories.map(c => (
-                <option key={c.id} value={c.id}>{c.name}</option>
-              ))}
-            </select>
-
-            <div className="radius-btns">
-              {RADII.map(r => (
-                <button key={r.value} type="button"
-                  className={`radius-btn ${form.radius === r.value ? 'active' : ''}`}
-                  onClick={() => setForm(f => ({ ...f, radius: r.value }))}>
-                  {r.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {skills.length > 0 && (
-            <div className="people-skill-row">
-              {skills.map(s => (
-                <button key={s.id} type="button"
-                  className={`skill-chip ${form.skills.includes(s.name) ? 'active' : ''}`}
-                  onClick={() => toggleSkill(s.name)}>
-                  {s.name}
-                </button>
-              ))}
-            </div>
-          )}
-
-          <p className="people-loc-note">
-            {form.latitude
-              ? '📍 Using your location to show distance'
-              : 'Location off — showing everyone, no distance filter'}
-          </p>
         </form>
 
         {!searched ? (
           <div className="state-box">
-            <h3>Find skilled people near you</h3>
-            <p>Search by username, or pick a category to start browsing.</p>
+            <h3>Find anyone by username</h3>
+            <p>Type a username to find them — SkillMap-wide, no location filter.</p>
           </div>
         ) : loading ? (
           <div className="people-grid">
@@ -304,7 +203,7 @@ export default function PeoplePage() {
         ) : results.length === 0 ? (
           <div className="state-box">
             <h3>No people found</h3>
-            <p>Try a different keyword, category, or a larger radius.</p>
+            <p>Double-check the username and try again.</p>
           </div>
         ) : (
           <>
@@ -337,9 +236,6 @@ export default function PeoplePage() {
                   )}
                   <div className="person-footer">
                     <span className="person-stat">⭐ {person.rating > 0 ? person.rating.toFixed(1) : '—'}</span>
-                    <span className="person-stat">
-                      📍 {person.distance_km != null ? `${person.distance_km} km` : '—'}
-                    </span>
                   </div>
                   <div className="person-card-actions">
                     <FriendButton person={person} />

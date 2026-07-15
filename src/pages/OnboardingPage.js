@@ -4,9 +4,16 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { getCategories, addSkill, editUser } from '../api/users';
 import { updateStatus } from '../api/users';
+import { LinkedInIcon, GitHubIcon, InstagramIcon } from '../components/SocialIcons';
 import './OnboardingPage.css';
 
-const STEPS = ['Category', 'Skills', 'Status', 'Location'];
+const STEPS = ['Category', 'Skills', 'Connect', 'Status', 'Location'];
+
+const CONNECT_FIELDS = [
+  { key: 'github_url',    label: 'GitHub',    icon: GitHubIcon,    placeholder: 'https://github.com/you' },
+  { key: 'linkedin_url',  label: 'LinkedIn',  icon: LinkedInIcon,  placeholder: 'https://linkedin.com/in/you' },
+  { key: 'instagram_url', label: 'Instagram', icon: InstagramIcon, placeholder: 'https://instagram.com/you' },
+];
 
 export default function OnboardingPage() {
   const { user } = useAuth();
@@ -19,6 +26,7 @@ export default function OnboardingPage() {
   const [selectedCat, setSelectedCat] = useState(null);
   const [skillInput, setSkillInput] = useState('');
   const [skills, setSkills]         = useState([]);
+  const [connect, setConnect]       = useState({ github_url: '', linkedin_url: '', instagram_url: '' });
   const [status, setStatus]         = useState('not_available');
   const [location, setLocation]     = useState({ lat: '', lon: '' });
   const [saving, setSaving]         = useState(false);
@@ -60,6 +68,9 @@ export default function OnboardingPage() {
       const payload = {};
       if (selectedCat) payload.category_id = selectedCat.id;
       if (location.lat) { payload.latitude = location.lat; payload.longitude = location.lon; }
+      for (const f of CONNECT_FIELDS) {
+        if (connect[f.key].trim()) payload[f.key] = connect[f.key].trim();
+      }
       if (Object.keys(payload).length > 0) await editUser(user.id, payload);
       if (status !== 'not_available') await updateStatus(status);
       for (const skill of skills) {
@@ -77,8 +88,10 @@ export default function OnboardingPage() {
     // categories actually loaded.
     if (step === 0) return !!selectedCat || categoriesFailed;
     if (step === 1) return skills.length > 0;
-    if (step === 2) return true;
+    // Connect an account — required, same as require_contact() on the backend.
+    if (step === 2) return CONNECT_FIELDS.some(f => connect[f.key].trim());
     if (step === 3) return true;
+    if (step === 4) return true;
     return false;
   };
 
@@ -163,6 +176,26 @@ export default function OnboardingPage() {
 
           {step === 2 && (
             <>
+              <h2 className="onboard-title">Connect an account</h2>
+              <p className="onboard-sub">
+                Add one so people can verify who they're dealing with — GitHub, LinkedIn, or Instagram.
+              </p>
+              <div className="connect-fields">
+                {CONNECT_FIELDS.map(f => (
+                  <div className="connect-field" key={f.key}>
+                    <span className="connect-field-icon">{f.icon}</span>
+                    <input className="create-input" type="url"
+                      placeholder={f.placeholder}
+                      value={connect[f.key]}
+                      onChange={e => setConnect(c => ({ ...c, [f.key]: e.target.value }))} />
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
+          {step === 3 && (
+            <>
               <h2 className="onboard-title">Set your availability</h2>
               <p className="onboard-sub">Let people know if you're open to work</p>
               <div className="status-options">
@@ -182,10 +215,10 @@ export default function OnboardingPage() {
             </>
           )}
 
-          {step === 3 && (
+          {step === 4 && (
             <>
               <h2 className="onboard-title">Share your location</h2>
-              <p className="onboard-sub">This helps people near you find you — only city-level precision is shown</p>
+              <p className="onboard-sub">Powers radius filtering on freelance/collab posts — only city-level precision is shown. People search doesn't use this.</p>
               <div className="location-box">
                 {location.lat ? (
                   <div className="location-captured">
@@ -207,8 +240,8 @@ export default function OnboardingPage() {
 
         {/* Actions */}
         <div className="onboard-actions">
-          {/* Category and Skills are required — only Status/Location can be skipped */}
-          {step >= 2 ? (
+          {/* Category, Skills, and Connect are required — only Status/Location can be skipped */}
+          {step >= 3 ? (
             <button className="onboard-skip" onClick={() => {
               if (step < STEPS.length - 1) setStep(s => s + 1);
               else navigate('/');
