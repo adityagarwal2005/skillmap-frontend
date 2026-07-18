@@ -3,7 +3,8 @@ import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { prepareMediaFile } from '../utils/mediaUpload';
-import { getConversations, sendMessage, getMessages } from '../api/work';
+import { getConversations, startConversation, sendMessage, getMessages } from '../api/work';
+import { getFriends } from '../api/users';
 import { ConversationSkeleton } from '../components/Skeleton';
 import AppShell from '../components/AppShell';
 import './FeedPage.css';
@@ -35,8 +36,24 @@ export default function MessagesPage() {
   const pollRef                           = useRef(null);
   const [searchParams]                    = useSearchParams();
 
+  // "New message" friend picker
+  const [friends, setFriends]             = useState([]);
+  const [showNewMsg, setShowNewMsg]        = useState(false);
+  const [startingWith, setStartingWith]    = useState(null);
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { loadConversations(); }, []);
+  useEffect(() => {
+    loadConversations();
+    getFriends().then(r => setFriends(r.data.friends || [])).catch(() => {});
+  }, []);
+
+  // Keep the mobile bottom nav out of the way while actually in a thread —
+  // it was competing with the input bar for the same reserved space,
+  // producing a visible dead gap that shifted around as the keyboard opened.
+  useEffect(() => {
+    document.body.classList.toggle('conv-active', !!activeConv);
+    return () => document.body.classList.remove('conv-active');
+  }, [activeConv]);
 
   useEffect(() => {
     if (activeConv) {
@@ -66,6 +83,22 @@ export default function MessagesPage() {
       }
     } catch { showToast('Failed to load conversations', 'error'); }
     finally { setLoadingConvs(false); }
+  };
+
+  const startNewConversation = async (friend) => {
+    try {
+      setStartingWith(friend.id);
+      const r = await startConversation(friend.id);
+      const convId = r.data.conversation_id;
+      const res = await getConversations();
+      const convs = res.data.conversations || [];
+      setConversations(convs);
+      const match = convs.find(cv => String(cv.id) === String(convId));
+      setActiveConv(match || { id: convId, with: friend.username, with_avatar: friend.profile_image, type: 'direct' });
+      setShowNewMsg(false);
+    } catch (err) {
+      showToast(err.response?.data?.error || 'Could not start chat', 'error');
+    } finally { setStartingWith(null); }
   };
 
   const loadMessages = async (convId) => {
@@ -114,7 +147,35 @@ export default function MessagesPage() {
         <aside className="convs-panel">
           <div className="convs-header">
             <h2 className="convs-title">Messages</h2>
+            <button type="button" className="convs-new-btn"
+              onClick={() => setShowNewMsg(s => !s)}
+              aria-label="New message">
+              {showNewMsg ? '×' : '＋'}
+            </button>
           </div>
+
+          {showNewMsg && (
+            <div className="new-msg-panel">
+              <div className="new-msg-panel-title">Message a friend</div>
+              {friends.length === 0 ? (
+                <div className="convs-empty">
+                  <p>No friends yet</p>
+                  <span>Add friends from Search or a profile to message them here</span>
+                </div>
+              ) : friends.map(friend => (
+                <div key={friend.id} className="friend-pick-row"
+                  onClick={() => startNewConversation(friend)}>
+                  <div className="conv-ava">
+                    {friend.profile_image
+                      ? <img className="ava-img" src={friend.profile_image} alt="" />
+                      : friend.username[0].toUpperCase()}
+                  </div>
+                  <span className="conv-name">{friend.username}</span>
+                  {startingWith === friend.id && <span className="friend-pick-busy">…</span>}
+                </div>
+              ))}
+            </div>
+          )}
 
           {loadingConvs ? (
             <>
@@ -125,7 +186,7 @@ export default function MessagesPage() {
           ) : conversations.length === 0 ? (
             <div className="convs-empty">
               <p>No conversations yet</p>
-              <span>Complete a freelance job or collab to start chatting</span>
+              <span>Message a friend, or complete a freelance job or collab to start chatting</span>
             </div>
           ) : conversations.map(conv => (
             <div key={conv.id}

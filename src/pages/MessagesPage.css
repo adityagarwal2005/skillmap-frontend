@@ -26,6 +26,9 @@
 }
 
 .convs-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: 22px 20px 16px;
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
@@ -40,6 +43,54 @@
   font-weight: 800;
   color: var(--text-1);
   letter-spacing: -0.03em;
+}
+
+.convs-new-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #0f172a;
+  color: #fff;
+  font-size: 1.125rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: opacity 0.15s;
+}
+.convs-new-btn:hover { opacity: 0.85; }
+
+.new-msg-panel {
+  border-bottom: 1px solid var(--border);
+  padding: 12px 0;
+}
+
+.new-msg-panel-title {
+  padding: 4px 20px 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.friend-pick-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  margin: 0 8px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background 0.14s;
+}
+.friend-pick-row:hover { background: var(--elevated); }
+
+.friend-pick-busy {
+  color: var(--text-3);
+  font-size: 0.875rem;
+  margin-left: auto;
 }
 
 .convs-empty {

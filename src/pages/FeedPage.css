@@ -1853,6 +1853,18 @@ video.post-media-el { cursor: default; object-fit: contain; background: #000; }
   .app-main { padding-bottom: 88px; }
   .messages-layout { height: calc(100vh - 52px - 88px); }
   .messages-layout { height: calc(100dvh - 52px - 88px); }
+
+  /* While a thread is actually open, drop the fixed bottom nav entirely —
+     on mobile, the on-screen keyboard resizes the visual viewport (100vh/
+     100dvh) inconsistently across browsers, so keeping the nav's reserved
+     88px in the layout math caused the thread + input bar to visibly jump
+     and leave a shifting blank gap every time the keyboard opened/closed.
+     Removing that fixed sibling and letting the thread simply fill the
+     remaining space (like WhatsApp/Telegram/IG DMs) removes the fight. */
+  body.conv-active .mobile-nav { display: none; }
+  body.conv-active .app-main { padding-bottom: 0; }
+  body.conv-active .messages-layout { height: calc(100vh - 52px); }
+  body.conv-active .messages-layout { height: calc(100dvh - 52px); }
 }
 
 @media (max-width: 1100px) { .right-panel { display: none; } }
