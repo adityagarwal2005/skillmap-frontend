@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useToast } from '../context/ToastContext';
 import { getNotifications, markAsRead, markAllAsRead } from '../api/notifications';
+import { respondFriendRequest } from '../api/users';
 import AppShell from '../components/AppShell';
 import { PostCardSkeleton } from '../components/Skeleton';
 import './FeedPage.css';
@@ -38,6 +39,10 @@ export default function NotificationsPage() {
 
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading]             = useState(true);
+  const [busyId, setBusyId]               = useState(null);
+  // Per-notification override once actioned here, so the buttons update
+  // immediately without waiting on a re-fetch.
+  const [statusOverride, setStatusOverride] = useState({});
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { load(); }, []);
@@ -66,6 +71,21 @@ export default function NotificationsPage() {
     } catch { showToast('Failed to mark all as read', 'error'); }
   };
 
+  const handleRespond = async (e, n, action) => {
+    e.stopPropagation();
+    try {
+      setBusyId(n.id);
+      await respondFriendRequest(n.actor_id, action);
+      setStatusOverride(s => ({ ...s, [n.id]: action === 'accept' ? 'friends' : 'none' }));
+      showToast(
+        action === 'accept' ? `You and ${n.actor_username} are now friends` : 'Request declined',
+        'success'
+      );
+    } catch (err) {
+      showToast(err.response?.data?.error || 'Something went wrong', 'error');
+    } finally { setBusyId(null); }
+  };
+
   const unreadCount = notifications.filter(n => !n.is_read).length;
 
   return (
@@ -92,20 +112,43 @@ export default function NotificationsPage() {
           </div>
         ) : (
           <div className="notif-list">
-            {notifications.map(n => (
-              <div key={n.id}
-                className={`notif-card ${!n.is_read ? 'unread' : ''}`}
-                onClick={() => handleRead(n.id)}>
-                <div className="notif-icon">
-                  {TYPE_ICONS[n.type] || '🔔'}
+            {notifications.map(n => {
+              const friendStatus = statusOverride[n.id] || n.friendship_status;
+              const showFriendActions = n.type === 'friend_request' && n.actor_id
+                && friendStatus === 'request_received';
+              const busy = busyId === n.id;
+              return (
+                <div key={n.id}
+                  className={`notif-card ${!n.is_read ? 'unread' : ''}`}
+                  onClick={() => handleRead(n.id)}>
+                  <div className="notif-icon">
+                    {n.actor_avatar
+                      ? <img className="notif-actor-ava" src={n.actor_avatar} alt="" />
+                      : TYPE_ICONS[n.type] || '🔔'}
+                  </div>
+                  <div className="notif-body">
+                    <p className="notif-message">{n.message}</p>
+                    <span className="notif-time">{timeAgo(n.created_at)}</span>
+                    {showFriendActions && (
+                      <div className="notif-actions">
+                        <button className="notif-action-btn is-accept" disabled={busy}
+                          onClick={e => handleRespond(e, n, 'accept')}>
+                          {busy ? '…' : 'Accept'}
+                        </button>
+                        <button className="notif-action-btn is-decline" disabled={busy}
+                          onClick={e => handleRespond(e, n, 'reject')}>
+                          Decline
+                        </button>
+                      </div>
+                    )}
+                    {n.type === 'friend_request' && friendStatus === 'friends' && (
+                      <span className="notif-friend-state">✓ Friends</span>
+                    )}
+                  </div>
+                  {!n.is_read && <div className="notif-dot" />}
                 </div>
-                <div className="notif-body">
-                  <p className="notif-message">{n.message}</p>
-                  <span className="notif-time">{timeAgo(n.created_at)}</span>
-                </div>
-                {!n.is_read && <div className="notif-dot" />}
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
