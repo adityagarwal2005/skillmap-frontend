@@ -64,6 +64,13 @@ body {
 }
 
 button  { cursor: pointer; border: none; outline: none; font-family: inherit; background: none; }
+
+/* Tactile press feedback. Hover states never fire on touch, so on a phone
+   every button felt dead when tapped. A subtle opacity dip on :active gives
+   universal, layout-neutral press feedback (Apple-HIG style) without needing
+   a bespoke rule on each of the ~70 button classes. It's a state, not an
+   animation, so reduced-motion users still get the cue. */
+button:not(:disabled):active { opacity: 0.6; }
 input, textarea, select { outline: none; border: none; font-family: inherit; background: none; color: inherit; }
 a { text-decoration: none; color: inherit; }
 
@@ -130,6 +137,39 @@ a { text-decoration: none; color: inherit; }
   --steel-solid: #161618;
   --steel-panel: linear-gradient(157deg, var(--steel-1) 0%, var(--steel-2) 55%, var(--steel-3) 100%);
 }
+
+/* ── Dark-mode primary buttons ───────────────────────────────────
+   Primary action buttons across the app hardcode #0f172a (dark navy)
+   with no dark-mode variant, so on the near-black dark theme they turn
+   muddy and lose their "primary" prominence against the panel. Invert
+   them to the accent (light fill, dark text) in dark mode — this is
+   exactly what the dark chrome already does for .topbar-search-btn, so
+   it matches an existing pattern rather than inventing one, and it's
+   what the --accent token (which flips light↔dark) is designed for.
+   Uses html[...] so specificity (0,2,1) beats page :hover rules that
+   re-assert #0f172a (0,2,0), keeping the fill correct on hover too;
+   each button's own opacity-dip hover still reads through. */
+html[data-theme="dark"] .create-submit,
+html[data-theme="dark"] .post-job-btn,
+html[data-theme="dark"] .wr-apply-btn,
+html[data-theme="dark"] .convs-new-btn,
+html[data-theme="dark"] .msg-send-btn,
+html[data-theme="dark"] .location-btn,
+html[data-theme="dark"] .people-search-btn,
+html[data-theme="dark"] .comment-submit,
+html[data-theme="dark"] .profile-msg-btn,
+html[data-theme="dark"] .search-inline-btn,
+html[data-theme="dark"] .settings-save-btn,
+html[data-theme="dark"] .opp-cta,
+html[data-theme="dark"] .status-composer-btn {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);
+}
+
+/* The onboarding progress fill is #0f172a on a dark track in dark mode —
+   i.e. invisible. Make it light so progress actually reads. */
+html[data-theme="dark"] .onboard-bar-fill { background: var(--accent); }
 
 /* Editorial rendering polish */
 body { text-rendering: optimizeLegibility; }
