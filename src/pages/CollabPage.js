@@ -9,6 +9,7 @@ import {
 import API from '../api/config';
 import AppShell from '../components/AppShell';
 import { PostCardSkeleton } from '../components/Skeleton';
+import Lightbox from '../components/Lightbox';
 import './FeedPage.css';
 import './FreelancePage.css';   // Collab reuses .freelance-header/.wr-* card styles
 import './CollabPage.css';
@@ -17,6 +18,7 @@ export default function CollabPage() {
   const { showToast }        = useToast();
   const navigate             = useNavigate();
 
+  const [lightboxSrc, setLightboxSrc] = useState(null);
   const [tab, setTab]           = useState('browse');
   const [posts, setPosts]       = useState([]);
   const [myPosts, setMyPosts]   = useState([]);
@@ -241,7 +243,7 @@ export default function CollabPage() {
                   {post.media_type === 'video'
                     ? <video className="post-media-el" src={post.media} controls playsInline />
                     : <img className="post-media-el" src={post.media} alt=""
-                        onClick={() => window.open(post.media, '_blank')} />}
+                        onClick={() => setLightboxSrc(post.media)} />}
                 </div>
               )}
               <div className="wr-skills">
@@ -281,7 +283,7 @@ export default function CollabPage() {
                   {post.media_type === 'video'
                     ? <video className="post-media-el" src={post.media} controls playsInline />
                     : <img className="post-media-el" src={post.media} alt=""
-                        onClick={() => window.open(post.media, '_blank')} />}
+                        onClick={() => setLightboxSrc(post.media)} />}
                 </div>
               )}
               <div className="wr-skills">
@@ -437,6 +439,8 @@ export default function CollabPage() {
           </div>
         </div>
       )}
+
+      {lightboxSrc && <Lightbox src={lightboxSrc} onClose={() => setLightboxSrc(null)} />}
     </AppShell>
   );
 }

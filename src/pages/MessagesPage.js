@@ -6,6 +6,7 @@ import { prepareMediaFile } from '../utils/mediaUpload';
 import { getConversations, startConversation, sendMessage, getMessages } from '../api/work';
 import { getFriends } from '../api/users';
 import { ConversationSkeleton } from '../components/Skeleton';
+import Lightbox from '../components/Lightbox';
 import AppShell from '../components/AppShell';
 import './FeedPage.css';
 import './MessagesPage.css';
@@ -40,6 +41,7 @@ export default function MessagesPage() {
   const [friends, setFriends]             = useState([]);
   const [showNewMsg, setShowNewMsg]        = useState(false);
   const [startingWith, setStartingWith]    = useState(null);
+  const [lightboxSrc, setLightboxSrc]      = useState(null);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
@@ -266,7 +268,7 @@ export default function MessagesPage() {
                           msg.media_type === 'video'
                             ? <video className="msg-media" src={msg.media_url} controls playsInline />
                             : <img className="msg-media" src={msg.media_url} alt=""
-                                onClick={() => window.open(msg.media_url, '_blank')} />
+                                onClick={() => setLightboxSrc(msg.media_url)} />
                         )}
                         {msg.text && <p className="msg-text">{msg.text}</p>}
                         <span className="msg-time">{timeAgo(msg.created_at)}</span>
@@ -316,6 +318,8 @@ export default function MessagesPage() {
           )}
         </main>
       </div>
+
+      {lightboxSrc && <Lightbox src={lightboxSrc} onClose={() => setLightboxSrc(null)} />}
     </AppShell>
   );
 }

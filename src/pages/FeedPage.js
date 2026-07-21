@@ -6,6 +6,7 @@ import { getFeed, getTrending } from '../api/feed';
 import { getDiscoverPeople } from '../api/users';
 import { PostCardSkeleton } from '../components/Skeleton';
 import AppShell from '../components/AppShell';
+import Lightbox from '../components/Lightbox';
 import './FeedPage.css';
 
 export default function FeedPage() {
@@ -19,6 +20,7 @@ export default function FeedPage() {
   const [hasMore, setHasMore] = useState(false);
   const [tab, setTab]         = useState('for-you');
   const [people, setPeople]   = useState([]);
+  const [lightboxSrc, setLightboxSrc] = useState(null);
   const [showWelcome, setShowWelcome] = useState(
     () => localStorage.getItem('smWelcomeSeen') !== '1'
   );
@@ -176,7 +178,7 @@ export default function FeedPage() {
                     ? <video className="post-media-el" src={item.media} controls playsInline
                         onClick={e => e.stopPropagation()} />
                     : <img className="post-media-el" src={item.media} alt=""
-                        onClick={e => { e.stopPropagation(); window.open(item.media, '_blank'); }} />}
+                        onClick={e => { e.stopPropagation(); setLightboxSrc(item.media); }} />}
                 </div>
               )}
 
@@ -254,6 +256,8 @@ export default function FeedPage() {
           </div>
         </div>
       )}
+
+      {lightboxSrc && <Lightbox src={lightboxSrc} onClose={() => setLightboxSrc(null)} />}
     </AppShell>
   );
 }

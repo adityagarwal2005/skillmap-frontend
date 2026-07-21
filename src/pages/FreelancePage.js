@@ -10,6 +10,7 @@ import {
 import API from '../api/config';
 import AppShell from '../components/AppShell';
 import { PostCardSkeleton } from '../components/Skeleton';
+import Lightbox from '../components/Lightbox';
 import './FeedPage.css';
 import './FreelancePage.css';
 
@@ -37,6 +38,7 @@ export default function FreelancePage() {
   const { showToast }        = useToast();
   const navigate             = useNavigate();
 
+  const [lightboxSrc, setLightboxSrc] = useState(null);
   const [tab, setTab]               = useState('available');
   const [available, setAvailable]   = useState([]);
   const [myJobs, setMyJobs]         = useState([]);
@@ -319,7 +321,7 @@ export default function FreelancePage() {
                   {wr.media_type === 'video'
                     ? <video className="post-media-el" src={wr.media} controls playsInline />
                     : <img className="post-media-el" src={wr.media} alt=""
-                        onClick={() => window.open(wr.media, '_blank')} />}
+                        onClick={() => setLightboxSrc(wr.media)} />}
                 </div>
               )}
               <div className="wr-skills">
@@ -538,6 +540,8 @@ export default function FreelancePage() {
           </div>
         </div>
       )}
+
+      {lightboxSrc && <Lightbox src={lightboxSrc} onClose={() => setLightboxSrc(null)} />}
     </AppShell>
   );
 }

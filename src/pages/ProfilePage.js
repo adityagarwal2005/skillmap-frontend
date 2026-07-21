@@ -21,6 +21,13 @@ const WhatsAppIcon = (
   </svg>
 );
 
+// Defense in depth: these URLs are user-supplied and rendered as a
+// clickable <a href>. The backend now rejects non-http(s) schemes on
+// save, but this guards any already-stored rows and any other client
+// hitting the API directly — a javascript: URI here would otherwise
+// run in the visiting user's browser when they click the link.
+const isSafeHref = (url) => /^https?:\/\//i.test(url);
+
 const SOCIALS = [
   { key: 'linkedin_url',  label: 'LinkedIn',  brand: 'linkedin',  icon: LinkedInIcon },
   { key: 'github_url',    label: 'GitHub',    brand: 'github',    icon: GitHubIcon },
@@ -419,7 +426,7 @@ export default function ProfilePage() {
                   const raw = profile[s.key];
                   const url = s.key === 'whatsapp'
                     ? (raw ? `https://wa.me/${String(raw).replace(/\D/g, '')}` : null)
-                    : raw;
+                    : (raw && isSafeHref(raw) ? raw : null);
                   return url ? (
                     <a key={s.key} href={url} target="_blank" rel="noreferrer"
                       className="social-card">
