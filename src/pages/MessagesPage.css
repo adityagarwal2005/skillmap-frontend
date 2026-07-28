@@ -146,6 +146,10 @@
 
 .conv-item.active .conv-ava { background: rgba(255,255,255,0.16); }
 
+/* Collab group threads — a shared team icon instead of one person's avatar,
+   since the "with" field here is the collab post title, not a username. */
+.conv-ava.is-group { background: #4f7cff; font-size: 19px; }
+
 .conv-info { flex: 1; min-width: 0; }
 
 .conv-top-row {
@@ -459,9 +463,13 @@ video.msg-media { cursor: default; }
     max-width: none;
     width: 100%;
     margin: 0;
-    /* leave room for the 52px topbar + 72px fixed mobile bottom nav */
-    height: calc(100vh - 52px - 72px);
-    height: calc(100dvh - 52px - 72px);
+    /* leave room for the 52px topbar + 88px fixed mobile bottom nav (must
+       match FeedPage.css's .app-main padding-bottom — this file loads after
+       FeedPage.css and had its own copy of this calc still using the old
+       72px figure, silently overriding FeedPage.css's fix via cascade order
+       whenever no conversation is open). */
+    height: calc(100vh - 52px - 88px);
+    height: calc(100dvh - 52px - 88px);
     border: none;
     border-radius: 0;
     box-shadow: none;

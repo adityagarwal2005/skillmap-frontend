@@ -20,6 +20,7 @@ const TYPE_ICONS = {
   job_complete:      '🏁',
   friend_request:    '👋',
   friend_accepted:   '🤝',
+  collab_match:      '🧩',
 };
 
 function timeAgo(dateStr) {

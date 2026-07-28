@@ -83,17 +83,6 @@ export const removeSkill = (userId, skill) =>
 export const getUserPortfolio = (userId, params = {}) =>
   API.get(`/portfolio/user/${userId}/`, { params });
 
-export const getUserCertificates = (userId) =>
-  API.get(`/users/${userId}/certificates/`);
-
-export const addCertificate = (formData) =>
-  API.post('/certificates/add/', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' }
-  });
-
-export const removeCertificate = (certId) =>
-  API.delete(`/certificates/${certId}/remove/`);
-
 export const getUserReviews = (userId) =>
   API.get(`/reviews/user/${userId}/`);
 

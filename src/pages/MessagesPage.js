@@ -194,10 +194,12 @@ export default function MessagesPage() {
             <div key={conv.id}
               className={`conv-item ${activeConv?.id === conv.id ? 'active' : ''}`}
               onClick={() => setActiveConv(conv)}>
-              <div className="conv-ava">
-                {conv.with_avatar
-                  ? <img className="ava-img" src={conv.with_avatar} alt="" />
-                  : conv.with?.[0]?.toUpperCase() || '?'}
+              <div className={`conv-ava ${conv.is_group ? 'is-group' : ''}`}>
+                {conv.is_group
+                  ? '👥'
+                  : conv.with_avatar
+                    ? <img className="ava-img" src={conv.with_avatar} alt="" />
+                    : conv.with?.[0]?.toUpperCase() || '?'}
               </div>
               <div className="conv-info">
                 <div className="conv-top-row">
@@ -208,7 +210,9 @@ export default function MessagesPage() {
                 </div>
                 <div className="conv-bottom-row">
                   <span className="conv-preview">{conv.last_message || 'No messages yet'}</span>
-                  <span className="conv-type-tag">{conv.type}</span>
+                  <span className="conv-type-tag">
+                    {conv.is_group ? `${conv.participant_count} people` : conv.type}
+                  </span>
                 </div>
               </div>
             </div>
@@ -228,15 +232,19 @@ export default function MessagesPage() {
               <div className="thread-header">
                 <button className="thread-back-btn" aria-label="Back to conversations"
                   onClick={() => setActiveConv(null)}>←</button>
-                <div className="conv-ava">
-                  {activeConv.with_avatar
-                    ? <img className="ava-img" src={activeConv.with_avatar} alt="" />
-                    : activeConv.with?.[0]?.toUpperCase() || '?'}
+                <div className={`conv-ava ${activeConv.is_group ? 'is-group' : ''}`}>
+                  {activeConv.is_group
+                    ? '👥'
+                    : activeConv.with_avatar
+                      ? <img className="ava-img" src={activeConv.with_avatar} alt="" />
+                      : activeConv.with?.[0]?.toUpperCase() || '?'}
                 </div>
                 <div>
                   <div className="thread-name">{activeConv.with}</div>
                   <div className="thread-type">
-                    {activeConv.type === 'direct' ? 'Direct message' : `${activeConv.type} project`}
+                    {activeConv.is_group
+                      ? `Collab team · ${activeConv.participant_count} people`
+                      : activeConv.type === 'direct' ? 'Direct message' : `${activeConv.type} project`}
                   </div>
                 </div>
               </div>
@@ -304,7 +312,7 @@ export default function MessagesPage() {
                 </label>
                 <input
                   className="msg-input"
-                  placeholder={`Message ${activeConv.with}...`}
+                  placeholder={activeConv.is_group ? 'Message the team...' : `Message ${activeConv.with}...`}
                   value={text}
                   onChange={e => setText(e.target.value)}
                   onKeyDown={handleKeyDown}
