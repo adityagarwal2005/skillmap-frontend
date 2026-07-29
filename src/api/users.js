@@ -3,6 +3,10 @@ import API from './config';
 export const getUser = (userId) =>
   API.get(`/users/${userId}/`);
 
+// Public — no auth required. Powers the shareable /u/:username profile page.
+export const getUserByUsername = (username) =>
+  API.get(`/users/by-username/${encodeURIComponent(username)}/`);
+
 export const editUser = (userId, data) =>
   API.post(`/users/${userId}/edit/`, new URLSearchParams(data));
 

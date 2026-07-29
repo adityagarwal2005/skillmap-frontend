@@ -37,6 +37,8 @@ const EditProfilePage  = lazyRetry(() => import('./pages/EditProfilePage'));
 const ApplicationsPage = lazyRetry(() => import('./pages/ApplicationsPage'));
 const JoinPage         = lazyRetry(() => import('./pages/JoinPage'));
 const LegalPage        = lazyRetry(() => import('./pages/LegalPage'));
+const PublicProfilePage = lazyRetry(() => import('./pages/PublicProfilePage'));
+const LandingPage       = lazyRetry(() => import('./pages/LandingPage'));
 
 const Loader = () => (
   <div style={{
@@ -60,8 +62,9 @@ function App() {
           <Route path="/join/:username"           element={user ? <Navigate to="/" /> : <JoinPage />} />
           <Route path="/terms"                    element={<LegalPage />} />
           <Route path="/privacy"                  element={<LegalPage />} />
+          <Route path="/u/:username"              element={<PublicProfilePage />} />
           <Route path="/onboarding"               element={user ? <OnboardingPage /> : <Navigate to="/login" />} />
-          <Route path="/"                         element={user ? <FeedPage /> : <Navigate to="/login" />} />
+          <Route path="/"                         element={user ? <FeedPage /> : <LandingPage />} />
           <Route path="/profile/:userId"          element={user ? <ProfilePage /> : <Navigate to="/login" />} />
           <Route path="/profile/:userId/edit"     element={user ? <EditProfilePage /> : <Navigate to="/login" />} />
           <Route path="/create-post"              element={user ? <CreatePostPage /> : <Navigate to="/login" />} />

@@ -12,6 +12,7 @@ import { endorseSkill, addReview } from '../api/users';
 import { ProfileHeaderSkeleton } from '../components/Skeleton';
 import AppShell from '../components/AppShell';
 import { LinkedInIcon, GitHubIcon, InstagramIcon } from '../components/SocialIcons';
+import { isSafeHref } from '../utils/safeUrl';
 import './FeedPage.css';
 import './ProfilePage.css';
 
@@ -20,13 +21,6 @@ const WhatsAppIcon = (
     <path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-2.9.8.8-2.8-.2-.3A8 8 0 1 1 12 20zm4.4-6c-.2-.1-1.4-.7-1.6-.8s-.4-.1-.5.1-.6.8-.8 1-.3.2-.5.1a6.5 6.5 0 0 1-3.2-2.8c-.2-.4.2-.4.6-1.2a.4.4 0 0 0 0-.4l-.8-1.9c-.2-.5-.4-.4-.5-.4h-.5a.9.9 0 0 0-.7.3A2.8 2.8 0 0 0 6.8 10c0 1.6 1.2 3.2 1.4 3.4s2.3 3.6 5.6 5c.8.3 1.4.5 1.9.4.6-.1 1.4-.6 1.6-1.1s.2-1 .1-1.1-.3-.2-.6-.3z"/>
   </svg>
 );
-
-// Defense in depth: these URLs are user-supplied and rendered as a
-// clickable <a href>. The backend now rejects non-http(s) schemes on
-// save, but this guards any already-stored rows and any other client
-// hitting the API directly — a javascript: URI here would otherwise
-// run in the visiting user's browser when they click the link.
-const isSafeHref = (url) => /^https?:\/\//i.test(url);
 
 const SOCIALS = [
   { key: 'linkedin_url',  label: 'LinkedIn',  brand: 'linkedin',  icon: LinkedInIcon },
@@ -242,7 +236,10 @@ export default function ProfilePage() {
   };
 
   const handleShare = async () => {
-    const url = `${window.location.origin}/profile/${userId}`;
+    // /profile/:userId requires login — anyone who isn't already a member
+    // hit a login wall instead of actually seeing the profile they were
+    // sent. /u/:username is the public, no-login card meant for this.
+    const url = `${window.location.origin}/u/${profile.username}`;
     // Native share sheet on mobile; clipboard copy everywhere else.
     if (navigator.share) {
       try { await navigator.share({ title: `${profile.username} on SkillMap`, url }); } catch {}
