@@ -331,6 +331,14 @@ export default function ProfilePage() {
                       <span className="profile-stat-label">Rating ({profile.review_count})</span>
                     </div>
                   )}
+                  {!isOwn && profile.mutual_friends_count > 0 && (
+                    <div className="profile-stat">
+                      <span className="profile-stat-val">{profile.mutual_friends_count}</span>
+                      <span className="profile-stat-label">
+                        Mutual friend{profile.mutual_friends_count === 1 ? '' : 's'}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -459,6 +467,11 @@ export default function ProfilePage() {
                   <span key={sk.name} className={`skill-tag ${sk.endorsements > 0 ? 'has-endorse' : ''}`}>
                     {sk.name}
                     {sk.endorsements > 0 && <span className="skill-endorse-count">{sk.endorsements}</span>}
+                    {sk.verified_endorsements > 0 && (
+                      <span className="skill-verified-badge" title="Endorsed by someone who's actually worked with them">
+                        ✓ verified
+                      </span>
+                    )}
                     {isOwn ? (
                       <button className="skill-remove" onClick={() => handleRemoveSkill(sk.name)}>×</button>
                     ) : (

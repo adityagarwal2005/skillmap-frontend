@@ -31,3 +31,23 @@ export const respondToCollabRequest = (requestId, status) =>
 
 export const closeCollabPost = (postId) =>
   API.post(`/collab/${postId}/close/`);
+
+// Task board
+export const getCollabTasks = (postId) =>
+  API.get(`/collab/${postId}/tasks/`);
+
+export const createCollabTask = (postId, title, assigneeId) =>
+  API.post(`/collab/${postId}/tasks/create/`, new URLSearchParams({
+    title, ...(assigneeId ? { assignee_id: assigneeId } : {}),
+  }));
+
+export const toggleCollabTask = (taskId) =>
+  API.post(`/collab/tasks/${taskId}/toggle/`);
+
+export const assignCollabTask = (taskId, assigneeId) =>
+  API.post(`/collab/tasks/${taskId}/assign/`, new URLSearchParams(
+    assigneeId ? { assignee_id: assigneeId } : {}
+  ));
+
+export const deleteCollabTask = (taskId) =>
+  API.delete(`/collab/tasks/${taskId}/delete/`);

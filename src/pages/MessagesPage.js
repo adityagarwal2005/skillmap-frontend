@@ -7,6 +7,7 @@ import { getConversations, startConversation, sendMessage, getMessages } from '.
 import { getFriends } from '../api/users';
 import { ConversationSkeleton } from '../components/Skeleton';
 import Lightbox from '../components/Lightbox';
+import CollabTasksPanel from '../components/CollabTasksPanel';
 import AppShell from '../components/AppShell';
 import './FeedPage.css';
 import './MessagesPage.css';
@@ -42,6 +43,7 @@ export default function MessagesPage() {
   const [showNewMsg, setShowNewMsg]        = useState(false);
   const [startingWith, setStartingWith]    = useState(null);
   const [lightboxSrc, setLightboxSrc]      = useState(null);
+  const [showTasks, setShowTasks]          = useState(false);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
@@ -56,6 +58,8 @@ export default function MessagesPage() {
     document.body.classList.toggle('conv-active', !!activeConv);
     return () => document.body.classList.remove('conv-active');
   }, [activeConv]);
+
+  useEffect(() => { setShowTasks(false); }, [activeConv?.id]);
 
   useEffect(() => {
     if (activeConv) {
@@ -247,6 +251,12 @@ export default function MessagesPage() {
                       : activeConv.type === 'direct' ? 'Direct message' : `${activeConv.type} project`}
                   </div>
                 </div>
+                {activeConv.is_group && (
+                  <button type="button" className="thread-tasks-btn"
+                    onClick={() => setShowTasks(s => !s)}>
+                    📋 Tasks
+                  </button>
+                )}
               </div>
 
               <div className="thread-messages">
@@ -322,6 +332,18 @@ export default function MessagesPage() {
                   Send
                 </button>
               </form>
+
+              {showTasks && activeConv.is_group && (
+                <CollabTasksPanel
+                  postId={activeConv.collab_post_id}
+                  participants={[
+                    { id: user.id, username: user.username },
+                    ...(activeConv.participants || []),
+                  ]}
+                  currentUserId={user.id}
+                  onClose={() => setShowTasks(false)}
+                />
+              )}
             </>
           )}
         </main>

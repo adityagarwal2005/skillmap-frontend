@@ -137,6 +137,11 @@ export default function PublicProfilePage() {
                     <span key={sk.name} className={`skill-tag ${sk.endorsements > 0 ? 'has-endorse' : ''}`}>
                       {sk.name}
                       {sk.endorsements > 0 && <span className="skill-endorse-count">{sk.endorsements}</span>}
+                      {sk.verified_endorsements > 0 && (
+                        <span className="skill-verified-badge" title="Endorsed by someone who's actually worked with them">
+                          ✓ verified
+                        </span>
+                      )}
                     </span>
                   ))}
                 </div>
