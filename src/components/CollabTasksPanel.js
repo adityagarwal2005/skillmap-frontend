@@ -13,7 +13,7 @@ import './CollabTasksPanel.css';
  * assign tasks, but only the task's creator or the collab owner can delete
  * one (enforced server-side too).
  */
-export default function CollabTasksPanel({ postId, participants, currentUserId, onClose }) {
+export default function CollabTasksPanel({ postId, participants, currentUserId, isCollabOwner, onClose }) {
   const { showToast } = useToast();
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -128,7 +128,7 @@ export default function CollabTasksPanel({ postId, participants, currentUserId, 
                 ))}
               </select>
             </div>
-            {task.created_by_id === currentUserId && (
+            {(task.created_by_id === currentUserId || isCollabOwner) && (
               <button className="task-delete" aria-label="Delete task"
                 disabled={busyId === task.id}
                 onClick={() => handleDelete(task)}>×</button>

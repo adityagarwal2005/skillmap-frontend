@@ -251,7 +251,7 @@ export default function MessagesPage() {
                       : activeConv.type === 'direct' ? 'Direct message' : `${activeConv.type} project`}
                   </div>
                 </div>
-                {activeConv.is_group && (
+                {activeConv.is_group && activeConv.collab_post_id && (
                   <button type="button" className="thread-tasks-btn"
                     onClick={() => setShowTasks(s => !s)}>
                     📋 Tasks
@@ -333,7 +333,7 @@ export default function MessagesPage() {
                 </button>
               </form>
 
-              {showTasks && activeConv.is_group && (
+              {showTasks && activeConv.is_group && activeConv.collab_post_id && (
                 <CollabTasksPanel
                   postId={activeConv.collab_post_id}
                   participants={[
@@ -341,6 +341,7 @@ export default function MessagesPage() {
                     ...(activeConv.participants || []),
                   ]}
                   currentUserId={user.id}
+                  isCollabOwner={!!activeConv.is_collab_owner}
                   onClose={() => setShowTasks(false)}
                 />
               )}
