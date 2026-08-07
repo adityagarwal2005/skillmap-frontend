@@ -3,11 +3,12 @@ import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { prepareMediaFile } from '../utils/mediaUpload';
-import { getConversations, startConversation, sendMessage, getMessages } from '../api/work';
+import { getConversations, startConversation, sendMessage, getMessages, setTyping } from '../api/work';
 import { getFriends } from '../api/users';
 import { ConversationSkeleton } from '../components/Skeleton';
 import Lightbox from '../components/Lightbox';
 import CollabTasksPanel from '../components/CollabTasksPanel';
+import { cldAvatar, cldThumb } from '../utils/cloudinaryUrl';
 import AppShell from '../components/AppShell';
 import './FeedPage.css';
 import './MessagesPage.css';
@@ -44,11 +45,25 @@ export default function MessagesPage() {
   const [startingWith, setStartingWith]    = useState(null);
   const [lightboxSrc, setLightboxSrc]      = useState(null);
   const [showTasks, setShowTasks]          = useState(false);
+  const [typingUsers, setTypingUsers]      = useState([]);
+  const lastTypingPingRef                  = useRef(0);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     loadConversations();
     getFriends().then(r => setFriends(r.data.friends || [])).catch(() => {});
+  }, []);
+
+  // Quietly poll the conversation list so a new conversation, a new last-
+  // message preview, or someone else's group thread shows up without a
+  // manual refresh — no loading spinner, just a silent swap. The currently
+  // open thread (activeConv) isn't touched by this, so it can't disrupt
+  // what's on screen while you're actually reading a conversation.
+  useEffect(() => {
+    const id = setInterval(() => {
+      getConversations().then(res => setConversations(res.data.conversations || [])).catch(() => {});
+    }, 5000);
+    return () => clearInterval(id);
   }, []);
 
   // Keep the mobile bottom nav out of the way while actually in a thread —
@@ -59,7 +74,7 @@ export default function MessagesPage() {
     return () => document.body.classList.remove('conv-active');
   }, [activeConv]);
 
-  useEffect(() => { setShowTasks(false); }, [activeConv?.id]);
+  useEffect(() => { setShowTasks(false); setTypingUsers([]); }, [activeConv?.id]);
 
   useEffect(() => {
     if (activeConv) {
@@ -112,8 +127,23 @@ export default function MessagesPage() {
       if (!loadingMsgs) setLoadingMsgs(true);
       const res = await getMessages(convId);
       setMessages(res.data.messages || []);
+      setTypingUsers(res.data.typing_users || []);
     } catch {}
     finally { setLoadingMsgs(false); }
+  };
+
+  // Pinged (throttled to once per 2s) while the user has this thread open and
+  // is actively typing — the recipient's poll picks it up and shows dots.
+  // The 4s server-side expiry (work/views.py) is what makes it disappear
+  // again, not an explicit "stopped typing" signal.
+  const handleTextChange = e => {
+    setText(e.target.value);
+    if (!activeConv) return;
+    const now = Date.now();
+    if (now - lastTypingPingRef.current > 2000) {
+      lastTypingPingRef.current = now;
+      setTyping(activeConv.id).catch(() => {});
+    }
   };
 
   const handleSend = async e => {
@@ -173,7 +203,7 @@ export default function MessagesPage() {
                   onClick={() => startNewConversation(friend)}>
                   <div className="conv-ava">
                     {friend.profile_image
-                      ? <img className="ava-img" src={friend.profile_image} alt="" />
+                      ? <img className="ava-img" src={cldAvatar(friend.profile_image)} alt="" />
                       : friend.username[0].toUpperCase()}
                   </div>
                   <span className="conv-name">{friend.username}</span>
@@ -202,7 +232,7 @@ export default function MessagesPage() {
                 {conv.is_group
                   ? '👥'
                   : conv.with_avatar
-                    ? <img className="ava-img" src={conv.with_avatar} alt="" />
+                    ? <img className="ava-img" src={cldAvatar(conv.with_avatar)} alt="" />
                     : conv.with?.[0]?.toUpperCase() || '?'}
               </div>
               <div className="conv-info">
@@ -240,10 +270,10 @@ export default function MessagesPage() {
                   {activeConv.is_group
                     ? '👥'
                     : activeConv.with_avatar
-                      ? <img className="ava-img" src={activeConv.with_avatar} alt="" />
+                      ? <img className="ava-img" src={cldAvatar(activeConv.with_avatar)} alt="" />
                       : activeConv.with?.[0]?.toUpperCase() || '?'}
                 </div>
-                <div>
+                <div className="thread-info">
                   <div className="thread-name">{activeConv.with}</div>
                   <div className="thread-type">
                     {activeConv.is_group
@@ -273,7 +303,7 @@ export default function MessagesPage() {
                       {!isOwn && showSender && (
                         <div className="msg-ava">
                           {msg.sender_avatar
-                            ? <img className="ava-img" src={msg.sender_avatar} alt="" />
+                            ? <img className="ava-img" src={cldAvatar(msg.sender_avatar)} alt="" />
                             : msg.sender[0].toUpperCase()}
                         </div>
                       )}
@@ -285,15 +315,31 @@ export default function MessagesPage() {
                         {msg.media_url && (
                           msg.media_type === 'video'
                             ? <video className="msg-media" src={msg.media_url} controls playsInline />
-                            : <img className="msg-media" src={msg.media_url} alt=""
+                            : <img className="msg-media" src={cldThumb(msg.media_url, 480)} alt=""
                                 onClick={() => setLightboxSrc(msg.media_url)} />
                         )}
                         {msg.text && <p className="msg-text">{msg.text}</p>}
-                        <span className="msg-time">{timeAgo(msg.created_at)}</span>
+                        <span className="msg-time">
+                          {timeAgo(msg.created_at)}
+                          {isOwn && !msg.sending && (
+                            <span className={`msg-tick ${msg.read_at ? 'is-read' : ''}`}
+                              aria-label={msg.read_at ? 'Seen' : 'Sent'}>
+                              {msg.read_at ? '✓✓' : '✓'}
+                            </span>
+                          )}
+                        </span>
                       </div>
                     </div>
                   );
                 })}
+                {typingUsers.length > 0 && (
+                  <div className="msg-row other">
+                    <div className="msg-ava-spacer" />
+                    <div className="msg-bubble typing-bubble" aria-label={`${typingUsers.join(', ')} typing`}>
+                      <span className="typing-dots"><span /><span /><span /></span>
+                    </div>
+                  </div>
+                )}
                 <div ref={messagesEndRef} />
               </div>
 
@@ -324,7 +370,7 @@ export default function MessagesPage() {
                   className="msg-input"
                   placeholder={activeConv.is_group ? 'Message the team...' : `Message ${activeConv.with}...`}
                   value={text}
-                  onChange={e => setText(e.target.value)}
+                  onChange={handleTextChange}
                   onKeyDown={handleKeyDown}
                   maxLength={500}
                 />

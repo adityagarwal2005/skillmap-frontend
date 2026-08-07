@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
@@ -7,6 +7,7 @@ import { getDiscoverPeople } from '../api/users';
 import { PostCardSkeleton } from '../components/Skeleton';
 import AppShell from '../components/AppShell';
 import Lightbox from '../components/Lightbox';
+import { cldAvatar, cldThumb } from '../utils/cloudinaryUrl';
 import './FeedPage.css';
 
 export default function FeedPage() {
@@ -24,6 +25,9 @@ export default function FeedPage() {
   const [showWelcome, setShowWelcome] = useState(
     () => localStorage.getItem('smWelcomeSeen') !== '1'
   );
+  const [newIds, setNewIds] = useState(new Set());
+  const seenIds = useRef(new Set());
+  const pollRef = useRef(null);
 
   const dismissWelcome = () => {
     setShowWelcome(false);
@@ -51,11 +55,42 @@ export default function FeedPage() {
     setLoading(true);
     try {
       const r = await getFeed();
-      setItems(r.data.feed || []);
+      const fresh = r.data.feed || [];
+      setItems(fresh);
       setHasMore(!!r.data.has_more);
+      // Baseline of what we've seen — a full (re)load never flashes anything.
+      seenIds.current = new Set(fresh.map(it => `${it.kind}-${it.id}`));
+      setNewIds(new Set());
     } catch { showToast('Failed to load feed', 'error'); }
     finally { setLoading(false); }
   };
+
+  // Quietly poll for brand-new posts (freelance + collab) while on the For
+  // You tab, and prepend/flash anything that wasn't there before — same
+  // approach as the Freelance job board's live poll. No WebSocket, no
+  // manual-refresh requirement, no infra change.
+  useEffect(() => {
+    if (tab !== 'for-you') return undefined;
+    const poll = async () => {
+      try {
+        const r = await getFeed();
+        const fresh = r.data.feed || [];
+        const arrived = fresh.filter(it => !seenIds.current.has(`${it.kind}-${it.id}`));
+        if (arrived.length) {
+          arrived.forEach(it => seenIds.current.add(`${it.kind}-${it.id}`));
+          setItems(prev => [...arrived, ...prev]);
+          setNewIds(prev => {
+            const n = new Set(prev);
+            arrived.forEach(it => n.add(`${it.kind}-${it.id}`));
+            return n;
+          });
+          showToast(`${arrived.length} new post${arrived.length > 1 ? 's' : ''}`, 'success');
+        }
+      } catch { /* silent — polling shouldn't nag */ }
+    };
+    pollRef.current = setInterval(poll, 5000);
+    return () => clearInterval(pollRef.current);
+  }, [tab]);
 
   const loadTrending = async () => {
     setLoading(true);
@@ -117,7 +152,7 @@ export default function FeedPage() {
                   onClick={() => navigate(`/profile/${p.id}`)}>
                   <div className="discover-ava">
                     {p.profile_image
-                      ? <img className="ava-img" src={p.profile_image} alt="" />
+                      ? <img className="ava-img" src={cldAvatar(p.profile_image)} alt="" />
                       : p.username[0].toUpperCase()}
                   </div>
                   <span className="discover-name">{p.username}</span>
@@ -143,8 +178,9 @@ export default function FeedPage() {
           </div>
         ) : items.map((item, i) => {
           const to = item.kind === 'freelance' ? '/freelance' : '/collab';
+          const isNew = newIds.has(`${item.kind}-${item.id}`);
           return (
-            <article key={`${item.kind}-${item.id}`} className={`opp-card ${item.kind}`}
+            <article key={`${item.kind}-${item.id}`} className={`opp-card ${item.kind} ${isNew ? 'is-new' : ''}`}
               style={{ animationDelay: `${i * 40}ms` }}
               onClick={() => navigate(to)}>
 
@@ -152,7 +188,7 @@ export default function FeedPage() {
                 <div className="post-ava"
                   onClick={e => { e.stopPropagation(); navigate(`/profile/${item.user.id}`); }}>
                   {item.user.profile_image
-                    ? <img className="ava-img" src={item.user.profile_image} alt="" />
+                    ? <img className="ava-img" src={cldAvatar(item.user.profile_image)} alt="" />
                     : item.user.username[0].toUpperCase()}
                 </div>
                 <div className="post-meta">
@@ -177,7 +213,7 @@ export default function FeedPage() {
                   {item.media_type === 'video'
                     ? <video className="post-media-el" src={item.media} controls playsInline
                         onClick={e => e.stopPropagation()} />
-                    : <img className="post-media-el" src={item.media} alt=""
+                    : <img className="post-media-el" src={cldThumb(item.media)} alt=""
                         onClick={e => { e.stopPropagation(); setLightboxSrc(item.media); }} />}
                 </div>
               )}

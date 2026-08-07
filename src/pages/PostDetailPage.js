@@ -10,6 +10,7 @@ import { getFeed } from '../api/feed';
 import { getUser, reportContent } from '../api/users';
 import AppShell from '../components/AppShell';
 import { PostCardSkeleton } from '../components/Skeleton';
+import { cldAvatar, cldThumb } from '../utils/cloudinaryUrl';
 import './FeedPage.css';
 import './PostDetailPage.css';
 
@@ -177,7 +178,7 @@ export default function PostDetailPage() {
                 <div className="post-ava"
                   onClick={() => navigate(`/profile/${item.user.id}`)}>
                   {item.user.profile_image
-                    ? <img className="ava-img" src={item.user.profile_image} alt="" />
+                    ? <img className="ava-img" src={cldAvatar(item.user.profile_image)} alt="" />
                     : item.user.username[0].toUpperCase()}
                 </div>
                 <div className="post-meta">
@@ -243,7 +244,7 @@ export default function PostDetailPage() {
                     {imgs.length > 0 && (
                       <div className={`post-gallery count-${Math.min(imgs.length, 4)}`}>
                         {imgs.slice(0, 4).map(m => (
-                          <img key={m.id} src={m.url} alt={item.title} className="post-gallery-img" />
+                          <img key={m.id} src={cldThumb(m.url, 1200)} alt={item.title} className="post-gallery-img" />
                         ))}
                       </div>
                     )}
@@ -284,7 +285,7 @@ export default function PostDetailPage() {
                 <div className="comment-input-row">
                   <div className="post-ava small">
                     {myAvatar
-                      ? <img className="ava-img" src={myAvatar} alt="" />
+                      ? <img className="ava-img" src={cldAvatar(myAvatar)} alt="" />
                       : user?.username?.[0]?.toUpperCase()}
                   </div>
                   <input
@@ -307,7 +308,7 @@ export default function PostDetailPage() {
                     <div className="comment-top">
                       <div className="post-ava small">
                         {c.profile_image
-                          ? <img className="ava-img" src={c.profile_image} alt="" />
+                          ? <img className="ava-img" src={cldAvatar(c.profile_image)} alt="" />
                           : c.username[0].toUpperCase()}
                       </div>
                       <div className="comment-meta">

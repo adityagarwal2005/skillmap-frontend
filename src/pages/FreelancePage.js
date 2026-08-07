@@ -11,6 +11,7 @@ import API from '../api/config';
 import AppShell from '../components/AppShell';
 import { PostCardSkeleton } from '../components/Skeleton';
 import Lightbox from '../components/Lightbox';
+import { cldThumb } from '../utils/cloudinaryUrl';
 import './FeedPage.css';
 import './FreelancePage.css';
 
@@ -133,7 +134,7 @@ export default function FreelancePage() {
         }
       } catch { /* silent — polling shouldn't nag */ }
     };
-    pollRef.current = setInterval(poll, 15000);
+    pollRef.current = setInterval(poll, 5000);
     return () => clearInterval(pollRef.current);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tab, skillFilter, radius, userLocation.lat]);
@@ -149,26 +150,33 @@ export default function FreelancePage() {
     finally { setLoadingMore(false); }
   };
 
-  const handlePost = async e => {
+  const handlePost = e => {
     e.preventDefault();
-    try {
-      setSubmitting(true);
-      // Attach the poster's live location so the job is findable by radius.
-      const payload = { ...postForm };
-      if (userLocation.lat) {
-        payload.latitude = userLocation.lat;
-        payload.longitude = userLocation.lon;
+    const payload = { ...postForm };
+    if (userLocation.lat) {
+      payload.latitude = userLocation.lat;
+      payload.longitude = userLocation.lon;
+    }
+    if (jobMedia) payload.media = jobMedia;
+
+    // Close immediately instead of waiting on the network round-trip
+    // (including any Cloudinary upload) — the create call finishes in the
+    // background. Form data is only cleared on confirmed success; on
+    // failure the modal reopens with everything still filled in.
+    setPostModal(false);
+
+    (async () => {
+      try {
+        await createWorkRequest(payload);
+        showToast('Job posted!', 'success');
+        setPostForm({ description: '', payment_amount: '', time_limit_hours: '', skills: '', range_km: 50 });
+        setJobMedia(null);
+        loadAll();
+      } catch (err) {
+        showToast(err.response?.data?.error || 'Failed to post job', 'error');
+        setPostModal(true);
       }
-      if (jobMedia) payload.media = jobMedia;
-      await createWorkRequest(payload);
-      showToast('Job posted!', 'success');
-      setPostModal(false);
-      setPostForm({ description: '', payment_amount: '', time_limit_hours: '', skills: '', range_km: 50 });
-      setJobMedia(null);
-      loadAll();
-    } catch (err) {
-      showToast(err.response?.data?.error || 'Failed to post job', 'error');
-    } finally { setSubmitting(false); }
+    })();
   };
 
   const handleApply = async e => {
@@ -320,7 +328,7 @@ export default function FreelancePage() {
                 <div className="post-media">
                   {wr.media_type === 'video'
                     ? <video className="post-media-el" src={wr.media} controls playsInline />
-                    : <img className="post-media-el" src={wr.media} alt=""
+                    : <img className="post-media-el" src={cldThumb(wr.media)} alt=""
                         onClick={() => setLightboxSrc(wr.media)} />}
                 </div>
               )}

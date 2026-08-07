@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import usePageMeta from '../hooks/usePageMeta';
 import './LandingPage.css';
 
 const FEATURES = [
@@ -23,6 +24,12 @@ const STEPS = [
 export default function LandingPage() {
   const navigate = useNavigate();
   const [referrer, setReferrer] = useState(null);
+
+  usePageMeta({
+    title: 'Campus Talent Network',
+    description: 'Find skilled people on your campus. Post freelance jobs, start collabs, and get work done with people right around you.',
+    path: '/',
+  });
 
   useEffect(() => {
     setReferrer(localStorage.getItem('smReferredBy'));

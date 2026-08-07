@@ -260,6 +260,15 @@
 }
 .thread-tasks-btn:hover { background: var(--elevated); }
 
+/* Lets a long collab title truncate instead of pushing the Tasks button /
+   back button off the edge of a narrow screen. */
+.thread-info { min-width: 0; flex: 1; }
+.thread-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* Only shown on mobile, where list and thread aren't side by side */
 .thread-back-btn {
   display: none;
@@ -430,6 +439,32 @@ video.msg-media { cursor: default; }
 }
 
 .msg-bubble.own .msg-time { color: rgba(255,255,255,0.55); }
+
+.msg-tick {
+  margin-left: 4px;
+  font-size: 0.6875rem;
+  letter-spacing: -1px;
+  color: rgba(255,255,255,0.55);
+}
+.msg-tick.is-read { color: #4fc3ff; }
+
+/* ── Typing indicator ── */
+.typing-bubble { padding: 11px 14px; }
+.typing-dots { display: inline-flex; align-items: center; gap: 4px; }
+.typing-dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-3);
+  animation: typingBounce 1.2s ease-in-out infinite;
+}
+.typing-dots span:nth-child(2) { animation-delay: 0.15s; }
+.typing-dots span:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes typingBounce {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+  30% { transform: translateY(-4px); opacity: 1; }
+}
 
 /* ── Input bar ── */
 .msg-input-bar {

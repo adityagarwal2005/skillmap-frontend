@@ -159,5 +159,9 @@ html[data-theme="dark"] .tasks-add-btn { background: var(--accent); color: var(-
 .task-delete:hover { background: rgba(255,59,48,0.1); color: var(--red, #ff3b30); }
 
 @media (max-width: 768px) {
-  .tasks-panel { position: fixed; }
+  /* .thread-panel already fills the screen below the topbar on mobile (the
+     conv list is hidden), so absolute (the default) already covers exactly
+     the right area. Switching to fixed here made the panel cover the whole
+     viewport including the 52px topbar above it. */
+  .tasks-panel { position: absolute; }
 }

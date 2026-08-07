@@ -48,13 +48,19 @@ export default function CreatePostPage() {
       const res = await createPortfolioItem(form);
       const itemId = res.data.item_id;
 
-      // Upload each photo to the new item (Cloudinary via the media endpoint)
-      for (const file of photos) {
-        const fd = new FormData();
-        fd.append('media_type', 'image');
-        fd.append('file', file);
-        try { await addMedia(itemId, fd); }
-        catch { showToast('A photo failed to upload', 'error'); }
+      // Photos upload to the already-created item in parallel and don't
+      // block navigation — the item exists as soon as createPortfolioItem
+      // resolves, so there's no reason to sit on the create screen waiting
+      // for every photo's own Cloudinary round-trip one at a time (that was
+      // a straight-up sequential for-loop — 4 photos took ~4x one photo's
+      // upload time before the user saw anything).
+      if (photos.length > 0) {
+        Promise.all(photos.map(file => {
+          const fd = new FormData();
+          fd.append('media_type', 'image');
+          fd.append('file', file);
+          return addMedia(itemId, fd).catch(() => showToast('A photo failed to upload', 'error'));
+        }));
       }
 
       showToast('Post created successfully!', 'success');

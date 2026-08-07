@@ -13,6 +13,7 @@ import { ProfileHeaderSkeleton } from '../components/Skeleton';
 import AppShell from '../components/AppShell';
 import { LinkedInIcon, GitHubIcon, InstagramIcon } from '../components/SocialIcons';
 import { isSafeHref } from '../utils/safeUrl';
+import { cldAvatar, cldThumb } from '../utils/cloudinaryUrl';
 import './FeedPage.css';
 import './ProfilePage.css';
 
@@ -284,7 +285,7 @@ export default function ProfilePage() {
               <div className="profile-avatar-wrap">
                 <div className="profile-avatar">
                   {profile.profile_image && !avatarBroken
-                    ? <img className="ava-img" src={profile.profile_image} alt={profile.username}
+                    ? <img className="ava-img" src={cldAvatar(profile.profile_image, 200)} alt={profile.username}
                         onError={() => setAvatarBroken(true)} />
                     : profile.username[0].toUpperCase()}
                 </div>
@@ -513,7 +514,7 @@ export default function ProfilePage() {
                     <div key={p.id} className="portfolio-card"
                       onClick={() => navigate(`/post/${p.id}`)}>
                       {p.media?.[0]?.url && p.media[0].media_type === 'image' && (
-                        <img src={p.media[0].url} alt={p.title} className="portfolio-card-img" />
+                        <img src={cldThumb(p.media[0].url, 500)} alt={p.title} className="portfolio-card-img" />
                       )}
                       <div className="portfolio-card-body">
                         <div className="portfolio-card-top">

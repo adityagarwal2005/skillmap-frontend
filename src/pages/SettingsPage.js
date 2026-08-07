@@ -5,6 +5,8 @@ import { useToast } from '../context/ToastContext';
 import { deleteUser, updateStatus, getBlockedUsers, unblockUser, getMyReferrals } from '../api/users';
 import { pushSupported, isPushEnabled, enablePush, disablePush } from '../push';
 import AppShell from '../components/AppShell';
+import { cldAvatar } from '../utils/cloudinaryUrl';
+import useInstallPrompt from '../hooks/useInstallPrompt';
 import './FeedPage.css';
 import './SettingsPage.css';
 
@@ -21,6 +23,7 @@ export default function SettingsPage() {
   const [pushBusy, setPushBusy] = useState(false);
   const [referrals, setReferrals] = useState([]);
   const [copiedInvite, setCopiedInvite] = useState(false);
+  const { canInstall, installed, promptInstall } = useInstallPrompt();
 
   useEffect(() => { isPushEnabled().then(setPushOn).catch(() => {}); }, []);
 
@@ -130,7 +133,7 @@ export default function SettingsPage() {
                   <div key={r.id} className="invite-ava" title={r.username}
                     onClick={() => navigate(`/profile/${r.id}`)}>
                     {r.profile_image
-                      ? <img className="ava-img" src={r.profile_image} alt="" />
+                      ? <img className="ava-img" src={cldAvatar(r.profile_image)} alt="" />
                       : r.username[0].toUpperCase()}
                   </div>
                 ))}
@@ -162,6 +165,26 @@ export default function SettingsPage() {
             </button>
           </div>
         </div>
+
+        {/* App */}
+        {(canInstall || installed) && (
+          <div className="settings-section">
+            <h2 className="settings-section-title">App</h2>
+            <div className="settings-row">
+              <div className="settings-row-info">
+                <span className="settings-row-label">Install SkillMap</span>
+                <span className="settings-row-sub">
+                  {installed
+                    ? 'Already installed on this device'
+                    : 'Add it to your home screen for a faster, full-screen experience'}
+                </span>
+              </div>
+              {!installed && (
+                <button className="settings-save-btn" onClick={promptInstall}>Install</button>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Notifications */}
         {pushSupported() && (

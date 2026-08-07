@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useToast } from '../context/ToastContext';
 import { prepareMediaFile } from '../utils/mediaUpload';
@@ -10,6 +10,7 @@ import API from '../api/config';
 import AppShell from '../components/AppShell';
 import { PostCardSkeleton } from '../components/Skeleton';
 import Lightbox from '../components/Lightbox';
+import { cldThumb } from '../utils/cloudinaryUrl';
 import './FeedPage.css';
 import './FreelancePage.css';   // Collab reuses .freelance-header/.wr-* card styles
 import './CollabPage.css';
@@ -28,6 +29,10 @@ export default function CollabPage() {
   const [userLocation, setUserLocation] = useState({ lat: '', lon: '' });
   const [hasMoreBrowse, setHasMoreBrowse] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
+
+  const [newIds, setNewIds] = useState(new Set());
+  const seenIds = useRef(new Set());
+  const pollRef = useRef(null);
 
   const [createModal, setCreateModal]         = useState(false);
   const [applyModal, setApplyModal]           = useState(null);
@@ -83,12 +88,39 @@ export default function CollabPage() {
         API.get('/collab/', { params: browseParams(radiusOverride) }),
         getMyCollabPosts(),
       ]);
-      setPosts(bRes.data.collab_posts || []);
+      const browsePosts = bRes.data.collab_posts || [];
+      setPosts(browsePosts);
       setMyPosts(mRes.data.collab_posts || []);
       setHasMoreBrowse(!!bRes.data.has_more);
+      // Baseline of what we've seen — a full (re)load never flashes anything.
+      seenIds.current = new Set(browsePosts.map(p => p.id));
+      setNewIds(new Set());
     } catch { showToast('Failed to load collabs', 'error'); }
     finally { setLoading(false); }
   };
+
+  // Quietly poll for brand-new collab posts while browsing, and
+  // prepend/flash anything that wasn't there before — same approach as the
+  // Freelance job board's live poll. No WebSocket, no manual refresh.
+  useEffect(() => {
+    if (tab !== 'browse') return undefined;
+    const poll = async () => {
+      try {
+        const res = await API.get('/collab/', { params: browseParams() });
+        const fresh = res.data.collab_posts || [];
+        const arrived = fresh.filter(p => !seenIds.current.has(p.id));
+        if (arrived.length) {
+          arrived.forEach(p => seenIds.current.add(p.id));
+          setPosts(prev => [...arrived, ...prev]);
+          setNewIds(prev => { const n = new Set(prev); arrived.forEach(p => n.add(p.id)); return n; });
+          showToast(`${arrived.length} new collab${arrived.length > 1 ? 's' : ''} posted`, 'success');
+        }
+      } catch { /* silent — polling shouldn't nag */ }
+    };
+    pollRef.current = setInterval(poll, 5000);
+    return () => clearInterval(pollRef.current);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tab, skillFilter, radius, userLocation.lat]);
 
   const handleLoadMoreBrowse = async () => {
     setLoadingMore(true);
@@ -101,26 +133,33 @@ export default function CollabPage() {
     finally { setLoadingMore(false); }
   };
 
-  const handleCreate = async e => {
+  const handleCreate = e => {
     e.preventDefault();
-    try {
-      setSubmitting(true);
-      // Attach the poster's location so the post can be found by radius.
-      const payload = { ...createForm };
-      if (userLocation.lat) {
-        payload.latitude = userLocation.lat;
-        payload.longitude = userLocation.lon;
+    const payload = { ...createForm };
+    if (userLocation.lat) {
+      payload.latitude = userLocation.lat;
+      payload.longitude = userLocation.lon;
+    }
+    if (collabMedia) payload.media = collabMedia;
+
+    // Close immediately instead of waiting on the network round-trip
+    // (including any Cloudinary upload) — the create call finishes in the
+    // background. Form data is only cleared on confirmed success; on
+    // failure the modal reopens with everything still filled in.
+    setCreateModal(false);
+
+    (async () => {
+      try {
+        await createCollabPost(payload);
+        showToast('Collab post created!', 'success');
+        setCreateForm({ title: '', description: '', skills: '', range_km: 50 });
+        setCollabMedia(null);
+        loadAll();
+      } catch (err) {
+        showToast(err.response?.data?.error || 'Failed to create', 'error');
+        setCreateModal(true);
       }
-      if (collabMedia) payload.media = collabMedia;
-      await createCollabPost(payload);
-      showToast('Collab post created!', 'success');
-      setCreateModal(false);
-      setCreateForm({ title: '', description: '', skills: '', range_km: 50 });
-      setCollabMedia(null);
-      loadAll();
-    } catch (err) {
-      showToast(err.response?.data?.error || 'Failed to create', 'error');
-    } finally { setSubmitting(false); }
+    })();
   };
 
   const handleApply = async e => {
@@ -230,7 +269,7 @@ export default function CollabPage() {
               </div>
             </div>
           ) : posts.map(post => (
-            <div key={post.id} className="collab-card">
+            <div key={post.id} className={`collab-card ${newIds.has(post.id) ? 'is-new' : ''}`}>
               <div className="collab-top">
                 <div className="post-ava small">{post.posted_by[0].toUpperCase()}</div>
                 <span className="wr-by">{post.posted_by}</span>
@@ -242,7 +281,7 @@ export default function CollabPage() {
                 <div className="post-media">
                   {post.media_type === 'video'
                     ? <video className="post-media-el" src={post.media} controls playsInline />
-                    : <img className="post-media-el" src={post.media} alt=""
+                    : <img className="post-media-el" src={cldThumb(post.media)} alt=""
                         onClick={() => setLightboxSrc(post.media)} />}
                 </div>
               )}
@@ -282,7 +321,7 @@ export default function CollabPage() {
                 <div className="post-media">
                   {post.media_type === 'video'
                     ? <video className="post-media-el" src={post.media} controls playsInline />
-                    : <img className="post-media-el" src={post.media} alt=""
+                    : <img className="post-media-el" src={cldThumb(post.media)} alt=""
                         onClick={() => setLightboxSrc(post.media)} />}
                 </div>
               )}

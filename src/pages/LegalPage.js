@@ -1,4 +1,5 @@
 import { useLocation, useNavigate, Link } from 'react-router-dom';
+import usePageMeta from '../hooks/usePageMeta';
 import './LegalPage.css';
 
 const LAST_UPDATED = 'July 2026';
@@ -148,6 +149,14 @@ export default function LegalPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const isPrivacy = location.pathname.startsWith('/privacy');
+
+  usePageMeta({
+    title: isPrivacy ? 'Privacy Policy' : 'Terms of Service',
+    description: isPrivacy
+      ? 'How SkillMap collects, uses, and protects your data.'
+      : 'The terms that govern using SkillMap, the campus talent network.',
+    path: isPrivacy ? '/privacy' : '/terms',
+  });
 
   return (
     <div className="legal-page">

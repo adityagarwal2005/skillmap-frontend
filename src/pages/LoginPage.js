@@ -113,27 +113,6 @@ export default function LoginPage() {
 
   return (
     <div className="login-page">
-      <aside className="auth-brand">
-        <div className="auth-brand-inner">
-          <div className="auth-brand-tag">// SKILLMAP — HYPERLOCAL SKILL NETWORK</div>
-          <h2 className="auth-brand-display">
-            Get discovered<br />for what you<br /><em>actually</em> do.
-          </h2>
-          <p className="auth-brand-sub">
-            Portfolios, freelance gigs, and collaborators — matched to the
-            skills and people right around you, across India.
-          </p>
-          <div className="auth-brand-meta">
-            <span>[ PORTFOLIO ]</span>
-            <span>[ FREELANCE ]</span>
-            <span>[ COLLAB ]</span>
-          </div>
-        </div>
-        <div className="auth-brand-glow" aria-hidden="true" />
-        <div className="auth-brand-grid" aria-hidden="true" />
-      </aside>
-
-      <div className="auth-form-col">
       <div className="login-box">
         <div className="login-wordmark">
           <div className="login-wordmark-icon">S</div>
@@ -261,7 +240,6 @@ export default function LoginPage() {
           By continuing, you agree to SkillMap's <Link to="/terms">Terms of Service</Link> and{' '}
           <Link to="/privacy">Privacy Policy</Link>.
         </p>
-      </div>
       </div>
     </div>
   );

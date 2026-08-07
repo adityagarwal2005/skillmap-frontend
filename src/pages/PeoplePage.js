@@ -7,6 +7,7 @@ import {
 } from '../api/users';
 import AppShell from '../components/AppShell';
 import { PostCardSkeleton } from '../components/Skeleton';
+import { cldAvatar } from '../utils/cloudinaryUrl';
 import './FeedPage.css';
 import './PeoplePage.css';
 
@@ -143,7 +144,7 @@ export default function PeoplePage() {
                   <div className="friend-req-person" onClick={() => navigate(`/profile/${req.id}`)}>
                     <div className="person-ava">
                       {req.profile_image
-                        ? <img className="ava-img" src={req.profile_image} alt="" />
+                        ? <img className="ava-img" src={cldAvatar(req.profile_image)} alt="" />
                         : req.username[0].toUpperCase()}
                     </div>
                     <div className="friend-req-info">
@@ -217,7 +218,7 @@ export default function PeoplePage() {
                   <div className="person-card-top">
                     <div className="person-ava">
                       {person.profile_image
-                        ? <img className="ava-img" src={person.profile_image} alt="" />
+                        ? <img className="ava-img" src={cldAvatar(person.profile_image)} alt="" />
                         : person.username[0].toUpperCase()}
                     </div>
                     <div className="person-info">

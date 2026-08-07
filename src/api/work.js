@@ -61,3 +61,6 @@ export const sendMessage = (convId, text, media) => {
 
 export const getMessages = (convId) =>
   API.get(`/conversations/${convId}/messages/`);
+
+export const setTyping = (convId) =>
+  API.post(`/conversations/${convId}/typing/`);

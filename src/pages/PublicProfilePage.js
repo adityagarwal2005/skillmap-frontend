@@ -3,6 +3,8 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { getUserByUsername } from '../api/users';
 import { LinkedInIcon, GitHubIcon, InstagramIcon } from '../components/SocialIcons';
 import { isSafeHref } from '../utils/safeUrl';
+import { cldAvatar } from '../utils/cloudinaryUrl';
+import usePageMeta from '../hooks/usePageMeta';
 import './ProfilePage.css';
 import './PublicProfilePage.css';
 
@@ -47,6 +49,17 @@ export default function PublicProfilePage() {
   const [notFound, setNotFound] = useState(false);
   const [avatarBroken, setAvatarBroken] = useState(false);
 
+  usePageMeta({
+    title: profile ? `${profile.username}${profile.category ? ` — ${profile.category}` : ''}` : username,
+    description: profile
+      ? (profile.headline || profile.bio || `${profile.username} on SkillMap — ${profile.category || 'campus talent network'}.`)
+      : `${username} on SkillMap`,
+    path: `/u/${username}`,
+    // Not-found pages have nothing worth indexing; real profiles are the
+    // whole point of this page existing, so they stay indexable.
+    noindex: notFound,
+  });
+
   useEffect(() => {
     setLoading(true);
     setNotFound(false);
@@ -89,7 +102,7 @@ export default function PublicProfilePage() {
               <div className="profile-avatar-wrap">
                 <div className="profile-avatar">
                   {profile.profile_image && !avatarBroken
-                    ? <img className="ava-img" src={profile.profile_image} alt={profile.username}
+                    ? <img className="ava-img" src={cldAvatar(profile.profile_image, 200)} alt={profile.username}
                         onError={() => setAvatarBroken(true)} />
                     : profile.username[0].toUpperCase()}
                 </div>

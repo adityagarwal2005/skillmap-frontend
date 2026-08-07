@@ -49,6 +49,17 @@ export default function ApplicationsPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { loadApps(); }, []);
 
+  // Quietly poll so a status change (accepted/declined elsewhere) shows up
+  // without a manual refresh — no loading spinner, just a silent swap since
+  // this list is short and personal (not something the user scrolls deep
+  // into), so a wholesale replace doesn't risk losing scroll position.
+  useEffect(() => {
+    const id = setInterval(() => {
+      getMyApplications().then(r => setApps(r.data.applications || [])).catch(() => {});
+    }, 5000);
+    return () => clearInterval(id);
+  }, []);
+
   const handleCompleteJob = async (wrId) => {
     try {
       setCompletingId(wrId);

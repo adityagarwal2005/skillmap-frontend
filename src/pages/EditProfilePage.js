@@ -6,6 +6,7 @@ import { getUser, editUser, getCategories, changePassword, uploadAvatar } from '
 import { prepareMediaFile } from '../utils/mediaUpload';
 import AppShell from '../components/AppShell';
 import { LinkedInIcon, GitHubIcon, InstagramIcon } from '../components/SocialIcons';
+import { cldAvatar } from '../utils/cloudinaryUrl';
 import './FeedPage.css';
 import './EditProfilePage.css';
 
@@ -153,7 +154,7 @@ export default function EditProfilePage() {
               <div className="avatar-edit">
                 <div className="avatar-edit-preview">
                   {avatar
-                    ? <img src={avatar} alt="avatar" />
+                    ? <img src={cldAvatar(avatar, 160)} alt="avatar" />
                     : (form.username[0] || '?').toUpperCase()}
                 </div>
                 <label className="avatar-edit-btn">

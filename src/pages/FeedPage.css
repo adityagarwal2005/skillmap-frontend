@@ -239,8 +239,22 @@
 .app-shell .detail-wrapper {
   max-width: none;
   width: 100%;
-  padding-left: clamp(24px, 4vw, 60px);
-  padding-right: clamp(24px, 4vw, 60px);
+}
+/* Gated to larger screens only — clamp()'s 24px floor otherwise beat each
+   page's own @media(max-width:600px) padding rule (16-20px) despite that
+   rule being more specific to mobile, since this selector's 2-class
+   specificity outranks it and it had no media guard of its own, silently
+   wasting edge space on phones. */
+@media (min-width: 641px) {
+  .app-shell .profile-wrapper,
+  .app-shell .search-wrapper,
+  .app-shell .notif-wrapper,
+  .app-shell .freelance-wrapper,
+  .app-shell .collab-wrapper,
+  .app-shell .detail-wrapper {
+    padding-left: clamp(24px, 4vw, 60px);
+    padding-right: clamp(24px, 4vw, 60px);
+  }
 }
 /* Forms & settings stay readable, just a touch wider (full-width inputs read poorly) */
 .app-shell .settings-wrapper { max-width: 960px; }
@@ -1251,6 +1265,21 @@ video.post-media-el { cursor: default; object-fit: contain; background: #000; }
   animation: cardIn 0.4s cubic-bezier(0.25,0.46,0.45,0.94) both;
 }
 .opp-card:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(0,0,0,0.1); border-color: var(--border-md); }
+
+/* "Just arrived via poll" flash — same convention as .wr-card.is-new in
+   FreelancePage.css, extended to every card type that now live-polls
+   (opp-card, collab-card, notif-card). Defined once here since this file
+   loads on every page. */
+.opp-card.is-new,
+.collab-card.is-new,
+.notif-card.is-new {
+  border-color: var(--green, #34c759);
+  animation: newItemFlash 2.2s ease-out 1;
+}
+@keyframes newItemFlash {
+  0%   { background: rgba(52,199,89,0.14); }
+  100% { background: var(--surface); }
+}
 
 .opp-kind {
   margin-left: auto;

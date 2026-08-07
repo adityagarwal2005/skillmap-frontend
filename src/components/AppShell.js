@@ -3,6 +3,9 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getUnreadCount } from '../api/notifications';
 import { getUser } from '../api/users';
+import { cldAvatar } from '../utils/cloudinaryUrl';
+import useInstallPrompt from '../hooks/useInstallPrompt';
+import usePageMeta from '../hooks/usePageMeta';
 import '../pages/FeedPage.css';
 
 const SVG = {
@@ -51,8 +54,13 @@ const MOBILE = [
   { id: 'home',     label: 'Home',     path: '/',            icon: I.home },
   { id: 'people',   label: 'People',   path: '/people',      icon: I.people },
   { id: 'create',   label: 'Post',     path: '/create-post', icon: I.create },
+  // No path — tapping opens a chooser sheet (Freelance / Collab), same
+  // pattern as the "+" post sheet. Profile itself was dropped from here
+  // since the topbar avatar (top-right, on every page) already opens it —
+  // this frees up the slot for Freelance/Collab, which previously had NO
+  // way in from the mobile bottom nav at all.
+  { id: 'work',     label: 'Work',     path: null,           icon: I.freelance },
   { id: 'messages', label: 'Messages', path: '/messages',    icon: I.messages },
-  { id: 'profile',  label: 'You',      path: null,           icon: I.profile },
 ];
 
 function deriveActive(pathname) {
@@ -92,6 +100,13 @@ export default function AppShell({
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Every page rendered through AppShell requires a logged-in session, so
+  // none of it should turn up in Google — it's personalized, gated, and
+  // meaningless to a crawler that can't authenticate. The public pages
+  // (Landing, public profile, legal) don't use AppShell and set their own
+  // indexable meta via the same hook.
+  usePageMeta({ noindex: true });
+
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
   const [unread, setUnread] = useState(0);
   const [avatar, setAvatar] = useState(null);
@@ -102,6 +117,11 @@ export default function AppShell({
     () => localStorage.getItem('smNudgeDismissed') === '1'
   );
   const [showPostSheet, setShowPostSheet] = useState(false);
+  const [showWorkSheet, setShowWorkSheet] = useState(false);
+  const { canInstall, promptInstall } = useInstallPrompt();
+  const [installDismissed, setInstallDismissed] = useState(
+    () => localStorage.getItem('smInstallDismissed') === '1'
+  );
   // FeedPage's first-login welcome modal covers this same top-of-page area —
   // without this the two rendered stacked on top of each other, illegibly.
   const [welcomePending, setWelcomePending] = useState(
@@ -133,7 +153,7 @@ export default function AppShell({
   useEffect(() => {
     const refresh = () => getUnreadCount().then(r => setUnread(r.data.unread_count || 0)).catch(() => {});
     refresh();
-    const id = setInterval(refresh, 30000);
+    const id = setInterval(refresh, 5000);
     return () => clearInterval(id);
   }, []);
 
@@ -159,6 +179,17 @@ export default function AppShell({
     localStorage.setItem('smNudgeDismissed', '1');
   };
 
+  // Only one dismissible banner at a time — the profile-completion nudge
+  // takes priority since it's about actually using the product.
+  const showInstallBanner = canInstall && !installDismissed && !showNudge && !welcomeShowing;
+
+  const dismissInstall = () => {
+    setInstallDismissed(true);
+    localStorage.setItem('smInstallDismissed', '1');
+  };
+
+  const handleInstallClick = async () => { await promptInstall(); };
+
   const missingText = missing.length === 1
     ? missing[0]
     : `${missing.slice(0, -1).join(', ')} and ${missing[missing.length - 1]}`;
@@ -166,11 +197,17 @@ export default function AppShell({
   const handleNav = (item) => {
     if (item.id === 'profile') { navigate(`/profile/${user?.id}`); return; }
     if (item.id === 'create') { setShowPostSheet(true); return; }
+    if (item.id === 'work') { setShowWorkSheet(true); return; }
     if (item.path) navigate(item.path);
   };
 
   const choosePost = (path) => {
     setShowPostSheet(false);
+    navigate(path);
+  };
+
+  const chooseWork = (path) => {
+    setShowWorkSheet(false);
     navigate(path);
   };
 
@@ -216,7 +253,7 @@ export default function AppShell({
           </button>
           <div className="topbar-avatar" onClick={() => navigate(`/profile/${user?.id}`)}>
             {avatar && !avatarBroken
-              ? <img className="ava-img" src={avatar} alt="" onError={() => setAvatarBroken(true)} />
+              ? <img className="ava-img" src={cldAvatar(avatar)} alt="" onError={() => setAvatarBroken(true)} />
               : user?.username?.[0]?.toUpperCase()}
           </div>
           <span className="topbar-username">{user?.username}</span>
@@ -264,20 +301,43 @@ export default function AppShell({
               </div>
             </div>
           )}
+          {showInstallBanner && (
+            <div className="profile-nudge">
+              <div className="profile-nudge-text">
+                <strong>Install SkillMap</strong>
+                <span>Add it to your home screen for a faster, full-screen experience.</span>
+              </div>
+              <div className="profile-nudge-actions">
+                <button className="profile-nudge-cta" onClick={handleInstallClick}>
+                  Install
+                </button>
+                <button className="profile-nudge-x" onClick={dismissInstall}
+                  aria-label="Dismiss">×</button>
+              </div>
+            </div>
+          )}
           {children}
         </main>
       </div>
 
       {/* Bottom tab bar — mobile only (CSS hides it on desktop) */}
       <nav className="mobile-nav">
-        {MOBILE.map(item => (
-          <button key={item.id}
-            className={`mobile-nav-btn ${activeId === item.id ? 'active' : ''} ${item.id === 'create' ? 'is-create' : ''}`}
-            onClick={() => handleNav(item)}>
-            {item.icon}
-            <span>{item.label}</span>
-          </button>
-        ))}
+        {MOBILE.map(item => {
+          // The "Work" tab covers two real routes (Freelance + Collab) that
+          // deriveActive() reports separately, so it needs its own active
+          // check instead of the plain id match every other tab uses.
+          const isActive = item.id === 'work'
+            ? (activeId === 'freelance' || activeId === 'collab')
+            : activeId === item.id;
+          return (
+            <button key={item.id}
+              className={`mobile-nav-btn ${isActive ? 'active' : ''} ${item.id === 'create' ? 'is-create' : ''}`}
+              onClick={() => handleNav(item)}>
+              {item.icon}
+              <span>{item.label}</span>
+            </button>
+          );
+        })}
       </nav>
 
       {robot && (
@@ -311,6 +371,38 @@ export default function AppShell({
             </button>
 
             <button className="post-sheet-cancel" onClick={() => setShowPostSheet(false)}>
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
+      {showWorkSheet && (
+        <div className="post-sheet-overlay" onClick={() => setShowWorkSheet(false)}>
+          <div className="post-sheet" onClick={e => e.stopPropagation()}>
+            <div className="post-sheet-grip" />
+            <h2 className="post-sheet-title">Work</h2>
+            <p className="post-sheet-sub">Browse paid gigs or find collaborators.</p>
+
+            <button className="post-option" onClick={() => chooseWork('/freelance')}>
+              <span className="post-option-ic">{I.freelance}</span>
+              <span className="post-option-text">
+                <span className="post-option-name">Freelance</span>
+                <span className="post-option-desc">Paid jobs from people on campus</span>
+              </span>
+              <span className="post-option-arrow">→</span>
+            </button>
+
+            <button className="post-option" onClick={() => chooseWork('/collab')}>
+              <span className="post-option-ic">{I.collab}</span>
+              <span className="post-option-text">
+                <span className="post-option-name">Collab</span>
+                <span className="post-option-desc">Team up on something together</span>
+              </span>
+              <span className="post-option-arrow">→</span>
+            </button>
+
+            <button className="post-sheet-cancel" onClick={() => setShowWorkSheet(false)}>
               Cancel
             </button>
           </div>

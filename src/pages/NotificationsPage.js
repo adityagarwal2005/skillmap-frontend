@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useToast } from '../context/ToastContext';
 import { getNotifications, markAsRead, markAllAsRead } from '../api/notifications';
 import { respondFriendRequest } from '../api/users';
 import AppShell from '../components/AppShell';
 import { PostCardSkeleton } from '../components/Skeleton';
+import { cldAvatar } from '../utils/cloudinaryUrl';
 import './FeedPage.css';
 import './NotificationsPage.css';
 
@@ -44,6 +45,9 @@ export default function NotificationsPage() {
   // Per-notification override once actioned here, so the buttons update
   // immediately without waiting on a re-fetch.
   const [statusOverride, setStatusOverride] = useState({});
+  const [newIds, setNewIds] = useState(new Set());
+  const seenIds = useRef(new Set());
+  const pollRef = useRef(null);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { load(); }, []);
@@ -52,10 +56,35 @@ export default function NotificationsPage() {
     try {
       setLoading(true);
       const res = await getNotifications();
-      setNotifications(res.data.notifications || []);
+      const fresh = res.data.notifications || [];
+      setNotifications(fresh);
+      // Baseline of what we've seen — a full (re)load never flashes anything.
+      seenIds.current = new Set(fresh.map(n => n.id));
+      setNewIds(new Set());
     } catch { showToast('Failed to load notifications', 'error'); }
     finally { setLoading(false); }
   };
+
+  // Quietly poll for new notifications and prepend/flash anything that
+  // wasn't there before — same approach used across Feed/Collab/Freelance.
+  // The topbar bell badge already polls separately every 30s; this keeps
+  // the actual list in sync too, without a manual refresh.
+  useEffect(() => {
+    const poll = async () => {
+      try {
+        const res = await getNotifications();
+        const fresh = res.data.notifications || [];
+        const arrived = fresh.filter(n => !seenIds.current.has(n.id));
+        if (arrived.length) {
+          arrived.forEach(n => seenIds.current.add(n.id));
+          setNotifications(prev => [...arrived, ...prev]);
+          setNewIds(prev => { const n2 = new Set(prev); arrived.forEach(n => n2.add(n.id)); return n2; });
+        }
+      } catch { /* silent — polling shouldn't nag */ }
+    };
+    pollRef.current = setInterval(poll, 5000);
+    return () => clearInterval(pollRef.current);
+  }, []);
 
   const handleRead = async (id) => {
     try {
@@ -120,11 +149,11 @@ export default function NotificationsPage() {
               const busy = busyId === n.id;
               return (
                 <div key={n.id}
-                  className={`notif-card ${!n.is_read ? 'unread' : ''}`}
+                  className={`notif-card ${!n.is_read ? 'unread' : ''} ${newIds.has(n.id) ? 'is-new' : ''}`}
                   onClick={() => handleRead(n.id)}>
                   <div className="notif-icon">
                     {n.actor_avatar
-                      ? <img className="notif-actor-ava" src={n.actor_avatar} alt="" />
+                      ? <img className="notif-actor-ava" src={cldAvatar(n.actor_avatar)} alt="" />
                       : TYPE_ICONS[n.type] || '🔔'}
                   </div>
                   <div className="notif-body">

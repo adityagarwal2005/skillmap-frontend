@@ -96,7 +96,7 @@
   white-space: pre-wrap;
 }
 
-.profile-links { display: flex; gap: 8px; margin-bottom: 18px; }
+.profile-links { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
 
 .profile-link {
   font-size: 0.875rem;
@@ -663,7 +663,7 @@
      spilling off the right edge. */
   .status-select, .edit-profile-btn { flex: 1 1 calc(50% - 4px); }
 
-  .profile-stats { gap: 20px; }
+  .profile-stats { gap: 20px; flex-wrap: wrap; }
 
   .profile-skills-section { padding: 18px 20px; }
 
