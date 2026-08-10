@@ -83,7 +83,7 @@ export default function PublicProfilePage() {
     <div className="public-profile-page">
       <header className="public-profile-topbar">
         <Link to="/" className="public-profile-brand">
-          <span className="public-profile-brand-icon">D</span>
+          <img className="public-profile-brand-icon" src="/icon-192.png" alt="" />
           DoitHere
         </Link>
         <button className="public-profile-cta" onClick={() => navigate('/login?mode=register')}>

@@ -39,7 +39,7 @@ export default function LandingPage() {
     <div className="landing-page">
       <header className="landing-nav">
         <div className="landing-brand">
-          <span className="landing-brand-icon">D</span>
+          <img className="landing-brand-icon" src="/icon-192.png" alt="" />
           DoitHere
         </div>
         <div className="landing-nav-actions">

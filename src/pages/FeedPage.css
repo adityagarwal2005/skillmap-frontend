@@ -14,7 +14,6 @@
 }
 .app-shell .topbar-name,
 .app-shell .topbar-username { color: #f5f5f7; }
-.app-shell .topbar-icon { background: #f5f5f7; color: #0a0a0a; }
 .app-shell .topbar-search-input {
   background: rgba(255,255,255,0.06);
   color: #f5f5f7;
@@ -316,15 +315,9 @@
 .topbar-icon {
   width: 26px;
   height: 26px;
-  background: var(--text-1);
   border-radius: 7px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--bg);
-  font-weight: 700;
-  font-size: 12px;
-  letter-spacing: -0.5px;
+  object-fit: cover;
+  display: block;
 }
 
 .topbar-name {

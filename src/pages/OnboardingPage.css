@@ -32,14 +32,9 @@
 .onboard-icon {
   width: 26px;
   height: 26px;
-  background: #0f172a;
   border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  font-weight: 800;
-  font-size: 12px;
+  object-fit: cover;
+  display: block;
 }
 
 .onboard-brand {

@@ -225,7 +225,7 @@ export default function AppShell({
     <div className="app-shell">
       <header className="topbar">
         <div className="topbar-brand" onClick={() => navigate('/')}>
-          <div className="topbar-icon">D</div>
+          <img className="topbar-icon" src="/icon-192.png" alt="" />
           <span className="topbar-name">DoitHere</span>
         </div>
 

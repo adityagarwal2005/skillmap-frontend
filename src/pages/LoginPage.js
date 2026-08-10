@@ -115,7 +115,7 @@ export default function LoginPage() {
     <div className="login-page">
       <div className="login-box">
         <div className="login-wordmark">
-          <div className="login-wordmark-icon">D</div>
+          <img className="login-wordmark-icon" src="/icon-192.png" alt="" />
           <span className="login-wordmark-name">DoitHere</span>
         </div>
 

@@ -106,7 +106,7 @@ export default function OnboardingPage() {
 
         {/* Wordmark */}
         <div className="onboard-wordmark">
-          <div className="onboard-icon">D</div>
+          <img className="onboard-icon" src="/icon-192.png" alt="" />
           <span className="onboard-brand">DoitHere</span>
         </div>
 

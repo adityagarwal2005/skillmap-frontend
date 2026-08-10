@@ -29,13 +29,8 @@
   width: 30px;
   height: 30px;
   border-radius: 8px;
-  background: #0f172a;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  font-size: 0.9375rem;
+  object-fit: cover;
+  display: block;
 }
 
 .public-profile-cta {
@@ -50,7 +45,6 @@
 }
 .public-profile-cta:hover { opacity: 0.85; }
 
-html[data-theme="dark"] .public-profile-brand-icon,
 html[data-theme="dark"] .public-profile-cta {
   background: var(--accent);
   color: var(--bg);

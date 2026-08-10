@@ -28,15 +28,9 @@
 .login-wordmark-icon {
   width: 32px;
   height: 32px;
-  background: var(--text-1);
   border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--bg);
-  font-weight: 700;
-  font-size: 14px;
-  letter-spacing: -0.5px;
+  object-fit: cover;
+  display: block;
 }
 
 .login-wordmark-name {
