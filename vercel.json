@@ -1,6 +1,7 @@
 {
   "buildCommand": "CI=false npm run build",
   "rewrites": [
+    { "source": "/.well-known/(.*)", "destination": "/.well-known/$1" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
