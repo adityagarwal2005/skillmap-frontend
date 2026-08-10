@@ -116,7 +116,7 @@ export default function LoginPage() {
       <div className="login-box">
         <div className="login-wordmark">
           <div className="login-wordmark-icon">D</div>
-          <span className="login-wordmark-name">Doithere</span>
+          <span className="login-wordmark-name">DoitHere</span>
         </div>
 
         <h1 className="login-heading">{heading}</h1>
@@ -237,7 +237,7 @@ export default function LoginPage() {
         )}
 
         <p className="login-footer">
-          By continuing, you agree to Doithere's <Link to="/terms">Terms of Service</Link> and{' '}
+          By continuing, you agree to DoitHere's <Link to="/terms">Terms of Service</Link> and{' '}
           <Link to="/privacy">Privacy Policy</Link>.
         </p>
       </div>

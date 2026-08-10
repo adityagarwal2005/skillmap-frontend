@@ -46,7 +46,7 @@ export default function SettingsPage() {
 
   const handleShareInvite = async () => {
     if (navigator.share) {
-      try { await navigator.share({ title: 'Join me on Doithere', url: inviteLink }); } catch {}
+      try { await navigator.share({ title: 'Join me on DoitHere', url: inviteLink }); } catch {}
       return;
     }
     handleCopyInvite();
@@ -158,7 +158,7 @@ export default function SettingsPage() {
           <div className="settings-row">
             <div className="settings-row-info">
               <span className="settings-row-label">Sign out</span>
-              <span className="settings-row-sub">Sign out of Doithere on this device</span>
+              <span className="settings-row-sub">Sign out of DoitHere on this device</span>
             </div>
             <button className="settings-save-btn" onClick={() => { logoutUser(); navigate('/login'); }}>
               Sign out
@@ -172,7 +172,7 @@ export default function SettingsPage() {
             <h2 className="settings-section-title">App</h2>
             <div className="settings-row">
               <div className="settings-row-info">
-                <span className="settings-row-label">Install Doithere</span>
+                <span className="settings-row-label">Install DoitHere</span>
                 <span className="settings-row-sub">
                   {installed
                     ? 'Already installed on this device'

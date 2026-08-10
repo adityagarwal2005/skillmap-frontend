@@ -10,36 +10,36 @@ function TermsContent() {
       <p className="legal-updated">Last updated: {LAST_UPDATED}</p>
 
       <p>
-        Doithere ("we", "us", "the platform") is a campus talent network that helps students
+        DoitHere ("we", "us", "the platform") is a campus talent network that helps students
         find skilled people nearby, post and apply to freelance work, and team up on collabs.
         By creating an account you agree to these terms.
       </p>
 
-      <h2>1. Who can use Doithere</h2>
+      <h2>1. Who can use DoitHere</h2>
       <p>
-        Doithere is built for students on our campus. You must provide accurate information when
+        DoitHere is built for students on our campus. You must provide accurate information when
         you register, and you're responsible for keeping your account secure. You must be old
         enough to legally enter into agreements in your jurisdiction to use paid freelance features.
       </p>
 
-      <h2>2. Doithere is a connector, not a party to your agreements</h2>
+      <h2>2. DoitHere is a connector, not a party to your agreements</h2>
       <p>
-        <strong>Doithere does not process, hold, or guarantee any payment.</strong> Freelance jobs,
+        <strong>DoitHere does not process, hold, or guarantee any payment.</strong> Freelance jobs,
         collabs, and any pay you arrange with another user are agreements directly between you and
-        them — Doithere has no part in that transaction, doesn't verify anyone's ability to pay or
+        them — DoitHere has no part in that transaction, doesn't verify anyone's ability to pay or
         deliver, and isn't liable if a job goes badly, payment doesn't happen, or work isn't
         completed as expected. Use good judgment: agree on scope and payment terms clearly before
         starting work, and prefer meeting in safe, public places for anything in person.
       </p>
       <p>
-        Nothing on Doithere creates an employment relationship between you, Doithere, or anyone you
+        Nothing on DoitHere creates an employment relationship between you, DoitHere, or anyone you
         work with through the platform.
       </p>
 
       <h2>3. Your content</h2>
       <p>
         You keep ownership of anything you post — portfolio work, job/collab listings, photos,
-        videos, and messages. By posting, you give Doithere permission to store and display it to
+        videos, and messages. By posting, you give DoitHere permission to store and display it to
         other users as part of running the platform. Don't post anything you don't have the right
         to share.
       </p>
@@ -48,7 +48,7 @@ function TermsContent() {
       <p>
         Be respectful. Harassment, hate speech, threats, spam, scams, and impersonation are not
         allowed and may get your account suspended or removed. Use the Block and Report features on
-        any profile or post if someone violates this — reports are reviewed by the Doithere team.
+        any profile or post if someone violates this — reports are reviewed by the DoitHere team.
       </p>
 
       <h2>5. Location & identity</h2>
@@ -69,12 +69,12 @@ function TermsContent() {
 
       <h2>7. Changes</h2>
       <p>
-        We may update these terms as Doithere evolves. Material changes will be reflected here with
+        We may update these terms as DoitHere evolves. Material changes will be reflected here with
         an updated date.
       </p>
 
       <h2>8. Contact</h2>
-      <p>Questions about these terms? Reach out to the Doithere team through the app.</p>
+      <p>Questions about these terms? Reach out to the DoitHere team through the app.</p>
     </>
   );
 }
@@ -85,7 +85,7 @@ function PrivacyContent() {
       <p className="legal-updated">Last updated: {LAST_UPDATED}</p>
 
       <p>
-        This explains what Doithere collects, why, and how it's used. We collect the minimum
+        This explains what DoitHere collects, why, and how it's used. We collect the minimum
         needed to make the platform work.
       </p>
 
@@ -116,7 +116,7 @@ function PrivacyContent() {
 
       <h2>4. Third-party services</h2>
       <p>
-        We use a small number of infrastructure providers to run Doithere: a hosting provider for
+        We use a small number of infrastructure providers to run DoitHere: a hosting provider for
         the app and database, Cloudinary for storing images/videos you upload, and an email
         provider for sending one-time login/verification codes. These providers only process data
         on our behalf and don't use it for their own purposes.
@@ -137,10 +137,10 @@ function PrivacyContent() {
       </p>
 
       <h2>7. Changes</h2>
-      <p>We may update this policy as Doithere evolves. Material changes will be reflected here.</p>
+      <p>We may update this policy as DoitHere evolves. Material changes will be reflected here.</p>
 
       <h2>8. Contact</h2>
-      <p>Questions about your data? Reach out to the Doithere team through the app.</p>
+      <p>Questions about your data? Reach out to the DoitHere team through the app.</p>
     </>
   );
 }
@@ -153,8 +153,8 @@ export default function LegalPage() {
   usePageMeta({
     title: isPrivacy ? 'Privacy Policy' : 'Terms of Service',
     description: isPrivacy
-      ? 'How Doithere collects, uses, and protects your data.'
-      : 'The terms that govern using Doithere, the campus talent network.',
+      ? 'How DoitHere collects, uses, and protects your data.'
+      : 'The terms that govern using DoitHere, the campus talent network.',
     path: isPrivacy ? '/privacy' : '/terms',
   });
 

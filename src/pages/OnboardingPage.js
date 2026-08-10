@@ -107,7 +107,7 @@ export default function OnboardingPage() {
         {/* Wordmark */}
         <div className="onboard-wordmark">
           <div className="onboard-icon">D</div>
-          <span className="onboard-brand">Doithere</span>
+          <span className="onboard-brand">DoitHere</span>
         </div>
 
         {/* Progress */}

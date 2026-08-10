@@ -150,7 +150,7 @@ export default function PostDetailPage() {
     try {
       setSubmittingReport(true);
       await reportContent('post', itemId, reportReason, reportDetails);
-      showToast('Report submitted. Thanks for helping keep Doithere safe.', 'success');
+      showToast('Report submitted. Thanks for helping keep DoitHere safe.', 'success');
       setReportModal(false);
       setReportDetails('');
       setReportReason('spam');

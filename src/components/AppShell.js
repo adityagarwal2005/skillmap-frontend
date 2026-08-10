@@ -226,7 +226,7 @@ export default function AppShell({
       <header className="topbar">
         <div className="topbar-brand" onClick={() => navigate('/')}>
           <div className="topbar-icon">D</div>
-          <span className="topbar-name">Doithere</span>
+          <span className="topbar-name">DoitHere</span>
         </div>
 
         <form onSubmit={handleSearchSubmit} className="topbar-search">
@@ -304,7 +304,7 @@ export default function AppShell({
           {showInstallBanner && (
             <div className="profile-nudge">
               <div className="profile-nudge-text">
-                <strong>Install Doithere</strong>
+                <strong>Install DoitHere</strong>
                 <span>Add it to your home screen for a faster, full-screen experience.</span>
               </div>
               <div className="profile-nudge-actions">

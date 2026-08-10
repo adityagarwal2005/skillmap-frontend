@@ -1,4 +1,4 @@
-/* Doithere service worker — makes the app installable + fast on repeat loads.
+/* DoitHere service worker — makes the app installable + fast on repeat loads.
    Strategy: network-first for navigations (always try fresh HTML, fall back to
    cache when offline); cache-first for static build assets. Deliberately does
    NOT cache API calls (anything under /users, /feed, etc. on the API host is a
@@ -62,8 +62,8 @@ self.addEventListener('fetch', (event) => {
 self.addEventListener('push', (event) => {
   let data = {};
   try { data = event.data ? event.data.json() : {}; }
-  catch (e) { data = { title: 'Doithere', body: event.data ? event.data.text() : '' }; }
-  const title = data.title || 'Doithere';
+  catch (e) { data = { title: 'DoitHere', body: event.data ? event.data.text() : '' }; }
+  const title = data.title || 'DoitHere';
   event.waitUntil(
     self.registration.showNotification(title, {
       body: data.body || '',

@@ -39,7 +39,7 @@ export default class ErrorBoundary extends Component {
       }}>
         <div style={{ fontSize: '2rem' }}>Something went wrong</div>
         <p style={{ color: '#9a9aa5', maxWidth: '360px', fontSize: '0.95rem' }}>
-          Doithere hit an unexpected error. Try going back to the home screen —
+          DoitHere hit an unexpected error. Try going back to the home screen —
           if it keeps happening, let us know.
         </p>
         <button

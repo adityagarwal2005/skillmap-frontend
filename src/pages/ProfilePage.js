@@ -113,7 +113,7 @@ export default function ProfilePage() {
     try {
       setSubmittingReport(true);
       await reportContent('user', userId, reportReason, reportDetails);
-      showToast('Report submitted. Thanks for helping keep Doithere safe.', 'success');
+      showToast('Report submitted. Thanks for helping keep DoitHere safe.', 'success');
       setReportModal(false);
       setReportDetails('');
       setReportReason('spam');
@@ -243,7 +243,7 @@ export default function ProfilePage() {
     const url = `${window.location.origin}/u/${profile.username}`;
     // Native share sheet on mobile; clipboard copy everywhere else.
     if (navigator.share) {
-      try { await navigator.share({ title: `${profile.username} on Doithere`, url }); } catch {}
+      try { await navigator.share({ title: `${profile.username} on DoitHere`, url }); } catch {}
       return;
     }
     try {
