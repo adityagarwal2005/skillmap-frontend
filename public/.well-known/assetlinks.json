@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "in.doithere.twa",
+        "sha256_cert_fingerprints": ["BC:F5:C1:25:61:1A:58:E4:01:F6:B5:C5:19:43:7E:D0:94:42:5D:EB:87:12:3D:E3:68:BE:05:8E:1B:5D:F2:B4"]
+      }
+    }]
