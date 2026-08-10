@@ -173,7 +173,7 @@ export default function PeoplePage() {
         <div className="people-hero">
           <h1 className="people-heading">Find People</h1>
           <p className="people-sub">
-            Search for anyone on SkillMap by username — anywhere, no location needed.
+            Search for anyone on Doithere by username — anywhere, no location needed.
           </p>
         </div>
 
@@ -197,7 +197,7 @@ export default function PeoplePage() {
         {!searched ? (
           <div className="state-box">
             <h3>Find anyone by username</h3>
-            <p>Type a username to find them — SkillMap-wide, no location filter.</p>
+            <p>Type a username to find them — Doithere-wide, no location filter.</p>
           </div>
         ) : loading ? (
           <div className="people-grid">

@@ -1867,6 +1867,15 @@ video.post-media-el { cursor: default; object-fit: contain; background: #000; }
     align-items: center;
     gap: 3px;
     flex: 1;
+    /* Flex items default to min-width:auto, which floors their size at the
+       LABEL'S UNWRAPPED TEXT WIDTH regardless of the flex:1 share — on
+       narrower phones the 5 buttons' combined minimums can exceed the
+       screen width, so the browser squishes/clips/overlaps labels
+       differently depending on its own resolution strategy (which is why
+       this only showed up on "some" phones and not others). min-width:0
+       lets flex:1 actually win, and the label itself gets clipped safely
+       with an ellipsis instead of overflowing raw. */
+    min-width: 0;
     color: rgba(245,245,247,0.55);
     font-size: 0.625rem;
     font-weight: 500;
@@ -1874,6 +1883,22 @@ video.post-media-el { cursor: default; object-fit: contain; background: #000; }
   }
   .mobile-nav-btn.active { color: #ffffff; }
   .mobile-nav-btn.is-create { color: rgba(245,245,247,0.9); }
+
+  .mobile-nav-btn span {
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Slightly smaller label on very narrow phones so real words (not just
+     truncated dots) still fit — 320-360px-wide devices are common enough
+     (older/budget Android, iPhone SE) to be worth a dedicated step instead
+     of relying on ellipsis alone. */
+  @media (max-width: 360px) {
+    .mobile-nav-btn { font-size: 0.5625rem; }
+    .mobile-nav { padding-left: 2px; padding-right: 2px; }
+  }
 
   /* keep page content clear of the fixed bar — 88px matches the nav's real
      footprint (padding + safe-area-inset-bottom on notched phones); this used

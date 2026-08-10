@@ -51,7 +51,7 @@ function setRobots(content) {
  */
 export default function usePageMeta({ title, description, path, noindex = false }) {
   useEffect(() => {
-    const fullTitle = title ? `${title} — SkillMap` : 'SkillMap — Campus Talent Network';
+    const fullTitle = title ? `${title} — Doithere` : 'Doithere — Campus Talent Network';
     document.title = fullTitle;
 
     setMetaTag('name', 'description', description);

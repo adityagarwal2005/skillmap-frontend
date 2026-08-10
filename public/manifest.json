@@ -1,6 +1,6 @@
 {
-  "short_name": "SkillMap",
-  "name": "SkillMap — Campus Talent Network",
+  "short_name": "Doithere",
+  "name": "Doithere — Campus Talent Network",
   "description": "Find skilled people on campus, collaborate, and get work done.",
   "icons": [
     {
@@ -29,6 +29,8 @@
   ],
   "start_url": ".",
   "scope": ".",
+  "lang": "en",
+  "dir": "ltr",
   "display": "standalone",
   "orientation": "portrait",
   "theme_color": "#0a0a0a",

@@ -6,7 +6,7 @@ import './LandingPage.css';
 const FEATURES = [
   { icon: '💼', title: 'Freelance work', text: 'Post a paid job or pick one up — real work, real pay, right around campus.' },
   { icon: '🧩', title: 'Collab teams', text: 'Find teammates for a project, hackathon, or startup idea — and actually talk as a team once you\'re in.' },
-  { icon: '🔎', title: 'People search', text: 'Find anyone on SkillMap by username, see their skills, and reach out directly.' },
+  { icon: '🔎', title: 'People search', text: 'Find anyone on Doithere by username, see their skills, and reach out directly.' },
   { icon: '💬', title: 'Messaging', text: 'DM a friend, or message anyone you\'ve actually worked with — no cold spam.' },
 ];
 
@@ -39,8 +39,8 @@ export default function LandingPage() {
     <div className="landing-page">
       <header className="landing-nav">
         <div className="landing-brand">
-          <span className="landing-brand-icon">S</span>
-          SkillMap
+          <span className="landing-brand-icon">D</span>
+          Doithere
         </div>
         <div className="landing-nav-actions">
           <button className="landing-nav-signin" onClick={() => navigate('/login')}>Sign in</button>
@@ -53,7 +53,7 @@ export default function LandingPage() {
           {referrer && (
             <div className="landing-invite-pill">You were invited by @{referrer}</div>
           )}
-          <div className="landing-hero-tag">// SKILLMAP — HYPERLOCAL SKILL NETWORK</div>
+          <div className="landing-hero-tag">// DOITHERE — HYPERLOCAL SKILL NETWORK</div>
           <h1 className="landing-hero-display">
             Get discovered<br />for what you<br /><em>actually</em> do.
           </h1>
@@ -101,12 +101,12 @@ export default function LandingPage() {
           ))}
         </div>
         <button className="landing-cta-lg" onClick={() => navigate('/login?mode=register')}>
-          Join SkillMap
+          Join Doithere
         </button>
       </section>
 
       <footer className="landing-footer">
-        <span>© {new Date().getFullYear()} SkillMap</span>
+        <span>© {new Date().getFullYear()} Doithere</span>
         <div className="landing-footer-links">
           <Link to="/terms">Terms</Link>
           <Link to="/privacy">Privacy</Link>

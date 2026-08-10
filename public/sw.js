@@ -1,9 +1,9 @@
-/* SkillMap service worker — makes the app installable + fast on repeat loads.
+/* Doithere service worker — makes the app installable + fast on repeat loads.
    Strategy: network-first for navigations (always try fresh HTML, fall back to
    cache when offline); cache-first for static build assets. Deliberately does
    NOT cache API calls (anything under /users, /feed, etc. on the API host is a
    different origin anyway and is left to the network). */
-const CACHE = 'skillmap-v2';
+const CACHE = 'doithere-v1';
 const APP_SHELL = ['/', '/index.html', '/manifest.json', '/favicon.ico'];
 
 self.addEventListener('install', (event) => {
@@ -62,8 +62,8 @@ self.addEventListener('fetch', (event) => {
 self.addEventListener('push', (event) => {
   let data = {};
   try { data = event.data ? event.data.json() : {}; }
-  catch (e) { data = { title: 'SkillMap', body: event.data ? event.data.text() : '' }; }
-  const title = data.title || 'SkillMap';
+  catch (e) { data = { title: 'Doithere', body: event.data ? event.data.text() : '' }; }
+  const title = data.title || 'Doithere';
   event.waitUntil(
     self.registration.showNotification(title, {
       body: data.body || '',

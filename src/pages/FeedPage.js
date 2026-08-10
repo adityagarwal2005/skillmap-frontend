@@ -129,7 +129,7 @@ export default function FeedPage() {
           <aside className="feed-promo">
             <span className="feed-promo-arrow" aria-hidden="true">↗</span>
             <div className="feed-promo-title">Stay ahead.<br />Build more.<br />Together.</div>
-            <div className="feed-promo-meta">SkillMap Ecosystem</div>
+            <div className="feed-promo-meta">Doithere Ecosystem</div>
           </aside>
         </div>
 
@@ -258,7 +258,7 @@ export default function FeedPage() {
         <div className="welcome-overlay" onClick={dismissWelcome}>
           <div className="welcome-card" onClick={e => e.stopPropagation()}>
             <div className="welcome-badge">S</div>
-            <h2 className="welcome-title">Welcome to SkillMap 👋</h2>
+            <h2 className="welcome-title">Welcome to Doithere 👋</h2>
             <p className="welcome-sub">Your campus talent network. Here are 3 quick ways to start:</p>
 
             <button className="welcome-step" onClick={() => welcomeGo(`/profile/${user?.id}/edit`)}>

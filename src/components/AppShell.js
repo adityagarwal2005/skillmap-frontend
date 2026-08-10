@@ -225,8 +225,8 @@ export default function AppShell({
     <div className="app-shell">
       <header className="topbar">
         <div className="topbar-brand" onClick={() => navigate('/')}>
-          <div className="topbar-icon">S</div>
-          <span className="topbar-name">SkillMap</span>
+          <div className="topbar-icon">D</div>
+          <span className="topbar-name">Doithere</span>
         </div>
 
         <form onSubmit={handleSearchSubmit} className="topbar-search">
@@ -304,7 +304,7 @@ export default function AppShell({
           {showInstallBanner && (
             <div className="profile-nudge">
               <div className="profile-nudge-text">
-                <strong>Install SkillMap</strong>
+                <strong>Install Doithere</strong>
                 <span>Add it to your home screen for a faster, full-screen experience.</span>
               </div>
               <div className="profile-nudge-actions">

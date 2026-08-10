@@ -52,8 +52,8 @@ export default function PublicProfilePage() {
   usePageMeta({
     title: profile ? `${profile.username}${profile.category ? ` — ${profile.category}` : ''}` : username,
     description: profile
-      ? (profile.headline || profile.bio || `${profile.username} on SkillMap — ${profile.category || 'campus talent network'}.`)
-      : `${username} on SkillMap`,
+      ? (profile.headline || profile.bio || `${profile.username} on Doithere — ${profile.category || 'campus talent network'}.`)
+      : `${username} on Doithere`,
     path: `/u/${username}`,
     // Not-found pages have nothing worth indexing; real profiles are the
     // whole point of this page existing, so they stay indexable.
@@ -83,11 +83,11 @@ export default function PublicProfilePage() {
     <div className="public-profile-page">
       <header className="public-profile-topbar">
         <Link to="/" className="public-profile-brand">
-          <span className="public-profile-brand-icon">S</span>
-          SkillMap
+          <span className="public-profile-brand-icon">D</span>
+          Doithere
         </Link>
         <button className="public-profile-cta" onClick={() => navigate('/login?mode=register')}>
-          Join SkillMap
+          Join Doithere
         </button>
       </header>
 
@@ -187,7 +187,7 @@ export default function PublicProfilePage() {
             <div className="public-profile-join-banner">
               <div>
                 <strong>Want to hire {profile.username}, or get discovered like this?</strong>
-                <span>Join SkillMap — freelance work, collabs, and people right around your campus.</span>
+                <span>Join Doithere — freelance work, collabs, and people right around your campus.</span>
               </div>
               <button className="public-profile-cta" onClick={() => navigate('/login?mode=register')}>
                 Join free

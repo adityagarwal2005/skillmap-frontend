@@ -115,8 +115,8 @@ export default function LoginPage() {
     <div className="login-page">
       <div className="login-box">
         <div className="login-wordmark">
-          <div className="login-wordmark-icon">S</div>
-          <span className="login-wordmark-name">SkillMap</span>
+          <div className="login-wordmark-icon">D</div>
+          <span className="login-wordmark-name">Doithere</span>
         </div>
 
         <h1 className="login-heading">{heading}</h1>
@@ -237,7 +237,7 @@ export default function LoginPage() {
         )}
 
         <p className="login-footer">
-          By continuing, you agree to SkillMap's <Link to="/terms">Terms of Service</Link> and{' '}
+          By continuing, you agree to Doithere's <Link to="/terms">Terms of Service</Link> and{' '}
           <Link to="/privacy">Privacy Policy</Link>.
         </p>
       </div>
