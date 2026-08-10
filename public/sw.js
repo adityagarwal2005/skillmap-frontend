@@ -2,8 +2,15 @@
    Strategy: network-first for navigations (always try fresh HTML, fall back to
    cache when offline); cache-first for static build assets. Deliberately does
    NOT cache API calls (anything under /users, /feed, etc. on the API host is a
-   different origin anyway and is left to the network). */
-const CACHE = 'doithere-v1';
+   different origin anyway and is left to the network).
+
+   IMPORTANT: cache-first means a static asset, once cached, is never
+   re-checked against the network — a stale icon/favicon/manifest will keep
+   being served forever otherwise. Bump this version string any time you
+   change the CONTENT of a file under public/ that keeps the same filename
+   (icons, favicon.ico, manifest.json, robot.png, etc.) — that's what
+   actually forces browsers to purge the old cached bytes and refetch. */
+const CACHE = 'doithere-v2';
 const APP_SHELL = ['/', '/index.html', '/manifest.json', '/favicon.ico'];
 
 self.addEventListener('install', (event) => {
