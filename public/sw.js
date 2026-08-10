@@ -10,7 +10,7 @@
    change the CONTENT of a file under public/ that keeps the same filename
    (icons, favicon.ico, manifest.json, robot.png, etc.) — that's what
    actually forces browsers to purge the old cached bytes and refetch. */
-const CACHE = 'doithere-v2';
+const CACHE = 'doithere-v3';
 const APP_SHELL = ['/', '/index.html', '/manifest.json', '/favicon.ico'];
 
 self.addEventListener('install', (event) => {
