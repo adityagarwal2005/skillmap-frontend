@@ -3,6 +3,14 @@ import API from './config';
 export const login = (username, password) =>
   API.post('/users/login/', new URLSearchParams({ username, password }));
 
+export const googleLogin = (credential, latitude, longitude, referredBy) =>
+  API.post('/users/login/google/', new URLSearchParams({
+    credential,
+    ...(latitude && { latitude }),
+    ...(longitude && { longitude }),
+    ...(referredBy && { referred_by: referredBy }),
+  }));
+
 export const sendOTP = (username, email) =>
   API.post('/users/send-otp/', new URLSearchParams({ username, email }));
 

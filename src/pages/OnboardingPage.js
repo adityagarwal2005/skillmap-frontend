@@ -88,8 +88,12 @@ export default function OnboardingPage() {
     // categories actually loaded.
     if (step === 0) return !!selectedCat || categoriesFailed;
     if (step === 1) return skills.length > 0;
-    // Connect an account — required, same as require_contact() on the backend.
-    if (step === 2) return CONNECT_FIELDS.some(f => connect[f.key].trim());
+    // Connect an account — optional at onboarding (most new users don't have
+    // a LinkedIn/GitHub handy yet). Still required before posting/accepting
+    // work (require_contact() on the backend), so it's just deferred, not
+    // dropped — Settings and this page both let you add one any time. A
+    // Google sign-in also counts, so anyone who used it here already has it.
+    if (step === 2) return true;
     if (step === 3) return true;
     if (step === 4) return true;
     return false;
@@ -176,9 +180,9 @@ export default function OnboardingPage() {
 
           {step === 2 && (
             <>
-              <h2 className="onboard-title">Connect an account</h2>
+              <h2 className="onboard-title">Connect an account <span style={{fontWeight:400,color:'var(--text-3)',fontSize:'0.7em'}}>(optional)</span></h2>
               <p className="onboard-sub">
-                Add one so people can verify who they're dealing with — GitHub, LinkedIn, or Instagram.
+                Add GitHub, LinkedIn, or Instagram so people can verify who they're dealing with. You can skip this — you'll just need one before posting or accepting work.
               </p>
               <div className="connect-fields">
                 {CONNECT_FIELDS.map(f => (
@@ -240,8 +244,8 @@ export default function OnboardingPage() {
 
         {/* Actions */}
         <div className="onboard-actions">
-          {/* Category, Skills, and Connect are required — only Status/Location can be skipped */}
-          {step >= 3 ? (
+          {/* Category and Skills are required — Connect, Status, and Location can be skipped */}
+          {step >= 2 ? (
             <button className="onboard-skip" onClick={() => {
               if (step < STEPS.length - 1) setStep(s => s + 1);
               else navigate('/');

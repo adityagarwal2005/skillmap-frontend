@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
-  login, sendOTP, verifyAndRegister, sendLoginOTP, verifyLoginOTP, resetPasswordWithOTP,
+  login, sendOTP, verifyAndRegister, sendLoginOTP, verifyLoginOTP, resetPasswordWithOTP, googleLogin,
 } from '../api/auth';
 import './LoginPage.css';
+
+const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
 
 export default function LoginPage() {
   const [searchParams] = useSearchParams();
@@ -18,6 +20,7 @@ export default function LoginPage() {
   const [success, setSuccess]   = useState('');
   const [loading, setLoading]   = useState(false);
   const { loginUser }           = useAuth();
+  const googleBtnRef            = useRef(null);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -26,6 +29,48 @@ export default function LoginPage() {
       });
     }
   }, []);
+
+  const handleGoogleCredential = async (response) => {
+    setError('');
+    setLoading(true);
+    try {
+      const referredBy = localStorage.getItem('smReferredBy') || '';
+      const res = await googleLogin(response.credential, location.lat, location.lon, referredBy);
+      localStorage.removeItem('smReferredBy');
+      signIn(res);
+    } catch (err) {
+      setError(err.response?.data?.error || 'Google sign-in failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Renders Google's own button into our div once the GIS script (loaded in
+  // index.html) is ready. Skipped entirely if no client ID is configured —
+  // this keeps the button silently absent on any environment that hasn't
+  // set REACT_APP_GOOGLE_CLIENT_ID yet, instead of throwing.
+  useEffect(() => {
+    if (!GOOGLE_CLIENT_ID || mode === 'forgot') return undefined;
+    let cancelled = false;
+    const tryInit = () => {
+      if (cancelled) return;
+      if (!window.google?.accounts?.id) { setTimeout(tryInit, 200); return; }
+      window.google.accounts.id.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        callback: handleGoogleCredential,
+      });
+      if (googleBtnRef.current) {
+        googleBtnRef.current.innerHTML = '';
+        window.google.accounts.id.renderButton(googleBtnRef.current, {
+          theme: 'outline', size: 'large', width: 320,
+          text: mode === 'register' ? 'signup_with' : 'signin_with',
+        });
+      }
+    };
+    tryInit();
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode, location.lat]);
 
   const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -124,6 +169,17 @@ export default function LoginPage() {
 
         {error   && <div className="login-error">{error}</div>}
         {success && <div className="login-success">{success}</div>}
+
+        {GOOGLE_CLIENT_ID && (mode === 'login' || (mode === 'register' && step === 1)) && (
+          <>
+            <div ref={googleBtnRef} className="login-google-btn" />
+            <div className="login-divider">
+              <div className="login-divider-line" />
+              <span className="login-divider-text">or</span>
+              <div className="login-divider-line" />
+            </div>
+          </>
+        )}
 
         <form onSubmit={handleSubmit} className="login-form">
           {/* Password login */}

@@ -119,6 +119,12 @@
 .login-submit:active:not(:disabled) { transform: translateY(0); }
 .login-submit:disabled { opacity: 0.35; cursor: not-allowed; }
 
+.login-google-btn {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
 .login-divider {
   display: flex;
   align-items: center;
