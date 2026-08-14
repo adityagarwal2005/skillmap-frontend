@@ -34,7 +34,19 @@ API.interceptors.response.use(
         const newToken = res.data.access;
         localStorage.setItem('access_token', newToken);
         original.headers.Authorization = `Bearer ${newToken}`;
-        return API(original);
+        try {
+          return await API(original);
+        } catch (retryError) {
+          // The refresh call itself succeeded, but the server still won't
+          // accept the fresh token on retry — the session is genuinely dead
+          // (not just an expired access token), so stop looping forever and
+          // force a clean re-login instead of silently failing every poll.
+          if (retryError.response?.status === 401) {
+            localStorage.clear();
+            window.location.href = '/login';
+          }
+          throw retryError;
+        }
       } catch {
         localStorage.clear();
         window.location.href = '/login';
