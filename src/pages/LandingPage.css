@@ -1,6 +1,13 @@
+/* The landing page is a fixed dark theme, independent of the app-wide
+   light/dark toggle — it's a marketing page, not a logged-in surface, and a
+   visitor who hasn't set a theme preference yet would otherwise see the
+   feature cards/footer fall back to light-mode tokens while the hero above
+   stays dark, a jarring seam. Colors below are hardcoded rather than themed
+   custom properties for that reason. */
 .landing-page {
   min-height: 100vh;
-  background: var(--bg2);
+  background: #0a0a0a;
+  color: #f5f5f7;
 }
 
 /* ── Top nav ── */
@@ -208,9 +215,13 @@
 .landing-feature-card {
   padding: 24px 22px;
   border-radius: var(--radius-lg);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-sm);
+  background: rgba(255,255,255,0.035);
+  border: 1px solid rgba(255,255,255,0.08);
+  transition: background 0.2s, border-color 0.2s;
+}
+.landing-feature-card:hover {
+  background: rgba(255,255,255,0.055);
+  border-color: rgba(79,124,255,0.35);
 }
 
 .landing-feature-icon { font-size: 1.75rem; margin-bottom: 12px; }
@@ -218,14 +229,14 @@
 .landing-feature-card h3 {
   font-size: 0.9375rem;
   font-weight: 700;
-  color: var(--text-1);
+  color: #f5f5f7;
   margin-bottom: 6px;
 }
 
 .landing-feature-card p {
   font-size: 0.8125rem;
   line-height: 1.55;
-  color: var(--text-2);
+  color: rgba(245,245,247,0.6);
 }
 
 /* ── How it works ── */
@@ -240,7 +251,7 @@
   font-size: var(--fs-h2, 1.75rem);
   font-weight: 700;
   letter-spacing: -0.02em;
-  color: var(--text-1);
+  color: #f5f5f7;
   margin-bottom: 36px;
 }
 
@@ -259,26 +270,24 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #0f172a;
-  color: #fff;
+  background: linear-gradient(135deg, #4f7cff, #00d3f2);
+  color: #0a0a0a;
   font-weight: 700;
   font-size: 0.9375rem;
   margin-bottom: 14px;
 }
 
-html[data-theme="dark"] .landing-step-num { background: var(--accent); color: var(--bg); }
-
 .landing-step h3 {
   font-size: 0.9375rem;
   font-weight: 700;
-  color: var(--text-1);
+  color: #f5f5f7;
   margin-bottom: 6px;
 }
 
 .landing-step p {
   font-size: 0.8125rem;
   line-height: 1.55;
-  color: var(--text-2);
+  color: rgba(245,245,247,0.6);
 }
 
 /* ── Footer ── */
@@ -288,13 +297,13 @@ html[data-theme="dark"] .landing-step-num { background: var(--accent); color: va
   justify-content: space-between;
   padding: 24px clamp(20px, 5vw, 56px) 40px;
   font-size: 0.8125rem;
-  color: var(--text-3);
-  border-top: 1px solid var(--border);
+  color: rgba(245,245,247,0.4);
+  border-top: 1px solid rgba(255,255,255,0.08);
 }
 
 .landing-footer-links { display: flex; gap: 18px; }
-.landing-footer-links a { color: var(--text-2); }
-.landing-footer-links a:hover { color: var(--text-1); }
+.landing-footer-links a { color: rgba(245,245,247,0.6); }
+.landing-footer-links a:hover { color: #f5f5f7; }
 
 @media (max-width: 860px) {
   .landing-features { grid-template-columns: repeat(2, 1fr); }
