@@ -1,6 +1,12 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { Suspense, lazy } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { Suspense, lazy, useEffect } from 'react';
 import { useAuth } from './context/AuthContext';
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+}
 
 // Lazy-loaded routes — each page ships as its own chunk, so the app boots fast.
 // lazyRetry: if a chunk fails to load (usually because a new build shipped and
@@ -42,11 +48,19 @@ const LandingPage       = lazyRetry(() => import('./pages/LandingPage'));
 
 const Loader = () => (
   <div style={{
-    minHeight: '100vh', display: 'flex',
+    minHeight: '100vh', display: 'flex', flexDirection: 'column', gap: '12px',
     alignItems: 'center', justifyContent: 'center',
     background: 'var(--bg)', color: 'var(--text-2)',
     fontSize: '0.875rem',
-  }}>Loading…</div>
+  }}>
+    <div style={{
+      width: 24, height: 24,
+      border: '2.5px solid var(--border-md, rgba(0,0,0,0.12))',
+      borderTopColor: 'var(--text-2, #6e6e73)',
+      borderRadius: '50%',
+      animation: 'spin 0.6s linear infinite',
+    }} />
+  </div>
 );
 
 function App() {
@@ -56,6 +70,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Suspense fallback={<Loader />}>
         <Routes>
           <Route path="/login"                    element={user ? <Navigate to="/" /> : <LoginPage />} />

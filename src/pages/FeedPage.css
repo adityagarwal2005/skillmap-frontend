@@ -413,8 +413,8 @@
 .feed-shell .topbar-bell-badge { border-color: var(--ink, #0a0a0a); }
 
 .topbar-btn {
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -426,8 +426,8 @@
 .topbar-btn:hover { background: var(--elevated); }
 
 .topbar-avatar {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   background: var(--text-1);
   border-radius: 50%;
   display: flex;
@@ -823,8 +823,8 @@
 .profile-nudge-cta:hover { opacity: 0.85; }
 
 .profile-nudge-x {
-  width: 30px;
-  height: 30px;
+  width: 44px;
+  height: 44px;
   font-size: 1.25rem;
   line-height: 1;
   color: rgba(245,245,247,0.6);
@@ -1015,13 +1015,8 @@
   width: 46px;
   height: 46px;
   border-radius: 13px;
-  background: #0a0a0a;
-  color: #fff;
-  font-weight: 800;
-  font-size: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  object-fit: cover;
+  display: block;
   margin-bottom: 16px;
 }
 

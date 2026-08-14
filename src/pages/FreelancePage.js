@@ -15,6 +15,14 @@ import { cldThumb } from '../utils/cloudinaryUrl';
 import './FeedPage.css';
 import './FreelancePage.css';
 
+const VISIBILITY_OPTIONS = [
+  { label: '1 hour',   hours: 1 },
+  { label: '6 hours',  hours: 6 },
+  { label: '12 hours', hours: 12 },
+  { label: '1 day',    hours: 24 },
+  { label: '3 days',   hours: 72 },
+];
+
 function timeLeft(expiresAt) {
   const diff = new Date(expiresAt) - Date.now();
   if (diff <= 0) return 'Expired';
@@ -56,7 +64,7 @@ export default function FreelancePage() {
   const [postModal, setPostModal]             = useState(false);
   const [applyModal, setApplyModal]           = useState(null);
   const [applicantsModal, setApplicantsModal] = useState(null);
-  const [postForm, setPostForm] = useState({ description: '', payment_amount: '', time_limit_hours: '', skills: '', range_km: 50 });
+  const [postForm, setPostForm] = useState({ description: '', payment_amount: '', time_limit_hours: 24, skills: '', range_km: 50 });
   const [jobMedia, setJobMedia] = useState(null);
   const [applyMsg, setApplyMsg]     = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -169,7 +177,7 @@ export default function FreelancePage() {
       try {
         await createWorkRequest(payload);
         showToast('Job posted!', 'success');
-        setPostForm({ description: '', payment_amount: '', time_limit_hours: '', skills: '', range_km: 50 });
+        setPostForm({ description: '', payment_amount: '', time_limit_hours: 24, skills: '', range_km: 50 });
         setJobMedia(null);
         loadAll();
       } catch (err) {
@@ -338,7 +346,6 @@ export default function FreelancePage() {
               <div className="wr-footer">
                 <div className="wr-meta">
                   <span className="wr-pay">₹{wr.payment_amount}</span>
-                  <span className="wr-duration">{wr.time_limit_hours}h project</span>
                   {wr.distance_km != null && <span className="wr-duration">📍 {wr.distance_km} km</span>}
                   {wr.responses_count > 0 && (
                     <span className="wr-heat">🔥 {wr.responses_count} applied</span>
@@ -426,10 +433,14 @@ export default function FreelancePage() {
                   onChange={e => setPostForm({...postForm, payment_amount: e.target.value})} />
               </div>
               <div className="modal-field">
-                <label className="modal-label">Time Limit (hours) *</label>
-                <input className="modal-input" type="number" required placeholder="e.g. 48"
+                <label className="modal-label">Visible till *</label>
+                <select className="modal-input" required
                   value={postForm.time_limit_hours}
-                  onChange={e => setPostForm({...postForm, time_limit_hours: e.target.value})} />
+                  onChange={e => setPostForm({...postForm, time_limit_hours: e.target.value})}>
+                  {VISIBILITY_OPTIONS.map(o => (
+                    <option key={o.hours} value={o.hours}>{o.label}</option>
+                  ))}
+                </select>
               </div>
               <div className="modal-field">
                 <label className="modal-label">Skills Required * <span style={{fontWeight:400,color:'var(--text-3)'}}>comma separated</span></label>
@@ -490,7 +501,7 @@ export default function FreelancePage() {
               <p className="wr-desc">{applyModal.description}</p>
               <div style={{display:'flex',gap:'8px',marginTop:'8px'}}>
                 <span className="wr-pay">₹{applyModal.payment_amount}</span>
-                <span className="wr-duration">{applyModal.time_limit_hours}h</span>
+                <span className="wr-duration">{timeLeft(applyModal.expires_at)}</span>
               </div>
             </div>
             <form onSubmit={handleApply}>

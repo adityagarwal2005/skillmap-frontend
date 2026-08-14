@@ -138,6 +138,19 @@ a { text-decoration: none; color: inherit; }
   --steel-panel: linear-gradient(157deg, var(--steel-1) 0%, var(--steel-2) 55%, var(--steel-3) 100%);
 }
 
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Page-enter fade — applied to main content wrappers for smooth route transitions */
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.feed-main, .profile-wrapper, .people-wrapper, .freelance-wrapper, .collab-wrapper,
+.convs-panel, .notif-wrapper, .settings-wrapper, .search-wrapper,
+.apps-wrapper, .create-wrapper, .edit-wrapper, .detail-wrapper {
+  animation: pageIn 0.25s var(--ease-out-expo) both;
+}
+
 /* ── Dark-mode primary buttons ───────────────────────────────────
    Primary action buttons across the app hardcode #0f172a (dark navy)
    with no dark-mode variant, so on the near-black dark theme they turn

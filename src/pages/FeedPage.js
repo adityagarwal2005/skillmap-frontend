@@ -10,6 +10,15 @@ import Lightbox from '../components/Lightbox';
 import { cldAvatar, cldThumb } from '../utils/cloudinaryUrl';
 import './FeedPage.css';
 
+function timeLeft(expiresAt) {
+  if (!expiresAt) return null;
+  const diff = new Date(expiresAt) - Date.now();
+  if (diff <= 0) return 'Expired';
+  const hrs = Math.floor(diff / 3600000);
+  if (hrs < 24) return `${hrs}h left`;
+  return `${Math.floor(hrs / 24)}d left`;
+}
+
 export default function FeedPage() {
   const { showToast }         = useToast();
   const { user }              = useAuth();
@@ -229,7 +238,7 @@ export default function FeedPage() {
                   {item.kind === 'freelance' ? (
                     <>
                       <span className="opp-pay">₹{item.payment_amount}</span>
-                      {item.time_limit_hours && <span className="opp-sub">{item.time_limit_hours}h</span>}
+                      {timeLeft(item.expires_at) && <span className="opp-sub">{timeLeft(item.expires_at)}</span>}
                       {item.responses_count > 0 && <span className="opp-heat">🔥 {item.responses_count} applied</span>}
                     </>
                   ) : (
@@ -257,7 +266,7 @@ export default function FeedPage() {
       {showWelcome && (
         <div className="welcome-overlay" onClick={dismissWelcome}>
           <div className="welcome-card" onClick={e => e.stopPropagation()}>
-            <div className="welcome-badge">S</div>
+            <img className="welcome-badge" src="/icon-192.png" alt="" />
             <h2 className="welcome-title">Welcome to DoitHere 👋</h2>
             <p className="welcome-sub">Your campus talent network. Here are 3 quick ways to start:</p>
 

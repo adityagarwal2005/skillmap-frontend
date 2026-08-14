@@ -6,6 +6,7 @@ import { getUser } from '../api/users';
 import { cldAvatar } from '../utils/cloudinaryUrl';
 import useInstallPrompt from '../hooks/useInstallPrompt';
 import usePageMeta from '../hooks/usePageMeta';
+import { pushSupported, isPushEnabled, enablePush } from '../push';
 import '../pages/FeedPage.css';
 
 const SVG = {
@@ -122,6 +123,11 @@ export default function AppShell({
   const [installDismissed, setInstallDismissed] = useState(
     () => localStorage.getItem('smInstallDismissed') === '1'
   );
+  const [pushPromptDismissed, setPushPromptDismissed] = useState(
+    () => localStorage.getItem('smPushDismissed') === '1'
+  );
+  const [pushAlreadyOn, setPushAlreadyOn] = useState(true);
+  const [pushEnabling, setPushEnabling] = useState(false);
   // FeedPage's first-login welcome modal covers this same top-of-page area —
   // without this the two rendered stacked on top of each other, illegibly.
   const [welcomePending, setWelcomePending] = useState(
@@ -189,6 +195,28 @@ export default function AppShell({
   };
 
   const handleInstallClick = async () => { await promptInstall(); };
+
+  useEffect(() => {
+    if (pushSupported()) isPushEnabled().then(on => setPushAlreadyOn(on)).catch(() => {});
+    else setPushAlreadyOn(true);
+  }, []);
+
+  const showPushPrompt = pushSupported() && !pushAlreadyOn && !pushPromptDismissed
+    && !showNudge && !showInstallBanner && !welcomeShowing;
+
+  const dismissPush = () => {
+    setPushPromptDismissed(true);
+    localStorage.setItem('smPushDismissed', '1');
+  };
+
+  const handleEnablePush = async () => {
+    setPushEnabling(true);
+    try {
+      await enablePush();
+      setPushAlreadyOn(true);
+    } catch { /* permission denied or unsupported — just dismiss */ }
+    finally { setPushEnabling(false); dismissPush(); }
+  };
 
   const missingText = missing.length === 1
     ? missing[0]
@@ -312,6 +340,22 @@ export default function AppShell({
                   Install
                 </button>
                 <button className="profile-nudge-x" onClick={dismissInstall}
+                  aria-label="Dismiss">×</button>
+              </div>
+            </div>
+          )}
+          {showPushPrompt && (
+            <div className="profile-nudge">
+              <div className="profile-nudge-text">
+                <strong>Turn on notifications</strong>
+                <span>Get notified about messages, job matches, and collab invites — even when the app is closed.</span>
+              </div>
+              <div className="profile-nudge-actions">
+                <button className="profile-nudge-cta" onClick={handleEnablePush}
+                  disabled={pushEnabling}>
+                  {pushEnabling ? 'Enabling…' : 'Enable'}
+                </button>
+                <button className="profile-nudge-x" onClick={dismissPush}
                   aria-label="Dismiss">×</button>
               </div>
             </div>

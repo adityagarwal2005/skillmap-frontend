@@ -291,7 +291,7 @@ export default function MessagesPage() {
 
               <div className="thread-messages">
                 {loadingMsgs && messages.length === 0 ? (
-                  <div className="msgs-loading">Loading messages...</div>
+                  <div className="msgs-loading"><span className="msgs-spinner" />Loading messages…</div>
                 ) : messages.length === 0 ? (
                   <div className="msgs-empty">No messages yet. Say hello!</div>
                 ) : messages.map((msg, i) => {
