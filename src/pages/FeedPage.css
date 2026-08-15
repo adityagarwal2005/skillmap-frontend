@@ -1243,16 +1243,18 @@ video.post-media-el { cursor: default; object-fit: contain; background: #000; }
 
 /* ── Opportunity cards (Freelance / Collab) — the new feed ── */
 .opp-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 18px 20px;
-  margin-bottom: 12px;
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: 20px;
+  padding: 22px 24px;
+  margin-bottom: 14px;
   cursor: pointer;
   transition: transform 0.18s var(--ease-out-expo, ease), box-shadow 0.18s, border-color 0.15s;
   animation: cardIn 0.4s cubic-bezier(0.25,0.46,0.45,0.94) both;
 }
-.opp-card:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(0,0,0,0.1); border-color: var(--border-md); }
+[data-theme="dark"] .opp-card { background: #17181a; border-color: rgba(255,255,255,0.08); }
+.opp-card:hover { transform: translateY(-3px); box-shadow: 0 16px 36px rgba(0,0,0,0.16); border-color: rgba(0,0,0,0.1); }
+[data-theme="dark"] .opp-card:hover { box-shadow: 0 16px 36px rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.16); }
 
 /* "Just arrived via poll" flash — same convention as .wr-card.is-new in
    FreelancePage.css, extended to every card type that now live-polls
@@ -1271,26 +1273,24 @@ video.post-media-el { cursor: default; object-fit: contain; background: #000; }
 
 .opp-kind {
   margin-left: auto;
-  font-size: 0.625rem;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 4px 9px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 6px 13px;
   border-radius: 999px;
   flex-shrink: 0;
+  background: rgba(0,0,0,0.06);
+  color: var(--text-1);
 }
-.opp-kind.freelance { background: #eaf2ff; color: #0a58ca; }
-.opp-kind.collab    { background: #e9f9ef; color: #12864a; }
-[data-theme="dark"] .opp-kind.freelance { background: rgba(10,88,202,0.2); color: #7aa8ff; }
-[data-theme="dark"] .opp-kind.collab    { background: rgba(18,134,74,0.2); color: #58d08a; }
+[data-theme="dark"] .opp-kind { background: rgba(255,255,255,0.1); }
 
 .opp-title {
-  font-size: 1.0625rem;
-  font-weight: 700;
+  font-size: 1.375rem;
+  font-weight: 800;
   color: var(--text-1);
-  margin: 12px 0 4px;
-  line-height: 1.35;
-  letter-spacing: -0.01em;
+  margin: 14px 0 6px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
 }
 .opp-desc { font-size: 0.9375rem; color: var(--text-2); line-height: 1.5; margin-bottom: 4px; }
 
@@ -1299,14 +1299,15 @@ video.post-media-el { cursor: default; object-fit: contain; background: #000; }
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-top: 14px;
-  padding-top: 13px;
-  border-top: 1px solid var(--border);
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(0,0,0,0.08);
   flex-wrap: wrap;
 }
+[data-theme="dark"] .opp-footer { border-top-color: rgba(255,255,255,0.1); }
 .opp-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; min-width: 0; }
-.opp-pay { font-size: 1rem; font-weight: 800; color: var(--text-1); letter-spacing: -0.3px; }
-.opp-sub { font-size: 0.8125rem; color: var(--text-2); font-weight: 500; }
+.opp-pay { font-size: 1.25rem; font-weight: 800; color: var(--text-1); letter-spacing: -0.02em; }
+.opp-sub { font-size: 0.8125rem; color: var(--text-2); font-weight: 600; }
 .opp-heat { font-size: 0.8125rem; font-weight: 700; color: #ff7a00; }
 .opp-ctype {
   font-size: 0.6875rem;
@@ -1319,18 +1320,20 @@ video.post-media-el { cursor: default; object-fit: contain; background: #000; }
 }
 
 .opp-cta {
-  height: 34px;
-  padding: 0 18px;
-  background: #0f172a;
-  color: #fff;
-  font-size: 0.8125rem;
+  height: 42px;
+  padding: 0 24px;
+  background: var(--text-1);
+  color: var(--bg);
+  font-size: 0.875rem;
   font-weight: 700;
-  border-radius: var(--radius-pill, 999px);
-  transition: opacity 0.15s;
+  border-radius: 999px;
+  transition: opacity 0.15s, transform 0.15s;
   flex-shrink: 0;
 }
 .opp-cta:hover { opacity: 0.85; }
-.opp-cta.ghost { background: none; color: var(--text-1); border: 1px solid var(--border-md); }
+.opp-cta:active { transform: scale(0.96); }
+.opp-cta.ghost { background: none; color: var(--text-1); border: 1.5px solid rgba(0,0,0,0.15); }
+[data-theme="dark"] .opp-cta.ghost { border-color: rgba(255,255,255,0.25); }
 .opp-cta.ghost:hover { background: var(--elevated); opacity: 1; }
 
 .state-box-actions { display: flex; gap: 10px; justify-content: center; margin-top: 16px; flex-wrap: wrap; }
