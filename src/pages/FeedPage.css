@@ -1252,9 +1252,28 @@ video.post-media-el { cursor: default; object-fit: contain; background: #000; }
   transition: transform 0.18s var(--ease-out-expo, ease), box-shadow 0.18s, border-color 0.15s;
   animation: cardIn 0.4s cubic-bezier(0.25,0.46,0.45,0.94) both;
 }
-[data-theme="dark"] .opp-card { background: #17181a; border-color: rgba(255,255,255,0.08); }
-.opp-card:hover { transform: translateY(-3px); box-shadow: 0 16px 36px rgba(0,0,0,0.16); border-color: rgba(0,0,0,0.1); }
-[data-theme="dark"] .opp-card:hover { box-shadow: 0 16px 36px rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.16); }
+.opp-card:hover { transform: translateY(-3px); box-shadow: 0 16px 36px rgba(0,0,0,0.28); border-color: rgba(0,0,0,0.1); }
+
+/* .opp-card is unconditionally white now (the Uber-style "pop" element on
+   the mostly-black page) — its own text/border colors are pinned to fixed
+   dark-on-white values below, independent of --text-1/--border, which
+   flip to light-on-dark by default. The bare classes above stay
+   theme-following for the few places (state-box empty states,
+   ApplicationsPage) that reuse opp-cta/opp-kind directly on the dark page
+   background instead of inside a card. */
+.opp-card .opp-kind    { background: rgba(0,0,0,0.06); color: #1d1d1f; }
+.opp-card .opp-title   { color: #0a0a0a; }
+.opp-card .opp-desc    { color: #55555a; }
+.opp-card .opp-footer  { border-top-color: rgba(0,0,0,0.08); }
+.opp-card .opp-pay     { color: #0a0a0a; }
+.opp-card .opp-sub     { color: #55555a; }
+.opp-card .opp-cta     { background: #0a0a0a; color: #ffffff; }
+.opp-card .opp-cta.ghost { background: none; color: #0a0a0a; border-color: rgba(0,0,0,0.15); }
+.opp-card .opp-cta.ghost:hover { background: rgba(0,0,0,0.05); }
+.opp-card .post-ava        { background: rgba(0,0,0,0.05); color: #0a0a0a; border-color: rgba(0,0,0,0.08); }
+.opp-card .post-author     { color: #0a0a0a; }
+.opp-card .post-author-cat { color: #8a8a8f; }
+.opp-card .tag-skill       { background: rgba(52,199,89,0.1); color: #1a8a4a; }
 
 /* "Just arrived via poll" flash — same convention as .wr-card.is-new in
    FreelancePage.css, extended to every card type that now live-polls
@@ -1268,7 +1287,7 @@ video.post-media-el { cursor: default; object-fit: contain; background: #000; }
 }
 @keyframes newItemFlash {
   0%   { background: rgba(52,199,89,0.14); }
-  100% { background: var(--surface); }
+  100% { background: #ffffff; }
 }
 
 .opp-kind {

@@ -14,8 +14,8 @@
 }
 
 .collab-card {
-  background: var(--surface);
-  border: 1px solid var(--border-md);
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.06);
   border-radius: var(--radius-lg);
   padding: 18px 20px;
   margin-bottom: 10px;
@@ -23,7 +23,7 @@
   animation: cardIn 0.3s ease both;
 }
 
-.collab-card:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+.collab-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.14); }
 
 .collab-top {
   display: flex;
@@ -36,7 +36,7 @@
 .collab-title {
   font-size: 1rem;
   font-weight: 700;
-  color: var(--text-1);
+  color: #0a0a0a;
   margin-bottom: 6px;
   letter-spacing: -0.2px;
 }

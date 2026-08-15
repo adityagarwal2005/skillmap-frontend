@@ -52,14 +52,33 @@
 }
 
 .wr-card {
-  background: var(--surface);
-  border: 1px solid var(--border-md);
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.06);
   border-radius: var(--radius-lg);
   padding: 18px 20px;
   margin-bottom: 10px;
   transition: border-color 0.15s;
   animation: cardIn 0.3s ease both;
 }
+
+/* Uber-style white card — pin text/borders to dark-on-white, independent of
+   --text-1/--border which are light-on-dark by default now. Same pattern as
+   .opp-card in FeedPage.css. .collab-card is included in every selector
+   here since CollabPage.js reuses these same wr-* classes inside its own
+   card (imports this file — see the comment in CollabPage.js). */
+.wr-card .wr-by, .collab-card .wr-by,
+.wr-card .wr-desc, .collab-card .wr-desc,
+.wr-card .wr-desc-sm, .collab-card .wr-desc-sm,
+.wr-card .wr-pay      { color: #0a0a0a; }
+.wr-card .wr-posted, .collab-card .wr-posted,
+.wr-card .wr-duration, .collab-card .wr-duration,
+.wr-card .wr-waiting, .collab-card .wr-waiting  { color: #6e6e73; }
+.wr-card .wr-footer, .collab-card .wr-footer   { border-top-color: rgba(0,0,0,0.08); }
+.wr-card .wr-time, .collab-card .wr-time     { background: rgba(0,0,0,0.06); color: #1d1d1f; }
+.wr-card .post-ava, .collab-card .post-ava    { background: rgba(0,0,0,0.05); color: #0a0a0a; border-color: rgba(0,0,0,0.08); }
+.wr-card .tag-skill, .collab-card .tag-skill   { background: rgba(52,199,89,0.1); color: #1a8a4a; }
+.wr-card .wr-view-btn, .collab-card .wr-view-btn { border-color: rgba(0,0,0,0.15); color: #55555a; }
+.wr-card .wr-view-btn:hover, .collab-card .wr-view-btn:hover { background: rgba(0,0,0,0.05); color: #0a0a0a; }
 
 .wr-card:hover { border-color: var(--border-md); box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
 
@@ -104,7 +123,7 @@
 }
 @keyframes wrFlash {
   0%   { background: rgba(52,199,89,0.14); }
-  100% { background: var(--surface); }
+  100% { background: #ffffff; }
 }
 
 .wr-new-badge {
