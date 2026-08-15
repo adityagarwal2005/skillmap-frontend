@@ -15,7 +15,7 @@ export default function SettingsPage() {
   const { showToast }        = useToast();
   const navigate             = useNavigate();
 
-  const [theme, setTheme]       = useState(localStorage.getItem('theme') || 'light');
+  const [theme, setTheme]       = useState(localStorage.getItem('themeV2') || 'dark');
   const [status, setStatus]     = useState('not_available');
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [blockedUsers, setBlockedUsers] = useState([]);
@@ -71,7 +71,7 @@ export default function SettingsPage() {
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
+    localStorage.setItem('themeV2', theme);
   }, [theme]);
 
   useEffect(() => {

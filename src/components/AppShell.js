@@ -108,7 +108,7 @@ export default function AppShell({
   // indexable meta via the same hook.
   usePageMeta({ noindex: true });
 
-  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
+  const [theme, setTheme] = useState(localStorage.getItem('themeV2') || 'dark');
   const [unread, setUnread] = useState(0);
   const [avatar, setAvatar] = useState(null);
   const [avatarBroken, setAvatarBroken] = useState(false);
@@ -142,7 +142,7 @@ export default function AppShell({
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
+    localStorage.setItem('themeV2', theme);
   }, [theme]);
 
   useEffect(() => {
