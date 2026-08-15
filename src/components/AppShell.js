@@ -108,7 +108,7 @@ export default function AppShell({
   // indexable meta via the same hook.
   usePageMeta({ noindex: true });
 
-  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
   const [unread, setUnread] = useState(0);
   const [avatar, setAvatar] = useState(null);
   const [avatarBroken, setAvatarBroken] = useState(false);
