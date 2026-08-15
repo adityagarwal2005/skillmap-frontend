@@ -98,8 +98,8 @@
 }
 
 .person-card {
-  background: var(--surface);
-  border: 1px solid var(--border-md);
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.06);
   border-radius: var(--radius-lg);
   padding: 18px;
   cursor: pointer;
@@ -108,10 +108,18 @@
 }
 
 .person-card:hover {
-  transform: translateY(-2px);
-  border-color: var(--border-md);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  transform: translateY(-3px);
+  border-color: rgba(0,0,0,0.1);
+  box-shadow: 0 16px 32px rgba(0,0,0,0.18);
 }
+
+/* Uber-style white card — same pattern as .opp-card in FeedPage.css */
+.person-card .person-name  { color: #0a0a0a; }
+.person-card .person-cat,
+.person-card .person-headline,
+.person-card .person-stat  { color: #6e6e73; }
+.person-card .person-footer { border-top-color: rgba(0,0,0,0.08); }
+.person-card .tag-skill    { background: rgba(52,199,89,0.1); color: #1a8a4a; }
 
 .person-card-top {
   display: flex;

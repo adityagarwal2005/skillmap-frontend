@@ -52,17 +52,18 @@
   align-items: flex-start;
   gap: 12px;
   padding: 14px 16px;
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.06);
   border-radius: var(--radius-md);
   cursor: pointer;
-  transition: background 0.12s, border-color 0.12s;
+  transition: background 0.12s, border-color 0.12s, box-shadow 0.15s;
   position: relative;
 }
 
-.notif-card:hover { background: var(--elevated); border-color: var(--border-md); }
-.notif-card.unread { background: var(--elevated); border-color: var(--border-md); }
+.notif-card:hover { box-shadow: 0 8px 20px rgba(0,0,0,0.12); border-color: rgba(0,0,0,0.1); }
+.notif-card.unread { background: #fafafa; border-color: rgba(0,0,0,0.1); }
 
+/* Uber-style white card — same pattern as .opp-card in FeedPage.css */
 .notif-icon {
   font-size: 1.125rem;
   flex-shrink: 0;
@@ -71,30 +72,30 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--bg);
+  background: rgba(0,0,0,0.05);
   border-radius: 50%;
-  border: 1px solid var(--border);
+  border: 1px solid rgba(0,0,0,0.08);
 }
 
 .notif-body { flex: 1; min-width: 0; }
 
 .notif-message {
   font-size: 0.875rem;
-  color: var(--text-1);
+  color: #0a0a0a;
   line-height: 1.5;
   margin-bottom: 3px;
 }
 
 .notif-time {
   font-size: 0.75rem;
-  color: var(--text-3);
+  color: #8a8a8f;
 }
 
 .notif-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--navy-bright);
+  background: #0a58ca;
   flex-shrink: 0;
   margin-top: 4px;
 }
