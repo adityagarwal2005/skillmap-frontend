@@ -35,6 +35,7 @@ export default function FeedPage() {
     () => localStorage.getItem('smWelcomeSeen') !== '1'
   );
   const [newIds, setNewIds] = useState(new Set());
+  const [viewItem, setViewItem] = useState(null);
   const seenIds = useRef(new Set());
   const pollRef = useRef(null);
 
@@ -186,12 +187,11 @@ export default function FeedPage() {
             </div>
           </div>
         ) : items.map((item, i) => {
-          const to = item.kind === 'freelance' ? '/freelance' : '/collab';
           const isNew = newIds.has(`${item.kind}-${item.id}`);
           return (
             <article key={`${item.kind}-${item.id}`} className={`opp-card ${item.kind} ${isNew ? 'is-new' : ''}`}
               style={{ animationDelay: `${i * 40}ms` }}
-              onClick={() => navigate(to)}>
+              onClick={() => setViewItem(item)}>
 
               <div className="post-top">
                 <div className="post-ava"
@@ -213,19 +213,6 @@ export default function FeedPage() {
               </div>
 
               <h2 className="opp-title">{item.title}</h2>
-              {item.kind === 'collab' && item.description && item.description !== item.title && (
-                <p className="opp-desc">{item.description}</p>
-              )}
-
-              {item.media && (
-                <div className="post-media">
-                  {item.media_type === 'video'
-                    ? <video className="post-media-el" src={item.media} controls playsInline
-                        onClick={e => e.stopPropagation()} />
-                    : <img className="post-media-el" src={cldThumb(item.media)} alt=""
-                        onClick={e => { e.stopPropagation(); setLightboxSrc(item.media); }} />}
-                </div>
-              )}
 
               {item.skills?.length > 0 && (
                 <div className="post-tags">
@@ -248,7 +235,7 @@ export default function FeedPage() {
                   )}
                   {item.distance_km != null && <span className="opp-sub">📍 {item.distance_km} km</span>}
                 </div>
-                <button className="opp-cta" onClick={e => { e.stopPropagation(); navigate(to); }}>
+                <button className="opp-cta" onClick={e => { e.stopPropagation(); setViewItem(item); }}>
                   {item.kind === 'freelance' ? 'View job' : 'View collab'}
                 </button>
               </div>
@@ -303,6 +290,73 @@ export default function FeedPage() {
       )}
 
       {lightboxSrc && <Lightbox src={lightboxSrc} onClose={() => setLightboxSrc(null)} />}
+
+      {viewItem && (
+        <div className="modal-overlay" onClick={() => setViewItem(null)}>
+          <div className="modal-box" onClick={e => e.stopPropagation()}>
+            <div className="post-top" style={{ marginBottom: 14 }}>
+              <div className="post-ava"
+                onClick={() => { setViewItem(null); navigate(`/profile/${viewItem.user.id}`); }}>
+                {viewItem.user.profile_image
+                  ? <img className="ava-img" src={cldAvatar(viewItem.user.profile_image)} alt="" />
+                  : viewItem.user.username[0].toUpperCase()}
+              </div>
+              <div className="post-meta">
+                <span className="post-author"
+                  onClick={() => { setViewItem(null); navigate(`/profile/${viewItem.user.id}`); }}>
+                  {viewItem.user.username}
+                </span>
+                <span className="post-author-cat">{viewItem.user.category || 'Independent'}</span>
+              </div>
+              <span className={`opp-kind ${viewItem.kind}`}>
+                {viewItem.kind === 'freelance' ? 'Freelance' : 'Collab'}
+              </span>
+            </div>
+
+            <h2 className="modal-title" style={{ marginBottom: 8 }}>{viewItem.title}</h2>
+
+            {viewItem.description && viewItem.description !== viewItem.title && (
+              <p className="wr-desc" style={{ marginBottom: 14 }}>{viewItem.description}</p>
+            )}
+
+            {viewItem.media && (
+              <div className="post-media" style={{ marginBottom: 14 }}>
+                {viewItem.media_type === 'video'
+                  ? <video className="post-media-el" src={viewItem.media} controls playsInline />
+                  : <img className="post-media-el" src={cldThumb(viewItem.media)} alt=""
+                      onClick={() => setLightboxSrc(viewItem.media)} />}
+              </div>
+            )}
+
+            {viewItem.skills?.length > 0 && (
+              <div className="post-tags" style={{ marginBottom: 14 }}>
+                {viewItem.skills.map(s => <span key={s} className="tag tag-skill">{s}</span>)}
+              </div>
+            )}
+
+            <div className="opp-meta" style={{ marginBottom: 18 }}>
+              {viewItem.kind === 'freelance' ? (
+                <>
+                  <span className="opp-pay">₹{viewItem.payment_amount}</span>
+                  {timeLeft(viewItem.expires_at) && <span className="opp-sub">{timeLeft(viewItem.expires_at)}</span>}
+                  {viewItem.responses_count > 0 && <span className="opp-heat">🔥 {viewItem.responses_count} applied</span>}
+                </>
+              ) : (
+                viewItem.applicants > 0 && <span className="opp-heat">🔥 {viewItem.applicants} people joined</span>
+              )}
+              {viewItem.distance_km != null && <span className="opp-sub">📍 {viewItem.distance_km} km away</span>}
+            </div>
+
+            <div className="modal-actions">
+              <button type="button" className="modal-cancel" onClick={() => setViewItem(null)}>Close</button>
+              <button type="button" className="modal-submit"
+                onClick={() => navigate(viewItem.kind === 'freelance' ? '/freelance' : '/collab')}>
+                {viewItem.kind === 'freelance' ? 'Apply on Freelance board' : 'Apply on Collab board'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </AppShell>
   );
 }

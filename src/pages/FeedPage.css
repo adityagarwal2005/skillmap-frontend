@@ -1261,6 +1261,11 @@ video.post-media-el { cursor: default; object-fit: contain; background: #000; }
    theme-following for the few places (state-box empty states,
    ApplicationsPage) that reuse opp-cta/opp-kind directly on the dark page
    background instead of inside a card. */
+/* .app-shell .feed-main prefix on the identity/author rules matches (and
+   beats) the specificity of ".app-shell .feed-main .post-author" above —
+   without it, that theme-following rule was silently winning the cascade
+   and re-painting the username light-on-white (invisible) inside the now
+   unconditionally-white card. */
 .opp-card .opp-kind    { background: rgba(0,0,0,0.06); color: #1d1d1f; }
 .opp-card .opp-title   { color: #0a0a0a; }
 .opp-card .opp-desc    { color: #55555a; }
@@ -1271,7 +1276,8 @@ video.post-media-el { cursor: default; object-fit: contain; background: #000; }
 .opp-card .opp-cta.ghost { background: none; color: #0a0a0a; border-color: rgba(0,0,0,0.15); }
 .opp-card .opp-cta.ghost:hover { background: rgba(0,0,0,0.05); }
 .opp-card .post-ava        { background: rgba(0,0,0,0.05); color: #0a0a0a; border-color: rgba(0,0,0,0.08); }
-.opp-card .post-author     { color: #0a0a0a; }
+.opp-card .post-author,
+.app-shell .feed-main .opp-card .post-author     { color: #0a0a0a; }
 .opp-card .post-author-cat { color: #8a8a8f; }
 .opp-card .tag-skill       { background: rgba(52,199,89,0.1); color: #1a8a4a; }
 

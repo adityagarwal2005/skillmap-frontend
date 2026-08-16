@@ -245,7 +245,9 @@ export default function MessagesPage() {
                 <div className="conv-bottom-row">
                   <span className="conv-preview">{conv.last_message || 'No messages yet'}</span>
                   <span className="conv-type-tag">
-                    {conv.is_group ? `${conv.participant_count} people` : conv.type}
+                    {conv.is_group
+                      ? `${conv.participant_count} people`
+                      : conv.type === 'collab' ? 'Collab' : 'Direct'}
                   </span>
                 </div>
               </div>
