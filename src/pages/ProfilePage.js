@@ -11,8 +11,6 @@ import { startConversation } from '../api/work';
 import { endorseSkill, addReview } from '../api/users';
 import { ProfileHeaderSkeleton } from '../components/Skeleton';
 import AppShell from '../components/AppShell';
-import { LinkedInIcon, GitHubIcon, InstagramIcon } from '../components/SocialIcons';
-import { isSafeHref } from '../utils/safeUrl';
 import { cldAvatar, cldThumb } from '../utils/cloudinaryUrl';
 import './FeedPage.css';
 import './ProfilePage.css';
@@ -23,12 +21,6 @@ const WhatsAppIcon = (
   </svg>
 );
 
-const SOCIALS = [
-  { key: 'linkedin_url',  label: 'LinkedIn',  brand: 'linkedin',  icon: LinkedInIcon },
-  { key: 'github_url',    label: 'GitHub',    brand: 'github',    icon: GitHubIcon },
-  { key: 'instagram_url', label: 'Instagram', brand: 'instagram', icon: InstagramIcon },
-  { key: 'whatsapp',      label: 'WhatsApp',  brand: 'whatsapp',  icon: WhatsAppIcon },
-];
 
 const REPORT_REASONS = [
   { value: 'spam',          label: 'Spam' },

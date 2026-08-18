@@ -2,18 +2,11 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import { getCategories, addSkill, editUser } from '../api/users';
+import { getCategories, addSkill, editUser, sendPhoneOTP, verifyPhoneOTP } from '../api/users';
 import { updateStatus } from '../api/users';
-import { LinkedInIcon, GitHubIcon, InstagramIcon } from '../components/SocialIcons';
 import './OnboardingPage.css';
 
-const STEPS = ['Category', 'Skills', 'Connect', 'Status', 'Location'];
-
-const CONNECT_FIELDS = [
-  { key: 'github_url',    label: 'GitHub',    icon: GitHubIcon,    placeholder: 'https://github.com/you' },
-  { key: 'linkedin_url',  label: 'LinkedIn',  icon: LinkedInIcon,  placeholder: 'https://linkedin.com/in/you' },
-  { key: 'instagram_url', label: 'Instagram', icon: InstagramIcon, placeholder: 'https://instagram.com/you' },
-];
+const STEPS = ['Category', 'Skills', 'Verify', 'Status', 'Location'];
 
 export default function OnboardingPage() {
   const { user } = useAuth();
@@ -26,7 +19,12 @@ export default function OnboardingPage() {
   const [selectedCat, setSelectedCat] = useState(null);
   const [skillInput, setSkillInput] = useState('');
   const [skills, setSkills]         = useState([]);
-  const [connect, setConnect]       = useState({ github_url: '', linkedin_url: '', instagram_url: '' });
+  const [phone, setPhone]           = useState('');
+  const [phoneOtp, setPhoneOtp]     = useState('');
+  const [phoneSent, setPhoneSent]   = useState(false);
+  const [phoneVerified, setPhoneVerified] = useState(false);
+  const [sendingOtp, setSendingOtp] = useState(false);
+  const [verifyingOtp, setVerifyingOtp] = useState(false);
   const [status, setStatus]         = useState('not_available');
   const [location, setLocation]     = useState({ lat: '', lon: '' });
   const [saving, setSaving]         = useState(false);
@@ -62,15 +60,36 @@ export default function OnboardingPage() {
     );
   };
 
+  const handleSendPhoneOtp = async () => {
+    if (!phone.trim()) { showToast('Enter your phone number', 'error'); return; }
+    try {
+      setSendingOtp(true);
+      await sendPhoneOTP(phone.trim());
+      setPhoneSent(true);
+      showToast('Code sent on WhatsApp!', 'success');
+    } catch (err) {
+      showToast(err.response?.data?.error || 'Failed to send code', 'error');
+    } finally { setSendingOtp(false); }
+  };
+
+  const handleVerifyPhoneOtp = async () => {
+    if (!phoneOtp.trim()) { showToast('Enter the code', 'error'); return; }
+    try {
+      setVerifyingOtp(true);
+      await verifyPhoneOTP(phone.trim(), phoneOtp.trim());
+      setPhoneVerified(true);
+      showToast('Phone verified!', 'success');
+    } catch (err) {
+      showToast(err.response?.data?.error || 'Invalid code', 'error');
+    } finally { setVerifyingOtp(false); }
+  };
+
   const handleFinish = async () => {
     try {
       setSaving(true);
       const payload = {};
       if (selectedCat) payload.category_id = selectedCat.id;
       if (location.lat) { payload.latitude = location.lat; payload.longitude = location.lon; }
-      for (const f of CONNECT_FIELDS) {
-        if (connect[f.key].trim()) payload[f.key] = connect[f.key].trim();
-      }
       if (Object.keys(payload).length > 0) await editUser(user.id, payload);
       if (status !== 'not_available') await updateStatus(status);
       for (const skill of skills) {
@@ -180,21 +199,48 @@ export default function OnboardingPage() {
 
           {step === 2 && (
             <>
-              <h2 className="onboard-title">Connect an account <span style={{fontWeight:400,color:'var(--text-3)',fontSize:'0.7em'}}>(optional)</span></h2>
+              <h2 className="onboard-title">Verify your phone <span style={{fontWeight:400,color:'var(--text-3)',fontSize:'0.7em'}}>(optional)</span></h2>
               <p className="onboard-sub">
-                Add GitHub, LinkedIn, or Instagram so people can verify who they're dealing with. You can skip this — you'll just need one before posting or accepting work.
+                We'll send a code on WhatsApp so people can trust who they're dealing with. You can skip this — you'll just need it before posting or accepting work.
               </p>
-              <div className="connect-fields">
-                {CONNECT_FIELDS.map(f => (
-                  <div className="connect-field" key={f.key}>
-                    <span className="connect-field-icon">{f.icon}</span>
-                    <input className="create-input" type="url"
-                      placeholder={f.placeholder}
-                      value={connect[f.key]}
-                      onChange={e => setConnect(c => ({ ...c, [f.key]: e.target.value }))} />
+
+              {phoneVerified ? (
+                <div className="location-captured">
+                  <span className="location-icon">✅</span>
+                  <div>
+                    <div className="location-label">Phone verified</div>
+                    <div className="location-coords">{phone}</div>
                   </div>
-                ))}
-              </div>
+                </div>
+              ) : !phoneSent ? (
+                <div className="skill-input-row">
+                  <input className="create-input" style={{ flex: 1 }} type="tel"
+                    placeholder="e.g. +91 98765 43210"
+                    value={phone}
+                    onChange={e => setPhone(e.target.value)}
+                    onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleSendPhoneOtp(); } }} />
+                  <button type="button" className="create-submit" onClick={handleSendPhoneOtp} disabled={sendingOtp}>
+                    {sendingOtp ? 'Sending…' : 'Send code'}
+                  </button>
+                </div>
+              ) : (
+                <div>
+                  <div className="skill-input-row">
+                    <input className="create-input otp-input" style={{ flex: 1 }}
+                      placeholder="000000" maxLength={6}
+                      value={phoneOtp}
+                      onChange={e => setPhoneOtp(e.target.value)}
+                      onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleVerifyPhoneOtp(); } }} />
+                    <button type="button" className="create-submit" onClick={handleVerifyPhoneOtp} disabled={verifyingOtp}>
+                      {verifyingOtp ? 'Verifying…' : 'Verify'}
+                    </button>
+                  </div>
+                  <p className="otp-resend">
+                    Didn't get it?{' '}
+                    <span onClick={() => { setPhoneSent(false); setPhoneOtp(''); }}>Go back</span>
+                  </p>
+                </div>
+              )}
             </>
           )}
 

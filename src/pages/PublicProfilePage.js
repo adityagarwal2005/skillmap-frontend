@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { getUserByUsername } from '../api/users';
-import { LinkedInIcon, GitHubIcon, InstagramIcon } from '../components/SocialIcons';
-import { isSafeHref } from '../utils/safeUrl';
 import { cldAvatar } from '../utils/cloudinaryUrl';
 import usePageMeta from '../hooks/usePageMeta';
 import './ProfilePage.css';
@@ -15,10 +13,7 @@ const WhatsAppIcon = (
 );
 
 const SOCIALS = [
-  { key: 'linkedin_url',  label: 'LinkedIn',  brand: 'linkedin',  icon: LinkedInIcon },
-  { key: 'github_url',    label: 'GitHub',    brand: 'github',    icon: GitHubIcon },
-  { key: 'instagram_url', label: 'Instagram', brand: 'instagram', icon: InstagramIcon },
-  { key: 'whatsapp',      label: 'WhatsApp',  brand: 'whatsapp',  icon: WhatsAppIcon },
+  { key: 'whatsapp', label: 'WhatsApp', brand: 'whatsapp', icon: WhatsAppIcon },
 ];
 
 const statusLabel = {
@@ -69,11 +64,7 @@ export default function PublicProfilePage() {
       .finally(() => setLoading(false));
   }, [username]);
 
-  const links = profile ? SOCIALS.filter(s => {
-    const raw = profile[s.key];
-    if (!raw) return false;
-    return s.key === 'whatsapp' || isSafeHref(raw);
-  }) : [];
+  const links = profile ? SOCIALS.filter(s => !!profile[s.key]) : [];
 
   const skills = profile
     ? (profile.skills_detail || (profile.skills || []).map(n => ({ name: n, endorsements: 0 })))

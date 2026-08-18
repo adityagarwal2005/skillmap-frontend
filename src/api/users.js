@@ -44,6 +44,12 @@ export const reportContent = (reportType, targetId, reason, details = '') =>
 export const updateStatus = (status) =>
   API.post('/users/status/update/', new URLSearchParams({ status }));
 
+export const sendPhoneOTP = (phone) =>
+  API.post('/users/phone/send-otp/', new URLSearchParams({ phone }));
+
+export const verifyPhoneOTP = (phone, otp) =>
+  API.post('/users/phone/verify-otp/', new URLSearchParams({ phone, otp }));
+
 export const searchUsers = (params) =>
   API.get('/users/search/', { params });
 

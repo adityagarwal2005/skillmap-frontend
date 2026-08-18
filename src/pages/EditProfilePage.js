@@ -2,10 +2,9 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import { getUser, editUser, getCategories, changePassword, uploadAvatar } from '../api/users';
+import { getUser, editUser, getCategories, changePassword, uploadAvatar, sendPhoneOTP, verifyPhoneOTP } from '../api/users';
 import { prepareMediaFile } from '../utils/mediaUpload';
 import AppShell from '../components/AppShell';
-import { LinkedInIcon, GitHubIcon, InstagramIcon } from '../components/SocialIcons';
 import { cldAvatar } from '../utils/cloudinaryUrl';
 import './FeedPage.css';
 import './EditProfilePage.css';
@@ -17,9 +16,14 @@ export default function EditProfilePage() {
   const navigate                        = useNavigate();
 
   const [form, setForm] = useState({
-    username: '', email: '', dob: '', headline: '', bio: '',
-    category_id: '', linkedin_url: '', github_url: '', instagram_url: '', whatsapp: '',
+    username: '', email: '', dob: '', headline: '', bio: '', category_id: '',
   });
+  const [phoneVerified, setPhoneVerified] = useState(false);
+  const [phone, setPhone]           = useState('');
+  const [phoneOtp, setPhoneOtp]     = useState('');
+  const [phoneSent, setPhoneSent]   = useState(false);
+  const [sendingOtp, setSendingOtp] = useState(false);
+  const [verifyingOtp, setVerifyingOtp] = useState(false);
   const [pwd, setPwd]               = useState({ current: '', next: '' });
   const [pwdSaving, setPwdSaving]   = useState(false);
   const [pwdDone, setPwdDone]       = useState(false);
@@ -45,11 +49,9 @@ export default function EditProfilePage() {
           headline:     u.headline || '',
           bio:          u.bio || '',
           category_id:  '',
-          linkedin_url: u.linkedin_url || '',
-          github_url:   u.github_url || '',
-          instagram_url: u.instagram_url || '',
-          whatsapp:     u.whatsapp || '',
         });
+        setPhoneVerified(!!u.phone_verified);
+        setPhone(u.whatsapp || '');
         setAvatar(u.profile_image || null);
         setCategories(cRes.data.categories || []);
       } catch { showToast('Failed to load profile', 'error'); }
@@ -68,11 +70,7 @@ export default function EditProfilePage() {
       if (form.email)        payload.email        = form.email;
       if (form.dob)          payload.dob          = form.dob;
       if (form.category_id)  payload.category_id  = form.category_id;
-      if (form.linkedin_url)  payload.linkedin_url  = form.linkedin_url;
-      if (form.github_url)    payload.github_url    = form.github_url;
-      if (form.instagram_url) payload.instagram_url = form.instagram_url;
       // Always send these so they can also be cleared.
-      payload.whatsapp = form.whatsapp;
       payload.headline = form.headline;
       payload.bio      = form.bio;
 
@@ -107,6 +105,31 @@ export default function EditProfilePage() {
     } finally { setAvatarSaving(false); }
   };
 
+  const handleSendPhoneOtp = async () => {
+    if (!phone.trim()) { showToast('Enter your phone number', 'error'); return; }
+    try {
+      setSendingOtp(true);
+      await sendPhoneOTP(phone.trim());
+      setPhoneSent(true);
+      showToast('Code sent on WhatsApp!', 'success');
+    } catch (err) {
+      showToast(err.response?.data?.error || 'Failed to send code', 'error');
+    } finally { setSendingOtp(false); }
+  };
+
+  const handleVerifyPhoneOtp = async () => {
+    if (!phoneOtp.trim()) { showToast('Enter the code', 'error'); return; }
+    try {
+      setVerifyingOtp(true);
+      await verifyPhoneOTP(phone.trim(), phoneOtp.trim());
+      setPhoneVerified(true);
+      setPhoneSent(false);
+      showToast('Phone verified!', 'success');
+    } catch (err) {
+      showToast(err.response?.data?.error || 'Invalid code', 'error');
+    } finally { setVerifyingOtp(false); }
+  };
+
   const handleChangePassword = async () => {
     if (!pwd.current || !pwd.next) {
       showToast('Enter your current and new password', 'error');
@@ -129,12 +152,6 @@ export default function EditProfilePage() {
       <div className="edit-wrapper"><div className="edit-loading">Loading…</div></div>
     </AppShell>
   );
-
-  const socials = [
-    { key: 'linkedin_url',  label: 'LinkedIn',  brand: 'linkedin',  icon: LinkedInIcon,  placeholder: 'linkedin.com/in/username' },
-    { key: 'github_url',    label: 'GitHub',    brand: 'github',    icon: GitHubIcon,    placeholder: 'github.com/username' },
-    { key: 'instagram_url', label: 'Instagram', brand: 'instagram', icon: InstagramIcon, placeholder: 'instagram.com/username' },
-  ];
 
   return (
     <AppShell active="profile">
@@ -221,34 +238,53 @@ export default function EditProfilePage() {
               </div>
             </section>
 
-            {/* Social & contact links */}
+            {/* Phone verification */}
             <section className="edit-section">
-              <div className="edit-section-label">Social &amp; contact</div>
+              <div className="edit-section-label">Phone verification</div>
               <p className="edit-section-hint">
-                At least one of GitHub, LinkedIn, or Instagram is <strong>required</strong> to
-                post or accept work — it's how people verify who they're dealing with.
+                A verified phone number is <strong>required</strong> to post or accept work —
+                it's how people trust who they're dealing with.
               </p>
 
-              {socials.map(s => (
-                <div className="edit-field" key={s.key}>
-                  <label className="edit-label">{s.label}</label>
-                  <div className="edit-input-group">
-                    <span className={`edit-input-icon ${s.brand}`}>{s.icon}</span>
-                    <input className="edit-input has-icon" type="url"
-                      value={form[s.key]}
-                      onChange={e => setForm({...form, [s.key]: e.target.value})}
-                      placeholder={s.placeholder} />
+              {phoneVerified ? (
+                <div className="location-captured">
+                  <span className="location-icon">✅</span>
+                  <div>
+                    <div className="location-label">Phone verified</div>
+                    <div className="location-coords">{phone}</div>
                   </div>
                 </div>
-              ))}
-
-              <div className="edit-field">
-                <label className="edit-label">WhatsApp number</label>
-                <input className="edit-input" type="tel"
-                  value={form.whatsapp}
-                  onChange={e => setForm({...form, whatsapp: e.target.value})}
-                  placeholder="e.g. 919876543210 (with country code)" />
-              </div>
+              ) : !phoneSent ? (
+                <div className="edit-field">
+                  <label className="edit-label">Phone number</label>
+                  <div style={{ display: 'flex', gap: '10px' }}>
+                    <input className="edit-input" type="tel" style={{ flex: 1 }}
+                      value={phone}
+                      onChange={e => setPhone(e.target.value)}
+                      placeholder="e.g. +91 98765 43210" />
+                    <button type="button" className="create-submit" onClick={handleSendPhoneOtp} disabled={sendingOtp}>
+                      {sendingOtp ? 'Sending…' : 'Send code'}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="edit-field">
+                  <label className="edit-label">Enter the code sent on WhatsApp</label>
+                  <div style={{ display: 'flex', gap: '10px' }}>
+                    <input className="edit-input otp-input" style={{ flex: 1 }}
+                      value={phoneOtp} maxLength={6}
+                      onChange={e => setPhoneOtp(e.target.value)}
+                      placeholder="000000" />
+                    <button type="button" className="create-submit" onClick={handleVerifyPhoneOtp} disabled={verifyingOtp}>
+                      {verifyingOtp ? 'Verifying…' : 'Verify'}
+                    </button>
+                  </div>
+                  <p className="otp-resend">
+                    Didn't get it?{' '}
+                    <span onClick={() => { setPhoneSent(false); setPhoneOtp(''); }}>Go back</span>
+                  </p>
+                </div>
+              )}
             </section>
 
             {/* Password */}
