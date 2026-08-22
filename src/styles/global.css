@@ -161,18 +161,21 @@ a { text-decoration: none; color: inherit; }
   animation: pageIn 0.25s var(--ease-out-expo) both;
 }
 
-/* ── Primary buttons (CUFood-style burnt-orange CTAs) ─────────────
+/* ── Primary buttons (Uber-style: white fill, black text) ─────────
    Primary action buttons across the app hardcode #0f172a (dark navy),
-   which is nearly invisible on the black theme. Flip them to the bold
-   orange accent (white text) — matching CUFood's prominent orange
-   action buttons — whenever we're NOT in explicit light mode. Using
+   which is nearly invisible on the black theme. Flip them to a solid
+   WHITE fill with black text — Uber's exact primary-button treatment —
+   whenever we're NOT in explicit light mode. The palette stays
+   near-monochrome; orange is reserved for the price pill alone.
    :root:not([data-theme="light"]) covers BOTH the default dark theme
-   (no attribute set — e.g. Login/Onboarding before AppShell mounts)
-   AND the explicit dark toggle, at specificity (0,3,0) so it beats the
-   pages' own (0,2,0) :hover rules that re-assert #0f172a. */
+   (no attribute set — Login/Onboarding before AppShell mounts) AND the
+   explicit dark toggle, at specificity (0,3,0) so it beats the pages'
+   own (0,2,0) :hover rules that re-assert #0f172a.
+   NOTE: .opp-cta and .wr-apply-btn are intentionally NOT here — they
+   sit INSIDE white cards, so they keep a black fill (see their card
+   rules) rather than turning white-on-white. */
 :root:not([data-theme="light"]) .create-submit,
 :root:not([data-theme="light"]) .post-job-btn,
-:root:not([data-theme="light"]) .wr-apply-btn,
 :root:not([data-theme="light"]) .convs-new-btn,
 :root:not([data-theme="light"]) .msg-send-btn,
 :root:not([data-theme="light"]) .location-btn,
@@ -181,17 +184,16 @@ a { text-decoration: none; color: inherit; }
 :root:not([data-theme="light"]) .profile-msg-btn,
 :root:not([data-theme="light"]) .search-inline-btn,
 :root:not([data-theme="light"]) .settings-save-btn,
-:root:not([data-theme="light"]) .opp-cta,
 :root:not([data-theme="light"]) .hire-btn,
 :root:not([data-theme="light"]) .status-composer-btn {
-  background: var(--cyan);
-  border-color: var(--cyan);
-  color: #ffffff;
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);
 }
 
-/* Progress fill also flips to the orange accent so it actually reads on
-   the dark track (was #0f172a — invisible). */
-:root:not([data-theme="light"]) .onboard-bar-fill { background: var(--cyan); }
+/* Progress fill flips to white so it reads on the dark track (was
+   #0f172a — invisible). */
+:root:not([data-theme="light"]) .onboard-bar-fill { background: var(--accent); }
 
 /* Editorial rendering polish */
 body { text-rendering: optimizeLegibility; }

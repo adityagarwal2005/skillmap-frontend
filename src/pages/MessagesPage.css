@@ -123,11 +123,11 @@
 }
 
 .conv-item:hover { background: var(--elevated); }
-.conv-item.active { background: rgba(255,255,255,0.06); box-shadow: inset 3px 0 0 var(--cyan); }
+.conv-item.active { background: rgba(255,255,255,0.08); box-shadow: inset 3px 0 0 var(--text-1); }
 .conv-item.active .conv-name,
 .conv-item.active .conv-time { color: #fff; }
 .conv-item.active .conv-preview { color: rgba(255,255,255,0.7); }
-.conv-item.active .conv-type-tag { background: var(--accent-orange-low, rgba(239,95,38,0.14)); color: var(--cyan); }
+.conv-item.active .conv-type-tag { background: rgba(255,255,255,0.16); color: rgba(255,255,255,0.85); }
 
 .conv-ava {
   width: 44px;
@@ -148,7 +148,7 @@
 
 /* Collab group threads — a shared team icon instead of one person's avatar,
    since the "with" field here is the collab post title, not a username. */
-.conv-ava.is-group { background: #ef5f26; font-size: 19px; }
+.conv-ava.is-group { background: #3a3a3c; font-size: 19px; }
 
 .conv-info { flex: 1; min-width: 0; }
 
@@ -358,8 +358,8 @@
 }
 
 .msg-bubble.own {
-  background: var(--cyan);
-  border-color: var(--cyan);
+  background: #f5f5f7;
+  border-color: #f5f5f7;
   border-radius: 18px 18px 5px 18px;
 }
 
@@ -380,7 +380,7 @@
   word-break: break-word;
 }
 
-.msg-bubble.own .msg-text { color: #fff; }
+.msg-bubble.own .msg-text { color: #0a0a0a; }
 
 /* ── Media in messages ── */
 .msg-media {
@@ -453,7 +453,7 @@ video.msg-media { cursor: default; }
   text-align: right;
 }
 
-.msg-bubble.own .msg-time { color: rgba(255,255,255,0.55); }
+.msg-bubble.own .msg-time { color: rgba(0,0,0,0.45); }
 
 .msg-tick {
   margin-left: 4px;

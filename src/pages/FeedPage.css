@@ -195,8 +195,8 @@
 .app-shell .skill-input:focus,
 .app-shell .modal-input:focus,
 .app-shell .modal-textarea:focus {
-  border-color: var(--cyan);
-  box-shadow: 0 0 0 4px var(--accent-orange-low, rgba(239,95,38,0.14));
+  border-color: var(--text-1);
+  box-shadow: 0 0 0 3px rgba(150,150,150,0.15);
 }
 
 /* Tags & pills — crisper */
@@ -528,12 +528,12 @@
   height: 46px;
   border: none;
   border-radius: 13px;
-  background: linear-gradient(135deg, #ef5f26, #ef5f26);
-  color: #ffffff;
+  background: #f5f5f7;
+  color: #0a0a0a;
   font-size: 0.9375rem;
-  font-weight: 650;
+  font-weight: 700;
   letter-spacing: -0.01em;
-  box-shadow: 0 6px 18px rgba(239,95,38,0.35);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.35);
   transition: transform 0.2s var(--ease-out-expo, ease),
               box-shadow 0.2s var(--ease-out-expo, ease),
               filter 0.2s ease;
@@ -541,7 +541,7 @@
 
 .sidebar-post-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 10px 26px rgba(239,95,38,0.45);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.4);
   filter: brightness(1.06);
 }
 
@@ -785,7 +785,7 @@
 }
 
 .type-filter-btn:hover { background: var(--elevated); color: var(--text-1); }
-.type-filter-btn.active { background: var(--cyan); color: #fff; border-color: var(--cyan); }
+.type-filter-btn.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
 [data-theme="light"] .type-filter-btn.active { background: #0f172a; }
 
 /* ── "Finish your profile" nudge (app-wide, dismissible) ── */

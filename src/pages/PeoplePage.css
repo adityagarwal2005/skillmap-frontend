@@ -205,8 +205,8 @@
   width: 100%;
   padding: 0 14px;
   border-radius: 10px;
-  border: 1px solid #ef5f26;
-  background: #ef5f26;
+  border: 1px solid #0a0a0a;
+  background: #0a0a0a;
   color: #fff;
   font-size: 0.8125rem;
   font-weight: 700;
@@ -263,7 +263,7 @@
   height: 20px;
   padding: 0 6px;
   border-radius: 10px;
-  background: #ef5f26;
+  background: #0a0a0a;
   color: #fff;
   font-size: 0.75rem;
   font-weight: 700;

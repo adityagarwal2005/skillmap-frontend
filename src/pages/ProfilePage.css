@@ -180,12 +180,12 @@
 
 /* Friend button states */
 .profile-friend-btn {
-  background: #ef5f26;
-  border-color: #ef5f26;
+  background: #0a0a0a;
+  border-color: #0a0a0a;
   color: #fff;
   font-weight: 700;
 }
-.profile-friend-btn:hover { background: #ef5f26; color: #fff; opacity: 0.88; }
+.profile-friend-btn:hover { background: #0a0a0a; color: #fff; opacity: 0.88; }
 .profile-friend-btn.is-pending {
   background: none;
   border-color: var(--border-md);
@@ -293,7 +293,7 @@
   transition: all 0.12s;
 }
 .skill-endorse-btn:hover { background: var(--elevated); color: var(--text-1); }
-.skill-endorse-btn.active { background: var(--cyan); border-color: var(--cyan); color: #fff; }
+.skill-endorse-btn.active { background: var(--accent); border-color: var(--accent); color: var(--bg); }
 .skill-endorse-btn:disabled { opacity: 0.5; }
 
 .no-skills { font-size: 0.9375rem; color: var(--text-3); }
