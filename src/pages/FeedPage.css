@@ -182,7 +182,7 @@
 .app-shell .skill-input,
 .app-shell .modal-input,
 .app-shell .modal-textarea {
-  border-radius: 12px;
+  border-radius: 14px;
   transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
 }
 .app-shell .create-input:focus,
@@ -195,8 +195,8 @@
 .app-shell .skill-input:focus,
 .app-shell .modal-input:focus,
 .app-shell .modal-textarea:focus {
-  border-color: var(--blue);
-  box-shadow: 0 0 0 4px rgba(0,113,227,0.12);
+  border-color: var(--cyan);
+  box-shadow: 0 0 0 4px var(--accent-orange-low, rgba(239,95,38,0.14));
 }
 
 /* Tags & pills — crisper */
@@ -359,7 +359,7 @@
 .topbar-search-input:focus {
   background: var(--surface);
   border-color: var(--blue);
-  box-shadow: 0 0 0 3px rgba(0,113,227,0.1);
+  box-shadow: 0 0 0 3px rgba(239,95,38,0.1);
 }
 
 .topbar-search-input::placeholder { color: var(--text-3); }
@@ -528,12 +528,12 @@
   height: 46px;
   border: none;
   border-radius: 13px;
-  background: linear-gradient(135deg, #0a84ff, #0071e3);
+  background: linear-gradient(135deg, #ef5f26, #ef5f26);
   color: #ffffff;
   font-size: 0.9375rem;
   font-weight: 650;
   letter-spacing: -0.01em;
-  box-shadow: 0 6px 18px rgba(0,113,227,0.35);
+  box-shadow: 0 6px 18px rgba(239,95,38,0.35);
   transition: transform 0.2s var(--ease-out-expo, ease),
               box-shadow 0.2s var(--ease-out-expo, ease),
               filter 0.2s ease;
@@ -541,7 +541,7 @@
 
 .sidebar-post-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 10px 26px rgba(0,113,227,0.45);
+  box-shadow: 0 10px 26px rgba(239,95,38,0.45);
   filter: brightness(1.06);
 }
 
@@ -589,7 +589,7 @@
 .sidebar-link:hover .sidebar-link-ic { color: #ffffff; }
 
 .sidebar-link.active {
-  background: linear-gradient(90deg, rgba(0,113,227,0.22), rgba(255,255,255,0.04) 70%);
+  background: linear-gradient(90deg, rgba(239,95,38,0.22), rgba(255,255,255,0.04) 70%);
   color: #ffffff;
   font-weight: 650;
   box-shadow: inset 0 0 0 1px rgba(255,255,255,0.07);
@@ -785,7 +785,7 @@
 }
 
 .type-filter-btn:hover { background: var(--elevated); color: var(--text-1); }
-.type-filter-btn.active { background: #0f172a; color: #fff; border-color: #0f172a; }
+.type-filter-btn.active { background: var(--cyan); color: #fff; border-color: var(--cyan); }
 [data-theme="light"] .type-filter-btn.active { background: #0f172a; }
 
 /* ── "Finish your profile" nudge (app-wide, dismissible) ── */
@@ -1506,14 +1506,14 @@ video.post-media-el { cursor: default; object-fit: contain; background: #000; }
   font-size: 0.875rem;
   font-weight: 500;
   padding: 6px 13px;
-  border: 1px solid rgba(0,113,227,0.2);
+  border: 1px solid rgba(239,95,38,0.2);
   border-radius: 20px;
   margin-bottom: 14px;
   transition: all 0.15s;
-  background: rgba(0,113,227,0.04);
+  background: rgba(239,95,38,0.04);
 }
 
-.post-ext-link:hover { background: rgba(0,113,227,0.08); }
+.post-ext-link:hover { background: rgba(239,95,38,0.08); }
 
 /* Multi-photo gallery */
 .post-gallery {
@@ -1821,7 +1821,7 @@ video.post-media-el { cursor: default; object-fit: contain; background: #000; }
 .modal-input:focus, .modal-textarea:focus {
   background: var(--surface);
   border-color: var(--blue);
-  box-shadow: 0 0 0 3px rgba(0,113,227,0.1);
+  box-shadow: 0 0 0 3px rgba(239,95,38,0.1);
 }
 
 .modal-input::placeholder, .modal-textarea::placeholder { color: var(--text-3); }
@@ -1971,8 +1971,8 @@ video.post-media-el { cursor: default; object-fit: contain; background: #000; }
      cramped together before. Push the icon cluster to the right of the logo. */
   .topbar-brand { margin-right: auto; }
   .topbar-right { gap: 10px; }
-  .topbar-btn { width: 40px; height: 40px; }
-  .topbar-avatar { width: 34px; height: 34px; font-size: 13px; }
+  .topbar-btn { width: 44px; height: 44px; }
+  .topbar-avatar { width: 38px; height: 38px; font-size: 14px; }
   .topbar-bell-badge { top: 2px; right: 2px; }
 
   .feed-main { padding: 16px; max-width: 100%; }

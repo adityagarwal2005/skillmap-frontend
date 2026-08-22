@@ -103,13 +103,13 @@
   font-weight: 500;
   color: var(--blue);
   padding: 5px 12px;
-  border: 1px solid rgba(0,113,227,0.2);
+  border: 1px solid rgba(239,95,38,0.2);
   border-radius: 20px;
-  background: rgba(0,113,227,0.04);
+  background: rgba(239,95,38,0.04);
   transition: all 0.15s;
 }
 
-.profile-link:hover { background: rgba(0,113,227,0.08); }
+.profile-link:hover { background: rgba(239,95,38,0.08); }
 
 .profile-stats { display: flex; gap: 32px; }
 
@@ -293,7 +293,7 @@
   transition: all 0.12s;
 }
 .skill-endorse-btn:hover { background: var(--elevated); color: var(--text-1); }
-.skill-endorse-btn.active { background: #0f172a; border-color: #0f172a; color: #fff; }
+.skill-endorse-btn.active { background: var(--cyan); border-color: var(--cyan); color: #fff; }
 .skill-endorse-btn:disabled { opacity: 0.5; }
 
 .no-skills { font-size: 0.9375rem; color: var(--text-3); }
@@ -327,7 +327,7 @@
 .skill-input:focus {
   background: var(--surface);
   border-color: var(--blue);
-  box-shadow: 0 0 0 3px rgba(0,113,227,0.1);
+  box-shadow: 0 0 0 3px rgba(239,95,38,0.1);
 }
 
 .skill-input::placeholder { color: var(--text-3); }

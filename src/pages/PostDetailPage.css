@@ -225,7 +225,7 @@
 .detail-edit-title:focus,
 .detail-edit-desc:focus {
   border-color: var(--blue);
-  box-shadow: 0 0 0 4px rgba(0,113,227,0.12);
+  box-shadow: 0 0 0 4px rgba(239,95,38,0.12);
 }
 .detail-edit-desc { resize: vertical; line-height: 1.5; }
 .detail-edit-actions { display: flex; gap: 8px; justify-content: flex-end; }
