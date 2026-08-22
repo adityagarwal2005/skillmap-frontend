@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;0,14..32,900;1,14..32,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;0,14..32,900;1,14..32,400&family=Space+Grotesk:wght@500;600;700&display=swap');
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -63,18 +63,50 @@ body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
   font-size: 15px;
   line-height: 1.5;
+  letter-spacing: -0.006em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11', 'ss01';
+  text-rendering: optimizeLegibility;
+}
+
+/* Space Grotesk display face for big headlines — paired with Inter for body.
+   Set --font-display so heading rules across pages can opt in consistently. */
+:root { --font-display: 'Space Grotesk', 'Inter', -apple-system, sans-serif; }
+
+.feed-heading,
+.landing-hero-display,
+.opp-title,
+.convs-title,
+.section-title,
+.app-shell .post-title,
+.app-shell .collab-title,
+.app-shell .wr-desc,
+.app-shell .search-heading,
+.app-shell .notif-title,
+.app-shell .freelance-title,
+.app-shell .create-title,
+.app-shell .settings-title,
+.app-shell .edit-title,
+.app-shell .people-heading,
+.app-shell .apps-heading,
+.profile-name,
+.profile-display-name {
+  font-family: var(--font-display);
+}
+
+/* Prices/counts read cleaner with tabular (monospaced) figures */
+.opp-pay, .wr-pay, .profile-stat-num, .stat-num {
+  font-variant-numeric: tabular-nums;
 }
 
 button  { cursor: pointer; border: none; outline: none; font-family: inherit; background: none; }
 
-/* Tactile press feedback. Hover states never fire on touch, so on a phone
-   every button felt dead when tapped. A subtle opacity dip on :active gives
-   universal, layout-neutral press feedback (Apple-HIG style) without needing
-   a bespoke rule on each of the ~70 button classes. It's a state, not an
-   animation, so reduced-motion users still get the cue. */
-button:not(:disabled):active { opacity: 0.6; }
+/* Tactile press feedback — a subtle opacity dip + micro scale-down on press,
+   giving every button a physical, considered response (Apple/Uber-style)
+   without a bespoke rule per class. */
+button { transition: opacity 0.18s ease, transform 0.12s var(--ease-out-quart, ease); }
+button:not(:disabled):active { opacity: 0.65; transform: scale(0.97); }
 input, textarea, select { outline: none; border: none; font-family: inherit; background: none; color: inherit; }
 a { text-decoration: none; color: inherit; }
 

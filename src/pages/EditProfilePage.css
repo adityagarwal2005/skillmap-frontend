@@ -14,9 +14,9 @@
 .edit-box {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 22px;
-  padding: 32px 34px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  border-radius: 24px;
+  padding: 34px 36px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2), 0 16px 48px rgba(0,0,0,0.22);
 }
 
 .edit-head { margin-bottom: 26px; }
@@ -89,11 +89,11 @@
 
 .edit-input {
   width: 100%;
-  height: 46px;
+  height: 48px;
   background: var(--elevated);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 0 15px;
+  border-radius: 14px;
+  padding: 0 16px;
   font-size: 0.9375rem;
   color: var(--text-1);
   font-family: inherit;
@@ -109,8 +109,8 @@
 .edit-input::placeholder { color: var(--text-3); }
 .edit-input:focus {
   background: var(--surface);
-  border-color: var(--blue);
-  box-shadow: 0 0 0 4px rgba(239,95,38,0.12);
+  border-color: var(--text-1);
+  box-shadow: 0 0 0 3px rgba(150,150,150,0.15);
 }
 .edit-select { cursor: pointer; }
 
