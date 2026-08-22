@@ -70,16 +70,24 @@
 .wr-card .wr-desc, .collab-card .wr-desc,
 .wr-card .wr-desc-sm, .collab-card .wr-desc-sm { color: #0a0a0a; }
 .wr-card .wr-posted, .collab-card .wr-posted,
-.wr-card .wr-duration, .collab-card .wr-duration,
 .wr-card .wr-waiting, .collab-card .wr-waiting  { color: #6e6e73; }
 .wr-card .wr-footer, .collab-card .wr-footer   { border-top-color: rgba(0,0,0,0.08); }
 .wr-card .wr-time, .collab-card .wr-time     { background: rgba(0,0,0,0.06); color: #1d1d1f; }
 .wr-card .post-ava, .collab-card .post-ava    { background: rgba(0,0,0,0.05); color: #0a0a0a; border-color: rgba(0,0,0,0.08); }
-.wr-card .tag-skill, .collab-card .tag-skill   { background: rgba(52,199,89,0.1); color: #1a8a4a; }
+/* Uber-style uniform gray metadata pills — orange stays only on the price */
+.wr-card .tag-skill, .collab-card .tag-skill,
+.wr-card .wr-duration, .collab-card .wr-duration,
+.wr-card .wr-heat, .collab-card .wr-heat {
+  background: rgba(0,0,0,0.06);
+  color: #3a3a3c;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 999px;
+}
 .wr-card .wr-view-btn, .collab-card .wr-view-btn { border-color: rgba(0,0,0,0.15); color: #55555a; }
 .wr-card .wr-view-btn:hover, .collab-card .wr-view-btn:hover { background: rgba(0,0,0,0.05); color: #0a0a0a; }
 
-.wr-card:hover { border-color: var(--border-md); box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+.wr-card:hover { transform: translateY(-3px); border-color: rgba(0,0,0,0.1); box-shadow: 0 16px 36px rgba(0,0,0,0.16); }
 
 /* ── Live job board ── */
 .wr-tabs-row {

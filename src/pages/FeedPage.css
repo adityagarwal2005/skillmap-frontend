@@ -1270,7 +1270,16 @@ video.post-media-el { cursor: default; object-fit: contain; background: #000; }
 .opp-card .opp-title   { color: #0a0a0a; }
 .opp-card .opp-desc    { color: #55555a; }
 .opp-card .opp-footer  { border-top-color: rgba(0,0,0,0.08); }
-.opp-card .opp-sub     { color: #55555a; }
+/* Uber-style uniform gray metadata pills (distance, applicants) — keeps the
+   card near-monochrome so the orange price is the only pop of color. */
+.opp-card .opp-sub,
+.opp-card .opp-heat {
+  color: #3a3a3c;
+  font-weight: 600;
+  background: rgba(0,0,0,0.05);
+  padding: 5px 12px;
+  border-radius: 999px;
+}
 .opp-card .opp-cta     { background: #0a0a0a; color: #ffffff; }
 .opp-card .opp-cta.ghost { background: none; color: #0a0a0a; border-color: rgba(0,0,0,0.15); }
 .opp-card .opp-cta.ghost:hover { background: rgba(0,0,0,0.05); }
@@ -1278,7 +1287,7 @@ video.post-media-el { cursor: default; object-fit: contain; background: #000; }
 .opp-card .post-author,
 .app-shell .feed-main .opp-card .post-author     { color: #0a0a0a; }
 .opp-card .post-author-cat { color: #8a8a8f; }
-.opp-card .tag-skill       { background: rgba(52,199,89,0.1); color: #1a8a4a; }
+.opp-card .tag-skill       { background: rgba(0,0,0,0.06); color: #3a3a3c; font-weight: 600; }
 
 /* "Just arrived via poll" flash — same convention as .wr-card.is-new in
    FreelancePage.css, extended to every card type that now live-polls
