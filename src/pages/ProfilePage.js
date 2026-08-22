@@ -21,6 +21,12 @@ const WhatsAppIcon = (
   </svg>
 );
 
+// Social links were reduced to just WhatsApp (verified via phone OTP) — the
+// old GitHub/LinkedIn/Instagram fields were unverifiable and were removed.
+const SOCIALS = [
+  { key: 'whatsapp', label: 'WhatsApp', brand: 'whatsapp', icon: WhatsAppIcon },
+];
+
 
 const REPORT_REASONS = [
   { value: 'spam',          label: 'Spam' },
@@ -422,9 +428,7 @@ export default function ProfilePage() {
               <div className="socials-grid">
                 {SOCIALS.map(s => {
                   const raw = profile[s.key];
-                  const url = s.key === 'whatsapp'
-                    ? (raw ? `https://wa.me/${String(raw).replace(/\D/g, '')}` : null)
-                    : (raw && isSafeHref(raw) ? raw : null);
+                  const url = raw ? `https://wa.me/${String(raw).replace(/\D/g, '')}` : null;
                   return url ? (
                     <a key={s.key} href={url} target="_blank" rel="noreferrer"
                       className="social-card">
