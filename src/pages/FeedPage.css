@@ -95,7 +95,7 @@
 .app-shell .people-heading,
 .app-shell .apps-heading {
   font-size: clamp(2.5rem, 5.5vw, 4.25rem);
-  font-weight: 800;
+  font-weight: 900;
   letter-spacing: -0.04em;
   line-height: 0.92;
   text-transform: uppercase;
@@ -681,7 +681,7 @@
 
 .feed-heading {
   font-size: clamp(2.75rem, 6vw, 4.5rem);
-  font-weight: 800;
+  font-weight: 900;
   color: var(--text-1);
   letter-spacing: -0.04em;
   line-height: 0.9;

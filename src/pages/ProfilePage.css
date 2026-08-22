@@ -180,12 +180,12 @@
 
 /* Friend button states */
 .profile-friend-btn {
-  background: #4f7cff;
-  border-color: #4f7cff;
+  background: #ef5f26;
+  border-color: #ef5f26;
   color: #fff;
   font-weight: 700;
 }
-.profile-friend-btn:hover { background: #4f7cff; color: #fff; opacity: 0.88; }
+.profile-friend-btn:hover { background: #ef5f26; color: #fff; opacity: 0.88; }
 .profile-friend-btn.is-pending {
   background: none;
   border-color: var(--border-md);

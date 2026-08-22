@@ -92,9 +92,9 @@
   margin-bottom: 20px;
   padding: 7px 16px;
   border-radius: 20px;
-  background: rgba(79,124,255,0.15);
-  border: 1px solid rgba(79,124,255,0.35);
-  color: #9db8ff;
+  background: rgba(239,95,38,0.15);
+  border: 1px solid rgba(239,95,38,0.35);
+  color: #ff8a5c;
   font-size: 0.8125rem;
   font-weight: 600;
 }
@@ -111,7 +111,7 @@
   font-size: var(--fs-display, clamp(2.75rem, 6vw, 4.75rem));
   line-height: var(--leading-tight, 1.08);
   letter-spacing: var(--tracking-tighter, -0.035em);
-  font-weight: 700;
+  font-weight: 900;
   margin-bottom: 22px;
 }
 
@@ -181,7 +181,7 @@
   top: -20vh;
   transform: translateX(-50%);
   background: radial-gradient(circle at center,
-    rgba(0,113,227,0.3), rgba(0,211,242,0.1) 40%, transparent 68%);
+    rgba(239,95,38,0.34), rgba(255,138,92,0.12) 40%, transparent 68%);
   filter: blur(24px);
 }
 
@@ -221,7 +221,7 @@
 }
 .landing-feature-card:hover {
   background: rgba(255,255,255,0.055);
-  border-color: rgba(79,124,255,0.35);
+  border-color: rgba(239,95,38,0.35);
 }
 
 .landing-feature-icon { font-size: 1.75rem; margin-bottom: 12px; }
@@ -270,7 +270,7 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #4f7cff, #00d3f2);
+  background: linear-gradient(135deg, #ff8a5c, #ef5f26);
   color: #0a0a0a;
   font-weight: 700;
   font-size: 0.9375rem;

@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;1,14..32,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;0,14..32,900;1,14..32,400&display=swap');
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -115,8 +114,13 @@ a { text-decoration: none; color: inherit; }
   --dur:       0.3s;
   --dur-slow:  0.6s;
 
-  /* Accents (used sparingly, per editorial direction) */
-  --cyan:  #00d3f2;
+  /* Accent — burnt orange (CUFood-style). This is THE single highlight color
+     used app-wide (kept under the legacy name --cyan so every existing
+     reference flips at once): active nav, prices, section kickers, live dots,
+     hero emphasis. Bright variant + low-alpha fill for pills/badges. */
+  --cyan:        #ef5f26;
+  --accent-2:    #ff8a5c;
+  --accent-orange-low: rgba(239,95,38,0.14);
   --radius-pill: 999px;
 
   /* Editorial "steel" surfaces — the main content area sitting on the dark
@@ -157,38 +161,37 @@ a { text-decoration: none; color: inherit; }
   animation: pageIn 0.25s var(--ease-out-expo) both;
 }
 
-/* ── Dark-mode primary buttons ───────────────────────────────────
-   Primary action buttons across the app hardcode #0f172a (dark navy)
-   with no dark-mode variant, so on the near-black dark theme they turn
-   muddy and lose their "primary" prominence against the panel. Invert
-   them to the accent (light fill, dark text) in dark mode — this is
-   exactly what the dark chrome already does for .topbar-search-btn, so
-   it matches an existing pattern rather than inventing one, and it's
-   what the --accent token (which flips light↔dark) is designed for.
-   Uses html[...] so specificity (0,2,1) beats page :hover rules that
-   re-assert #0f172a (0,2,0), keeping the fill correct on hover too;
-   each button's own opacity-dip hover still reads through. */
-html[data-theme="dark"] .create-submit,
-html[data-theme="dark"] .post-job-btn,
-html[data-theme="dark"] .wr-apply-btn,
-html[data-theme="dark"] .convs-new-btn,
-html[data-theme="dark"] .msg-send-btn,
-html[data-theme="dark"] .location-btn,
-html[data-theme="dark"] .people-search-btn,
-html[data-theme="dark"] .comment-submit,
-html[data-theme="dark"] .profile-msg-btn,
-html[data-theme="dark"] .search-inline-btn,
-html[data-theme="dark"] .settings-save-btn,
-html[data-theme="dark"] .opp-cta,
-html[data-theme="dark"] .status-composer-btn {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: var(--bg);
+/* ── Primary buttons (CUFood-style burnt-orange CTAs) ─────────────
+   Primary action buttons across the app hardcode #0f172a (dark navy),
+   which is nearly invisible on the black theme. Flip them to the bold
+   orange accent (white text) — matching CUFood's prominent orange
+   action buttons — whenever we're NOT in explicit light mode. Using
+   :root:not([data-theme="light"]) covers BOTH the default dark theme
+   (no attribute set — e.g. Login/Onboarding before AppShell mounts)
+   AND the explicit dark toggle, at specificity (0,3,0) so it beats the
+   pages' own (0,2,0) :hover rules that re-assert #0f172a. */
+:root:not([data-theme="light"]) .create-submit,
+:root:not([data-theme="light"]) .post-job-btn,
+:root:not([data-theme="light"]) .wr-apply-btn,
+:root:not([data-theme="light"]) .convs-new-btn,
+:root:not([data-theme="light"]) .msg-send-btn,
+:root:not([data-theme="light"]) .location-btn,
+:root:not([data-theme="light"]) .people-search-btn,
+:root:not([data-theme="light"]) .comment-submit,
+:root:not([data-theme="light"]) .profile-msg-btn,
+:root:not([data-theme="light"]) .search-inline-btn,
+:root:not([data-theme="light"]) .settings-save-btn,
+:root:not([data-theme="light"]) .opp-cta,
+:root:not([data-theme="light"]) .hire-btn,
+:root:not([data-theme="light"]) .status-composer-btn {
+  background: var(--cyan);
+  border-color: var(--cyan);
+  color: #ffffff;
 }
 
-/* The onboarding progress fill is #0f172a on a dark track in dark mode —
-   i.e. invisible. Make it light so progress actually reads. */
-html[data-theme="dark"] .onboard-bar-fill { background: var(--accent); }
+/* Progress fill also flips to the orange accent so it actually reads on
+   the dark track (was #0f172a — invisible). */
+:root:not([data-theme="light"]) .onboard-bar-fill { background: var(--cyan); }
 
 /* Editorial rendering polish */
 body { text-rendering: optimizeLegibility; }

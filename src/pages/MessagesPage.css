@@ -148,7 +148,7 @@
 
 /* Collab group threads — a shared team icon instead of one person's avatar,
    since the "with" field here is the collab post title, not a username. */
-.conv-ava.is-group { background: #4f7cff; font-size: 19px; }
+.conv-ava.is-group { background: #ef5f26; font-size: 19px; }
 
 .conv-info { flex: 1; min-width: 0; }
 
