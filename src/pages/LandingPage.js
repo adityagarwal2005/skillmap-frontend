@@ -53,7 +53,7 @@ export default function LandingPage() {
           {referrer && (
             <div className="landing-invite-pill">You were invited by @{referrer}</div>
           )}
-          <div className="landing-hero-tag">// DOITHERE — HYPERLOCAL SKILL NETWORK</div>
+          <div className="landing-hero-tag">DOITHERE — HYPERLOCAL SKILL NETWORK</div>
           <h1 className="landing-hero-display">
             Get discovered<br />for what you<br /><em>actually</em> do.
           </h1>

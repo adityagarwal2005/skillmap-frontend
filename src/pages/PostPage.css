@@ -13,111 +13,133 @@
   letter-spacing: -0.05em;
   line-height: 0.9;
   color: var(--text-1);
-  margin-bottom: 28px;
+  margin-bottom: 30px;
 }
 
-/* New-post cards — two big tap targets */
+/* ── New-post cards — two big tap targets ── */
 .post-new-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
-  margin-bottom: 44px;
+  margin-bottom: 56px;
 }
 .post-new-card {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 4px;
+  gap: 2px;
   text-align: left;
-  padding: 20px 20px 22px;
+  padding: 22px 20px 24px;
   background: #000000;
-  border: 1px solid rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.14);
   border-radius: 20px;
-  transition: background 0.2s, border-color 0.2s, transform 0.16s var(--ease-out-expo, ease);
+  transition: border-color 0.2s, transform 0.16s var(--ease-out-expo, ease);
 }
-.post-new-card:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.16); }
-.post-new-emoji { font-size: 1.5rem; margin-bottom: 8px; }
+.post-new-card:hover { border-color: rgba(255,255,255,0.34); transform: translateY(-2px); }
+.post-new-card:active { transform: scale(0.98); }
+.post-new-emoji { font-size: 1.625rem; margin-bottom: 12px; }
 .post-new-name {
   font-family: var(--font-display);
-  font-size: 1.125rem;
+  font-size: 1.1875rem;
   font-weight: 700;
   color: var(--text-1);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
 }
-.post-new-desc { font-size: 0.8125rem; color: var(--text-3); line-height: 1.35; }
+.post-new-desc { font-size: 0.8125rem; color: var(--text-3); line-height: 1.4; margin-top: 2px; }
+.post-new-arrow {
+  position: absolute;
+  top: 22px;
+  right: 20px;
+  font-size: 1.125rem;
+  color: var(--text-3);
+  transition: transform 0.18s var(--ease-out-expo, ease), color 0.18s;
+}
+.post-new-card:hover .post-new-arrow { transform: translateX(3px); color: var(--text-1); }
 
-/* Sections — CUFood category header: orange number + huge title + count */
-.post-section { margin-bottom: 40px; }
-.post-section-head {
-  display: flex;
-  align-items: baseline;
-  gap: 14px;
+/* ══════════════════════════════════════════════
+   CUFood menu section — orange number, huge tight
+   title, bright rule; items are big bold names with
+   a small orange price pill underneath.
+   ══════════════════════════════════════════════ */
+.menu-section {
+  border-top: 1px solid rgba(255,255,255,0.85);
+  padding-top: 26px;
   margin-bottom: 8px;
 }
-.post-section-num {
+
+.menu-head {
+  display: flex;
+  align-items: baseline;
+  gap: 18px;
+  margin-bottom: 20px;
+}
+.menu-num {
   font-family: var(--font-display);
   font-size: 1rem;
   font-weight: 700;
   color: var(--cyan);
   font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
 }
-.post-section-title {
+.menu-title {
   font-family: var(--font-display);
-  font-size: clamp(1.75rem, 6vw, 2.25rem);
-  font-weight: 700;
-  letter-spacing: -0.03em;
+  font-size: clamp(2.25rem, 8vw, 3.25rem);
+  font-weight: 800;
+  letter-spacing: -0.045em;
   color: var(--text-1);
-  line-height: 1;
+  line-height: 0.95;
 }
-.post-section-count {
-  font-size: 0.8125rem;
+.menu-count {
+  font-size: 0.875rem;
   color: var(--text-3);
-  font-weight: 600;
+  font-weight: 500;
+  align-self: center;
 }
 
-/* Rows — borderless, thin divider, big bold title (CUFood menu list) */
-.post-row {
+/* ── Menu items ── */
+.menu-list { display: flex; flex-direction: column; margin-bottom: 40px; }
+.menu-item {
   width: 100%;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
   text-align: left;
-  padding: 22px 4px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  padding: 22px 2px 24px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
   transition: opacity 0.15s;
 }
-.post-row:first-of-type { border-top: 1px solid rgba(255,255,255,0.08); }
-.post-row-title {
+.menu-item:hover { opacity: 0.6; }
+.menu-item-name {
   font-family: var(--font-display);
-  font-size: 1.5rem;
+  font-size: clamp(1.375rem, 5vw, 1.75rem);
   font-weight: 700;
   color: var(--text-1);
-  letter-spacing: -0.03em;
-  line-height: 1.1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  letter-spacing: -0.035em;
+  line-height: 1.12;
+  width: 100%;
 }
-.post-row-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
-.post-row-price {
+.menu-item-foot { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.menu-price {
+  font-family: var(--font-display);
   font-size: 0.9375rem;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--cyan);
-  background: var(--accent-orange-low, rgba(239,95,38,0.14));
-  padding: 4px 11px;
+  background: rgba(239,95,38,0.12);
+  padding: 6px 14px;
   border-radius: 999px;
   font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
 }
-.post-row-sub {
-  font-size: 0.75rem;
+.menu-item-sub {
+  font-size: 0.8125rem;
   color: var(--text-3);
   font-weight: 500;
   text-transform: capitalize;
 }
 
-.post-muted { font-size: 0.9375rem; color: var(--text-3); padding: 16px 4px; }
+.menu-muted { font-size: 0.9375rem; color: var(--text-3); padding: 8px 2px 32px; }
 
 @media (max-width: 520px) {
   .post-new-grid { grid-template-columns: 1fr; }

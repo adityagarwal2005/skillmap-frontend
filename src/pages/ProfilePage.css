@@ -16,21 +16,28 @@
 
 .profile-header {
   display: flex;
-  align-items: flex-start;
-  gap: 26px;
-  padding: 34px 36px;
+  flex-direction: column;
+  gap: 22px;
+  padding: 30px 30px 26px;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 24px;
+  border-radius: 26px;
   margin-bottom: 14px;
   box-shadow: 0 1px 2px rgba(0,0,0,0.2), 0 12px 40px rgba(0,0,0,0.22);
+}
+
+/* Identity row — avatar + name/category/status */
+.profile-id-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
 }
 
 .profile-avatar-wrap { position: relative; flex-shrink: 0; }
 
 .profile-avatar {
-  width: 92px;
-  height: 92px;
+  width: 88px;
+  height: 88px;
   border-radius: 50%;
   background: #0d0d0d;
   display: flex;
@@ -53,22 +60,15 @@
   border: 2px solid var(--surface);
 }
 
-.profile-info { flex: 1; min-width: 0; }
-
-.profile-name-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 4px;
-  flex-wrap: wrap;
-}
+.profile-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
 
 .profile-name {
-  font-size: 2.5rem;
+  font-size: clamp(1.875rem, 7vw, 2.5rem);
   font-weight: 800;
   color: var(--text-1);
   letter-spacing: -0.04em;
   line-height: 1;
+  word-break: break-word;
 }
 
 /* .profile-status-badge + .status-green/.status-orange/.status-gray now live
@@ -76,18 +76,16 @@
    don't import ProfilePage.css). */
 
 .profile-category {
-  font-size: 1rem;
+  font-size: 0.9375rem;
   color: var(--text-2);
-  margin-bottom: 12px;
-  font-weight: 400;
+  font-weight: 500;
 }
 
 .profile-headline {
   font-size: 0.9375rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--text-1);
-  margin: -6px 0 12px;
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
 .profile-bio {
@@ -112,16 +110,31 @@
 
 .profile-link:hover { background: rgba(239,95,38,0.08); }
 
-.profile-stats { display: flex; gap: 36px; }
+/* Stats — an even, bordered row (CUFood-style stat strip) */
+.profile-stats {
+  display: flex;
+  gap: 0;
+  padding: 16px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
 
-.profile-stat { display: flex; flex-direction: column; gap: 4px; }
+.profile-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+  min-width: 0;
+  padding: 0 4px;
+}
+.profile-stat + .profile-stat { border-left: 1px solid var(--border); padding-left: 18px; }
 
 .profile-stat-val {
   font-family: var(--font-display);
-  font-size: 1.625rem;
-  font-weight: 700;
+  font-size: 1.75rem;
+  font-weight: 800;
   color: var(--text-1);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
   font-variant-numeric: tabular-nums;
   line-height: 1;
 }
@@ -129,89 +142,83 @@
 .profile-stat-label {
   font-size: 0.6875rem;
   color: var(--text-3);
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.07em;
 }
 
-.profile-owner-actions {
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+/* ── Action bar ── */
+.profile-actions { display: flex; flex-direction: column; gap: 12px; }
+
+.profile-action-row { display: flex; gap: 10px; }
+
+/* Primary — full-width ink/white pill */
+.profile-primary-btn {
+  flex: 1;
+  height: 48px;
+  padding: 0 22px;
+  border-radius: 14px;
+  background: var(--text-1);
+  color: var(--bg);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  transition: opacity 0.15s, transform 0.14s var(--ease-out-expo, ease);
 }
+.profile-primary-btn:hover:not(:disabled) { opacity: 0.88; }
+.profile-primary-btn:active { transform: scale(0.98); }
+.profile-primary-btn:disabled { opacity: 0.55; }
+.profile-primary-btn.is-accept { background: #22a559; color: #fff; }
+
+/* Secondary — outlined pill */
+.profile-ghost-btn {
+  flex: 1;
+  height: 48px;
+  padding: 0 18px;
+  border-radius: 14px;
+  border: 1px solid var(--border-md);
+  background: none;
+  color: var(--text-1);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  transition: background 0.15s, border-color 0.15s;
+}
+.profile-ghost-btn:hover:not(:disabled) { background: var(--elevated); border-color: var(--text-3); }
+.profile-ghost-btn:disabled { opacity: 0.6; }
+.profile-ghost-btn.is-pending,
+.profile-ghost-btn.is-friends { color: var(--text-2); }
 
 .status-select {
+  flex: 1;
+  height: 48px;
   background: var(--elevated);
-  border: 1px solid var(--border);
-  border-radius: 20px;
+  border: 1px solid var(--border-md);
+  border-radius: 14px;
   color: var(--text-1);
-  font-size: 0.875rem;
-  font-weight: 500;
-  padding: 7px 14px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  padding: 0 14px;
   cursor: pointer;
   font-family: inherit;
-  transition: all 0.15s;
 }
 
-.edit-profile-btn {
-  height: 34px;
-  padding: 0 16px;
-  background: none;
-  border: 1px solid var(--border-md);
-  border-radius: 20px;
-  color: var(--text-2);
-  font-size: 0.875rem;
-  font-weight: 500;
-  transition: all 0.15s;
-  text-align: center;
+/* Tertiary — subtle text links for Share / Rate / Report / Block */
+.profile-more-links {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding-top: 2px;
 }
-
-.edit-profile-btn:hover { background: var(--elevated); color: var(--text-1); }
-
-.edit-profile-btn.is-danger { color: var(--red, #ff3b30); border-color: rgba(255,59,48,0.3); }
-.edit-profile-btn.is-danger:hover { background: rgba(255,59,48,0.08); color: var(--red, #ff3b30); }
-.edit-profile-btn:disabled { opacity: 0.6; cursor: default; }
-
-.profile-msg-btn {
-  background: #000000;
-  border-color: #000000;
-  color: #fff;
-  font-weight: 700;
-}
-.profile-msg-btn:hover { background: #000000; color: #fff; opacity: 0.85; }
-.profile-msg-btn:disabled { opacity: 0.6; }
-
-.profile-share-btn { font-weight: 600; }
-
-/* Friend button states */
-.profile-friend-btn {
-  background: #0a0a0a;
-  border-color: #0a0a0a;
-  color: #fff;
-  font-weight: 700;
-}
-.profile-friend-btn:hover { background: #0a0a0a; color: #fff; opacity: 0.88; }
-.profile-friend-btn.is-pending {
-  background: none;
-  border-color: var(--border-md);
-  color: var(--text-2);
+.profile-more-links button {
+  font-size: 0.8125rem;
   font-weight: 600;
+  color: var(--text-3);
+  transition: color 0.15s;
 }
-.profile-friend-btn.is-pending:hover { background: var(--elevated); color: var(--text-1); }
-.profile-friend-btn.is-friends {
-  background: var(--elevated);
-  border-color: var(--border-md);
-  color: var(--text-1);
-  font-weight: 600;
-}
-.profile-friend-btn.is-accept {
-  background: #22a559;
-  border-color: #22a559;
-  color: #fff;
-  font-weight: 700;
-}
-.profile-friend-btn.is-accept:hover { background: #22a559; color: #fff; opacity: 0.88; }
+.profile-more-links button:hover { color: var(--text-1); }
+.profile-more-links button.is-danger:hover { color: var(--red, #ff3b30); }
+.profile-more-links span { color: var(--text-3); opacity: 0.5; font-size: 0.75rem; }
 
 /* Skills */
 .profile-skills-section {
@@ -549,7 +556,7 @@
   box-shadow: 0 12px 28px rgba(0,0,0,0.22);
 }
 .app-shell .profile-name {
-  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  font-size: clamp(1.875rem, 7vw, 2.5rem);
   letter-spacing: -0.04em;
 }
 .app-shell .profile-header,
@@ -652,25 +659,12 @@
   .profile-wrapper { padding: 20px 16px 60px; }
 
   .profile-header {
-    flex-direction: column;
-    align-items: stretch;
-    padding: 22px 20px;
+    padding: 22px 20px 22px;
   }
 
-  .profile-avatar-wrap { align-self: flex-start; }
-
-  .profile-owner-actions {
-    flex-direction: row;
-    flex-wrap: wrap;
-    width: 100%;
-  }
-
-  /* Wrap 2-per-row so a crowded action row (Add friend / Accept / Decline /
-     Message / Share / Rate / Report / Block) stays fully on-screen instead of
-     spilling off the right edge. */
-  .status-select, .edit-profile-btn { flex: 1 1 calc(50% - 4px); }
-
-  .profile-stats { gap: 20px; flex-wrap: wrap; }
+  .profile-stats { padding: 14px 0; }
+  .profile-stat + .profile-stat { padding-left: 14px; }
+  .profile-stat-val { font-size: 1.5rem; }
 
   .profile-skills-section { padding: 18px 20px; }
 

@@ -266,139 +266,145 @@ export default function ProfilePage() {
           <>
             <button className="profile-back" onClick={() => navigate(-1)}>← Back</button>
 
-            {/* Header */}
+            {/* Header — identity, stats, then a clean action bar */}
             <div className="profile-header">
-              <div className="profile-avatar-wrap">
-                <div className="profile-avatar">
-                  {profile.profile_image && !avatarBroken
-                    ? <img className="ava-img" src={cldAvatar(profile.profile_image, 200)} alt={profile.username}
-                        onError={() => setAvatarBroken(true)} />
-                    : profile.username[0].toUpperCase()}
+              <div className="profile-id-row">
+                <div className="profile-avatar-wrap">
+                  <div className="profile-avatar">
+                    {profile.profile_image && !avatarBroken
+                      ? <img className="ava-img" src={cldAvatar(profile.profile_image, 200)} alt={profile.username}
+                          onError={() => setAvatarBroken(true)} />
+                      : profile.username[0].toUpperCase()}
+                  </div>
+                  {profile.status !== 'not_available' && <span className="profile-status-dot" />}
                 </div>
-                {profile.status !== 'not_available' && <span className="profile-status-dot" />}
-              </div>
 
-              <div className="profile-info">
-                <div className="profile-name-row">
+                <div className="profile-info">
                   <h1 className="profile-name">{profile.username}</h1>
+                  <p className="profile-category">{profile.category || 'Independent'}</p>
                   <span className={`profile-status-badge ${statusColor[profile.status]}`}>
                     {statusLabel[profile.status]}
                   </span>
                 </div>
-                <p className="profile-category">{profile.category || 'Independent'}</p>
-                {profile.headline && <p className="profile-headline">{profile.headline}</p>}
-                <div className="profile-stats">
-                  {(isOwn || portfolio.length > 0) && (
-                    <div className="profile-stat">
-                      <span className="profile-stat-val">{portfolio.length}</span>
-                      <span className="profile-stat-label">Work</span>
-                    </div>
-                  )}
-                  {(isOwn || (profile.skills?.length || 0) > 0) && (
-                    <div className="profile-stat">
-                      <span className="profile-stat-val">{profile.skills?.length || 0}</span>
-                      <span className="profile-stat-label">Skills</span>
-                    </div>
-                  )}
-                  {memberSince && (
-                    <div className="profile-stat">
-                      <span className="profile-stat-val">{memberSince}</span>
-                      <span className="profile-stat-label">Since</span>
-                    </div>
-                  )}
-                  {isOwn && (
-                    <div className="profile-stat">
-                      <span className="profile-stat-val">{profile.profile_views ?? 0}</span>
-                      <span className="profile-stat-label">Views</span>
-                    </div>
-                  )}
-                  {profile.review_count > 0 && (
-                    <div className="profile-stat">
-                      <span className="profile-stat-val">★ {profile.rating?.toFixed(1)}</span>
-                      <span className="profile-stat-label">Rating ({profile.review_count})</span>
-                    </div>
-                  )}
-                  {!isOwn && profile.mutual_friends_count > 0 && (
-                    <div className="profile-stat">
-                      <span className="profile-stat-val">{profile.mutual_friends_count}</span>
-                      <span className="profile-stat-label">
-                        Mutual friend{profile.mutual_friends_count === 1 ? '' : 's'}
-                      </span>
-                    </div>
-                  )}
-                </div>
+              </div>
+
+              {profile.headline && <p className="profile-headline">{profile.headline}</p>}
+
+              <div className="profile-stats">
+                {(isOwn || portfolio.length > 0) && (
+                  <div className="profile-stat">
+                    <span className="profile-stat-val">{portfolio.length}</span>
+                    <span className="profile-stat-label">Work</span>
+                  </div>
+                )}
+                {(isOwn || (profile.skills?.length || 0) > 0) && (
+                  <div className="profile-stat">
+                    <span className="profile-stat-val">{profile.skills?.length || 0}</span>
+                    <span className="profile-stat-label">Skills</span>
+                  </div>
+                )}
+                {memberSince && (
+                  <div className="profile-stat">
+                    <span className="profile-stat-val">{memberSince}</span>
+                    <span className="profile-stat-label">Since</span>
+                  </div>
+                )}
+                {isOwn && (
+                  <div className="profile-stat">
+                    <span className="profile-stat-val">{profile.profile_views ?? 0}</span>
+                    <span className="profile-stat-label">Views</span>
+                  </div>
+                )}
+                {profile.review_count > 0 && (
+                  <div className="profile-stat">
+                    <span className="profile-stat-val">★ {profile.rating?.toFixed(1)}</span>
+                    <span className="profile-stat-label">Rating ({profile.review_count})</span>
+                  </div>
+                )}
+                {!isOwn && profile.mutual_friends_count > 0 && (
+                  <div className="profile-stat">
+                    <span className="profile-stat-val">{profile.mutual_friends_count}</span>
+                    <span className="profile-stat-label">
+                      Mutual friend{profile.mutual_friends_count === 1 ? '' : 's'}
+                    </span>
+                  </div>
+                )}
               </div>
 
               {isOwn ? (
-                <div className="profile-owner-actions">
-                  <select className="status-select" value={profile.status} onChange={handleStatusChange}>
-                    <option value="not_available">Not Available</option>
-                    <option value="open_to_freelance">Open to Freelance</option>
-                    <option value="open_to_work">Open to Work</option>
-                  </select>
-                  <button className="edit-profile-btn" onClick={() => navigate(`/profile/${userId}/edit`)}>
-                    Edit Profile
+                <div className="profile-actions">
+                  <button className="profile-primary-btn" onClick={() => navigate(`/profile/${userId}/edit`)}>
+                    Edit profile
                   </button>
-                  <button className="edit-profile-btn" onClick={() => navigate('/applications')}>
-                    📋 Applications
-                  </button>
-                  <button className="edit-profile-btn profile-share-btn" onClick={handleShare}>
-                    ↗ Share
-                  </button>
+                  <div className="profile-action-row">
+                    <select className="status-select" value={profile.status} onChange={handleStatusChange}>
+                      <option value="not_available">Not Available</option>
+                      <option value="open_to_freelance">Open to Freelance</option>
+                      <option value="open_to_work">Open to Work</option>
+                    </select>
+                    <button className="profile-ghost-btn" onClick={() => navigate('/applications')}>
+                      Applications
+                    </button>
+                    <button className="profile-ghost-btn" onClick={handleShare}>
+                      Share
+                    </button>
+                  </div>
                 </div>
               ) : (
-                <div className="profile-owner-actions">
+                <div className="profile-actions">
                   {!isBlocked && friendStatus === 'request_received' && (
-                    <>
-                      <button className="edit-profile-btn profile-friend-btn is-accept"
+                    <div className="profile-action-row">
+                      <button className="profile-primary-btn is-accept"
                         onClick={handleAcceptFriend} disabled={friendBusy}>
                         {friendBusy ? '…' : '✓ Accept friend'}
                       </button>
-                      <button className="edit-profile-btn"
+                      <button className="profile-ghost-btn"
                         onClick={() => handleRemoveFriend(true)} disabled={friendBusy}>
                         Decline
                       </button>
-                    </>
+                    </div>
                   )}
-                  {!isBlocked && friendStatus === 'none' && (
-                    <button className="edit-profile-btn profile-friend-btn"
-                      onClick={handleAddFriend} disabled={friendBusy}>
-                      {friendBusy ? '…' : '＋ Add friend'}
+
+                  {!isBlocked && friendStatus !== 'request_received' && (
+                    <div className="profile-action-row">
+                      <button className="profile-primary-btn"
+                        onClick={handleMessage} disabled={messaging}>
+                        {messaging ? '…' : '💬 Message'}
+                      </button>
+                      {friendStatus === 'none' && (
+                        <button className="profile-ghost-btn"
+                          onClick={handleAddFriend} disabled={friendBusy}>
+                          {friendBusy ? '…' : '＋ Add friend'}
+                        </button>
+                      )}
+                      {friendStatus === 'request_sent' && (
+                        <button className="profile-ghost-btn is-pending"
+                          onClick={() => handleRemoveFriend(false)} disabled={friendBusy}
+                          title="Cancel request">
+                          {friendBusy ? '…' : 'Requested ✓'}
+                        </button>
+                      )}
+                      {friendStatus === 'friends' && (
+                        <button className="profile-ghost-btn is-friends"
+                          onClick={() => handleRemoveFriend(false)} disabled={friendBusy}
+                          title="Remove friend">
+                          {friendBusy ? '…' : '✓ Friends'}
+                        </button>
+                      )}
+                    </div>
+                  )}
+
+                  <div className="profile-more-links">
+                    <button onClick={handleShare}>Share</button>
+                    <span>·</span>
+                    <button onClick={() => setRateModal(true)}>Rate</button>
+                    <span>·</span>
+                    <button onClick={() => setReportModal(true)}>Report</button>
+                    <span>·</span>
+                    <button className="is-danger" onClick={handleToggleBlock} disabled={blocking}>
+                      {blocking ? '…' : isBlocked ? 'Unblock' : 'Block'}
                     </button>
-                  )}
-                  {!isBlocked && friendStatus === 'request_sent' && (
-                    <button className="edit-profile-btn profile-friend-btn is-pending"
-                      onClick={() => handleRemoveFriend(false)} disabled={friendBusy}
-                      title="Cancel request">
-                      {friendBusy ? '…' : 'Requested ✓'}
-                    </button>
-                  )}
-                  {!isBlocked && friendStatus === 'friends' && (
-                    <button className="edit-profile-btn profile-friend-btn is-friends"
-                      onClick={() => handleRemoveFriend(false)} disabled={friendBusy}
-                      title="Remove friend">
-                      {friendBusy ? '…' : '✓ Friends'}
-                    </button>
-                  )}
-                  {!isBlocked && (
-                    <button className="edit-profile-btn profile-msg-btn"
-                      onClick={handleMessage} disabled={messaging}>
-                      {messaging ? '…' : '💬 Message'}
-                    </button>
-                  )}
-                  <button className="edit-profile-btn profile-share-btn" onClick={handleShare}>
-                    ↗ Share
-                  </button>
-                  <button className="edit-profile-btn" onClick={() => setRateModal(true)}>
-                    ★ Rate
-                  </button>
-                  <button className="edit-profile-btn" onClick={() => setReportModal(true)}>
-                    Report
-                  </button>
-                  <button className={`edit-profile-btn ${isBlocked ? '' : 'is-danger'}`}
-                    onClick={handleToggleBlock} disabled={blocking}>
-                    {blocking ? '…' : isBlocked ? 'Unblock' : 'Block'}
-                  </button>
+                  </div>
                 </div>
               )}
             </div>

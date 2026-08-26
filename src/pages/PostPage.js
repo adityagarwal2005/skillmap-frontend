@@ -32,58 +32,71 @@ export default function PostPage() {
       <div className="post-page">
         <h1 className="post-page-title">Post</h1>
 
+        {/* Two big create actions */}
         <div className="post-new-grid">
           <button className="post-new-card" onClick={() => navigate('/freelance?new=1')}>
             <span className="post-new-emoji">💼</span>
-            <span className="post-new-name">Freelance job</span>
+            <span className="post-new-name">New freelance</span>
             <span className="post-new-desc">Hire someone for paid work</span>
+            <span className="post-new-arrow">→</span>
           </button>
           <button className="post-new-card" onClick={() => navigate('/collab?new=1')}>
             <span className="post-new-emoji">🧩</span>
-            <span className="post-new-name">Collab</span>
+            <span className="post-new-name">New collab</span>
             <span className="post-new-desc">Find teammates for a project</span>
+            <span className="post-new-arrow">→</span>
           </button>
         </div>
 
-        <section className="post-section">
-          <div className="post-section-head">
-            <span className="post-section-num">01</span>
-            <h2 className="post-section-title">My Freelance</h2>
-            <span className="post-section-count">{jobs.length}</span>
+        {/* ── My Freelance — CUFood menu section ── */}
+        <section className="menu-section">
+          <div className="menu-head">
+            <span className="menu-num">01</span>
+            <h2 className="menu-title">My Freelance</h2>
+            <span className="menu-count">{jobs.length} {jobs.length === 1 ? 'item' : 'items'}</span>
           </div>
           {loading ? (
-            <p className="post-muted">Loading…</p>
+            <p className="menu-muted">Loading…</p>
           ) : jobs.length === 0 ? (
-            <p className="post-muted">No freelance posts yet.</p>
-          ) : jobs.map(j => (
-            <button key={j.id} className="post-row" onClick={() => navigate('/freelance')}>
-              <span className="post-row-title">{j.description}</span>
-              <span className="post-row-meta">
-                <span className="post-row-price">₹{j.payment_amount}</span>
-                <span className="post-row-sub">{j.responses_count} applied · {j.status}</span>
-              </span>
-            </button>
-          ))}
+            <p className="menu-muted">No freelance posts yet.</p>
+          ) : (
+            <div className="menu-list">
+              {jobs.map(j => (
+                <button key={j.id} className="menu-item" onClick={() => navigate('/freelance')}>
+                  <span className="menu-item-name">{j.description}</span>
+                  <span className="menu-item-foot">
+                    <span className="menu-price">₹{j.payment_amount}</span>
+                    <span className="menu-item-sub">{j.responses_count} applied · {j.status}</span>
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
         </section>
 
-        <section className="post-section">
-          <div className="post-section-head">
-            <span className="post-section-num">02</span>
-            <h2 className="post-section-title">My Collab</h2>
-            <span className="post-section-count">{collabs.length}</span>
+        {/* ── My Collab — CUFood menu section ── */}
+        <section className="menu-section">
+          <div className="menu-head">
+            <span className="menu-num">02</span>
+            <h2 className="menu-title">My Collab</h2>
+            <span className="menu-count">{collabs.length} {collabs.length === 1 ? 'item' : 'items'}</span>
           </div>
           {loading ? (
-            <p className="post-muted">Loading…</p>
+            <p className="menu-muted">Loading…</p>
           ) : collabs.length === 0 ? (
-            <p className="post-muted">No collab posts yet.</p>
-          ) : collabs.map(c => (
-            <button key={c.id} className="post-row" onClick={() => navigate('/collab')}>
-              <span className="post-row-title">{c.title}</span>
-              <span className="post-row-meta">
-                <span className="post-row-sub">{c.applicants} joined · {c.status}</span>
-              </span>
-            </button>
-          ))}
+            <p className="menu-muted">No collab posts yet.</p>
+          ) : (
+            <div className="menu-list">
+              {collabs.map(c => (
+                <button key={c.id} className="menu-item" onClick={() => navigate('/collab')}>
+                  <span className="menu-item-name">{c.title}</span>
+                  <span className="menu-item-foot">
+                    <span className="menu-item-sub">{c.applicants} joined · {c.status}</span>
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
         </section>
       </div>
     </AppShell>

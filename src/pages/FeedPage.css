@@ -54,7 +54,6 @@
   z-index: 2;
 }
 
-/* Editorial "//" motif on every page's title, tying them to the feed */
 .app-shell .search-heading,
 .app-shell .settings-title,
 .app-shell .notif-title,
@@ -62,23 +61,6 @@
 .app-shell .create-title,
 .app-shell .convs-title,
 .app-shell .people-heading { letter-spacing: -0.02em; }
-
-.app-shell .search-heading::before,
-.app-shell .settings-title::before,
-.app-shell .notif-title::before,
-.app-shell .freelance-title::before,
-.app-shell .create-title::before,
-.app-shell .convs-title::before,
-.app-shell .people-heading::before,
-.app-shell .apps-heading::before,
-.app-shell .edit-title::before {
-  /* Same font + weight as the heading so "// TITLE" reads as one tight unit,
-     exactly like the Feed hero's "// FEED" (was monospace, which blew the
-     space between // and the word wide open at large sizes). */
-  content: "// ";
-  font-weight: inherit;
-  color: var(--text-1);
-}
 
 /* ══════════════════════════════════════════════════════════
    PREMIUM PASS — shared polish applied across every page
@@ -95,10 +77,9 @@
 .app-shell .people-heading,
 .app-shell .apps-heading {
   font-size: clamp(2.5rem, 5.5vw, 4.25rem);
-  font-weight: 900;
-  letter-spacing: -0.04em;
+  font-weight: 800;
+  letter-spacing: -0.045em;
   line-height: 0.92;
-  text-transform: uppercase;
 }
 
 /* Content cards — consistent soft-lift interaction everywhere */
@@ -681,11 +662,10 @@
 
 .feed-heading {
   font-size: clamp(2.75rem, 6vw, 4.5rem);
-  font-weight: 900;
+  font-weight: 800;
   color: var(--text-1);
-  letter-spacing: -0.04em;
+  letter-spacing: -0.045em;
   line-height: 0.9;
-  text-transform: uppercase;
 }
 
 .feed-heading-kicker { display: block; }
@@ -699,17 +679,6 @@
   letter-spacing: -0.05em;
   line-height: 0.88;
   margin-bottom: 24px;
-}
-/* Optional editorial kicker over the big title (CUFood-style overline) */
-.work-kicker {
-  display: block;
-  font-family: var(--font-mono, monospace);
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--text-3);
-  margin-bottom: 14px;
 }
 .work-filter { display: flex; gap: 8px; margin-bottom: 28px; }
 .work-filter-chip {
