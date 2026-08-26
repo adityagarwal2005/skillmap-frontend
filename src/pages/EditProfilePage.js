@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import { getUser, editUser, getCategories, changePassword, uploadAvatar, sendPhoneOTP, verifyPhoneOTP } from '../api/users';
+import { getUser, editUser, getCategories, changePassword, uploadAvatar } from '../api/users';
 import { prepareMediaFile } from '../utils/mediaUpload';
 import AppShell from '../components/AppShell';
 import { cldAvatar } from '../utils/cloudinaryUrl';
@@ -18,12 +18,6 @@ export default function EditProfilePage() {
   const [form, setForm] = useState({
     username: '', email: '', dob: '', headline: '', bio: '', category_id: '',
   });
-  const [phoneVerified, setPhoneVerified] = useState(false);
-  const [phone, setPhone]           = useState('');
-  const [phoneOtp, setPhoneOtp]     = useState('');
-  const [phoneSent, setPhoneSent]   = useState(false);
-  const [sendingOtp, setSendingOtp] = useState(false);
-  const [verifyingOtp, setVerifyingOtp] = useState(false);
   const [pwd, setPwd]               = useState({ current: '', next: '' });
   const [pwdSaving, setPwdSaving]   = useState(false);
   const [pwdDone, setPwdDone]       = useState(false);
@@ -50,8 +44,6 @@ export default function EditProfilePage() {
           bio:          u.bio || '',
           category_id:  '',
         });
-        setPhoneVerified(!!u.phone_verified);
-        setPhone(u.whatsapp || '');
         setAvatar(u.profile_image || null);
         setCategories(cRes.data.categories || []);
       } catch { showToast('Failed to load profile', 'error'); }
@@ -103,31 +95,6 @@ export default function EditProfilePage() {
     } catch (err) {
       showToast(err.response?.data?.error || 'Failed to upload photo', 'error');
     } finally { setAvatarSaving(false); }
-  };
-
-  const handleSendPhoneOtp = async () => {
-    if (!phone.trim()) { showToast('Enter your phone number', 'error'); return; }
-    try {
-      setSendingOtp(true);
-      await sendPhoneOTP(phone.trim());
-      setPhoneSent(true);
-      showToast('Code sent on WhatsApp!', 'success');
-    } catch (err) {
-      showToast(err.response?.data?.error || 'Failed to send code', 'error');
-    } finally { setSendingOtp(false); }
-  };
-
-  const handleVerifyPhoneOtp = async () => {
-    if (!phoneOtp.trim()) { showToast('Enter the code', 'error'); return; }
-    try {
-      setVerifyingOtp(true);
-      await verifyPhoneOTP(phone.trim(), phoneOtp.trim());
-      setPhoneVerified(true);
-      setPhoneSent(false);
-      showToast('Phone verified!', 'success');
-    } catch (err) {
-      showToast(err.response?.data?.error || 'Invalid code', 'error');
-    } finally { setVerifyingOtp(false); }
   };
 
   const handleChangePassword = async () => {
@@ -236,55 +203,6 @@ export default function EditProfilePage() {
                   </select>
                 </div>
               </div>
-            </section>
-
-            {/* Phone verification */}
-            <section className="edit-section">
-              <div className="edit-section-label">Phone verification</div>
-              <p className="edit-section-hint">
-                A verified phone number is <strong>required</strong> to post or accept work —
-                it's how people trust who they're dealing with.
-              </p>
-
-              {phoneVerified ? (
-                <div className="location-captured">
-                  <span className="location-icon">✅</span>
-                  <div>
-                    <div className="location-label">Phone verified</div>
-                    <div className="location-coords">{phone}</div>
-                  </div>
-                </div>
-              ) : !phoneSent ? (
-                <div className="edit-field">
-                  <label className="edit-label">Phone number</label>
-                  <div style={{ display: 'flex', gap: '10px' }}>
-                    <input className="edit-input" type="tel" style={{ flex: 1 }}
-                      value={phone}
-                      onChange={e => setPhone(e.target.value)}
-                      placeholder="e.g. +91 98765 43210" />
-                    <button type="button" className="create-submit" onClick={handleSendPhoneOtp} disabled={sendingOtp}>
-                      {sendingOtp ? 'Sending…' : 'Send code'}
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="edit-field">
-                  <label className="edit-label">Enter the code sent on WhatsApp</label>
-                  <div style={{ display: 'flex', gap: '10px' }}>
-                    <input className="edit-input otp-input" style={{ flex: 1 }}
-                      value={phoneOtp} maxLength={6}
-                      onChange={e => setPhoneOtp(e.target.value)}
-                      placeholder="000000" />
-                    <button type="button" className="create-submit" onClick={handleVerifyPhoneOtp} disabled={verifyingOtp}>
-                      {verifyingOtp ? 'Verifying…' : 'Verify'}
-                    </button>
-                  </div>
-                  <p className="otp-resend">
-                    Didn't get it?{' '}
-                    <span onClick={() => { setPhoneSent(false); setPhoneOtp(''); }}>Go back</span>
-                  </p>
-                </div>
-              )}
             </section>
 
             {/* Password */}

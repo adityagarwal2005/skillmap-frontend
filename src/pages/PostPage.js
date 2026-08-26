@@ -35,13 +35,11 @@ export default function PostPage() {
         {/* Two big create actions */}
         <div className="post-new-grid">
           <button className="post-new-card" onClick={() => navigate('/freelance?new=1')}>
-            <span className="post-new-emoji">💼</span>
             <span className="post-new-name">New freelance</span>
             <span className="post-new-desc">Hire someone for paid work</span>
             <span className="post-new-arrow">→</span>
           </button>
           <button className="post-new-card" onClick={() => navigate('/collab?new=1')}>
-            <span className="post-new-emoji">🧩</span>
             <span className="post-new-name">New collab</span>
             <span className="post-new-desc">Find teammates for a project</span>
             <span className="post-new-arrow">→</span>

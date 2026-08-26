@@ -249,15 +249,10 @@ export default function AppShell({
 
   return (
     <div className="app-shell">
-      {/* Minimal top bar — just the wordmark + a notifications bell. Search,
-          theme, avatar, sign-out were removed per the CUFood-minimal direction;
-          those live in Profile/Settings now. */}
-      <header className="topbar topbar-minimal">
-        <div className="topbar-brand" onClick={() => navigate('/')}>
-          <img className="topbar-icon" src="/icon-192.png" alt="" />
-          <span className="topbar-name">DoitHere</span>
-        </div>
-
+      {/* Minimal top bar — just a notifications bell, right-aligned. The
+          wordmark/logo was removed per the CUFood-minimal direction; search,
+          theme, avatar, sign-out live in Profile/Settings now. */}
+      <header className="topbar topbar-minimal topbar-bare">
         <div className="topbar-right">
           <button className="topbar-btn topbar-bell" aria-label="Notifications"
             onClick={() => navigate('/notifications')}>

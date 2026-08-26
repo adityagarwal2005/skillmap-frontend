@@ -3,8 +3,8 @@
 .messages-layout {
   display: flex;
   width: 100%;
-  height: calc(100vh - 54px);
-  height: calc(100dvh - 54px);   /* dvh accounts for the mobile browser toolbar */
+  height: 100vh;
+  height: 100dvh;   /* dvh accounts for the mobile browser toolbar */
   background: var(--surface);
   overflow: hidden;
 }
@@ -29,7 +29,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 22px 20px 16px;
+  padding: 26px 22px 18px;
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
   position: sticky;
@@ -39,10 +39,12 @@
 }
 
 .convs-title {
-  font-size: 1.5rem;
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 7vw, 2.5rem);
   font-weight: 800;
   color: var(--text-1);
-  letter-spacing: -0.03em;
+  letter-spacing: -0.045em;
+  line-height: 0.95;
 }
 
 .convs-new-btn {
@@ -114,9 +116,9 @@
 .conv-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 13px 16px;
-  margin: 3px 8px;
+  gap: 14px;
+  padding: 16px 16px;
+  margin: 2px 8px;
   border-radius: var(--radius-md);
   cursor: pointer;
   transition: background 0.14s;
@@ -130,16 +132,17 @@
 .conv-item.active .conv-type-tag { background: rgba(255,255,255,0.16); color: rgba(255,255,255,0.85); }
 
 .conv-ava {
-  width: 44px;
-  height: 44px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
-  background: #000000;
+  background: #0d0d0d;
+  border: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
   font-weight: 700;
-  font-size: 15px;
+  font-size: 17px;
   flex-shrink: 0;
   overflow: hidden;
 }
@@ -161,9 +164,11 @@
 }
 
 .conv-name {
-  font-size: 0.9375rem;
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
   font-weight: 700;
   color: var(--text-1);
+  letter-spacing: -0.02em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -240,7 +245,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 15px 22px;
+  padding: 16px 64px 16px 22px;   /* extra right pad clears the floating bell */
   background: var(--surface);
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
@@ -279,13 +284,16 @@
 }
 
 .thread-name {
-  font-size: 0.9375rem;
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  font-weight: 800;
   color: var(--text-1);
+  letter-spacing: -0.03em;
+  line-height: 1.05;
 }
 
 .thread-type {
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   color: var(--text-3);
   text-transform: capitalize;
 }
@@ -533,8 +541,8 @@ video.msg-media { cursor: default; }
        FeedPage.css and had its own copy of this calc still using the old
        72px figure, silently overriding FeedPage.css's fix via cascade order
        whenever no conversation is open). */
-    height: calc(100vh - 52px - 88px);
-    height: calc(100dvh - 52px - 88px);
+    height: calc(100vh - 88px);
+    height: calc(100dvh - 88px);
     border: none;
     border-radius: 0;
     box-shadow: none;

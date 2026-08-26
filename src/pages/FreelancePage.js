@@ -64,7 +64,7 @@ export default function FreelancePage() {
   const [postModal, setPostModal]             = useState(false);
   const [applyModal, setApplyModal]           = useState(null);
   const [applicantsModal, setApplicantsModal] = useState(null);
-  const [postForm, setPostForm] = useState({ description: '', payment_amount: '', time_limit_hours: 24, skills: '', range_km: 50 });
+  const [postForm, setPostForm] = useState({ description: '', payment_amount: '', time_limit_hours: 24, skills: '', range_km: 50, gender_preference: 'any' });
   const [jobMedia, setJobMedia] = useState(null);
   const [applyMsg, setApplyMsg]     = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -177,7 +177,7 @@ export default function FreelancePage() {
       try {
         await createWorkRequest(payload);
         showToast('Job posted!', 'success');
-        setPostForm({ description: '', payment_amount: '', time_limit_hours: 24, skills: '', range_km: 50 });
+        setPostForm({ description: '', payment_amount: '', time_limit_hours: 24, skills: '', range_km: 50, gender_preference: 'any' });
         setJobMedia(null);
         loadAll();
       } catch (err) {
@@ -346,6 +346,9 @@ export default function FreelancePage() {
               <div className="wr-footer">
                 <div className="wr-meta">
                   <span className="wr-pay">₹{wr.payment_amount}</span>
+                  {wr.gender_preference && wr.gender_preference !== 'any' && (
+                    <span className="wr-duration">{wr.gender_preference === 'male' ? 'Male only' : 'Female only'}</span>
+                  )}
                   {wr.distance_km != null && <span className="wr-duration">📍 {wr.distance_km} km</span>}
                   {wr.responses_count > 0 && (
                     <span className="wr-heat">{wr.responses_count} applied</span>
@@ -440,6 +443,16 @@ export default function FreelancePage() {
                   {VISIBILITY_OPTIONS.map(o => (
                     <option key={o.hours} value={o.hours}>{o.label}</option>
                   ))}
+                </select>
+              </div>
+              <div className="modal-field">
+                <label className="modal-label">Preferred gender</label>
+                <select className="modal-input"
+                  value={postForm.gender_preference}
+                  onChange={e => setPostForm({...postForm, gender_preference: e.target.value})}>
+                  <option value="any">Any</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
                 </select>
               </div>
               <div className="modal-field">

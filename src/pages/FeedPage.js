@@ -30,6 +30,7 @@ export default function FeedPage() {
   const [hasMore, setHasMore] = useState(false);
   const [tab, setTab]         = useState('for-you');
   const [workFilter, setWorkFilter] = useState('all');
+  const [range, setRange]     = useState('any'); // any | 0.5 | 1 | 5 | 10 (km)
   const [people, setPeople]   = useState([]);
   const [lightboxSrc, setLightboxSrc] = useState(null);
   const [showWelcome, setShowWelcome] = useState(
@@ -132,7 +133,18 @@ export default function FeedPage() {
   return (
     <AppShell active="work" robot>
       <div className="feed-main">
-        <h1 className="feed-heading work-heading">Work</h1>
+        <div className="work-head">
+          <h1 className="feed-heading work-heading">Work</h1>
+          <div className="work-range">
+            <select className="work-range-select" value={range} onChange={e => setRange(e.target.value)}>
+              <option value="any">Any distance</option>
+              <option value="0.5">Within 500 m</option>
+              <option value="1">Within 1 km</option>
+              <option value="5">Within 5 km</option>
+              <option value="10">Within 10 km</option>
+            </select>
+          </div>
+        </div>
 
         <div className="work-filter">
           {['all', 'freelance', 'collab'].map(f => (
@@ -145,7 +157,10 @@ export default function FeedPage() {
         </div>
 
         {(() => {
-          const shown = items.filter(it => workFilter === 'all' || it.kind === workFilter);
+          const shown = items.filter(it =>
+            (workFilter === 'all' || it.kind === workFilter) &&
+            (range === 'any' || it.distance_km == null || it.distance_km <= parseFloat(range))
+          );
           if (loading) return (
             <div className="loading-row">
               <PostCardSkeleton /><PostCardSkeleton /><PostCardSkeleton />
@@ -161,62 +176,39 @@ export default function FeedPage() {
             </div>
           </div>
           );
-          return shown.map((item, i) => {
-          const isNew = newIds.has(`${item.kind}-${item.id}`);
           return (
-            <article key={`${item.kind}-${item.id}`} className={`opp-card ${item.kind} ${isNew ? 'is-new' : ''}`}
-              style={{ animationDelay: `${i * 40}ms` }}
-              onClick={() => setViewItem(item)}>
-
-              <div className="post-top">
-                <div className="post-ava"
-                  onClick={e => { e.stopPropagation(); navigate(`/profile/${item.user.id}`); }}>
-                  {item.user.profile_image
-                    ? <img className="ava-img" src={cldAvatar(item.user.profile_image)} alt="" />
-                    : item.user.username[0].toUpperCase()}
-                </div>
-                <div className="post-meta">
-                  <span className="post-author"
-                    onClick={e => { e.stopPropagation(); navigate(`/profile/${item.user.id}`); }}>
-                    {item.user.username}
-                  </span>
-                  <span className="post-author-cat">{item.user.category || 'Independent'}</span>
-                </div>
-                <span className={`opp-kind ${item.kind}`}>
-                  {item.kind === 'freelance' ? 'Freelance' : 'Collab'}
-                </span>
-              </div>
-
-              <h2 className="opp-title">{item.title}</h2>
-
-              {item.skills?.length > 0 && (
-                <div className="post-tags">
-                  {item.skills.map(s => <span key={s} className="tag tag-skill">{s}</span>)}
-                </div>
-              )}
-
-              <div className="opp-footer">
-                <div className="opp-meta">
-                  {item.kind === 'freelance' ? (
-                    <>
-                      <span className="opp-pay">₹{item.payment_amount}</span>
-                      {timeLeft(item.expires_at) && <span className="opp-sub">{timeLeft(item.expires_at)}</span>}
-                      {item.responses_count > 0 && <span className="opp-heat">{item.responses_count} applied</span>}
-                    </>
-                  ) : (
-                    <>
-                      {item.applicants > 0 && <span className="opp-heat">{item.applicants} applied</span>}
-                    </>
-                  )}
-                  {item.distance_km != null && <span className="opp-sub">📍 {item.distance_km} km</span>}
-                </div>
-                <button className="opp-cta" onClick={e => { e.stopPropagation(); setViewItem(item); }}>
-                  {item.kind === 'freelance' ? 'View job' : 'View collab'}
-                </button>
-              </div>
-            </article>
+            <div className="menu-list">
+              {shown.map((item, i) => {
+                const isNew = newIds.has(`${item.kind}-${item.id}`);
+                return (
+                  <button key={`${item.kind}-${item.id}`}
+                    className={`menu-item ${isNew ? 'is-new' : ''}`}
+                    style={{ animationDelay: `${i * 40}ms` }}
+                    onClick={() => setViewItem(item)}>
+                    <div className="menu-item-top">
+                      <span className="menu-item-name">{item.title}</span>
+                      <span className={`menu-kind ${item.kind}`}>
+                        {item.kind === 'freelance' ? 'Freelance' : 'Collab'}
+                      </span>
+                    </div>
+                    <div className="menu-item-foot">
+                      {item.kind === 'freelance' && <span className="menu-price">₹{item.payment_amount}</span>}
+                      {item.kind === 'freelance' && item.gender_preference && item.gender_preference !== 'any' && (
+                        <span className="menu-item-sub">{item.gender_preference === 'male' ? 'Male only' : 'Female only'}</span>
+                      )}
+                      <span className="menu-item-sub">@{item.user.username}</span>
+                      {item.kind === 'freelance'
+                        ? (item.responses_count > 0 && <span className="menu-item-sub">{item.responses_count} applied</span>)
+                        : (item.applicants > 0 && <span className="menu-item-sub">{item.applicants} applied</span>)}
+                      {item.kind === 'freelance' && timeLeft(item.expires_at) &&
+                        <span className="menu-item-sub">{timeLeft(item.expires_at)}</span>}
+                      {item.distance_km != null && <span className="menu-item-sub">{item.distance_km} km</span>}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
           );
-          });
         })()}
 
         {!loading && hasMore && workFilter === 'all' && (

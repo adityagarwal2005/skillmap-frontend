@@ -177,36 +177,61 @@
 }
 .avatar-edit-btn:hover { background: var(--elevated); border-color: var(--text-3); }
 
-/* Password update button */
+/* Password update button — outlined pill (was near-black on black = invisible) */
 .pwd-update-btn {
   align-self: flex-start;
-  height: 44px;
-  padding: 0 20px;
-  border-radius: var(--radius-pill, 999px);
-  background: var(--ink, #0a0a0a);
-  color: #f5f5f7;
-  font-size: 0.875rem;
-  font-weight: 600;
-  transition: transform 0.2s var(--ease-out-expo, ease), opacity 0.2s ease, background 0.2s ease;
+  height: 46px;
+  padding: 0 22px;
+  border-radius: 14px;
+  background: none;
+  border: 1px solid var(--border-md);
+  color: var(--text-1);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  transition: background 0.18s ease, border-color 0.18s ease, opacity 0.2s ease;
 }
-.pwd-update-btn:hover:not(:disabled) { transform: translateY(-1px); }
+.pwd-update-btn:hover:not(:disabled) { background: var(--elevated); border-color: var(--text-3); }
 .pwd-update-btn:disabled { opacity: 0.5; cursor: default; }
-.pwd-update-btn.is-done { background: var(--green, #34c759); }
+.pwd-update-btn.is-done { background: var(--green, #34c759); border-color: var(--green, #34c759); color: #fff; }
 
 /* Actions */
 .edit-actions {
   display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  padding-top: 22px;
+  gap: 12px;
+  padding-top: 24px;
   border-top: 1px solid var(--border);
 }
+
+/* Clean, non-blobby action buttons (CUFood): solid Save, outlined Cancel */
+.edit-actions .create-submit {
+  flex: 1;
+  height: 52px;
+  border-radius: 14px;
+  background: var(--text-1);
+  color: var(--bg);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  transition: opacity 0.15s, transform 0.14s var(--ease-out-expo, ease);
+}
+.edit-actions .create-submit:hover:not(:disabled) { opacity: 0.88; }
+.edit-actions .create-submit:active { transform: scale(0.98); }
+.edit-actions .create-submit:disabled { opacity: 0.55; }
+.edit-actions .create-cancel {
+  height: 52px;
+  padding: 0 24px;
+  border-radius: 14px;
+  border: 1px solid var(--border-md);
+  background: none;
+  color: var(--text-1);
+  font-size: 1rem;
+  font-weight: 600;
+  transition: background 0.15s, border-color 0.15s;
+}
+.edit-actions .create-cancel:hover { background: var(--elevated); border-color: var(--text-3); }
 
 @media (max-width: 520px) {
   .edit-wrapper { padding: 20px 16px 48px; }
   .edit-box { padding: 24px 20px; }
   .edit-row { grid-template-columns: 1fr; }
-  .edit-actions { flex-direction: column-reverse; }
-  .edit-actions .create-cancel,
-  .edit-actions .create-submit { width: 100%; }
 }

@@ -285,6 +285,36 @@
   background: rgba(0,0,0,0.85);
 }
 
+/* Logo removed. The bell no longer needs a whole sticky band — float it in
+   the top-right corner and take it out of layout flow so every page's content
+   moves up and reclaims that wasted strip. */
+.topbar-bare {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: auto;
+  width: auto;
+  height: auto;
+  padding: 10px 12px;
+  background: transparent;
+  border-bottom: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  z-index: 300;
+}
+.topbar-bare .topbar-bell {
+  color: var(--text-1);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* A subtle scrim only in light theme so the dark bell icon stays legible over
+   pale content; in dark theme the white icon reads fine on black. */
+:root[data-theme="light"] .topbar-bare .topbar-bell { background: rgba(0,0,0,0.04); }
+
 .topbar-brand {
   display: flex;
   align-items: center;
@@ -460,7 +490,7 @@
 .app-body {
   display: flex;
   width: 100%;
-  min-height: calc(100vh - 52px);
+  min-height: 100vh;   /* topbar is now a fixed floating bell — no reserved band */
 }
 
 /* The steel surface itself — fills the whole area from the rail to the right
@@ -489,8 +519,8 @@
   flex-shrink: 0;
   padding: 28px 14px;
   position: sticky;
-  top: 52px;
-  height: calc(100vh - 52px);
+  top: 0;
+  height: 100vh;
   overflow-y: auto;
   background: #0a0a0a;
   border-right: 1px solid rgba(255,255,255,0.08);
@@ -671,15 +701,47 @@
 .feed-heading-kicker { display: block; }
 
 /* Work page — minimal CUFood header + Freelance/Collab filter chips */
+/* Work hero — huge bold title + a distance-range dropdown beside it */
+.work-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
 .work-heading {
   text-transform: none;
   font-family: var(--font-display);
-  font-size: clamp(3.25rem, 15vw, 5rem);
-  font-weight: 800;
-  letter-spacing: -0.05em;
-  line-height: 0.88;
-  margin-bottom: 24px;
+  font-size: clamp(3.5rem, 17vw, 5.5rem);
+  font-weight: 900;
+  letter-spacing: -0.055em;
+  line-height: 0.85;
+  margin-bottom: 0;
 }
+.work-range { flex-shrink: 0; }
+.work-range-select {
+  height: 42px;
+  padding: 0 38px 0 16px;
+  border-radius: 999px;
+  border: 1px solid var(--border-md);
+  background: var(--elevated);
+  color: var(--text-1);
+  font-family: inherit;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  /* custom chevron */
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+.work-range-select:hover { border-color: var(--text-3); }
+
 .work-filter { display: flex; gap: 8px; margin-bottom: 28px; }
 .work-filter-chip {
   padding: 11px 22px;
@@ -697,6 +759,110 @@
   color: var(--bg);
   border-color: var(--accent);
 }
+
+/* ══════════════════════════════════════════════
+   CUFood menu — shared by Work feed + Post page.
+   Orange section number, huge tight title, bright
+   rule; items are big bold names with a small
+   orange price pill underneath.
+   ══════════════════════════════════════════════ */
+.menu-section {
+  border-top: 1px solid rgba(255,255,255,0.85);
+  padding-top: 26px;
+  margin-bottom: 8px;
+}
+.menu-head {
+  display: flex;
+  align-items: baseline;
+  gap: 18px;
+  margin-bottom: 12px;
+}
+.menu-num {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--cyan);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+.menu-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.25rem, 8vw, 3.25rem);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  color: var(--text-1);
+  line-height: 0.95;
+}
+.menu-count {
+  font-size: 0.875rem;
+  color: var(--text-3);
+  font-weight: 500;
+  align-self: center;
+}
+
+/* ── Menu items (both pages) ── */
+.menu-list { display: flex; flex-direction: column; margin-bottom: 40px; }
+/* Flat lists (Work feed) need a top rule on the first item; sections already
+   supply their own bright top rule so their items only carry bottom rules. */
+.feed-main .menu-list > .menu-item:first-child { border-top: 1px solid rgba(255,255,255,0.1); }
+.menu-item {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  text-align: left;
+  padding: 22px 2px 24px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  transition: opacity 0.15s;
+  animation: cardIn 0.35s ease both;
+}
+.menu-item:hover { opacity: 0.6; }
+.menu-item.is-new { animation: menuFlash 2.2s ease-out 1; }
+@keyframes menuFlash {
+  0%   { background: rgba(239,95,38,0.12); }
+  100% { background: transparent; }
+}
+.menu-item-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; width: 100%; }
+.menu-item-name {
+  font-family: var(--font-display);
+  font-size: clamp(1.375rem, 5vw, 1.75rem);
+  font-weight: 700;
+  color: var(--text-1);
+  letter-spacing: -0.035em;
+  line-height: 1.12;
+  min-width: 0;
+}
+.menu-kind {
+  flex-shrink: 0;
+  font-size: 0.625rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  border: 1px solid var(--border-md);
+  padding: 4px 9px;
+  border-radius: 999px;
+  margin-top: 4px;
+}
+.menu-item-foot { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.menu-price {
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--cyan);
+  background: rgba(239,95,38,0.12);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+.menu-item-sub {
+  font-size: 0.8125rem;
+  color: var(--text-3);
+  font-weight: 500;
+}
+.menu-muted { font-size: 0.9375rem; color: var(--text-3); padding: 8px 2px 32px; }
 
 /* Dark promo card, top-right of the hero */
 .feed-promo {
@@ -1947,8 +2113,8 @@ video.post-media-el { cursor: default; object-fit: contain; background: #000; }
      to say 72px here specifically, leaving a bare gray gap above the nav on
      the Messages page that every other page didn't have. */
   .app-main { padding-bottom: 88px; }
-  .messages-layout { height: calc(100vh - 52px - 88px); }
-  .messages-layout { height: calc(100dvh - 52px - 88px); }
+  .messages-layout { height: calc(100vh - 88px); }
+  .messages-layout { height: calc(100dvh - 88px); }
 
   /* While a thread is actually open, drop the fixed bottom nav entirely —
      on mobile, the on-screen keyboard resizes the visual viewport (100vh/
@@ -1959,8 +2125,8 @@ video.post-media-el { cursor: default; object-fit: contain; background: #000; }
      remaining space (like WhatsApp/Telegram/IG DMs) removes the fight. */
   body.conv-active .mobile-nav { display: none; }
   body.conv-active .app-main { padding-bottom: 0; }
-  body.conv-active .messages-layout { height: calc(100vh - 52px); }
-  body.conv-active .messages-layout { height: calc(100dvh - 52px); }
+  body.conv-active .messages-layout { height: 100vh; }
+  body.conv-active .messages-layout { height: 100dvh; }
 }
 
 @media (max-width: 1100px) { .right-panel { display: none; } }

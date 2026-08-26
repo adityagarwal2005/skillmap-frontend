@@ -183,35 +183,7 @@ export default function MessagesPage() {
         <aside className="convs-panel">
           <div className="convs-header">
             <h2 className="convs-title">Messages</h2>
-            <button type="button" className="convs-new-btn"
-              onClick={() => setShowNewMsg(s => !s)}
-              aria-label="New message">
-              {showNewMsg ? '×' : '＋'}
-            </button>
           </div>
-
-          {showNewMsg && (
-            <div className="new-msg-panel">
-              <div className="new-msg-panel-title">Message a friend</div>
-              {friends.length === 0 ? (
-                <div className="convs-empty">
-                  <p>No friends yet</p>
-                  <span>Add friends from Search or a profile to message them here</span>
-                </div>
-              ) : friends.map(friend => (
-                <div key={friend.id} className="friend-pick-row"
-                  onClick={() => startNewConversation(friend)}>
-                  <div className="conv-ava">
-                    {friend.profile_image
-                      ? <img className="ava-img" src={cldAvatar(friend.profile_image)} alt="" />
-                      : friend.username[0].toUpperCase()}
-                  </div>
-                  <span className="conv-name">{friend.username}</span>
-                  {startingWith === friend.id && <span className="friend-pick-busy">…</span>}
-                </div>
-              ))}
-            </div>
-          )}
 
           {loadingConvs ? (
             <>
