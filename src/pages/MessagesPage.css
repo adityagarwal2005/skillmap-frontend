@@ -49,7 +49,7 @@
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  background: #0f172a;
+  background: #000000;
   color: #fff;
   font-size: 1.125rem;
   font-weight: 700;
@@ -133,7 +133,7 @@
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: #0f172a;
+  background: #000000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -148,7 +148,7 @@
 
 /* Collab group threads — a shared team icon instead of one person's avatar,
    since the "with" field here is the collab post title, not a username. */
-.conv-ava.is-group { background: #3a3a3c; font-size: 19px; }
+.conv-ava.is-group { background: #000000; font-size: 19px; }
 
 .conv-info { flex: 1; min-width: 0; }
 
@@ -334,7 +334,7 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: #0f172a;
+  background: #000000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -510,7 +510,7 @@ video.msg-media { cursor: default; }
 .msg-send-btn {
   height: 44px;
   padding: 0 24px;
-  background: #0f172a;
+  background: #000000;
   color: #fff;
   font-size: 0.9375rem;
   font-weight: 700;

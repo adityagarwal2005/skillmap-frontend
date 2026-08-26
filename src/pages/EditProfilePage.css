@@ -152,7 +152,7 @@
   border-radius: 50%;
   overflow: hidden;
   flex-shrink: 0;
-  background: linear-gradient(145deg, #2c2c2e, #0a0a0a);
+  background: #0d0d0d;
   color: #fff;
   display: flex;
   align-items: center;

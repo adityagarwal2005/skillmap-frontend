@@ -31,7 +31,7 @@
 .post-job-btn {
   height: 50px;
   padding: 0 28px;
-  background: #0f172a;
+  background: #000000;
   color: #fff;
   font-size: 1.0625rem;
   font-weight: 700;
@@ -41,7 +41,7 @@
   flex-shrink: 0;
 }
 
-[data-theme="light"] .post-job-btn { background: #0f172a; }
+[data-theme="light"] .post-job-btn { background: #000000; }
 .post-job-btn:hover { opacity: 0.85; }
 
 .freelance-loading {
@@ -257,7 +257,7 @@
 .wr-apply-btn {
   height: 32px;
   padding: 0 18px;
-  background: #0f172a;
+  background: #000000;
   color: #fff;
   font-size: 0.8125rem;
   font-weight: 700;
@@ -265,7 +265,7 @@
   transition: opacity 0.15s;
 }
 
-[data-theme="light"] .wr-apply-btn { background: #0f172a; }
+[data-theme="light"] .wr-apply-btn { background: #000000; }
 .wr-apply-btn:hover { opacity: 0.85; }
 
 .wr-owner-actions { display: flex; gap: 8px; }

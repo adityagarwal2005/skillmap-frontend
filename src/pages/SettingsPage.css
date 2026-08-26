@@ -82,7 +82,7 @@
 .settings-save-btn {
   height: 32px;
   padding: 0 14px;
-  background: #0f172a;
+  background: #000000;
   color: #fff;
   font-size: 0.8125rem;
   font-weight: 700;
@@ -91,7 +91,7 @@
   white-space: nowrap;
 }
 
-[data-theme="light"] .settings-save-btn { background: #0f172a; }
+[data-theme="light"] .settings-save-btn { background: #000000; }
 .settings-save-btn:hover:not(:disabled) { opacity: 0.85; }
 .settings-save-btn:disabled { opacity: 0.45; }
 
@@ -122,7 +122,7 @@
 }
 
 .theme-toggle-btn.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
-[data-theme="light"] .theme-toggle-btn.active { background: #0f172a; }
+[data-theme="light"] .theme-toggle-btn.active { background: #000000; }
 .theme-toggle-btn:not(.active):hover { background: var(--elevated); color: var(--text-1); }
 
 .danger-zone { border-color: rgba(239,68,68,0.2); }
@@ -220,7 +220,7 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: #0f172a;
+  background: #000000;
   display: flex;
   align-items: center;
   justify-content: center;

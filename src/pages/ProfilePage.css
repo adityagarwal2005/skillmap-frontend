@@ -32,7 +32,7 @@
   width: 92px;
   height: 92px;
   border-radius: 50%;
-  background: linear-gradient(145deg, #2c2c2e, #0a0a0a);
+  background: #0d0d0d;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -174,12 +174,12 @@
 .edit-profile-btn:disabled { opacity: 0.6; cursor: default; }
 
 .profile-msg-btn {
-  background: #0f172a;
-  border-color: #0f172a;
+  background: #000000;
+  border-color: #000000;
   color: #fff;
   font-weight: 700;
 }
-.profile-msg-btn:hover { background: #0f172a; color: #fff; opacity: 0.85; }
+.profile-msg-btn:hover { background: #000000; color: #fff; opacity: 0.85; }
 .profile-msg-btn:disabled { opacity: 0.6; }
 
 .profile-share-btn { font-weight: 600; }
@@ -543,7 +543,7 @@
 
 /* ── Premium profile touches ── */
 .app-shell .profile-avatar {
-  background: linear-gradient(145deg, #2c2c2e, #050505);
+  background: #0d0d0d;
   color: #ffffff;
   border: none;
   box-shadow: 0 12px 28px rgba(0,0,0,0.22);

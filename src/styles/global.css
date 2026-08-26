@@ -8,19 +8,22 @@
    data-theme also render dark from the first paint, no flash of light theme.
    [data-theme="light"] is the opt-in override for the theme toggle. */
 :root {
+  /* Pure black & white — no grey surfaces. Panels/cards/inputs are all black;
+     structure comes from thin white-opacity borders. Text is white, stepped
+     down only via white opacity (reads as dimmed white, never grey hex). */
   --bg:          #000000;
-  --bg2:         #0a0a0a;
-  --surface:     #1c1c1e;
-  --elevated:    #2c2c2e;
-  --border:      rgba(255,255,255,0.08);
-  --border-md:   rgba(255,255,255,0.12);
-  --text-1:      #f5f5f7;
-  --text-2:      #98989d;
-  --text-3:      #636366;
-  --accent:      #f5f5f7;
-  --accent-low:  rgba(255,255,255,0.08);
-  --navy:        #f5f5f7;
-  --navy-bright: #f5f5f7;
+  --bg2:         #000000;
+  --surface:     #000000;
+  --elevated:    #0d0d0d;
+  --border:      rgba(255,255,255,0.14);
+  --border-md:   rgba(255,255,255,0.22);
+  --text-1:      #ffffff;
+  --text-2:      rgba(255,255,255,0.66);
+  --text-3:      rgba(255,255,255,0.42);
+  --accent:      #ffffff;
+  --accent-low:  rgba(255,255,255,0.1);
+  --navy:        #ffffff;
+  --navy-bright: #ffffff;
   --green:       #30d158;
   --green-low:   rgba(48,209,88,0.1);
   --red:         #ff453a;
@@ -159,11 +162,11 @@ a { text-decoration: none; color: inherit; }
      chrome. Dark by default now (matches the mostly-black Uber direction);
      [data-theme="light"] below flips it back to the original off-white
      sheen for anyone who opts into light mode. */
-  --ink:        #0a0a0a;   /* near-black chrome */
-  --steel-1:     #232325;
-  --steel-2:     #1c1c1e;
-  --steel-3:     #202022;
-  --steel-solid: #161618;
+  --ink:        #000000;   /* pure black chrome */
+  --steel-1:     #000000;
+  --steel-2:     #000000;
+  --steel-3:     #000000;
+  --steel-solid: #000000;
   --steel-panel: linear-gradient(157deg, var(--steel-1) 0%, var(--steel-2) 55%, var(--steel-3) 100%);
 }
 

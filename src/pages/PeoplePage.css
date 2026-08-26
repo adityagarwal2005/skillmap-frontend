@@ -71,7 +71,7 @@
 .people-search-btn {
   height: 46px;
   padding: 0 26px;
-  background: #0f172a;
+  background: #000000;
   color: #fff;
   font-size: 0.9375rem;
   font-weight: 700;
@@ -132,7 +132,7 @@
   width: 42px;
   height: 42px;
   border-radius: 50%;
-  background: #0f172a;
+  background: #000000;
   display: flex;
   align-items: center;
   justify-content: center;

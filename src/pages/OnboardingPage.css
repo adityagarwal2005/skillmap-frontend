@@ -75,9 +75,9 @@
 }
 
 .onboard-step.active .onboard-step-dot {
-  background: #0f172a;
+  background: #000000;
   color: #fff;
-  border-color: #0f172a;
+  border-color: #000000;
 }
 
 .onboard-step.done .onboard-step-dot {
@@ -106,12 +106,12 @@
 
 .onboard-bar-fill {
   height: 100%;
-  background: #0f172a;
+  background: #000000;
   border-radius: 3px;
   transition: width 0.3s ease;
 }
 
-[data-theme="light"] .onboard-bar-fill { background: #0f172a; }
+[data-theme="light"] .onboard-bar-fill { background: #000000; }
 
 /* Content */
 .onboard-content { min-height: 240px; }
@@ -151,13 +151,13 @@
 .category-card:hover { border-color: var(--border-md); background: var(--bg); }
 
 .category-card.selected {
-  border-color: #0f172a;
+  border-color: #000000;
   background: rgba(15,23,42,0.08);
 }
 
 [data-theme="light"] .category-card.selected {
   background: rgba(15,23,42,0.05);
-  border-color: #0f172a;
+  border-color: #000000;
 }
 
 .category-name {
@@ -197,7 +197,7 @@
 .status-option:hover { border-color: var(--border-md); }
 
 .status-option.selected {
-  border-color: #0f172a;
+  border-color: #000000;
   background: rgba(15,23,42,0.06);
 }
 
@@ -226,7 +226,7 @@
 .location-btn {
   height: 42px;
   padding: 0 24px;
-  background: #0f172a;
+  background: #000000;
   color: #fff;
   font-size: 0.9375rem;
   font-weight: 700;
@@ -234,7 +234,7 @@
   transition: opacity 0.15s;
 }
 
-[data-theme="light"] .location-btn { background: #0f172a; }
+[data-theme="light"] .location-btn { background: #000000; }
 .location-btn:hover:not(:disabled) { opacity: 0.85; }
 .location-btn:disabled { opacity: 0.5; }
 
@@ -305,7 +305,7 @@
 .create-submit {
   height: 42px;
   padding: 0 22px;
-  background: #0f172a;
+  background: #000000;
   color: #fff;
   font-size: 0.9375rem;
   font-weight: 700;
@@ -313,7 +313,7 @@
   transition: opacity 0.15s;
   flex-shrink: 0;
 }
-[data-theme="light"] .create-submit { background: #0f172a; }
+[data-theme="light"] .create-submit { background: #000000; }
 .create-submit:hover:not(:disabled) { opacity: 0.85; }
 .create-submit:disabled { opacity: 0.5; cursor: not-allowed; }
 

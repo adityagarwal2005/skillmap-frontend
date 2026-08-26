@@ -94,7 +94,7 @@
 .create-submit {
   height: 36px;
   padding: 0 22px;
-  background: #0f172a;
+  background: #000000;
   color: #fff;
   font-size: 0.875rem;
   font-weight: 700;
@@ -102,7 +102,7 @@
   transition: opacity 0.15s;
 }
 
-[data-theme="light"] .create-submit { background: #0f172a; }
+[data-theme="light"] .create-submit { background: #000000; }
 .create-submit:hover:not(:disabled) { opacity: 0.85; }
 .create-submit:disabled { opacity: 0.45; cursor: not-allowed; }
 

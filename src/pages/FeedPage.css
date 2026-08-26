@@ -9,7 +9,7 @@
 .app-shell.app-shell { background: var(--ink, #0a0a0a); }
 
 .app-shell .topbar {
-  background: rgba(10,10,10,0.72);
+  background: rgba(0,0,0,0.9);
   border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 .app-shell .topbar-name,
@@ -217,7 +217,7 @@
 .app-shell .msg-ava,
 .app-shell .review-avatar,
 .app-shell .post-ava {
-  background: linear-gradient(145deg, #2c2c2e, #0a0a0a);
+  background: #0d0d0d;
   color: #f5f5f7;
   border: none;
 }
@@ -585,7 +585,7 @@
 .sidebar-link-ic svg { width: 19px; height: 19px; display: block; }
 .sidebar-link-label { flex: 1; }
 
-.sidebar-link:hover { background: rgba(255,255,255,0.055); color: #ffffff; }
+.sidebar-link:hover { background: #0d0d0d; color: #ffffff; }
 .sidebar-link:hover .sidebar-link-ic { color: #ffffff; }
 
 .sidebar-link.active {
@@ -813,7 +813,7 @@
 
 .type-filter-btn:hover { background: var(--elevated); color: var(--text-1); }
 .type-filter-btn.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
-[data-theme="light"] .type-filter-btn.active { background: #0f172a; }
+[data-theme="light"] .type-filter-btn.active { background: #000000; }
 
 /* ── "Finish your profile" nudge (app-wide, dismissible) ── */
 .profile-nudge {
@@ -825,7 +825,7 @@
   margin: 18px auto 0;
   max-width: 900px;
   padding: 14px 18px;
-  background: #0f172a;
+  background: #000000;
   border-radius: var(--radius-lg);
   box-shadow: 0 8px 24px rgba(0,0,0,0.14);
   animation: cardIn 0.3s ease both;
@@ -918,7 +918,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #0f172a;
+  background: #000000;
   color: #fff;
   border-radius: 13px;
 }
@@ -993,7 +993,7 @@
 .status-composer-btn {
   height: 42px;
   padding: 0 22px;
-  background: #0f172a;
+  background: #000000;
   color: #fff;
   font-size: 0.9375rem;
   font-weight: 700;
@@ -1070,7 +1070,7 @@
   height: 30px;
   flex-shrink: 0;
   border-radius: 50%;
-  background: #0f172a;
+  background: #000000;
   color: #fff;
   font-weight: 800;
   font-size: 0.875rem;
@@ -1157,7 +1157,7 @@
   width: 54px;
   height: 54px;
   border-radius: 50%;
-  background: #0f172a;
+  background: #000000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1204,8 +1204,8 @@
 }
 .near-me-chip:hover { border-color: var(--text-1); color: var(--text-1); }
 .near-me-chip.active {
-  background: #0f172a;
-  border-color: #0f172a;
+  background: #000000;
+  border-color: #000000;
   color: #fff;
 }
 
@@ -1914,7 +1914,7 @@ video.post-media-el { cursor: default; object-fit: contain; background: #000; }
     z-index: 300;
     justify-content: space-around;
     align-items: center;
-    background: rgba(10,10,10,0.92);
+    background: rgba(0,0,0,0.96);
     backdrop-filter: saturate(180%) blur(20px);
     -webkit-backdrop-filter: saturate(180%) blur(20px);
     border-top: 1px solid rgba(255,255,255,0.1);

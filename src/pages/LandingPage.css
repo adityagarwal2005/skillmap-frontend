@@ -215,12 +215,12 @@
 .landing-feature-card {
   padding: 24px 22px;
   border-radius: var(--radius-lg);
-  background: rgba(255,255,255,0.035);
+  background: #000000;
   border: 1px solid rgba(255,255,255,0.08);
   transition: background 0.2s, border-color 0.2s;
 }
 .landing-feature-card:hover {
-  background: rgba(255,255,255,0.055);
+  background: #0d0d0d;
   border-color: rgba(239,95,38,0.35);
 }
 
