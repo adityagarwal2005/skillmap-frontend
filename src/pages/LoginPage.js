@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import {
   login, sendOTP, verifyAndRegister, sendLoginOTP, verifyLoginOTP, resetPasswordWithOTP, googleLogin,
 } from '../api/auth';
+import Logo from '../components/Logo';
 import './LoginPage.css';
 
 const GOOGLE_CLIENT_ID = process.env.REACT_APP_GOOGLE_CLIENT_ID;
@@ -160,8 +161,7 @@ export default function LoginPage() {
     <div className="login-page">
       <div className="login-box">
         <div className="login-wordmark">
-          <img className="login-wordmark-icon" src="/icon-192.png" alt="" />
-          <span className="login-wordmark-name">DoitHere</span>
+          <Logo size={2.25} />
         </div>
 
         <h1 className="login-heading">{heading}</h1>

@@ -1,0 +1,17 @@
+.brand-logo {
+  font-family: 'Pacifico', cursive;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.28em;
+  white-space: nowrap;
+  user-select: none;
+}
+.brand-logo.is-clickable { cursor: pointer; }
+.brand-logo-doit { color: #ffffff; }
+.brand-logo-here { color: #ef5f26; }
+
+/* On a light background (light theme marketing/login), keep "Doit" readable */
+:root[data-theme="light"] .brand-logo-doit { color: #0a0a0a; }
