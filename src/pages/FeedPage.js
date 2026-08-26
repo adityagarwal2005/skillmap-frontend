@@ -30,7 +30,7 @@ export default function FeedPage() {
   const [hasMore, setHasMore] = useState(false);
   const [tab, setTab]         = useState('for-you');
   const [workFilter, setWorkFilter] = useState('all');
-  const [range, setRange]     = useState('any'); // any | 0.5 | 1 | 5 | 10 (km)
+  const [range, setRange]     = useState('5'); // 0.5 | 1 | 2 | 5 | 10 (km)
   const [people, setPeople]   = useState([]);
   const [lightboxSrc, setLightboxSrc] = useState(null);
   const [showWelcome, setShowWelcome] = useState(
@@ -135,15 +135,17 @@ export default function FeedPage() {
       <div className="feed-main">
         <div className="work-head">
           <h1 className="feed-heading work-heading">Work</h1>
-          <div className="work-range">
-            <select className="work-range-select" value={range} onChange={e => setRange(e.target.value)}>
-              <option value="any">Any distance</option>
-              <option value="0.5">Within 500 m</option>
-              <option value="1">Within 1 km</option>
-              <option value="5">Within 5 km</option>
-              <option value="10">Within 10 km</option>
+          <label className="range-pill">
+            <span className="range-dot" />
+            <span className="range-cap">Near me</span>
+            <select className="range-select" value={range} onChange={e => setRange(e.target.value)}>
+              <option value="0.5">500 m</option>
+              <option value="1">1 km</option>
+              <option value="2">2 km</option>
+              <option value="5">5 km</option>
+              <option value="10">10 km</option>
             </select>
-          </div>
+          </label>
         </div>
 
         <div className="work-filter">
@@ -159,7 +161,7 @@ export default function FeedPage() {
         {(() => {
           const shown = items.filter(it =>
             (workFilter === 'all' || it.kind === workFilter) &&
-            (range === 'any' || it.distance_km == null || it.distance_km <= parseFloat(range))
+            (it.distance_km == null || it.distance_km <= parseFloat(range))
           );
           if (loading) return (
             <div className="loading-row">
@@ -177,32 +179,55 @@ export default function FeedPage() {
           </div>
           );
           return (
-            <div className="menu-list">
+            <div className="work-grid">
               {shown.map((item, i) => {
                 const isNew = newIds.has(`${item.kind}-${item.id}`);
+                const applied = item.kind === 'freelance' ? item.responses_count : item.applicants;
+                const near = item.distance_km != null && item.distance_km <= 2;
                 return (
                   <button key={`${item.kind}-${item.id}`}
-                    className={`menu-item ${isNew ? 'is-new' : ''}`}
-                    style={{ animationDelay: `${i * 40}ms` }}
+                    className={`work-card ${item.kind} ${isNew ? 'is-new' : ''}`}
+                    style={{ animationDelay: `${i * 45}ms` }}
                     onClick={() => setViewItem(item)}>
-                    <div className="menu-item-top">
-                      <span className="menu-item-name">{item.title}</span>
-                      <span className={`menu-kind ${item.kind}`}>
+                    <div className="work-card-head">
+                      <span className={`work-kind-tag ${item.kind}`}>
+                        <span className="work-kind-dot" />
                         {item.kind === 'freelance' ? 'Freelance' : 'Collab'}
                       </span>
+                      {item.kind === 'freelance' && <span className="work-price">₹{item.payment_amount}</span>}
                     </div>
-                    <div className="menu-item-foot">
-                      {item.kind === 'freelance' && <span className="menu-price">₹{item.payment_amount}</span>}
-                      {item.kind === 'freelance' && item.gender_preference && item.gender_preference !== 'any' && (
-                        <span className="menu-item-sub">{item.gender_preference === 'male' ? 'Male only' : 'Female only'}</span>
-                      )}
-                      <span className="menu-item-sub">@{item.user.username}</span>
-                      {item.kind === 'freelance'
-                        ? (item.responses_count > 0 && <span className="menu-item-sub">{item.responses_count} applied</span>)
-                        : (item.applicants > 0 && <span className="menu-item-sub">{item.applicants} applied</span>)}
-                      {item.kind === 'freelance' && timeLeft(item.expires_at) &&
-                        <span className="menu-item-sub">{timeLeft(item.expires_at)}</span>}
-                      {item.distance_km != null && <span className="menu-item-sub">{item.distance_km} km</span>}
+
+                    <h2 className="work-card-title">{item.title}</h2>
+
+                    {item.skills?.length > 0 && (
+                      <div className="work-tags">
+                        {item.skills.slice(0, 3).map(s => <span key={s} className="work-tag">{s}</span>)}
+                        {item.skills.length > 3 && <span className="work-tag more">+{item.skills.length - 3}</span>}
+                      </div>
+                    )}
+
+                    <div className="work-card-foot">
+                      <span className="work-poster">
+                        <span className="work-ava">
+                          {item.user.profile_image
+                            ? <img className="ava-img" src={cldAvatar(item.user.profile_image)} alt="" />
+                            : item.user.username[0].toUpperCase()}
+                        </span>
+                        <span className="work-poster-name">{item.user.username}</span>
+                      </span>
+                      <span className="work-meta">
+                        {item.distance_km != null && (
+                          <span className={`work-dist ${near ? 'is-near' : ''}`}>
+                            <span className="work-dot" />{item.distance_km} km
+                          </span>
+                        )}
+                        {item.kind === 'freelance' && item.gender_preference && item.gender_preference !== 'any' && (
+                          <span className="work-metaitem">{item.gender_preference === 'male' ? 'Male' : 'Female'}</span>
+                        )}
+                        {applied > 0 && <span className="work-metaitem">{applied} applied</span>}
+                        {item.kind === 'freelance' && timeLeft(item.expires_at) &&
+                          <span className="work-metaitem">{timeLeft(item.expires_at)}</span>}
+                      </span>
                     </div>
                   </button>
                 );
