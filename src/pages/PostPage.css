@@ -8,12 +8,12 @@
 
 .post-page-title {
   font-family: var(--font-display);
-  font-size: clamp(2.5rem, 9vw, 3.5rem);
-  font-weight: 700;
-  letter-spacing: -0.04em;
-  line-height: 0.95;
+  font-size: clamp(3rem, 13vw, 4.25rem);
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  line-height: 0.9;
   color: var(--text-1);
-  margin-bottom: 26px;
+  margin-bottom: 28px;
 }
 
 /* New-post cards — two big tap targets */
@@ -90,11 +90,11 @@
 .post-row:first-of-type { border-top: 1px solid rgba(255,255,255,0.08); }
 .post-row-title {
   font-family: var(--font-display);
-  font-size: 1.375rem;
-  font-weight: 600;
+  font-size: 1.5rem;
+  font-weight: 700;
   color: var(--text-1);
-  letter-spacing: -0.02em;
-  line-height: 1.15;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;

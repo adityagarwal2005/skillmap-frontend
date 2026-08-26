@@ -227,12 +227,13 @@
 }
 
 .wr-pay {
-  font-size: 1.0625rem;
+  font-family: var(--font-display);
+  font-size: 1.3125rem;
   font-weight: 800;
   color: var(--cyan);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
   background: var(--accent-orange-low, rgba(239,95,38,0.14));
-  padding: 5px 13px;
+  padding: 6px 15px;
   border-radius: 999px;
 }
 

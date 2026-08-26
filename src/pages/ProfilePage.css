@@ -64,11 +64,11 @@
 }
 
 .profile-name {
-  font-size: 2rem;
-  font-weight: 700;
+  font-size: 2.5rem;
+  font-weight: 800;
   color: var(--text-1);
-  letter-spacing: -0.03em;
-  line-height: 1.05;
+  letter-spacing: -0.04em;
+  line-height: 1;
 }
 
 /* .profile-status-badge + .status-green/.status-orange/.status-gray now live

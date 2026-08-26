@@ -132,6 +132,7 @@ export default function FeedPage() {
   return (
     <AppShell active="work" robot>
       <div className="feed-main">
+        <span className="work-kicker">Live opportunities</span>
         <h1 className="feed-heading work-heading">Work</h1>
 
         <div className="work-filter">

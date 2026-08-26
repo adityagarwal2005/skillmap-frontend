@@ -96,6 +96,10 @@ body {
 .profile-name,
 .profile-display-name {
   font-family: var(--font-display);
+  /* Crisp, tight display type — the CUFood signature look */
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: 'ss01', 'ss02';
 }
 
 /* Prices/counts read cleaner with tabular (monospaced) figures */
