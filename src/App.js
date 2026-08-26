@@ -28,6 +28,7 @@ const lazyRetry = (importer) => lazy(() =>
 
 const LoginPage        = lazyRetry(() => import('./pages/LoginPage'));
 const FeedPage         = lazyRetry(() => import('./pages/FeedPage'));
+const PostPage         = lazyRetry(() => import('./pages/PostPage'));
 const ProfilePage      = lazyRetry(() => import('./pages/ProfilePage'));
 const CreatePostPage   = lazyRetry(() => import('./pages/CreatePostPage'));
 const PostDetailPage   = lazyRetry(() => import('./pages/PostDetailPage'));
@@ -83,6 +84,7 @@ function App() {
           <Route path="/profile/:userId"          element={user ? <ProfilePage /> : <Navigate to="/login" />} />
           <Route path="/profile/:userId/edit"     element={user ? <EditProfilePage /> : <Navigate to="/login" />} />
           <Route path="/create-post"              element={user ? <CreatePostPage /> : <Navigate to="/login" />} />
+          <Route path="/post"                     element={user ? <PostPage /> : <Navigate to="/login" />} />
           <Route path="/post/:itemId"             element={user ? <PostDetailPage /> : <Navigate to="/login" />} />
           <Route path="/people"                   element={user ? <PeoplePage /> : <Navigate to="/login" />} />
           <Route path="/freelance"                element={user ? <FreelancePage /> : <Navigate to="/login" />} />

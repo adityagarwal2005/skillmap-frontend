@@ -51,25 +51,24 @@ const NAV = [
   ]},
 ];
 
+// Minimal 4-tab bottom nav (CUFood-style): Work (browse freelance + collab),
+// Post (new post + my listings), Messages, Profile. Everything else (search,
+// people, notifications, settings) is deferred — surfaced later once there's
+// enough volume to need it.
 const MOBILE = [
-  { id: 'home',     label: 'Home',     path: '/',            icon: I.home },
-  { id: 'people',   label: 'People',   path: '/people',      icon: I.people },
-  { id: 'create',   label: 'Post',     path: '/create-post', icon: I.create },
-  // No path — tapping opens a chooser sheet (Freelance / Collab), same
-  // pattern as the "+" post sheet. Profile itself was dropped from here
-  // since the topbar avatar (top-right, on every page) already opens it —
-  // this frees up the slot for Freelance/Collab, which previously had NO
-  // way in from the mobile bottom nav at all.
-  { id: 'work',     label: 'Work',     path: null,           icon: I.freelance },
-  { id: 'messages', label: 'Messages', path: '/messages',    icon: I.messages },
+  { id: 'work',     label: 'Work',     path: '/',         icon: I.freelance },
+  { id: 'post',     label: 'Post',     path: '/post',     icon: I.create },
+  { id: 'messages', label: 'Messages', path: '/messages', icon: I.messages },
+  { id: 'profile',  label: 'Profile',  path: null,        icon: I.profile },
 ];
 
 function deriveActive(pathname) {
-  if (pathname === '/') return 'home';
+  if (pathname === '/') return 'work';
+  if (pathname.startsWith('/post'))          return 'post';
   if (pathname.startsWith('/search'))        return 'search';
   if (pathname.startsWith('/people'))        return 'people';
-  if (pathname.startsWith('/freelance'))     return 'freelance';
-  if (pathname.startsWith('/collab'))        return 'collab';
+  if (pathname.startsWith('/freelance'))     return 'work';
+  if (pathname.startsWith('/collab'))        return 'work';
   if (pathname.startsWith('/messages'))      return 'messages';
   if (pathname.startsWith('/profile'))       return 'profile';
   if (pathname.startsWith('/applications'))  return 'applications';
@@ -225,7 +224,6 @@ export default function AppShell({
   const handleNav = (item) => {
     if (item.id === 'profile') { navigate(`/profile/${user?.id}`); return; }
     if (item.id === 'create') { setShowPostSheet(true); return; }
-    if (item.id === 'work') { setShowWorkSheet(true); return; }
     if (item.path) navigate(item.path);
   };
 
@@ -251,41 +249,21 @@ export default function AppShell({
 
   return (
     <div className="app-shell">
-      <header className="topbar">
+      {/* Minimal top bar — just the wordmark + a notifications bell. Search,
+          theme, avatar, sign-out were removed per the CUFood-minimal direction;
+          those live in Profile/Settings now. */}
+      <header className="topbar topbar-minimal">
         <div className="topbar-brand" onClick={() => navigate('/')}>
           <img className="topbar-icon" src="/icon-192.png" alt="" />
           <span className="topbar-name">DoitHere</span>
         </div>
 
-        <form onSubmit={handleSearchSubmit} className="topbar-search">
-          <span className="topbar-search-icon">{SVG.search}</span>
-          <input className="topbar-search-input"
-            placeholder="Search work, skills, or @username…"
-            value={searchVal} onChange={handleSearchChange} />
-          <button type="submit" className="topbar-search-btn">Go</button>
-        </form>
-
         <div className="topbar-right">
-          <button className="topbar-btn topbar-mobile-search" aria-label="Search"
-            onClick={() => navigate('/search')}>
-            {SVG.search}
-          </button>
           <button className="topbar-btn topbar-bell" aria-label="Notifications"
             onClick={() => navigate('/notifications')}>
             {I.notifications}
             {unread > 0 && <span className="topbar-bell-badge">{unread > 9 ? '9+' : unread}</span>}
           </button>
-          <button className="topbar-btn" aria-label="Toggle theme"
-            onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}>
-            {theme === 'dark' ? SVG.sun : SVG.moon}
-          </button>
-          <div className="topbar-avatar" onClick={() => navigate(`/profile/${user?.id}`)}>
-            {avatar && !avatarBroken
-              ? <img className="ava-img" src={cldAvatar(avatar)} alt="" onError={() => setAvatarBroken(true)} />
-              : user?.username?.[0]?.toUpperCase()}
-          </div>
-          <span className="topbar-username">{user?.username}</span>
-          <button className="topbar-signout" onClick={logoutUser}>Sign out</button>
         </div>
       </header>
 
@@ -367,15 +345,10 @@ export default function AppShell({
       {/* Bottom tab bar — mobile only (CSS hides it on desktop) */}
       <nav className="mobile-nav">
         {MOBILE.map(item => {
-          // The "Work" tab covers two real routes (Freelance + Collab) that
-          // deriveActive() reports separately, so it needs its own active
-          // check instead of the plain id match every other tab uses.
-          const isActive = item.id === 'work'
-            ? (activeId === 'freelance' || activeId === 'collab')
-            : activeId === item.id;
+          const isActive = activeId === item.id;
           return (
             <button key={item.id}
-              className={`mobile-nav-btn ${isActive ? 'active' : ''} ${item.id === 'create' ? 'is-create' : ''}`}
+              className={`mobile-nav-btn ${isActive ? 'active' : ''} ${item.id === 'post' ? 'is-create' : ''}`}
               onClick={() => handleNav(item)}>
               {item.icon}
               <span>{item.label}</span>

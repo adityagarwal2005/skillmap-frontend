@@ -15,17 +15,6 @@ import { cldAvatar, cldThumb } from '../utils/cloudinaryUrl';
 import './FeedPage.css';
 import './ProfilePage.css';
 
-const WhatsAppIcon = (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-    <path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-2.9.8.8-2.8-.2-.3A8 8 0 1 1 12 20zm4.4-6c-.2-.1-1.4-.7-1.6-.8s-.4-.1-.5.1-.6.8-.8 1-.3.2-.5.1a6.5 6.5 0 0 1-3.2-2.8c-.2-.4.2-.4.6-1.2a.4.4 0 0 0 0-.4l-.8-1.9c-.2-.5-.4-.4-.5-.4h-.5a.9.9 0 0 0-.7.3A2.8 2.8 0 0 0 6.8 10c0 1.6 1.2 3.2 1.4 3.4s2.3 3.6 5.6 5c.8.3 1.4.5 1.9.4.6-.1 1.4-.6 1.6-1.1s.2-1 .1-1.1-.3-.2-.6-.3z"/>
-  </svg>
-);
-
-// Social links were reduced to just WhatsApp (verified via phone OTP) — the
-// old GitHub/LinkedIn/Instagram fields were unverifiable and were removed.
-const SOCIALS = [
-  { key: 'whatsapp', label: 'WhatsApp', brand: 'whatsapp', icon: WhatsAppIcon },
-];
 
 
 const REPORT_REASONS = [
@@ -264,7 +253,6 @@ export default function ProfilePage() {
     not_available:     'status-gray',
   };
 
-  const links = SOCIALS.filter(s => profile?.[s.key]);
   const memberSince = profile?.created_at ? new Date(profile.created_at).getFullYear() : null;
 
   return (
@@ -422,36 +410,6 @@ export default function ProfilePage() {
               </div>
             )}
 
-            {/* Social accounts — the identity hub */}
-            <div className="profile-skills-section">
-              <h3 className="section-title">My accounts</h3>
-              <div className="socials-grid">
-                {SOCIALS.map(s => {
-                  const raw = profile[s.key];
-                  const url = raw ? `https://wa.me/${String(raw).replace(/\D/g, '')}` : null;
-                  return url ? (
-                    <a key={s.key} href={url} target="_blank" rel="noreferrer"
-                      className="social-card">
-                      <span className={`social-glyph ${s.brand}`}>{s.icon}</span>
-                      <span className="social-meta">
-                        <span className="social-label">{s.label}</span>
-                        <span className="social-open">Open profile ↗</span>
-                      </span>
-                    </a>
-                  ) : (
-                    <div key={s.key} className="social-card is-disconnected">
-                      <span className={`social-glyph ${s.brand} muted`}>{s.icon}</span>
-                      <span className="social-meta">
-                        <span className="social-label">{s.label}</span>
-                        <span className="social-open">
-                          {isOwn ? 'Add in Edit Profile' : 'Not connected'}
-                        </span>
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
 
             {/* Skills — hidden on other people's profiles while empty, so a new
                 platform doesn't read as a ghost town; still shown to the owner

@@ -29,6 +29,7 @@ export default function FeedPage() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(false);
   const [tab, setTab]         = useState('for-you');
+  const [workFilter, setWorkFilter] = useState('all');
   const [people, setPeople]   = useState([]);
   const [lightboxSrc, setLightboxSrc] = useState(null);
   const [showWelcome, setShowWelcome] = useState(
@@ -129,64 +130,38 @@ export default function FeedPage() {
   };
 
   return (
-    <AppShell active="home" robot>
+    <AppShell active="work" robot>
       <div className="feed-main">
-        <div className="feed-hero">
-          <h1 className="feed-heading">
-            <span className="feed-heading-kicker">// FEED</span>
-            {tab === 'for-you' ? 'For You' : 'Trending'}
-          </h1>
-          <aside className="feed-promo">
-            <span className="feed-promo-arrow" aria-hidden="true">↗</span>
-            <div className="feed-promo-title">Stay ahead.<br />Build more.<br />Together.</div>
-            <div className="feed-promo-meta">DoitHere Ecosystem</div>
-          </aside>
+        <h1 className="feed-heading work-heading">Work</h1>
+
+        <div className="work-filter">
+          {['all', 'freelance', 'collab'].map(f => (
+            <button key={f}
+              className={`work-filter-chip ${workFilter === f ? 'active' : ''}`}
+              onClick={() => setWorkFilter(f)}>
+              {f === 'all' ? 'All' : f === 'freelance' ? 'Freelance' : 'Collab'}
+            </button>
+          ))}
         </div>
 
-        <div className="tab-group">
-          <button className={`tab-btn ${tab === 'for-you' ? 'active' : ''}`}
-            onClick={() => switchTab('for-you')}>For You</button>
-          <button className={`tab-btn ${tab === 'trending' ? 'active' : ''}`}
-            onClick={() => switchTab('trending')}>Trending</button>
-        </div>
-
-        {people.length > 0 && (
-          <section className="discover-strip">
-            <div className="discover-head">
-              <h2 className="discover-title">Discover people</h2>
-              <button className="discover-all" onClick={() => navigate('/people')}>See all →</button>
+        {(() => {
+          const shown = items.filter(it => workFilter === 'all' || it.kind === workFilter);
+          if (loading) return (
+            <div className="loading-row">
+              <PostCardSkeleton /><PostCardSkeleton /><PostCardSkeleton />
             </div>
-            <div className="discover-row">
-              {people.map(p => (
-                <button key={p.id} className="discover-card"
-                  onClick={() => navigate(`/profile/${p.id}`)}>
-                  <div className="discover-ava">
-                    {p.profile_image
-                      ? <img className="ava-img" src={cldAvatar(p.profile_image)} alt="" />
-                      : p.username[0].toUpperCase()}
-                  </div>
-                  <span className="discover-name">{p.username}</span>
-                  <span className="discover-cat">{p.category || 'Independent'}</span>
-                </button>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {loading ? (
-          <div className="loading-row">
-            <PostCardSkeleton /><PostCardSkeleton /><PostCardSkeleton />
-          </div>
-        ) : items.length === 0 ? (
+          );
+          if (shown.length === 0) return (
           <div className="state-box">
-            <h3>No open opportunities yet</h3>
+            <h3>Nothing here yet</h3>
             <p>Post a freelance job or start a collab — or check back soon.</p>
             <div className="state-box-actions">
               <button className="opp-cta" onClick={() => navigate('/freelance?new=1')}>Post a job</button>
               <button className="opp-cta ghost" onClick={() => navigate('/collab?new=1')}>Start a collab</button>
             </div>
           </div>
-        ) : items.map((item, i) => {
+          );
+          return shown.map((item, i) => {
           const isNew = newIds.has(`${item.kind}-${item.id}`);
           return (
             <article key={`${item.kind}-${item.id}`} className={`opp-card ${item.kind} ${isNew ? 'is-new' : ''}`}
@@ -241,9 +216,10 @@ export default function FeedPage() {
               </div>
             </article>
           );
-        })}
+          });
+        })()}
 
-        {!loading && hasMore && (
+        {!loading && hasMore && workFilter === 'all' && (
           <button className="load-more-btn" onClick={handleLoadMore} disabled={loadingMore}>
             {loadingMore ? 'Loading…' : 'Load more'}
           </button>
