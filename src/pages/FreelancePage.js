@@ -348,7 +348,7 @@ export default function FreelancePage() {
                   <span className="wr-pay">₹{wr.payment_amount}</span>
                   {wr.distance_km != null && <span className="wr-duration">📍 {wr.distance_km} km</span>}
                   {wr.responses_count > 0 && (
-                    <span className="wr-heat">🔥 {wr.responses_count} applied</span>
+                    <span className="wr-heat">{wr.responses_count} applied</span>
                   )}
                 </div>
                 <button className="wr-apply-btn" onClick={() => setApplyModal(wr)}>Apply</button>

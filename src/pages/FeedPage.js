@@ -201,11 +201,11 @@ export default function FeedPage() {
                     <>
                       <span className="opp-pay">₹{item.payment_amount}</span>
                       {timeLeft(item.expires_at) && <span className="opp-sub">{timeLeft(item.expires_at)}</span>}
-                      {item.responses_count > 0 && <span className="opp-heat">🔥 {item.responses_count} applied</span>}
+                      {item.responses_count > 0 && <span className="opp-heat">{item.responses_count} applied</span>}
                     </>
                   ) : (
                     <>
-                      {item.applicants > 0 && <span className="opp-heat">🔥 {item.applicants} applied</span>}
+                      {item.applicants > 0 && <span className="opp-heat">{item.applicants} applied</span>}
                     </>
                   )}
                   {item.distance_km != null && <span className="opp-sub">📍 {item.distance_km} km</span>}
@@ -315,10 +315,10 @@ export default function FeedPage() {
                 <>
                   <span className="opp-pay">₹{viewItem.payment_amount}</span>
                   {timeLeft(viewItem.expires_at) && <span className="opp-sub">{timeLeft(viewItem.expires_at)}</span>}
-                  {viewItem.responses_count > 0 && <span className="opp-heat">🔥 {viewItem.responses_count} applied</span>}
+                  {viewItem.responses_count > 0 && <span className="opp-heat">{viewItem.responses_count} applied</span>}
                 </>
               ) : (
-                viewItem.applicants > 0 && <span className="opp-heat">🔥 {viewItem.applicants} people joined</span>
+                viewItem.applicants > 0 && <span className="opp-heat">{viewItem.applicants} people joined</span>
               )}
               {viewItem.distance_km != null && <span className="opp-sub">📍 {viewItem.distance_km} km away</span>}
             </div>
