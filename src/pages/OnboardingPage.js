@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { getCategories, addSkill, editUser, sendPhoneOTP, verifyPhoneOTP } from '../api/users';
 import { updateStatus } from '../api/users';
+import Logo from '../components/Logo';
 import './OnboardingPage.css';
 
 const STEPS = ['Category', 'Skills', 'Verify', 'Status', 'Location'];
@@ -129,8 +130,7 @@ export default function OnboardingPage() {
 
         {/* Wordmark */}
         <div className="onboard-wordmark">
-          <img className="onboard-icon" src="/icon-192.png" alt="" />
-          <span className="onboard-brand">DoitHere</span>
+          <Logo size={2.4} className="onboard-logo" />
         </div>
 
         {/* Progress */}

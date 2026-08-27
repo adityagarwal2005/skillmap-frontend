@@ -7,6 +7,7 @@ import { getDiscoverPeople } from '../api/users';
 import { PostCardSkeleton } from '../components/Skeleton';
 import AppShell from '../components/AppShell';
 import Lightbox from '../components/Lightbox';
+import Logo from '../components/Logo';
 import { cldAvatar, cldThumb } from '../utils/cloudinaryUrl';
 import './FeedPage.css';
 
@@ -246,8 +247,8 @@ export default function FeedPage() {
       {showWelcome && (
         <div className="welcome-overlay" onClick={dismissWelcome}>
           <div className="welcome-card" onClick={e => e.stopPropagation()}>
-            <img className="welcome-badge" src="/icon-192.png" alt="" />
-            <h2 className="welcome-title">Welcome to DoitHere 👋</h2>
+            <Logo size={2.2} className="welcome-badge-logo" />
+            <h2 className="welcome-title">Welcome 👋</h2>
             <p className="welcome-sub">Your campus talent network. Here are 3 quick ways to start:</p>
 
             <button className="welcome-step" onClick={() => welcomeGo(`/profile/${user?.id}/edit`)}>

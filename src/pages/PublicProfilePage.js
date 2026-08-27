@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { getUserByUsername } from '../api/users';
 import { cldAvatar } from '../utils/cloudinaryUrl';
 import usePageMeta from '../hooks/usePageMeta';
+import Logo from '../components/Logo';
 import './ProfilePage.css';
 import './PublicProfilePage.css';
 
@@ -74,8 +75,7 @@ export default function PublicProfilePage() {
     <div className="public-profile-page">
       <header className="public-profile-topbar">
         <Link to="/" className="public-profile-brand">
-          <img className="public-profile-brand-icon" src="/icon-192.png" alt="" />
-          DoitHere
+          <Logo size={1.4} className="public-profile-brand-logo" />
         </Link>
         <button className="public-profile-cta" onClick={() => navigate('/login?mode=register')}>
           Join DoitHere
