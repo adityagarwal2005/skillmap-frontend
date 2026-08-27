@@ -8,6 +8,7 @@ import { PostCardSkeleton } from '../components/Skeleton';
 import AppShell from '../components/AppShell';
 import Lightbox from '../components/Lightbox';
 import Logo from '../components/Logo';
+import NotificationBell from '../components/NotificationBell';
 import { cldAvatar, cldThumb } from '../utils/cloudinaryUrl';
 import './FeedPage.css';
 
@@ -135,7 +136,10 @@ export default function FeedPage() {
     <AppShell active="work" robot>
       <div className="feed-main">
         <div className="work-head">
-          <h1 className="feed-heading work-heading">Work</h1>
+          <div className="page-title-row">
+            <h1 className="feed-heading work-heading">Work</h1>
+            <NotificationBell />
+          </div>
           <label className="range-pill">
             <span className="range-dot" />
             <span className="range-cap">Near me</span>

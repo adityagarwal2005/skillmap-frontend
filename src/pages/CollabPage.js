@@ -8,6 +8,7 @@ import {
 } from '../api/collab';
 import API from '../api/config';
 import AppShell from '../components/AppShell';
+import NotificationBell from '../components/NotificationBell';
 import { PostCardSkeleton } from '../components/Skeleton';
 import Lightbox from '../components/Lightbox';
 import { cldThumb } from '../utils/cloudinaryUrl';
@@ -39,7 +40,7 @@ export default function CollabPage() {
   const [applicantsModal, setApplicantsModal] = useState(null);
   const [submitting, setSubmitting]           = useState(false);
 
-  const [createForm, setCreateForm] = useState({ title: '', description: '', skills: '', range_km: 50 });
+  const [createForm, setCreateForm] = useState({ title: '', description: '', skills: '', range_km: 50, time_limit_hours: 24 });
   const [collabMedia, setCollabMedia] = useState(null);
   const [applyMsg, setApplyMsg]     = useState('');
 
@@ -152,7 +153,7 @@ export default function CollabPage() {
       try {
         await createCollabPost(payload);
         showToast('Collab post created!', 'success');
-        setCreateForm({ title: '', description: '', skills: '', range_km: 50 });
+        setCreateForm({ title: '', description: '', skills: '', range_km: 50, time_limit_hours: 24 });
         setCollabMedia(null);
         loadAll();
       } catch (err) {
@@ -204,10 +205,11 @@ export default function CollabPage() {
     <AppShell active="collab">
       <div className="collab-wrapper">
         <div className="freelance-header">
-          <div>
+          <div className="page-title-row">
             <h1 className="freelance-title">Collab</h1>
-            <p className="freelance-sub">Find people to build something together</p>
+            <NotificationBell />
           </div>
+          <p className="freelance-sub">Find people to build something together</p>
           <button className="post-job-btn" onClick={() => setCreateModal(true)}>+ Start a Collab</button>
         </div>
 
@@ -368,6 +370,18 @@ export default function CollabPage() {
                 <input className="modal-input" placeholder="React, Python, Design"
                   value={createForm.skills}
                   onChange={e => setCreateForm({...createForm, skills: e.target.value})} />
+              </div>
+              <div className="modal-field">
+                <label className="modal-label">Visible for *</label>
+                <select className="modal-input" required
+                  value={createForm.time_limit_hours}
+                  onChange={e => setCreateForm({...createForm, time_limit_hours: e.target.value})}>
+                  <option value={1}>1 hour</option>
+                  <option value={2}>2 hours</option>
+                  <option value={6}>6 hours</option>
+                  <option value={12}>12 hours</option>
+                  <option value={24}>24 hours</option>
+                </select>
               </div>
               <div className="modal-field">
                 <label className="modal-label">Visible within</label>

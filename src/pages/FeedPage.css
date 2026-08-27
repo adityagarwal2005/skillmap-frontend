@@ -705,17 +705,24 @@
 
 /* Work page — minimal CUFood header + Freelance/Collab filter chips */
 /* Work hero — huge bold title + a distance-range dropdown beside it */
-/* Title on its own line, the distance pill beneath it (left-aligned) — this
-   keeps the pill clear of the fixed notification bell in the top-right corner,
-   which was crowding it. */
 .work-head {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 16px;
   margin-bottom: 22px;
-  padding-right: 52px;   /* keep the big title clear of the corner bell */
 }
+
+/* Shared header row: page title on the left, the notification bell inline on
+   the right — so the bell lines up with the heading on every page. */
+.page-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+}
+.page-title-row .notif-bell { margin-top: 2px; align-self: flex-start; }
 .work-heading {
   text-transform: none;
   font-family: var(--font-display);

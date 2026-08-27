@@ -10,6 +10,7 @@ import Lightbox from '../components/Lightbox';
 import CollabTasksPanel from '../components/CollabTasksPanel';
 import { cldAvatar, cldThumb } from '../utils/cloudinaryUrl';
 import AppShell from '../components/AppShell';
+import NotificationBell from '../components/NotificationBell';
 import './FeedPage.css';
 import './MessagesPage.css';
 
@@ -183,6 +184,7 @@ export default function MessagesPage() {
         <aside className="convs-panel">
           <div className="convs-header">
             <h2 className="convs-title">Messages</h2>
+            <NotificationBell />
           </div>
 
           {loadingConvs ? (
@@ -261,6 +263,7 @@ export default function MessagesPage() {
                     📋 Tasks
                   </button>
                 )}
+                <NotificationBell className="thread-bell" />
               </div>
 
               <div className="thread-messages">

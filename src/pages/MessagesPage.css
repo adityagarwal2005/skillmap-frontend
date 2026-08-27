@@ -245,7 +245,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 16px 64px 16px 22px;   /* extra right pad clears the floating bell */
+  padding: 14px 20px;
   background: var(--surface);
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;

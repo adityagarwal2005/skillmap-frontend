@@ -9,6 +9,7 @@ import {
 } from '../api/work';
 import API from '../api/config';
 import AppShell from '../components/AppShell';
+import NotificationBell from '../components/NotificationBell';
 import { PostCardSkeleton } from '../components/Skeleton';
 import Lightbox from '../components/Lightbox';
 import { cldThumb } from '../utils/cloudinaryUrl';
@@ -17,10 +18,10 @@ import './FreelancePage.css';
 
 const VISIBILITY_OPTIONS = [
   { label: '1 hour',   hours: 1 },
+  { label: '2 hours',  hours: 2 },
   { label: '6 hours',  hours: 6 },
   { label: '12 hours', hours: 12 },
-  { label: '1 day',    hours: 24 },
-  { label: '3 days',   hours: 72 },
+  { label: '24 hours', hours: 24 },
 ];
 
 function timeLeft(expiresAt) {
@@ -251,10 +252,11 @@ export default function FreelancePage() {
     <AppShell active="freelance">
       <div className="freelance-wrapper">
         <div className="freelance-header">
-          <div>
+          <div className="page-title-row">
             <h1 className="freelance-title">Freelance</h1>
-            <p className="freelance-sub">Find work or post a job</p>
+            <NotificationBell />
           </div>
+          <p className="freelance-sub">Find work or post a job</p>
           <button className="post-job-btn" onClick={() => setPostModal(true)}>+ Post a Job</button>
         </div>
 

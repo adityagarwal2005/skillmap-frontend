@@ -11,6 +11,7 @@ import { startConversation } from '../api/work';
 import { endorseSkill, addReview } from '../api/users';
 import { ProfileHeaderSkeleton } from '../components/Skeleton';
 import AppShell from '../components/AppShell';
+import NotificationBell from '../components/NotificationBell';
 import { cldAvatar, cldThumb } from '../utils/cloudinaryUrl';
 import './FeedPage.css';
 import './ProfilePage.css';
@@ -264,7 +265,10 @@ export default function ProfilePage() {
           <div className="profile-loading">User not found</div>
         ) : (
           <>
-            <button className="profile-back" onClick={() => navigate(-1)}>← Back</button>
+            <div className="page-title-row profile-top-row">
+              <button className="profile-back" onClick={() => navigate(-1)}>← Back</button>
+              <NotificationBell />
+            </div>
 
             {/* Header — identity, stats, then a clean action bar */}
             <div className="profile-header">

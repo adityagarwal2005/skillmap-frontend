@@ -249,19 +249,9 @@ export default function AppShell({
 
   return (
     <div className="app-shell">
-      {/* Minimal top bar — just a notifications bell, right-aligned. The
-          wordmark/logo was removed per the CUFood-minimal direction; search,
-          theme, avatar, sign-out live in Profile/Settings now. */}
-      <header className="topbar topbar-minimal topbar-bare">
-        <div className="topbar-right">
-          <button className="topbar-btn topbar-bell" aria-label="Notifications"
-            onClick={() => navigate('/notifications')}>
-            {I.notifications}
-            {unread > 0 && <span className="topbar-bell-badge">{unread > 9 ? '9+' : unread}</span>}
-          </button>
-        </div>
-      </header>
-
+      {/* No top bar — the notification bell now lives inline in each page's
+          own header row (see <NotificationBell/>), so it lines up with the
+          page title instead of floating over content. */}
       <div className="app-body">
         <nav className="sidebar">
           {NAV.map(group => (
