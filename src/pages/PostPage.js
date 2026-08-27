@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import { getMyWorkRequests, getWorkRequestResponses, assignWorkRequest } from '../api/work';
+import { getMyWorkRequests, getWorkRequestResponses, assignWorkRequest, rejectWorkApplicant } from '../api/work';
 import { getMyCollabPosts, getCollabApplicants, respondToCollabRequest } from '../api/collab';
 import AppShell from '../components/AppShell';
 import NotificationBell from '../components/NotificationBell';
@@ -94,9 +94,10 @@ export default function PostPage() {
     setBusyId(id);
     try {
       if (kind === 'collab') await respondToCollabRequest(a.id, 'declined');
-      // remove from the list either way (freelance has no server-side reject yet)
+      else await rejectWorkApplicant(item.id, a.user_id);
       setAppById(prev => ({ ...prev, [key]: (prev[key] || []).filter(x => appKey(kind, x) !== id) }));
       showToast(`${appName(kind, a)} declined — they can apply again`, 'success');
+      load();                                    // refresh applicant counts
     } catch (err) {
       showToast(err.response?.data?.error || 'Could not decline', 'error');
     } finally { setBusyId(null); setConfirm(null); }

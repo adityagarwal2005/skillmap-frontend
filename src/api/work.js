@@ -28,6 +28,9 @@ export const getWorkRequestResponses = (wrId) =>
 export const assignWorkRequest = (wrId, assigneeId) =>
   API.post(`/work/requests/${wrId}/assign/`, new URLSearchParams({ assignee_id: assigneeId }));
 
+export const rejectWorkApplicant = (wrId, applicantId) =>
+  API.post(`/work/requests/${wrId}/reject/`, new URLSearchParams({ applicant_id: applicantId }));
+
 export const closeWorkRequest = (wrId) =>
   API.post(`/work/requests/${wrId}/close/`);
 
