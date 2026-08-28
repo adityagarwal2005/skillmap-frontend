@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import {
-  getUser, addSkill, removeSkill, updateStatus, getUserPortfolio,
+  getUser, addSkill, removeSkill, getUserPortfolio,
   blockUser, unblockUser, getBlockedUsers, reportContent,
   sendFriendRequest, respondFriendRequest, removeFriend,
 } from '../api/users';
@@ -136,14 +136,6 @@ export default function ProfilePage() {
     } catch { showToast('Failed to remove skill', 'error'); }
   };
 
-  const handleStatusChange = async e => {
-    try {
-      await updateStatus(e.target.value);
-      showToast('Status updated', 'success');
-      loadProfile();
-    } catch { showToast('Failed to update status', 'error'); }
-  };
-
   const [rateModal, setRateModal] = useState(false);
   const [rateStars, setRateStars] = useState(5);
   const [rateComment, setRateComment] = useState('');
@@ -242,18 +234,6 @@ export default function ProfilePage() {
     }
   };
 
-  const statusLabel = {
-    open_to_freelance: 'Open to Freelance',
-    open_to_work:      'Open to Work',
-    not_available:     'Not Available',
-  };
-
-  const statusColor = {
-    open_to_freelance: 'status-orange',
-    open_to_work:      'status-green',
-    not_available:     'status-gray',
-  };
-
   const memberSince = profile?.created_at ? new Date(profile.created_at).getFullYear() : null;
 
   return (
@@ -280,15 +260,11 @@ export default function ProfilePage() {
                           onError={() => setAvatarBroken(true)} />
                       : profile.username[0].toUpperCase()}
                   </div>
-                  {profile.status !== 'not_available' && <span className="profile-status-dot" />}
                 </div>
 
                 <div className="profile-info">
                   <h1 className="profile-name">{profile.username}</h1>
                   <p className="profile-category">{profile.category || 'Independent'}</p>
-                  <span className={`profile-status-badge ${statusColor[profile.status]}`}>
-                    {statusLabel[profile.status]}
-                  </span>
                 </div>
               </div>
 
@@ -340,16 +316,6 @@ export default function ProfilePage() {
                   <button className="profile-primary-btn" onClick={() => navigate(`/profile/${userId}/edit`)}>
                     Edit profile
                   </button>
-                  <div className="profile-action-row">
-                    <select className="status-select" value={profile.status} onChange={handleStatusChange}>
-                      <option value="not_available">Not Available</option>
-                      <option value="open_to_freelance">Open to Freelance</option>
-                      <option value="open_to_work">Open to Work</option>
-                    </select>
-                    <button className="profile-ghost-btn" onClick={() => navigate('/applications')}>
-                      Applications
-                    </button>
-                  </div>
                   <div className="profile-more-links">
                     <button onClick={handleShare}>Share profile</button>
                   </div>
