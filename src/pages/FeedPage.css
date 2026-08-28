@@ -12,29 +12,6 @@
   background: rgba(0,0,0,0.9);
   border-bottom: 1px solid rgba(255,255,255,0.08);
 }
-.app-shell .topbar-name,
-.app-shell .topbar-username { color: #f5f5f7; }
-.app-shell .topbar-search-input {
-  background: rgba(255,255,255,0.06);
-  color: #f5f5f7;
-}
-.app-shell .topbar-search-input:focus {
-  background: rgba(255,255,255,0.1);
-  border-color: rgba(255,255,255,0.2);
-  box-shadow: none;
-}
-.app-shell .topbar-search-input::placeholder { color: rgba(245,245,247,0.4); }
-.app-shell .topbar-search-btn { background: #f5f5f7; color: #0a0a0a; }
-.app-shell .topbar-btn { color: rgba(245,245,247,0.65); }
-.app-shell .topbar-btn:hover { background: rgba(255,255,255,0.08); color: #fff; }
-.app-shell .topbar-avatar { background: #f5f5f7; color: #0a0a0a; }
-.app-shell .topbar-signout {
-  border-color: rgba(255,255,255,0.2);
-  color: rgba(245,245,247,0.72);
-}
-.app-shell .topbar-signout:hover { background: rgba(255,255,255,0.08); color: #fff; }
-
-/* ── Steel content panels: every page's content floats on the dark chrome ── */
 /* Content columns are transparent — the steel comes from .app-main behind them.
    They just sit above the fixed robot. */
 .app-shell .feed-main,
@@ -42,8 +19,6 @@
 .app-shell .search-wrapper,
 .app-shell .settings-wrapper,
 .app-shell .notif-wrapper,
-.app-shell .freelance-wrapper,
-.app-shell .collab-wrapper,
 .app-shell .detail-wrapper,
 .app-shell .create-wrapper,
 .app-shell .edit-wrapper,
@@ -57,20 +32,14 @@
 .app-shell .search-heading,
 .app-shell .settings-title,
 .app-shell .notif-title,
-.app-shell .freelance-title,
 .app-shell .create-title,
 .app-shell .convs-title,
 .app-shell .people-heading { letter-spacing: -0.02em; }
-
-/* ══════════════════════════════════════════════════════════
-   PREMIUM PASS — shared polish applied across every page
-   ══════════════════════════════════════════════════════════ */
 
 /* Bigger, tighter editorial page titles — matches the Feed hero's scale so
    every page reads with the same bold weight, not just Home. */
 .app-shell .search-heading,
 .app-shell .notif-title,
-.app-shell .freelance-title,
 .app-shell .create-title,
 .app-shell .settings-title,
 .app-shell .edit-title,
@@ -85,36 +54,24 @@
 /* Content cards — consistent soft-lift interaction everywhere */
 .app-shell .portfolio-card,
 .app-shell .person-card,
-.app-shell .wr-card,
-.app-shell .collab-card,
-.app-shell .review-card,
-.app-shell .cert-card,
 .app-shell .notif-card {
   transition: transform 0.24s var(--ease-out-expo, ease),
               box-shadow 0.24s var(--ease-out-expo, ease),
               border-color 0.24s ease;
 }
 .app-shell .portfolio-card:hover,
-.app-shell .person-card:hover,
-.app-shell .wr-card:hover,
-.app-shell .collab-card:hover {
+.app-shell .person-card:hover {
   transform: translateY(-3px);
   box-shadow: 0 14px 34px rgba(0,0,0,0.13);
   border-color: var(--border-md);
 }
 
 /* Primary actions — unify to true ink black, pill, with a premium lift */
-.app-shell .post-job-btn,
-.app-shell .wr-apply-btn,
-.app-shell .filter-search-btn,
 .app-shell .settings-save-btn,
 .app-shell .create-submit,
-.app-shell .cta-btn,
 .app-shell .skill-add-btn,
 .app-shell .comment-submit,
-.app-shell .msg-send-btn,
-.app-shell .hire-btn,
-.app-shell .add-cert-btn {
+.app-shell .msg-send-btn {
   background: var(--ink, #0a0a0a);
   color: #f5f5f7;
   border-radius: var(--radius-pill, 999px);
@@ -123,30 +80,21 @@
               box-shadow 0.2s var(--ease-out-expo, ease),
               opacity 0.2s ease;
 }
-.app-shell .post-job-btn:hover:not(:disabled),
-.app-shell .wr-apply-btn:hover:not(:disabled),
-.app-shell .filter-search-btn:hover:not(:disabled),
 .app-shell .settings-save-btn:hover:not(:disabled),
 .app-shell .create-submit:hover:not(:disabled),
-.app-shell .cta-btn:hover:not(:disabled),
 .app-shell .skill-add-btn:hover:not(:disabled),
 .app-shell .comment-submit:hover:not(:disabled),
-.app-shell .msg-send-btn:hover:not(:disabled),
-.app-shell .hire-btn:hover:not(:disabled) {
+.app-shell .msg-send-btn:hover:not(:disabled) {
   transform: translateY(-1px);
   box-shadow: 0 8px 20px rgba(0,0,0,0.22);
   opacity: 1;
 }
-/* add-cert is a dashed ghost button — keep it ghost, just pill it */
-.app-shell .add-cert-btn { background: none; color: var(--text-2); }
 
 /* Secondary / outline actions — pill + smooth */
-.app-shell .edit-profile-btn,
 .app-shell .wr-view-btn,
 .app-shell .wr-close-btn,
 .app-shell .create-cancel,
-.app-shell .notif-read-all,
-.app-shell .status-select {
+.app-shell .notif-read-all {
   border-radius: var(--radius-pill, 999px);
   transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
 }
@@ -155,9 +103,6 @@
 .app-shell .create-input,
 .app-shell .create-textarea,
 .app-shell .create-select,
-.app-shell .settings-input,
-.app-shell .filter-input,
-.app-shell .filter-select,
 .app-shell .comment-input,
 .app-shell .msg-input,
 .app-shell .skill-input,
@@ -169,8 +114,6 @@
 .app-shell .create-input:focus,
 .app-shell .create-textarea:focus,
 .app-shell .create-select:focus,
-.app-shell .settings-input:focus,
-.app-shell .filter-input:focus,
 .app-shell .comment-input:focus,
 .app-shell .msg-input:focus,
 .app-shell .skill-input:focus,
@@ -182,7 +125,6 @@
 
 /* Tags & pills — crisper */
 .app-shell .tag,
-.app-shell .mini-tag,
 .app-shell .skill-tag,
 .app-shell .profile-status-badge { letter-spacing: -0.01em; }
 
@@ -196,7 +138,6 @@
 .app-shell .person-ava,
 .app-shell .conv-ava,
 .app-shell .msg-ava,
-.app-shell .review-avatar,
 .app-shell .post-ava {
   background: #0d0d0d;
   color: #f5f5f7;
@@ -204,8 +145,7 @@
 }
 
 /* Empty / zero states — more considered */
-.app-shell .state-box,
-.app-shell .empty-state {
+.app-shell .state-box {
   border-radius: 20px;
   border-style: dashed;
 }
@@ -214,8 +154,6 @@
 .app-shell .profile-wrapper,
 .app-shell .search-wrapper,
 .app-shell .notif-wrapper,
-.app-shell .freelance-wrapper,
-.app-shell .collab-wrapper,
 .app-shell .detail-wrapper {
   max-width: none;
   width: 100%;
@@ -229,8 +167,6 @@
   .app-shell .profile-wrapper,
   .app-shell .search-wrapper,
   .app-shell .notif-wrapper,
-  .app-shell .freelance-wrapper,
-  .app-shell .collab-wrapper,
   .app-shell .detail-wrapper {
     padding-left: clamp(24px, 4vw, 60px);
     padding-right: clamp(24px, 4vw, 60px);
@@ -242,8 +178,7 @@
 .app-shell .edit-wrapper     { max-width: 720px; }
 
 /* ── Larger editorial names & titles ── */
-.app-shell .post-title,
-.app-shell .collab-title {
+.app-shell .post-title {
   font-size: clamp(1.4rem, 2vw, 1.75rem);
   font-weight: 900;
   letter-spacing: -0.035em;
@@ -257,13 +192,10 @@
   color: var(--text-1);
   line-height: 1.2;
 }
-.app-shell .wr-desc-sm { font-size: 1.0625rem; font-weight: 600; }
-.app-shell .wr-by,
 .app-shell .person-name,
 .app-shell .conv-name,
 .app-shell .thread-name { font-size: 1.15rem; font-weight: 800; letter-spacing: -0.01em; }
 .app-shell .portfolio-card-title { font-size: 1.2rem; }
-.app-shell .wr-pay { font-size: 1.3rem; }
 
 /* ── Topbar ── */
 .topbar {
@@ -285,201 +217,6 @@
   background: rgba(0,0,0,0.85);
 }
 
-/* Logo removed. The bell no longer needs a whole sticky band — float it in
-   the top-right corner and take it out of layout flow so every page's content
-   moves up and reclaims that wasted strip. */
-.topbar-bare {
-  position: fixed;
-  /* Sit just below the status bar / notch, comfortably clear of content —
-     the same spot on every page. */
-  top: calc(env(safe-area-inset-top, 0px) + 14px);
-  right: calc(env(safe-area-inset-right, 0px) + 14px);
-  left: auto;
-  width: auto;
-  height: auto;
-  padding: 0;
-  background: transparent;
-  border-bottom: none;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  z-index: 300;
-}
-.topbar-bare .topbar-bell {
-  color: var(--text-1);
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.topbar-bare .topbar-bell svg { width: 22px; height: 22px; }
-/* A subtle scrim only in light theme so the dark bell icon stays legible over
-   pale content; in dark theme the white icon reads fine on black. */
-:root[data-theme="light"] .topbar-bare .topbar-bell { background: rgba(0,0,0,0.04); }
-
-.topbar-brand {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
-  cursor: pointer;
-}
-
-.topbar-icon {
-  width: 26px;
-  height: 26px;
-  border-radius: 7px;
-  object-fit: cover;
-  display: block;
-}
-
-.topbar-name {
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: var(--text-1);
-  letter-spacing: -0.3px;
-}
-
-.topbar-search {
-  flex: 1;
-  max-width: none;
-  margin-right: 8px;
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.topbar-search-icon {
-  position: absolute;
-  left: 11px;
-  color: var(--text-3);
-  pointer-events: none;
-  display: flex;
-}
-
-.topbar-search-input {
-  width: 100%;
-  height: 34px;
-  background: var(--elevated);
-  border: 1px solid transparent;
-  border-radius: 10px;
-  padding: 0 76px 0 33px;
-  font-size: 0.875rem;
-  color: var(--text-1);
-  transition: all 0.2s;
-}
-
-.topbar-search-input:focus {
-  background: var(--surface);
-  border-color: var(--text-1);
-  box-shadow: 0 0 0 3px rgba(150,150,150,0.15);
-}
-
-.topbar-search-input::placeholder { color: var(--text-3); }
-
-.topbar-search-btn {
-  position: absolute;
-  right: 5px;
-  height: 24px;
-  padding: 0 12px;
-  background: var(--text-1);
-  color: var(--bg);
-  font-size: 0.75rem;
-  font-weight: 600;
-  border-radius: 7px;
-  transition: opacity 0.15s;
-  letter-spacing: 0.1px;
-}
-
-.topbar-search-btn:hover { opacity: 0.75; }
-
-/* Compact search icon — desktop hides it (the full bar shows instead) */
-.topbar-mobile-search { display: none; }
-
-.topbar-right {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
-}
-
-/* Notification bell */
-.topbar-bell { position: relative; }
-.topbar-bell-badge {
-  position: absolute;
-  top: 1px;
-  right: 1px;
-  min-width: 15px;
-  height: 15px;
-  padding: 0 4px;
-  background: var(--red, #ff3b30);
-  color: #fff;
-  font-size: 0.5625rem;
-  font-weight: 800;
-  line-height: 1;
-  border-radius: 999px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid var(--surface);
-}
-.feed-shell .topbar-bell-badge { border-color: var(--ink, #0a0a0a); }
-
-.topbar-btn {
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  color: var(--text-2);
-  transition: background 0.15s;
-}
-
-.topbar-btn:hover { background: var(--elevated); }
-
-.topbar-avatar {
-  width: 32px;
-  height: 32px;
-  background: var(--text-1);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--bg);
-  font-weight: 600;
-  font-size: 11px;
-  flex-shrink: 0;
-  cursor: pointer;
-  transition: opacity 0.15s;
-}
-
-.topbar-avatar:hover { opacity: 0.8; }
-
-.topbar-username {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--text-1);
-}
-
-.topbar-signout {
-  height: 28px;
-  padding: 0 14px;
-  border-radius: 20px;
-  border: 1px solid var(--border-md);
-  color: var(--text-2);
-  font-size: 0.8125rem;
-  font-weight: 500;
-  transition: all 0.15s;
-  letter-spacing: 0.1px;
-}
-
-.topbar-signout:hover {
-  background: var(--elevated);
-  color: var(--text-1);
-}
-
 /* Profile photo filling any avatar circle (topbar, feed, people, profile) */
 .ava-img {
   width: 100%;
@@ -493,7 +230,7 @@
 .app-body {
   display: flex;
   width: 100%;
-  min-height: 100vh;   /* topbar is now a fixed floating bell — no reserved band */
+  min-height: 100vh;
 }
 
 /* The steel surface itself — fills the whole area from the rail to the right
@@ -506,13 +243,6 @@
   flex-direction: column;
   background: var(--steel-solid);
   box-shadow: inset 1px 0 0 rgba(0,0,0,0.06);
-  /* No hardcoded --text-1/--surface/etc. overrides here — this used to pin
-     the whole content area to light-mode colors regardless of the theme
-     toggle (the reason dark mode barely looked different: the dark chrome
-     was dark, but every page's actual content stayed light). Now it just
-     inherits the active theme's tokens from :root / [data-theme="dark"],
-     and --steel-solid itself is theme-aware too, so the panel background
-     flips along with everything else. */
   color: var(--text-1);
 }
 
@@ -621,20 +351,6 @@
   box-shadow: 0 0 10px rgba(0,211,242,0.6);
 }
 
-.sidebar-link-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: currentColor;
-  flex-shrink: 0;
-  opacity: 0.3;
-}
-
-.sidebar-link.active .sidebar-link-dot {
-  opacity: 1;
-  background: var(--blue);
-}
-
 .sidebar-badge {
   margin-left: auto;
   background: var(--red);
@@ -646,8 +362,6 @@
   min-width: 18px;
   text-align: center;
 }
-
-/* ── Feed Main ── */
 /* Steel content panel floating on the dark chrome */
 .app-shell .feed-main {
   position: relative;
@@ -685,14 +399,6 @@
 .app-shell .feed-main .post-title,
 .app-shell .feed-main .post-author { color: var(--text-1); }
 
-.feed-hero {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 32px;
-  margin-bottom: 28px;
-}
-
 .feed-heading {
   font-size: clamp(2.75rem, 6vw, 4.5rem);
   font-weight: 800;
@@ -700,10 +406,6 @@
   letter-spacing: -0.045em;
   line-height: 0.9;
 }
-
-.feed-heading-kicker { display: block; }
-
-/* Work page — minimal CUFood header + Freelance/Collab filter chips */
 /* Work hero — huge bold title + a distance-range dropdown beside it */
 .work-head {
   display: flex;
@@ -994,143 +696,13 @@
   font-weight: 500;
   align-self: center;
 }
-
-/* ── Menu items (both pages) ── */
-.menu-list { display: flex; flex-direction: column; margin-bottom: 40px; }
 /* Flat lists (Work feed) need a top rule on the first item; sections already
    supply their own bright top rule so their items only carry bottom rules. */
-.feed-main .menu-list > .menu-item:first-child { border-top: 1px solid rgba(255,255,255,0.1); }
-.menu-item {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 12px;
-  text-align: left;
-  padding: 22px 2px 24px;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-  transition: opacity 0.15s;
-  animation: cardIn 0.35s ease both;
-}
-.menu-item:hover { opacity: 0.6; }
-.menu-item.is-new { animation: menuFlash 2.2s ease-out 1; }
 @keyframes menuFlash {
   0%   { background: rgba(239,95,38,0.12); }
   100% { background: transparent; }
 }
-.menu-item-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; width: 100%; }
-.menu-item-name {
-  font-family: var(--font-display);
-  font-size: clamp(1.375rem, 5vw, 1.75rem);
-  font-weight: 700;
-  color: var(--text-1);
-  letter-spacing: -0.035em;
-  line-height: 1.12;
-  min-width: 0;
-}
-.menu-kind {
-  flex-shrink: 0;
-  font-size: 0.625rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-3);
-  border: 1px solid var(--border-md);
-  padding: 4px 9px;
-  border-radius: 999px;
-  margin-top: 4px;
-}
-.menu-item-foot { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
-.menu-price {
-  font-family: var(--font-display);
-  font-size: 0.9375rem;
-  font-weight: 700;
-  color: var(--cyan);
-  background: rgba(239,95,38,0.12);
-  padding: 6px 14px;
-  border-radius: 999px;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.01em;
-}
-.menu-item-sub {
-  font-size: 0.8125rem;
-  color: var(--text-3);
-  font-weight: 500;
-}
 .menu-muted { font-size: 0.9375rem; color: var(--text-3); padding: 8px 2px 32px; }
-
-/* Dark promo card, top-right of the hero */
-.feed-promo {
-  position: relative;
-  flex-shrink: 0;
-  width: 208px;
-  min-height: 176px;
-  background: var(--ink, #0a0a0a);
-  border-radius: 16px;
-  padding: 18px 20px;
-  color: #f5f5f7;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  overflow: hidden;
-}
-
-.feed-promo-arrow {
-  position: absolute;
-  top: 16px;
-  right: 18px;
-  font-size: 1.15rem;
-  line-height: 1;
-  color: #f5f5f7;
-}
-
-.feed-promo-title {
-  font-size: 1.0625rem;
-  font-weight: 700;
-  line-height: 1.15;
-  letter-spacing: -0.01em;
-  text-transform: uppercase;
-  margin-bottom: 12px;
-}
-
-.feed-promo-meta {
-  font-family: var(--font-mono, monospace);
-  font-size: 0.625rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: rgba(245,245,247,0.5);
-}
-
-/* Underline tab row */
-.tab-group {
-  display: flex;
-  gap: 26px;
-  border-bottom: 1px solid rgba(0,0,0,0.1);
-  margin-bottom: 26px;
-}
-
-.tab-btn {
-  position: relative;
-  padding: 0 0 12px;
-  font-size: 0.9375rem;
-  font-weight: 500;
-  color: var(--text-2);
-  transition: color 0.18s var(--ease-out-expo, ease);
-}
-
-.tab-btn:hover { color: var(--text-1); }
-
-.tab-btn.active { color: var(--text-1); font-weight: 600; }
-
-.tab-btn.active::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -1px;
-  height: 2px;
-  background: var(--text-1);
-}
 
 /* ── Pill filter buttons (Search + Collab type filters) ──
    Shared here in FeedPage.css (loaded on every page) so pages that use them
@@ -1203,155 +775,11 @@
 .profile-nudge-x:hover { background: rgba(255,255,255,0.12); color: #fff; }
 
 /* ── "What do you want to post?" chooser sheet ── */
-.post-sheet-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 500;
-  background: rgba(0,0,0,0.5);
-  -webkit-backdrop-filter: blur(4px);
-  backdrop-filter: blur(4px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  animation: postOverlayIn 0.15s ease;
-}
-
-.post-sheet {
-  width: 100%;
-  max-width: 440px;
-  background: var(--surface);
-  border: 1px solid var(--border-md);
-  border-radius: 22px;
-  padding: 22px;
-  box-shadow: 0 24px 60px rgba(0,0,0,0.3);
-  animation: postSheetUp 0.22s var(--ease-out-expo, ease);
-}
-
-.post-sheet-grip { display: none; }
-
-.post-sheet-title {
-  font-size: 1.25rem;
-  font-weight: 800;
-  color: var(--text-1);
-  letter-spacing: -0.02em;
-}
-.post-sheet-sub { font-size: 0.875rem; color: var(--text-2); margin: 3px 0 18px; }
-
-.post-option {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  width: 100%;
-  padding: 14px;
-  margin-bottom: 10px;
-  background: var(--elevated);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  text-align: left;
-  transition: transform 0.15s var(--ease-out-expo, ease), background 0.15s, border-color 0.15s;
-}
-.post-option:hover { background: var(--surface); border-color: var(--text-1); transform: translateY(-2px); }
-
-.post-option-ic {
-  width: 46px;
-  height: 46px;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #000000;
-  color: #fff;
-  border-radius: 13px;
-}
-
-.post-option-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
-.post-option-name { font-size: 0.9375rem; font-weight: 700; color: var(--text-1); }
-.post-option-desc { font-size: 0.8125rem; color: var(--text-2); line-height: 1.35; }
-.post-option-arrow { color: var(--text-3); font-size: 1.1rem; flex-shrink: 0; }
-
-.post-sheet-cancel {
-  width: 100%;
-  height: 44px;
-  margin-top: 4px;
-  color: var(--text-2);
-  font-size: 0.9375rem;
-  font-weight: 600;
-  border-radius: 12px;
-  transition: background 0.15s;
-}
-.post-sheet-cancel:hover { background: var(--elevated); }
 
 @keyframes postOverlayIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes postSheetUp {
   from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: translateY(0); }
-}
-
-@media (max-width: 600px) {
-  /* Dock as a bottom sheet on phones */
-  .post-sheet-overlay { align-items: flex-end; padding: 0; }
-  .post-sheet {
-    max-width: none;
-    border-radius: 22px 22px 0 0;
-    padding: 12px 18px calc(20px + env(safe-area-inset-bottom, 0px));
-  }
-  .post-sheet-grip {
-    display: block;
-    width: 40px;
-    height: 4px;
-    border-radius: 999px;
-    background: var(--border-md);
-    margin: 2px auto 14px;
-  }
-}
-
-/* ── Quick status composer ── */
-.status-composer {
-  display: flex;
-  gap: 10px;
-  margin: 0 0 20px;
-  padding: 10px;
-  background: var(--surface);
-  border: 1px solid var(--border-md);
-  border-radius: var(--radius-lg);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-}
-
-.status-composer-input {
-  flex: 1;
-  height: 42px;
-  background: var(--elevated);
-  border: 1px solid transparent;
-  border-radius: var(--radius-md);
-  padding: 0 14px;
-  font-size: 0.9375rem;
-  color: var(--text-1);
-  transition: border-color 0.15s, background 0.15s;
-}
-.status-composer-input:focus { background: var(--surface); border-color: var(--border-md); }
-.status-composer-input::placeholder { color: var(--text-3); }
-
-.status-composer-btn {
-  height: 42px;
-  padding: 0 22px;
-  background: #000000;
-  color: #fff;
-  font-size: 0.9375rem;
-  font-weight: 700;
-  border-radius: var(--radius-md);
-  transition: opacity 0.15s;
-  flex-shrink: 0;
-}
-.status-composer-btn:hover:not(:disabled) { opacity: 0.85; }
-.status-composer-btn:disabled { opacity: 0.45; }
-
-.post-status-text {
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: var(--text-1);
-  line-height: 1.5;
-  letter-spacing: -0.01em;
 }
 
 /* ── First-run welcome modal ── */
@@ -1438,119 +866,6 @@
 }
 .welcome-skip:hover { background: var(--elevated); }
 
-/* ── Discover people strip (keeps the feed alive on day one) ── */
-.discover-strip { margin: 4px 0 22px; }
-
-.discover-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-
-.discover-title {
-  font-size: 1rem;
-  font-weight: 800;
-  color: var(--text-1);
-  letter-spacing: -0.02em;
-}
-
-.discover-all {
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: var(--text-2);
-  transition: color 0.12s;
-}
-.discover-all:hover { color: var(--text-1); }
-
-.discover-row {
-  display: flex;
-  gap: 10px;
-  overflow-x: auto;
-  padding-bottom: 4px;
-  scrollbar-width: none;
-}
-.discover-row::-webkit-scrollbar { display: none; }
-
-.discover-card {
-  flex: 0 0 auto;
-  width: 132px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 7px;
-  padding: 18px 12px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  cursor: pointer;
-  transition: transform 0.18s var(--ease-out-expo, ease), box-shadow 0.18s, border-color 0.15s;
-  animation: cardIn 0.3s ease both;
-}
-
-.discover-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 26px rgba(0,0,0,0.12);
-  border-color: var(--border-md);
-}
-
-.discover-ava {
-  width: 54px;
-  height: 54px;
-  border-radius: 50%;
-  background: #000000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  font-weight: 700;
-  font-size: 20px;
-  overflow: hidden;
-}
-
-.discover-name {
-  font-size: 0.875rem;
-  font-weight: 700;
-  color: var(--text-1);
-  max-width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.discover-cat {
-  font-size: 0.6875rem;
-  color: var(--text-3);
-  max-width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* ── "Near me" quick filter chip (Collab / Freelance) ── */
-.near-me-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  height: 34px;
-  padding: 0 15px;
-  margin-bottom: 12px;
-  background: var(--elevated);
-  border: 1px solid var(--border-md);
-  border-radius: 999px;
-  color: var(--text-2);
-  font-size: 0.8125rem;
-  font-weight: 700;
-  transition: all 0.15s;
-}
-.near-me-chip:hover { border-color: var(--text-1); color: var(--text-1); }
-.near-me-chip.active {
-  background: #000000;
-  border-color: #000000;
-  color: #fff;
-}
-
 /* ── Media on posts (collab / freelance / feed) ── */
 .post-media { margin: 4px 0 12px; }
 .post-media-el {
@@ -1564,106 +879,10 @@
 }
 video.post-media-el { cursor: default; object-fit: contain; background: #000; }
 
-/* Attach control in create modals */
-.post-media-pick {
-  display: inline-flex;
-  align-items: center;
-  height: 40px;
-  padding: 0 14px;
-  border: 1px dashed var(--border-md);
-  border-radius: var(--radius-sm);
-  color: var(--text-2);
-  font-size: 0.875rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.post-media-pick:hover { border-color: var(--text-1); color: var(--text-1); }
-
-.post-media-chip {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  height: 40px;
-  padding: 0 8px 0 14px;
-  background: var(--elevated);
-  border: 1px solid var(--border-md);
-  border-radius: var(--radius-sm);
-}
-.post-media-chip-name {
-  flex: 1;
-  min-width: 0;
-  font-size: 0.8125rem;
-  color: var(--text-2);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.post-media-chip button {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  font-size: 1.1rem;
-  line-height: 1;
-  color: var(--text-2);
-  flex-shrink: 0;
-}
-.post-media-chip button:hover { background: var(--border-md); color: var(--text-1); }
-
-/* ── Opportunity cards (Freelance / Collab) — the new feed ── */
-.opp-card {
-  background: #ffffff;
-  border: 1px solid rgba(0,0,0,0.06);
-  border-radius: 22px;
-  padding: 26px 26px;
-  margin-bottom: 18px;
-  cursor: pointer;
-  transition: transform 0.18s var(--ease-out-expo, ease), box-shadow 0.18s, border-color 0.15s;
-  animation: cardIn 0.4s cubic-bezier(0.25,0.46,0.45,0.94) both;
-}
-.opp-card:hover { transform: translateY(-3px); box-shadow: 0 16px 36px rgba(0,0,0,0.28); border-color: rgba(0,0,0,0.1); }
-
-/* .opp-card is unconditionally white now (the Uber-style "pop" element on
-   the mostly-black page) — its own text/border colors are pinned to fixed
-   dark-on-white values below, independent of --text-1/--border, which
-   flip to light-on-dark by default. The bare classes above stay
-   theme-following for the few places (state-box empty states,
-   ApplicationsPage) that reuse opp-cta/opp-kind directly on the dark page
-   background instead of inside a card. */
-/* .app-shell .feed-main prefix on the identity/author rules matches (and
-   beats) the specificity of ".app-shell .feed-main .post-author" above —
-   without it, that theme-following rule was silently winning the cascade
-   and re-painting the username light-on-white (invisible) inside the now
-   unconditionally-white card. */
-.opp-card .opp-kind    { background: rgba(0,0,0,0.06); color: #1d1d1f; }
-.opp-card .opp-title   { color: #0a0a0a; }
-.opp-card .opp-desc    { color: #55555a; }
-.opp-card .opp-footer  { border-top-color: rgba(0,0,0,0.08); }
-/* Uber-style uniform gray metadata pills (distance, applicants) — keeps the
-   card near-monochrome so the orange price is the only pop of color. */
-.opp-card .opp-sub,
-.opp-card .opp-heat {
-  color: #3a3a3c;
-  font-weight: 600;
-  background: rgba(0,0,0,0.05);
-  padding: 5px 12px;
-  border-radius: 999px;
-}
-.opp-card .opp-cta     { background: #0a0a0a; color: #ffffff; }
-.opp-card .opp-cta.ghost { background: none; color: #0a0a0a; border-color: rgba(0,0,0,0.15); }
-.opp-card .opp-cta.ghost:hover { background: rgba(0,0,0,0.05); }
-.opp-card .post-ava        { background: rgba(0,0,0,0.05); color: #0a0a0a; border-color: rgba(0,0,0,0.08); }
-.opp-card .post-author,
-.app-shell .feed-main .opp-card .post-author     { color: #0a0a0a; }
-.opp-card .post-author-cat { color: #8a8a8f; }
-.opp-card .tag-skill       { background: rgba(0,0,0,0.06); color: #3a3a3c; font-weight: 600; }
-
 /* "Just arrived via poll" flash — same convention as .wr-card.is-new in
    FreelancePage.css, extended to every card type that now live-polls
    (opp-card, collab-card, notif-card). Defined once here since this file
    loads on every page. */
-.opp-card.is-new,
-.collab-card.is-new,
 .notif-card.is-new {
   border-color: var(--green, #34c759);
   animation: newItemFlash 2.2s ease-out 1;
@@ -1685,29 +904,6 @@ video.post-media-el { cursor: default; object-fit: contain; background: #000; }
   color: var(--text-1);
 }
 [data-theme="dark"] .opp-kind { background: rgba(255,255,255,0.1); }
-
-.opp-title {
-  font-family: var(--font-display);
-  font-size: 1.75rem;
-  font-weight: 800;
-  color: var(--text-1);
-  margin: 16px 0 8px;
-  line-height: 1.08;
-  letter-spacing: -0.035em;
-}
-.opp-desc { font-size: 0.9375rem; color: var(--text-2); line-height: 1.55; margin-bottom: 4px; }
-
-.opp-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-top: 18px;
-  padding-top: 16px;
-  border-top: 1px solid rgba(0,0,0,0.08);
-  flex-wrap: wrap;
-}
-[data-theme="dark"] .opp-footer { border-top-color: rgba(255,255,255,0.1); }
 .opp-meta { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; min-width: 0; }
 .opp-pay {
   font-family: var(--font-display);
@@ -1721,15 +917,6 @@ video.post-media-el { cursor: default; object-fit: contain; background: #000; }
 }
 .opp-sub { font-size: 0.8125rem; color: var(--text-2); font-weight: 600; }
 .opp-heat { font-size: 0.8125rem; font-weight: 700; color: #ff7a00; }
-.opp-ctype {
-  font-size: 0.6875rem;
-  font-weight: 700;
-  text-transform: capitalize;
-  color: var(--text-2);
-  background: var(--elevated);
-  padding: 3px 10px;
-  border-radius: 999px;
-}
 
 .opp-cta {
   height: 42px;
@@ -1870,16 +1057,6 @@ video.post-media-el { cursor: default; object-fit: contain; background: #000; }
   line-height: 1.6;
   margin-bottom: 14px;
   font-weight: 400;
-}
-
-.post-img {
-  width: 100%;
-  border-radius: var(--radius-md);
-  object-fit: cover;
-  max-height: 280px;
-  margin-bottom: 14px;
-  border: 1px solid var(--border);
-  display: block;
 }
 
 .post-ext-link {
@@ -2085,42 +1262,6 @@ video.post-media-el { cursor: default; object-fit: contain; background: #000; }
 }
 
 /* ── Right Panel ── */
-.right-panel {
-  width: 260px;
-  flex-shrink: 0;
-  padding: 24px 18px;
-  background: var(--bg2);
-}
-
-.panel-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 16px 18px;
-  margin-bottom: 10px;
-  box-shadow: var(--shadow-sm);
-}
-
-.panel-card-title {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--text-1);
-  margin-bottom: 14px;
-  letter-spacing: -0.2px;
-}
-
-.panel-stat {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--border);
-  font-size: 0.875rem;
-}
-
-.panel-stat:last-child { border-bottom: none; padding-bottom: 0; }
-.panel-stat-label { color: var(--text-2); }
-.panel-stat-val   { font-weight: 600; color: var(--text-1); }
 
 .post-btn {
   display: flex;
@@ -2246,18 +1387,6 @@ video.post-media-el { cursor: default; object-fit: contain; background: #000; }
 .modal-submit:hover:not(:disabled) { opacity: 0.8; }
 .modal-submit:disabled { opacity: 0.35; cursor: not-allowed; }
 
-.star-row { display: flex; gap: 6px; }
-
-.star-btn {
-  font-size: 1.5rem;
-  color: var(--border-md);
-  transition: color 0.12s, transform 0.12s;
-  line-height: 1;
-}
-
-.star-btn.active { color: #ff9f0a; }
-.star-btn:hover  { transform: scale(1.1); }
-
 /* ── Mobile bottom navigation ── */
 .mobile-nav { display: none; }
 
@@ -2283,14 +1412,6 @@ video.post-media-el { cursor: default; object-fit: contain; background: #000; }
     align-items: center;
     gap: 3px;
     flex: 1;
-    /* Flex items default to min-width:auto, which floors their size at the
-       LABEL'S UNWRAPPED TEXT WIDTH regardless of the flex:1 share — on
-       narrower phones the 5 buttons' combined minimums can exceed the
-       screen width, so the browser squishes/clips/overlaps labels
-       differently depending on its own resolution strategy (which is why
-       this only showed up on "some" phones and not others). min-width:0
-       lets flex:1 actually win, and the label itself gets clipped safely
-       with an ellipsis instead of overflowing raw. */
     min-width: 0;
     color: rgba(245,245,247,0.55);
     font-size: 0.625rem;
@@ -2336,28 +1457,12 @@ video.post-media-el { cursor: default; object-fit: contain; background: #000; }
   body.conv-active .messages-layout { height: 100vh; }
   body.conv-active .messages-layout { height: 100dvh; }
 }
-
-@media (max-width: 1100px) { .right-panel { display: none; } }
 @media (max-width: 768px) {
   .sidebar { display: none; }
   .topbar { padding: 0 12px; gap: 8px; }
 
-  /* Collapse the topbar to logo + essential icons — the full search bar,
-     brand text, username, and sign-out no longer fit next to each other
-     on a phone and were forcing horizontal scroll on every page. */
-  .topbar-name,
-  .topbar-search,
-  .topbar-username,
-  .topbar-signout { display: none; }
-  .topbar-mobile-search { display: flex; }
-
   /* Give the icon row room to breathe with proper tap targets — they were
      cramped together before. Push the icon cluster to the right of the logo. */
-  .topbar-brand { margin-right: auto; }
-  .topbar-right { gap: 10px; }
-  .topbar-btn { width: 44px; height: 44px; }
-  .topbar-avatar { width: 38px; height: 38px; font-size: 14px; }
-  .topbar-bell-badge { top: 2px; right: 2px; }
 
   .feed-main { padding: 16px; max-width: 100%; }
   .app-shell .feed-main {
@@ -2368,7 +1473,5 @@ video.post-media-el { cursor: default; object-fit: contain; background: #000; }
     max-width: 100%;
     box-shadow: none;
   }
-  .feed-hero { flex-direction: column; gap: 20px; }
-  .feed-promo { width: 100%; min-height: 140px; }
   .feed-heading { font-size: clamp(2.25rem, 11vw, 3.25rem); }
 }

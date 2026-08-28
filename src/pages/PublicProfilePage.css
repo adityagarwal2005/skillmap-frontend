@@ -25,14 +25,6 @@
   letter-spacing: -0.02em;
 }
 
-.public-profile-brand-icon {
-  width: 30px;
-  height: 30px;
-  border-radius: 8px;
-  object-fit: cover;
-  display: block;
-}
-
 .public-profile-cta {
   height: 38px;
   padding: 0 20px;

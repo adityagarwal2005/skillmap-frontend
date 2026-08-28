@@ -3,17 +3,10 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getUnreadCount } from '../api/notifications';
 import { getUser } from '../api/users';
-import { cldAvatar } from '../utils/cloudinaryUrl';
 import useInstallPrompt from '../hooks/useInstallPrompt';
 import usePageMeta from '../hooks/usePageMeta';
 import { pushSupported, isPushEnabled, enablePush } from '../push';
 import '../pages/FeedPage.css';
-
-const SVG = {
-  search: <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>,
-  sun:    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>,
-  moon:   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>,
-};
 
 const svg = (children) => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -77,25 +70,20 @@ function deriveActive(pathname) {
 }
 
 /**
- * Shared application chrome: dark frosted topbar + dark editorial nav rail +
- * signature robot. Every authenticated page renders its content as children,
- * which float as a steel panel on the dark chrome.
+ * Shared application chrome: desktop nav rail + mobile bottom tab bar. Every
+ * authenticated page renders its content as children. There's no topbar —
+ * each page owns its own header row (title + <NotificationBell/>).
  *
  * Props:
- *   active        override the highlighted nav item (else derived from URL)
- *   searchValue   controlled value for the topbar search (optional)
- *   onSearchChange(value)  controlled onChange (optional)
- *   onSearchSubmit(e)      controlled submit (optional; default navigates to /search)
+ *   active   override the highlighted nav item (else derived from URL)
+ *   robot    show the decorative hero robot (Work page only)
  */
 export default function AppShell({
   children,
   active,
   robot = false,
-  searchValue,
-  onSearchChange,
-  onSearchSubmit,
 }) {
-  const { user, logoutUser } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -106,11 +94,10 @@ export default function AppShell({
   // indexable meta via the same hook.
   usePageMeta({ noindex: true });
 
-  const [theme, setTheme] = useState(localStorage.getItem('themeV2') || 'dark');
+  // Read-only now — the theme toggle lived in the old topbar; this just
+  // re-applies whatever was last stored (Settings still writes it).
+  const [theme] = useState(localStorage.getItem('themeV2') || 'dark');
   const [unread, setUnread] = useState(0);
-  const [avatar, setAvatar] = useState(null);
-  const [avatarBroken, setAvatarBroken] = useState(false);
-  const [q, setQ] = useState('');
   const [profile, setProfile] = useState(null);
   const [nudgeDismissed, setNudgeDismissed] = useState(
     () => localStorage.getItem('smNudgeDismissed') === '1'
@@ -143,11 +130,7 @@ export default function AppShell({
 
   useEffect(() => {
     if (user?.id) {
-      getUser(user.id).then(r => {
-        setAvatar(r.data.profile_image || null);
-        setAvatarBroken(false);
-        setProfile(r.data);
-      }).catch(() => {});
+      getUser(user.id).then(r => setProfile(r.data)).catch(() => {});
     }
   }, [user?.id]);
 
@@ -222,16 +205,6 @@ export default function AppShell({
     if (item.id === 'profile') { navigate(`/profile/${user?.id}`); return; }
     if (item.path) navigate(item.path);
   };
-
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    if (onSearchSubmit) { onSearchSubmit(e); return; }
-    if (q.trim()) navigate(`/search?q=${encodeURIComponent(q)}`);
-  };
-
-  const searchVal = searchValue !== undefined ? searchValue : q;
-  const handleSearchChange = (e) =>
-    onSearchChange ? onSearchChange(e.target.value) : setQ(e.target.value);
 
   return (
     <div className="app-shell">

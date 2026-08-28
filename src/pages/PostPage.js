@@ -2,8 +2,12 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import { getMyWorkRequests, getWorkRequestResponses, assignWorkRequest, rejectWorkApplicant } from '../api/work';
-import { getMyCollabPosts, getCollabApplicants, respondToCollabRequest } from '../api/collab';
+import {
+  getMyWorkRequests, getWorkRequestResponses, assignWorkRequest, rejectWorkApplicant, closeWorkRequest,
+} from '../api/work';
+import {
+  getMyCollabPosts, getCollabApplicants, respondToCollabRequest, closeCollabPost,
+} from '../api/collab';
 import AppShell from '../components/AppShell';
 import NotificationBell from '../components/NotificationBell';
 import CreateWorkModal from '../components/CreateWorkModal';
@@ -37,6 +41,7 @@ export default function PostPage() {
   const [busyId, setBusyId]           = useState(null);          // appId currently mutating
   const [connected, setConnected]     = useState({});            // `${key}:${appId}` -> conversation_id
   const [createKind, setCreateKind]   = useState(null);          // 'freelance' | 'collab' | null
+  const [closing, setClosing]         = useState(null);          // `${kind}-${id}` awaiting close confirm
 
   const load = () => {
     if (!user?.id) return;
@@ -103,6 +108,21 @@ export default function PostPage() {
     } catch (err) {
       showToast(err.response?.data?.error || 'Could not decline', 'error');
     } finally { setBusyId(null); setConfirm(null); }
+  };
+
+  // Close early — the post stops showing to everyone before its visibility
+  // window runs out. Not reversible from the UI, hence the confirm step.
+  const doClose = async (kind, item) => {
+    const key = `${kind}-${item.id}`;
+    setBusyId(key);
+    try {
+      if (kind === 'freelance') await closeWorkRequest(item.id);
+      else                      await closeCollabPost(item.id);
+      showToast('Post closed', 'success');
+      load();
+    } catch (err) {
+      showToast(err.response?.data?.error || 'Could not close', 'error');
+    } finally { setBusyId(null); setClosing(null); }
   };
 
   const renderApplicants = (kind, item) => {
@@ -191,6 +211,26 @@ export default function PostPage() {
               </button>
             </div>
             {renderApplicants(kind, item)}
+
+            {item.status === 'closed' ? (
+              <p className="mng-closed">This post is closed — it's no longer visible to anyone.</p>
+            ) : closing === key ? (
+              <div className="mng-close-confirm">
+                <span className="mng-close-q">Close this post? It stops showing to everyone.</span>
+                <div className="mng-close-btns">
+                  <button className="mng-close-yes" disabled={busyId === key}
+                    onClick={() => doClose(kind, item)}>
+                    {busyId === key ? '…' : 'Yes, close it'}
+                  </button>
+                  <button className="mng-confirm-cancel" disabled={busyId === key}
+                    onClick={() => setClosing(null)}>Cancel</button>
+                </div>
+              </div>
+            ) : (
+              <button className="mng-close-btn" onClick={() => setClosing(key)}>
+                Close this post early
+              </button>
+            )}
           </div>
         )}
       </div>

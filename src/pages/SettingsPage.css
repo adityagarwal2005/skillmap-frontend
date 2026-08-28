@@ -58,27 +58,6 @@
   color: var(--text-3);
 }
 
-.settings-row-action {
-  display: flex;
-  gap: 8px;
-  flex-shrink: 0;
-}
-
-.settings-input {
-  height: 32px;
-  width: 200px;
-  background: var(--elevated);
-  border: 1px solid var(--border-md);
-  border-radius: var(--radius-sm);
-  padding: 0 10px;
-  font-size: 0.8125rem;
-  color: var(--text-1);
-  transition: border-color 0.15s;
-}
-
-.settings-input:focus { border-color: var(--navy-bright); }
-.settings-input::placeholder { color: var(--text-3); }
-
 .settings-save-btn {
   height: 32px;
   padding: 0 14px;
@@ -169,8 +148,6 @@
 
 @media (max-width: 600px) {
   .settings-row { flex-direction: column; align-items: flex-start; }
-  .settings-input { width: 100%; }
-  .settings-row-action { width: 100%; }
 }
 
 /* ── Invite friends ── */

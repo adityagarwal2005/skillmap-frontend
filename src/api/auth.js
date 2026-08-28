@@ -26,8 +26,6 @@ export const verifyLoginOTP = (email, otp) =>
 export const resetPasswordWithOTP = (email, otp, newPassword) =>
   API.post('/users/password/reset/', new URLSearchParams({ email, otp, new_password: newPassword }));
 
-
-
 export const verifyAndRegister = (username, email, password, otp, latitude, longitude, referredBy) =>
   API.post('/users/verify-register/', new URLSearchParams({
     username, email, password, otp,
@@ -36,13 +34,11 @@ export const verifyAndRegister = (username, email, password, otp, latitude, long
     ...(referredBy && { referred_by: referredBy }),
   }));
 
-  
 export const refreshToken = (refresh) =>
   API.post('/users/token/refresh/', new URLSearchParams({ refresh }));
 
-
 export const register = (username, email, password, latitude, longitude) =>
-  API.post('/users/register/', new URLSearchParams({ 
+  API.post('/users/register/', new URLSearchParams({
     username, email, password,
     ...(latitude && { latitude }),
     ...(longitude && { longitude }),

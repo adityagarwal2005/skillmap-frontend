@@ -75,10 +75,7 @@ export default function SearchPage() {
   };
 
   return (
-    <AppShell active="search"
-      searchValue={q}
-      onSearchChange={setQ}
-      onSearchSubmit={handleSearch}>
+    <AppShell active="search">
       <div className="search-wrapper">
         <div className="search-header">
           <h1 className="search-heading">

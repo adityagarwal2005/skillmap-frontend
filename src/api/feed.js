@@ -5,6 +5,3 @@ export const getFeed = (params = {}) =>
 
 export const searchFeed = (params = {}) =>
   API.get('/feed/search/', { params });
-
-export const getTrending = (params = {}) =>
-  API.get('/feed/trending/', { params });

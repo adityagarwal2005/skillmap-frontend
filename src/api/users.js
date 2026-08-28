@@ -53,9 +53,6 @@ export const verifyPhoneOTP = (phone, otp) =>
 export const searchUsers = (params) =>
   API.get('/users/search/', { params });
 
-export const getDiscoverPeople = (params = {}) =>
-  API.get('/users/discover/', { params });
-
 export const getMyReferrals = () =>
   API.get('/users/referrals/');
 
@@ -75,14 +72,8 @@ export const removeFriend = (userId) =>
 export const getFriendRequests = () =>
   API.get('/users/friend-requests/');
 
-export const getFriends = () =>
-  API.get('/users/friends/');
-
 export const getCategories = () =>
   API.get('/categories/');
-
-export const getCategorySkills = (categoryId) =>
-  API.get(`/categories/${categoryId}/skills/`);
 
 export const addSkill = (userId, skill) =>
   API.post(`/users/${userId}/skills/add/`, new URLSearchParams({ skill }));
@@ -92,9 +83,6 @@ export const removeSkill = (userId, skill) =>
 
 export const getUserPortfolio = (userId, params = {}) =>
   API.get(`/portfolio/user/${userId}/`, { params });
-
-export const getUserReviews = (userId) =>
-  API.get(`/reviews/user/${userId}/`);
 
 export const addReview = (revieweeId, data) =>
   API.post(`/reviews/user/${revieweeId}/add/`, new URLSearchParams(data));

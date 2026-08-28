@@ -25,21 +25,6 @@
   margin-bottom: 48px;
 }
 
-.login-wordmark-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  object-fit: cover;
-  display: block;
-}
-
-.login-wordmark-name {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--text-1);
-  letter-spacing: -0.3px;
-}
-
 .login-heading {
   font-size: 2rem;
   font-weight: 700;

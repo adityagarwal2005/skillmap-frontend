@@ -11,9 +11,6 @@ const bodyFor = (data) => {
   return new URLSearchParams(rest);
 };
 
-export const getCollabPosts = (params = {}) =>
-  API.get('/collab/', { params });
-
 export const getMyCollabPosts = () =>
   API.get('/collab/mine/');
 
@@ -29,6 +26,7 @@ export const getCollabApplicants = (postId) =>
 export const respondToCollabRequest = (requestId, status) =>
   API.post(`/collab/requests/${requestId}/respond/`, new URLSearchParams({ status }));
 
+// Close early — stops it showing to anyone before its visibility window ends.
 export const closeCollabPost = (postId) =>
   API.post(`/collab/${postId}/close/`);
 

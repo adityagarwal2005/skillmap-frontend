@@ -4,7 +4,7 @@
   display: flex;
   width: 100%;
   height: 100vh;
-  height: 100dvh;   /* dvh accounts for the mobile browser toolbar */
+  height: 100dvh;
   background: var(--surface);
   overflow: hidden;
 }
@@ -45,54 +45,6 @@
   color: var(--text-1);
   letter-spacing: -0.045em;
   line-height: 0.95;
-}
-
-.convs-new-btn {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background: #000000;
-  color: #fff;
-  font-size: 1.125rem;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: opacity 0.15s;
-}
-.convs-new-btn:hover { opacity: 0.85; }
-
-.new-msg-panel {
-  border-bottom: 1px solid var(--border);
-  padding: 12px 0;
-}
-
-.new-msg-panel-title {
-  padding: 4px 20px 10px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-3);
-}
-
-.friend-pick-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 16px;
-  margin: 0 8px;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: background 0.14s;
-}
-.friend-pick-row:hover { background: var(--elevated); }
-
-.friend-pick-busy {
-  color: var(--text-3);
-  font-size: 0.875rem;
-  margin-left: auto;
 }
 
 .convs-empty {
@@ -501,7 +453,7 @@ video.msg-media { cursor: default; }
 
 .msg-input {
   flex: 1;
-  min-width: 0;            /* let it shrink so the Send button stays on-screen */
+  min-width: 0;
   height: 44px;
   background: var(--elevated);
   border: 1px solid var(--border-md);
@@ -536,11 +488,6 @@ video.msg-media { cursor: default; }
     max-width: none;
     width: 100%;
     margin: 0;
-    /* leave room for the 52px topbar + 88px fixed mobile bottom nav (must
-       match FeedPage.css's .app-main padding-bottom — this file loads after
-       FeedPage.css and had its own copy of this calc still using the old
-       72px figure, silently overriding FeedPage.css's fix via cascade order
-       whenever no conversation is open). */
     height: calc(100vh - 88px);
     height: calc(100dvh - 88px);
     border: none;

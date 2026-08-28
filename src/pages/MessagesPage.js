@@ -3,8 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { prepareMediaFile } from '../utils/mediaUpload';
-import { getConversations, startConversation, sendMessage, getMessages, setTyping } from '../api/work';
-import { getFriends } from '../api/users';
+import { getConversations, sendMessage, getMessages, setTyping } from '../api/work';
 import { ConversationSkeleton } from '../components/Skeleton';
 import Lightbox from '../components/Lightbox';
 import CollabTasksPanel from '../components/CollabTasksPanel';
@@ -40,20 +39,13 @@ export default function MessagesPage() {
   const pollRef                           = useRef(null);
   const [searchParams]                    = useSearchParams();
 
-  // "New message" friend picker
-  const [friends, setFriends]             = useState([]);
-  const [showNewMsg, setShowNewMsg]        = useState(false);
-  const [startingWith, setStartingWith]    = useState(null);
   const [lightboxSrc, setLightboxSrc]      = useState(null);
   const [showTasks, setShowTasks]          = useState(false);
   const [typingUsers, setTypingUsers]      = useState([]);
   const lastTypingPingRef                  = useRef(0);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    loadConversations();
-    getFriends().then(r => setFriends(r.data.friends || [])).catch(() => {});
-  }, []);
+  useEffect(() => { loadConversations(); }, []);
 
   // Quietly poll the conversation list so a new conversation, a new last-
   // message preview, or someone else's group thread shows up without a
@@ -105,22 +97,6 @@ export default function MessagesPage() {
       }
     } catch { showToast('Failed to load conversations', 'error'); }
     finally { setLoadingConvs(false); }
-  };
-
-  const startNewConversation = async (friend) => {
-    try {
-      setStartingWith(friend.id);
-      const r = await startConversation(friend.id);
-      const convId = r.data.conversation_id;
-      const res = await getConversations();
-      const convs = res.data.conversations || [];
-      setConversations(convs);
-      const match = convs.find(cv => String(cv.id) === String(convId));
-      setActiveConv(match || { id: convId, with: friend.username, with_avatar: friend.profile_image, type: 'direct' });
-      setShowNewMsg(false);
-    } catch (err) {
-      showToast(err.response?.data?.error || 'Could not start chat', 'error');
-    } finally { setStartingWith(null); }
   };
 
   const loadMessages = async (convId) => {

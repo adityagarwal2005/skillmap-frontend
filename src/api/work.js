@@ -16,9 +16,6 @@ export const createWorkRequest = (data) =>
 export const getMyWorkRequests = (userId) =>
   API.get(`/work/requests/user/${userId}/`);
 
-export const getAvailableWorkRequests = (userId) =>
-  API.get(`/work/requests/available/${userId}/`);
-
 export const respondToWorkRequest = (wrId, status, message = '') =>
   API.post(`/work/requests/${wrId}/respond/`, new URLSearchParams({ status, message }));
 
@@ -31,20 +28,12 @@ export const assignWorkRequest = (wrId, assigneeId) =>
 export const rejectWorkApplicant = (wrId, applicantId) =>
   API.post(`/work/requests/${wrId}/reject/`, new URLSearchParams({ applicant_id: applicantId }));
 
+// Close early — stops it showing to anyone before its visibility window ends.
 export const closeWorkRequest = (wrId) =>
   API.post(`/work/requests/${wrId}/close/`);
 
 export const completeWorkRequest = (wrId) =>
   API.post(`/work/requests/${wrId}/complete/`);
-
-export const sendWorkProposal = (receiverId, data) =>
-  API.post(`/work/proposals/send/${receiverId}/`, new URLSearchParams(data));
-
-export const getMyProposals = () =>
-  API.get('/work/proposals/mine/');
-
-export const respondToWorkProposal = (proposalId, status) =>
-  API.post(`/work/proposals/${proposalId}/respond/`, new URLSearchParams({ status }));
 
 export const getMyApplications = () =>
   API.get('/my-applications/');

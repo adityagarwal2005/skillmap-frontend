@@ -38,13 +38,6 @@
 
 .notif-read-all:hover { background: var(--elevated); }
 
-.notif-loading {
-  text-align: center;
-  padding: 60px;
-  color: var(--text-2);
-  font-size: 0.875rem;
-}
-
 .notif-list { display: flex; flex-direction: column; gap: 4px; }
 
 .notif-card {

@@ -22,9 +22,6 @@
 .edit-head { margin-bottom: 26px; }
 
 .edit-title {
-  /* font-size/weight/letter-spacing/line-height come from the shared
-     editorial-heading rule in FeedPage.css, so every page title matches
-     the Feed hero's scale. */
   color: var(--text-1);
 }
 /* "// " prefix + color now come from the shared rule in FeedPage.css */
@@ -81,12 +78,6 @@
   gap: 8px;
 }
 
-.edit-hint {
-  font-weight: 400;
-  font-size: 0.75rem;
-  color: var(--text-3);
-}
-
 .edit-input {
   width: 100%;
   height: 48px;
@@ -113,32 +104,6 @@
   box-shadow: 0 0 0 3px rgba(150,150,150,0.15);
 }
 .edit-select { cursor: pointer; }
-
-/* Icon-prefixed social inputs */
-.edit-input-group { position: relative; display: flex; align-items: center; }
-
-.edit-input-icon {
-  position: absolute;
-  left: 8px;
-  width: 30px;
-  height: 30px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 7px;
-  color: #ffffff;
-  flex-shrink: 0;
-  pointer-events: none;
-}
-.edit-input-icon svg { display: block; }
-.edit-input-icon.linkedin  { background: #0a66c2; }
-.edit-input-icon.github    { background: #181717; }
-.edit-input-icon.instagram {
-  background: linear-gradient(45deg, #f09433, #dc2743 50%, #bc1888);
-}
-
-.edit-input.has-icon { padding-left: 48px; }
 
 /* Avatar upload */
 .avatar-edit {

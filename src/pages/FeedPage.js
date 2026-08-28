@@ -2,8 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
-import { getFeed, getTrending } from '../api/feed';
-import { getDiscoverPeople } from '../api/users';
+import { getFeed } from '../api/feed';
 import { respondToWorkRequest } from '../api/work';
 import { applyToCollab } from '../api/collab';
 import { PostCardSkeleton } from '../components/Skeleton';
@@ -32,10 +31,8 @@ export default function FeedPage() {
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(false);
-  const [tab, setTab]         = useState('for-you');
   const [workFilter, setWorkFilter] = useState('all');
   const [range, setRange]     = useState('5'); // 0.5 | 1 | 2 | 5 | 10 (km)
-  const [people, setPeople]   = useState([]);
   const [lightboxSrc, setLightboxSrc] = useState(null);
   const [showWelcome, setShowWelcome] = useState(
     () => localStorage.getItem('smWelcomeSeen') !== '1'
@@ -81,16 +78,6 @@ export default function FeedPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { loadFeed(); }, []);
 
-  // People to discover — keeps the feed from ever looking empty on day one.
-  useEffect(() => {
-    getDiscoverPeople({ limit: 12 })
-      .then(r => setPeople(r.data.results || []))
-      .catch(() => {});
-  }, []);
-
-  const fetchPage = tab === 'for-you' ? getFeed : getTrending;
-  const dataKey = tab === 'for-you' ? 'feed' : 'trending';
-
   const loadFeed = async () => {
     setLoading(true);
     try {
@@ -105,12 +92,10 @@ export default function FeedPage() {
     finally { setLoading(false); }
   };
 
-  // Quietly poll for brand-new posts (freelance + collab) while on the For
-  // You tab, and prepend/flash anything that wasn't there before — same
-  // approach as the Freelance job board's live poll. No WebSocket, no
-  // manual-refresh requirement, no infra change.
+  // Quietly poll for brand-new posts (freelance + collab) and prepend/flash
+  // anything that wasn't there before. No WebSocket, no manual-refresh
+  // requirement, no infra change.
   useEffect(() => {
-    if (tab !== 'for-you') return undefined;
     const poll = async () => {
       try {
         const r = await getFeed();
@@ -130,32 +115,17 @@ export default function FeedPage() {
     };
     pollRef.current = setInterval(poll, 5000);
     return () => clearInterval(pollRef.current);
-  }, [tab]);
-
-  const loadTrending = async () => {
-    setLoading(true);
-    try {
-      const r = await getTrending();
-      setItems(r.data.trending || []);
-      setHasMore(!!r.data.has_more);
-    } catch { showToast('Failed to load feed', 'error'); }
-    finally { setLoading(false); }
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleLoadMore = async () => {
     setLoadingMore(true);
     try {
-      const r = await fetchPage({ offset: items.length });
-      const next = r.data[dataKey] || [];
-      setItems(prev => [...prev, ...next]);
+      const r = await getFeed({ offset: items.length });
+      setItems(prev => [...prev, ...(r.data.feed || [])]);
       setHasMore(!!r.data.has_more);
     } catch { showToast('Failed to load more', 'error'); }
     finally { setLoadingMore(false); }
-  };
-
-  const switchTab = t => {
-    setTab(t);
-    t === 'for-you' ? loadFeed() : loadTrending();
   };
 
   return (
@@ -213,7 +183,7 @@ export default function FeedPage() {
             <div className="work-grid">
               {shown.map((item, i) => {
                 const isNew = newIds.has(`${item.kind}-${item.id}`);
-                const applied = item.kind === 'freelance' ? item.responses_count : item.applicants;
+                const appliedCount = item.kind === 'freelance' ? item.responses_count : item.applicants;
                 const near = item.distance_km != null && item.distance_km <= 2;
                 return (
                   <button key={`${item.kind}-${item.id}`}
@@ -255,7 +225,7 @@ export default function FeedPage() {
                         {item.kind === 'freelance' && item.gender_preference && item.gender_preference !== 'any' && (
                           <span className="work-metaitem">{item.gender_preference === 'male' ? 'Male' : 'Female'}</span>
                         )}
-                        {applied > 0 && <span className="work-metaitem">{applied} applied</span>}
+                        {appliedCount > 0 && <span className="work-metaitem">{appliedCount} applied</span>}
                         {item.kind === 'freelance' && timeLeft(item.expires_at) &&
                           <span className="work-metaitem">{timeLeft(item.expires_at)}</span>}
                       </span>

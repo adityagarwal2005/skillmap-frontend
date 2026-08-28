@@ -38,7 +38,6 @@
 }
 .post-new-card:hover { border-color: rgba(255,255,255,0.34); transform: translateY(-2px); }
 .post-new-card:active { transform: scale(0.98); }
-.post-new-emoji { font-size: 1.625rem; margin-bottom: 12px; }
 .post-new-name {
   font-family: var(--font-display);
   font-size: 1.1875rem;
@@ -56,9 +55,6 @@
   transition: transform 0.18s var(--ease-out-expo, ease), color 0.18s;
 }
 .post-new-card:hover .post-new-arrow { transform: translateX(3px); color: var(--text-1); }
-
-/* CUFood menu styles (.menu-section/.menu-item/.menu-price/…) live in
-   FeedPage.css so both Post and Work share one definition. */
 
 /* ══════════════════════════════════════════════
    My-post management — each posted freelance/collab
@@ -231,6 +227,57 @@
 }
 .mng-dm-btn:hover { opacity: 0.88; }
 .mng-dm-btn:active { transform: scale(0.96); }
+
+/* ── Close a post early ── */
+.mng-close-btn {
+  margin-top: 14px;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border-md);
+  background: none;
+  color: var(--text-3);
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: color 0.15s, border-color 0.15s;
+}
+.mng-close-btn:hover { color: #ff453a; border-color: rgba(255,69,58,0.5); }
+
+.mng-close-confirm {
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid rgba(255,69,58,0.35);
+  border-radius: 14px;
+  background: rgba(255,69,58,0.06);
+}
+.mng-close-q {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text-1);
+  margin-bottom: 12px;
+}
+.mng-close-btns { display: flex; gap: 10px; }
+.mng-close-yes {
+  flex: 1;
+  height: 40px;
+  border-radius: 12px;
+  background: #ff453a;
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 800;
+}
+.mng-close-yes:disabled { opacity: 0.6; }
+
+.mng-closed {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  font-size: 0.875rem;
+  color: var(--text-3);
+}
 
 @media (max-width: 520px) {
   .post-new-grid { grid-template-columns: 1fr; }

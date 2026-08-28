@@ -3,15 +3,6 @@ import API from './config';
 export const createPortfolioItem = (data) =>
   API.post('/portfolio/create/', new URLSearchParams(data));
 
-export const createStatusPost = (text) =>
-  API.post('/portfolio/status/', new URLSearchParams({ text }));
-
-export const getPortfolioItem = (userId, itemId) =>
-  API.get(`/portfolio/user/${userId}/`).then(r => ({
-    ...r,
-    data: { item: r.data.items?.find(i => i.id === parseInt(itemId)) }
-  }));
-
 export const editPortfolioItem = (itemId, data) =>
   API.post(`/portfolio/${itemId}/edit/`, new URLSearchParams(data));
 

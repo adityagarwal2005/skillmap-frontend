@@ -4,13 +4,6 @@
   padding: 28px 24px 60px;
 }
 
-.detail-loading {
-  text-align: center;
-  padding: 60px;
-  color: var(--text-2);
-  font-size: 0.875rem;
-}
-
 .detail-card {
   background: var(--surface);
   border: 1px solid var(--border-md);
