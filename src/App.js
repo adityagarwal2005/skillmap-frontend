@@ -40,6 +40,7 @@ const SearchPage       = lazyRetry(() => import('./pages/SearchPage'));
 const OnboardingPage   = lazyRetry(() => import('./pages/OnboardingPage'));
 const EditProfilePage  = lazyRetry(() => import('./pages/EditProfilePage'));
 const ApplicationsPage = lazyRetry(() => import('./pages/ApplicationsPage'));
+const ApplicantsPage   = lazyRetry(() => import('./pages/ApplicantsPage'));
 const JoinPage         = lazyRetry(() => import('./pages/JoinPage'));
 const LegalPage        = lazyRetry(() => import('./pages/LegalPage'));
 const PublicProfilePage = lazyRetry(() => import('./pages/PublicProfilePage'));
@@ -112,6 +113,7 @@ function App() {
             <Route path="/settings"                 element={user ? <SettingsPage /> : <Navigate to="/login" />} />
             <Route path="/search"                   element={user ? <SearchPage /> : <Navigate to="/login" />} />
             <Route path="/applications"             element={user ? <ApplicationsPage /> : <Navigate to="/login" />} />
+            <Route path="/applicants/:kind/:id"     element={user ? <ApplicantsPage /> : <Navigate to="/login" />} />
             <Route path="*"                         element={<Navigate to={user ? "/" : "/login"} />} />
           </Routes>
         </AuthGate>

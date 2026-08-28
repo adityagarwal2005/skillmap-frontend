@@ -183,7 +183,12 @@ export default function PostPage() {
               <span className={`mng-time ${tl === 'Expired' ? 'is-expired' : ''}`}>
                 {tl ? `⏳ ${tl}` : 'No expiry set'}
               </span>
-              <span className="mng-count">{applied} {applied === 1 ? 'applicant' : 'applicants'}</span>
+              {/* Opens the full applicant manager — room to read each pitch,
+                  see their skills, and accept/decline from one place. */}
+              <button className="mng-count is-link"
+                onClick={() => navigate(`/applicants/${kind}/${item.id}`)}>
+                {applied} {applied === 1 ? 'applicant' : 'applicants'} →
+              </button>
             </div>
             {renderApplicants(kind, item)}
           </div>
