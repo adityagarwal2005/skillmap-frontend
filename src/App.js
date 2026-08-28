@@ -33,8 +33,6 @@ const ProfilePage      = lazyRetry(() => import('./pages/ProfilePage'));
 const CreatePostPage   = lazyRetry(() => import('./pages/CreatePostPage'));
 const PostDetailPage   = lazyRetry(() => import('./pages/PostDetailPage'));
 const PeoplePage       = lazyRetry(() => import('./pages/PeoplePage'));
-const FreelancePage    = lazyRetry(() => import('./pages/FreelancePage'));
-const CollabPage       = lazyRetry(() => import('./pages/CollabPage'));
 const MessagesPage     = lazyRetry(() => import('./pages/MessagesPage'));
 const NotificationsPage = lazyRetry(() => import('./pages/NotificationsPage'));
 const SettingsPage     = lazyRetry(() => import('./pages/SettingsPage'));
@@ -104,8 +102,11 @@ function App() {
             <Route path="/post"                     element={user ? <PostPage /> : <Navigate to="/login" />} />
             <Route path="/post/:itemId"             element={user ? <PostDetailPage /> : <Navigate to="/login" />} />
             <Route path="/people"                   element={user ? <PeoplePage /> : <Navigate to="/login" />} />
-            <Route path="/freelance"                element={user ? <FreelancePage /> : <Navigate to="/login" />} />
-            <Route path="/collab"                   element={user ? <CollabPage /> : <Navigate to="/login" />} />
+            {/* /freelance and /collab are gone — browsing both happens on
+                Work (/), and posting/managing on Post (/post). Redirect any
+                old links (or a bookmarked board) instead of 404-ing. */}
+            <Route path="/freelance"                element={<Navigate to="/post" replace />} />
+            <Route path="/collab"                   element={<Navigate to="/post" replace />} />
             <Route path="/messages"                 element={user ? <MessagesPage /> : <Navigate to="/login" />} />
             <Route path="/notifications"            element={user ? <NotificationsPage /> : <Navigate to="/login" />} />
             <Route path="/settings"                 element={user ? <SettingsPage /> : <Navigate to="/login" />} />

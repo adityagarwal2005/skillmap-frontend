@@ -6,6 +6,7 @@ import { getMyWorkRequests, getWorkRequestResponses, assignWorkRequest, rejectWo
 import { getMyCollabPosts, getCollabApplicants, respondToCollabRequest } from '../api/collab';
 import AppShell from '../components/AppShell';
 import NotificationBell from '../components/NotificationBell';
+import CreateWorkModal from '../components/CreateWorkModal';
 import './FeedPage.css';
 import './PostPage.css';
 
@@ -35,6 +36,7 @@ export default function PostPage() {
   const [confirm, setConfirm]         = useState(null);          // { key, appId, action }
   const [busyId, setBusyId]           = useState(null);          // appId currently mutating
   const [connected, setConnected]     = useState({});            // `${key}:${appId}` -> conversation_id
+  const [createKind, setCreateKind]   = useState(null);          // 'freelance' | 'collab' | null
 
   const load = () => {
     if (!user?.id) return;
@@ -200,12 +202,12 @@ export default function PostPage() {
 
         {/* Two big create actions */}
         <div className="post-new-grid">
-          <button className="post-new-card" onClick={() => navigate('/freelance?new=1')}>
+          <button className="post-new-card" onClick={() => setCreateKind('freelance')}>
             <span className="post-new-name">New freelance</span>
             <span className="post-new-desc">Hire someone for paid work</span>
             <span className="post-new-arrow">→</span>
           </button>
-          <button className="post-new-card" onClick={() => navigate('/collab?new=1')}>
+          <button className="post-new-card" onClick={() => setCreateKind('collab')}>
             <span className="post-new-name">New collab</span>
             <span className="post-new-desc">Find teammates for a project</span>
             <span className="post-new-arrow">→</span>
@@ -256,6 +258,14 @@ export default function PostPage() {
           )}
         </section>
       </div>
+
+      {createKind && (
+        <CreateWorkModal
+          kind={createKind}
+          onClose={() => setCreateKind(null)}
+          onCreated={load}
+        />
+      )}
     </AppShell>
   );
 }

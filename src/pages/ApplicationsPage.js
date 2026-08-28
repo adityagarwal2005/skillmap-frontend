@@ -103,14 +103,13 @@ export default function ApplicationsPage() {
             <h3>No applications yet</h3>
             <p>Apply to a freelance job or collab and it'll show up here.</p>
             <div className="state-box-actions">
-              <button className="opp-cta" onClick={() => navigate('/freelance')}>Browse jobs</button>
-              <button className="opp-cta ghost" onClick={() => navigate('/collab')}>Browse collabs</button>
+              <button className="opp-cta" onClick={() => navigate('/')}>Browse work</button>
             </div>
           </div>
         ) : (
           shown.map(a => (
             <div key={`${a.kind}-${a.id}`} className="app-card"
-              onClick={() => navigate(a.kind === 'freelance' ? '/freelance' : '/collab')}>
+              onClick={() => navigate('/')}>
               <div className="app-card-top">
                 <span className={`opp-kind ${a.kind}`}>{a.kind === 'freelance' ? 'Freelance' : 'Collab'}</span>
                 <span className={`app-status ${STATUS_CLASS[a.status] || 'st-pending'}`}>

@@ -4,6 +4,8 @@ import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
 import { getFeed, getTrending } from '../api/feed';
 import { getDiscoverPeople } from '../api/users';
+import { respondToWorkRequest } from '../api/work';
+import { applyToCollab } from '../api/collab';
 import { PostCardSkeleton } from '../components/Skeleton';
 import AppShell from '../components/AppShell';
 import Lightbox from '../components/Lightbox';
@@ -40,8 +42,32 @@ export default function FeedPage() {
   );
   const [newIds, setNewIds] = useState(new Set());
   const [viewItem, setViewItem] = useState(null);
+  const [applyMsg, setApplyMsg] = useState('');
+  const [applying, setApplying] = useState(false);
+  const [applied, setApplied]   = useState(false);
   const seenIds = useRef(new Set());
   const pollRef = useRef(null);
+
+  // Reset the apply form each time a different opportunity is opened.
+  useEffect(() => { setApplyMsg(''); setApplied(false); }, [viewItem?.kind, viewItem?.id]);
+
+  const handleApply = async () => {
+    if (!viewItem) return;
+    try {
+      setApplying(true);
+      if (viewItem.kind === 'freelance') {
+        await respondToWorkRequest(viewItem.id, 'accepted', applyMsg);
+      } else {
+        await applyToCollab(viewItem.id, applyMsg);
+      }
+      setApplied(true);
+      showToast('Application sent!', 'success');
+    } catch (err) {
+      showToast(err.response?.data?.error || 'Could not apply', 'error');
+    } finally {
+      setApplying(false);
+    }
+  };
 
   const dismissWelcome = () => {
     setShowWelcome(false);
@@ -178,8 +204,8 @@ export default function FeedPage() {
             <h3>Nothing here yet</h3>
             <p>Post a freelance job or start a collab — or check back soon.</p>
             <div className="state-box-actions">
-              <button className="opp-cta" onClick={() => navigate('/freelance?new=1')}>Post a job</button>
-              <button className="opp-cta ghost" onClick={() => navigate('/collab?new=1')}>Start a collab</button>
+              <button className="opp-cta" onClick={() => navigate('/post')}>Post a job</button>
+              <button className="opp-cta ghost" onClick={() => navigate('/post')}>Start a collab</button>
             </div>
           </div>
           );
@@ -345,12 +371,29 @@ export default function FeedPage() {
               {viewItem.distance_km != null && <span className="opp-sub">📍 {viewItem.distance_km} km away</span>}
             </div>
 
+            {/* Applying happens right here — the separate Freelance/Collab
+                board pages the old flow linked out to are gone. */}
+            {applied ? (
+              <p className="apply-done">✓ Applied — you'll hear back in Messages.</p>
+            ) : (
+              <div className="modal-field">
+                <label className="modal-label">
+                  Message <span style={{ fontWeight: 400, color: 'var(--text-3)' }}>optional</span>
+                </label>
+                <textarea className="modal-textarea" rows={2}
+                  placeholder="Why are you a good fit?"
+                  value={applyMsg} onChange={e => setApplyMsg(e.target.value)} />
+              </div>
+            )}
+
             <div className="modal-actions">
               <button type="button" className="modal-cancel" onClick={() => setViewItem(null)}>Close</button>
-              <button type="button" className="modal-submit"
-                onClick={() => navigate(viewItem.kind === 'freelance' ? '/freelance' : '/collab')}>
-                {viewItem.kind === 'freelance' ? 'Apply on Freelance board' : 'Apply on Collab board'}
-              </button>
+              {!applied && (
+                <button type="button" className="modal-submit"
+                  onClick={handleApply} disabled={applying}>
+                  {applying ? 'Applying…' : viewItem.kind === 'freelance' ? 'Apply for job' : 'Join collab'}
+                </button>
+              )}
             </div>
           </div>
         </div>

@@ -39,9 +39,10 @@ const NAV = [
     { id: 'people',  label: 'People',  path: '/people', icon: I.people },
   ]},
   { group: 'Work', items: [
-    { id: 'freelance', label: 'Freelance', path: '/freelance', icon: I.freelance },
-    { id: 'collab',    label: 'Collab',    path: '/collab',    icon: I.collab },
-    { id: 'messages',  label: 'Messages',  path: '/messages',  icon: I.messages },
+    // Freelance/Collab no longer have their own board pages — browsing both
+    // happens on Work (/), and posting/managing on Post (/post).
+    { id: 'post',     label: 'Post',     path: '/post',     icon: I.create },
+    { id: 'messages', label: 'Messages', path: '/messages', icon: I.messages },
   ]},
   { group: 'You', items: [
     { id: 'profile',       label: 'Profile',       path: null,             icon: I.profile },
@@ -67,8 +68,6 @@ function deriveActive(pathname) {
   if (pathname.startsWith('/post'))          return 'post';
   if (pathname.startsWith('/search'))        return 'search';
   if (pathname.startsWith('/people'))        return 'people';
-  if (pathname.startsWith('/freelance'))     return 'work';
-  if (pathname.startsWith('/collab'))        return 'work';
   if (pathname.startsWith('/messages'))      return 'messages';
   if (pathname.startsWith('/profile'))       return 'profile';
   if (pathname.startsWith('/applications'))  return 'applications';
@@ -116,8 +115,6 @@ export default function AppShell({
   const [nudgeDismissed, setNudgeDismissed] = useState(
     () => localStorage.getItem('smNudgeDismissed') === '1'
   );
-  const [showPostSheet, setShowPostSheet] = useState(false);
-  const [showWorkSheet, setShowWorkSheet] = useState(false);
   const { canInstall, promptInstall } = useInstallPrompt();
   const [installDismissed, setInstallDismissed] = useState(
     () => localStorage.getItem('smInstallDismissed') === '1'
@@ -223,18 +220,7 @@ export default function AppShell({
 
   const handleNav = (item) => {
     if (item.id === 'profile') { navigate(`/profile/${user?.id}`); return; }
-    if (item.id === 'create') { setShowPostSheet(true); return; }
     if (item.path) navigate(item.path);
-  };
-
-  const choosePost = (path) => {
-    setShowPostSheet(false);
-    navigate(path);
-  };
-
-  const chooseWork = (path) => {
-    setShowWorkSheet(false);
-    navigate(path);
   };
 
   const handleSearchSubmit = (e) => {
@@ -270,7 +256,7 @@ export default function AppShell({
               ))}
             </div>
           ))}
-          <button className="sidebar-post-btn" onClick={() => setShowPostSheet(true)}>
+          <button className="sidebar-post-btn" onClick={() => navigate('/post')}>
             + Post work
           </button>
         </nav>
@@ -347,69 +333,6 @@ export default function AppShell({
           onError={e => { e.currentTarget.style.display = 'none'; }} />
       )}
 
-      {showPostSheet && (
-        <div className="post-sheet-overlay" onClick={() => setShowPostSheet(false)}>
-          <div className="post-sheet" onClick={e => e.stopPropagation()}>
-            <div className="post-sheet-grip" />
-            <h2 className="post-sheet-title">What do you want to post?</h2>
-            <p className="post-sheet-sub">Pick where this goes.</p>
-
-            <button className="post-option" onClick={() => choosePost('/freelance?new=1')}>
-              <span className="post-option-ic">{I.freelance}</span>
-              <span className="post-option-text">
-                <span className="post-option-name">Post a freelance job</span>
-                <span className="post-option-desc">Hire someone for paid work</span>
-              </span>
-              <span className="post-option-arrow">→</span>
-            </button>
-
-            <button className="post-option" onClick={() => choosePost('/collab?new=1')}>
-              <span className="post-option-ic">{I.collab}</span>
-              <span className="post-option-text">
-                <span className="post-option-name">Start a collab</span>
-                <span className="post-option-desc">Find teammates to build something together</span>
-              </span>
-              <span className="post-option-arrow">→</span>
-            </button>
-
-            <button className="post-sheet-cancel" onClick={() => setShowPostSheet(false)}>
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
-
-      {showWorkSheet && (
-        <div className="post-sheet-overlay" onClick={() => setShowWorkSheet(false)}>
-          <div className="post-sheet" onClick={e => e.stopPropagation()}>
-            <div className="post-sheet-grip" />
-            <h2 className="post-sheet-title">Work</h2>
-            <p className="post-sheet-sub">Browse paid gigs or find collaborators.</p>
-
-            <button className="post-option" onClick={() => chooseWork('/freelance')}>
-              <span className="post-option-ic">{I.freelance}</span>
-              <span className="post-option-text">
-                <span className="post-option-name">Freelance</span>
-                <span className="post-option-desc">Paid jobs from people on campus</span>
-              </span>
-              <span className="post-option-arrow">→</span>
-            </button>
-
-            <button className="post-option" onClick={() => chooseWork('/collab')}>
-              <span className="post-option-ic">{I.collab}</span>
-              <span className="post-option-text">
-                <span className="post-option-name">Collab</span>
-                <span className="post-option-desc">Team up on something together</span>
-              </span>
-              <span className="post-option-arrow">→</span>
-            </button>
-
-            <button className="post-sheet-cancel" onClick={() => setShowWorkSheet(false)}>
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
