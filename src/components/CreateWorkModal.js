@@ -83,7 +83,15 @@ export default function CreateWorkModal({ kind, onClose, onCreated }) {
       onCreated?.();
       onClose();
     } catch (err) {
-      showToast(err.response?.data?.error || 'Failed to post', 'error');
+      // Surface the status when the server didn't send a usable message —
+      // a bare "Failed to post" on a 500 gives no clue what went wrong.
+      const status = err.response?.status;
+      showToast(
+        err.response?.data?.error
+          || (status >= 500 ? `Server error (${status}) — please try again`
+              : status ? `Failed to post (${status})` : 'Network error — check your connection'),
+        'error',
+      );
     } finally {
       setSubmitting(false);
     }
