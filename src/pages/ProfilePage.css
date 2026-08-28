@@ -26,11 +26,13 @@
   box-shadow: 0 1px 2px rgba(0,0,0,0.2), 0 12px 40px rgba(0,0,0,0.22);
 }
 
-/* Identity row — avatar + name/category/status */
+/* Identity row — avatar + name/category/status. Top-aligned (not centered)
+   so a long username wrapping to 2-3 lines doesn't leave the avatar floating
+   oddly in the middle of the block. */
 .profile-id-row {
   display: flex;
-  align-items: center;
-  gap: 20px;
+  align-items: flex-start;
+  gap: 18px;
 }
 
 .profile-avatar-wrap { position: relative; flex-shrink: 0; }
@@ -150,11 +152,16 @@
 /* ── Action bar ── */
 .profile-actions { display: flex; flex-direction: column; gap: 12px; }
 
-.profile-action-row { display: flex; gap: 10px; }
+/* flex-wrap + min-width:0 on every child — without these, a select showing
+   "Not Available" plus two more pills forced a fixed intrinsic width per
+   item and blew straight off the right edge of narrow phones instead of
+   shrinking or wrapping. */
+.profile-action-row { display: flex; gap: 10px; flex-wrap: wrap; }
 
 /* Primary — full-width ink/white pill */
 .profile-primary-btn {
   flex: 1;
+  min-width: 0;
   height: 48px;
   padding: 0 22px;
   border-radius: 14px;
@@ -163,6 +170,7 @@
   font-size: 0.9375rem;
   font-weight: 700;
   letter-spacing: -0.01em;
+  white-space: nowrap;
   transition: opacity 0.15s, transform 0.14s var(--ease-out-expo, ease);
 }
 .profile-primary-btn:hover:not(:disabled) { opacity: 0.88; }
@@ -173,6 +181,7 @@
 /* Secondary — outlined pill */
 .profile-ghost-btn {
   flex: 1;
+  min-width: 0;
   height: 48px;
   padding: 0 18px;
   border-radius: 14px;
@@ -181,6 +190,9 @@
   color: var(--text-1);
   font-size: 0.9375rem;
   font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   transition: background 0.15s, border-color 0.15s;
 }
 .profile-ghost-btn:hover:not(:disabled) { background: var(--elevated); border-color: var(--text-3); }
@@ -190,6 +202,7 @@
 
 .status-select {
   flex: 1;
+  min-width: 0;
   height: 48px;
   background: var(--elevated);
   border: 1px solid var(--border-md);
@@ -200,6 +213,7 @@
   padding: 0 14px;
   cursor: pointer;
   font-family: inherit;
+  text-overflow: ellipsis;
 }
 
 /* Tertiary — subtle text links for Share / Rate / Report / Block */

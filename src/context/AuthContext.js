@@ -28,6 +28,16 @@ export const AuthProvider = ({ children }) => {
     setUser(userData);
   };
 
+  // Merge a partial patch into the stored user (e.g. after picking a
+  // username, or any other in-place profile field the app already knows).
+  const updateUser = (patch) => {
+    setUser(prev => {
+      const next = { ...prev, ...patch };
+      localStorage.setItem('user', JSON.stringify(next));
+      return next;
+    });
+  };
+
   const logoutUser = () => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
@@ -37,7 +47,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, loginUser, logoutUser }}>
+    <AuthContext.Provider value={{ user, token, loading, loginUser, updateUser, logoutUser }}>
       {children}
     </AuthContext.Provider>
   );

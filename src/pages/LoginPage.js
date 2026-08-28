@@ -86,7 +86,14 @@ export default function LoginPage() {
   const signIn = (res) => {
     const { access, refresh, user_id } = res.data;
     loginUser(
-      { id: user_id, username: res.data.username || form.identifier || form.email },
+      {
+        id: user_id,
+        username: res.data.username || form.identifier || form.email,
+        // Only set on a brand-new Google sign-in — the account got an
+        // auto-generated username from the email and hasn't picked a real
+        // one yet. App.js redirects here until they do.
+        needsUsername: !!res.data.is_new_user,
+      },
       access, refresh,
     );
   };

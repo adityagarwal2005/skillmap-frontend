@@ -349,9 +349,9 @@ export default function ProfilePage() {
                     <button className="profile-ghost-btn" onClick={() => navigate('/applications')}>
                       Applications
                     </button>
-                    <button className="profile-ghost-btn" onClick={handleShare}>
-                      Share
-                    </button>
+                  </div>
+                  <div className="profile-more-links">
+                    <button onClick={handleShare}>Share profile</button>
                   </div>
                 </div>
               ) : (

@@ -46,6 +46,7 @@ const JoinPage         = lazyRetry(() => import('./pages/JoinPage'));
 const LegalPage        = lazyRetry(() => import('./pages/LegalPage'));
 const PublicProfilePage = lazyRetry(() => import('./pages/PublicProfilePage'));
 const LandingPage       = lazyRetry(() => import('./pages/LandingPage'));
+const ChooseUsernamePage = lazyRetry(() => import('./pages/ChooseUsernamePage'));
 
 const Loader = () => (
   <div style={{
@@ -64,6 +65,20 @@ const Loader = () => (
   </div>
 );
 
+// A brand-new Google sign-in lands with an auto-generated username (from
+// their email) and user.needsUsername=true. Force every route except the
+// picker itself (and a few always-public pages) through /choose-username
+// until they've actually picked one.
+function AuthGate({ user, children }) {
+  const location = useLocation();
+  const allowed = ['/choose-username', '/terms', '/privacy'];
+  const isPublicProfile = location.pathname.startsWith('/u/');
+  if (user?.needsUsername && !allowed.includes(location.pathname) && !isPublicProfile) {
+    return <Navigate to="/choose-username" replace />;
+  }
+  return children;
+}
+
 function App() {
   const { user, loading } = useAuth();
 
@@ -73,29 +88,32 @@ function App() {
     <BrowserRouter>
       <ScrollToTop />
       <Suspense fallback={<Loader />}>
-        <Routes>
-          <Route path="/login"                    element={user ? <Navigate to="/" /> : <LoginPage />} />
-          <Route path="/join/:username"           element={user ? <Navigate to="/" /> : <JoinPage />} />
-          <Route path="/terms"                    element={<LegalPage />} />
-          <Route path="/privacy"                  element={<LegalPage />} />
-          <Route path="/u/:username"              element={<PublicProfilePage />} />
-          <Route path="/onboarding"               element={user ? <OnboardingPage /> : <Navigate to="/login" />} />
-          <Route path="/"                         element={user ? <FeedPage /> : <LandingPage />} />
-          <Route path="/profile/:userId"          element={user ? <ProfilePage /> : <Navigate to="/login" />} />
-          <Route path="/profile/:userId/edit"     element={user ? <EditProfilePage /> : <Navigate to="/login" />} />
-          <Route path="/create-post"              element={user ? <CreatePostPage /> : <Navigate to="/login" />} />
-          <Route path="/post"                     element={user ? <PostPage /> : <Navigate to="/login" />} />
-          <Route path="/post/:itemId"             element={user ? <PostDetailPage /> : <Navigate to="/login" />} />
-          <Route path="/people"                   element={user ? <PeoplePage /> : <Navigate to="/login" />} />
-          <Route path="/freelance"                element={user ? <FreelancePage /> : <Navigate to="/login" />} />
-          <Route path="/collab"                   element={user ? <CollabPage /> : <Navigate to="/login" />} />
-          <Route path="/messages"                 element={user ? <MessagesPage /> : <Navigate to="/login" />} />
-          <Route path="/notifications"            element={user ? <NotificationsPage /> : <Navigate to="/login" />} />
-          <Route path="/settings"                 element={user ? <SettingsPage /> : <Navigate to="/login" />} />
-          <Route path="/search"                   element={user ? <SearchPage /> : <Navigate to="/login" />} />
-          <Route path="/applications"             element={user ? <ApplicationsPage /> : <Navigate to="/login" />} />
-          <Route path="*"                         element={<Navigate to={user ? "/" : "/login"} />} />
-        </Routes>
+        <AuthGate user={user}>
+          <Routes>
+            <Route path="/login"                    element={user ? <Navigate to="/" /> : <LoginPage />} />
+            <Route path="/join/:username"           element={user ? <Navigate to="/" /> : <JoinPage />} />
+            <Route path="/terms"                    element={<LegalPage />} />
+            <Route path="/privacy"                  element={<LegalPage />} />
+            <Route path="/u/:username"              element={<PublicProfilePage />} />
+            <Route path="/choose-username"          element={user ? <ChooseUsernamePage /> : <Navigate to="/login" />} />
+            <Route path="/onboarding"               element={user ? <OnboardingPage /> : <Navigate to="/login" />} />
+            <Route path="/"                         element={user ? <FeedPage /> : <LandingPage />} />
+            <Route path="/profile/:userId"          element={user ? <ProfilePage /> : <Navigate to="/login" />} />
+            <Route path="/profile/:userId/edit"     element={user ? <EditProfilePage /> : <Navigate to="/login" />} />
+            <Route path="/create-post"              element={user ? <CreatePostPage /> : <Navigate to="/login" />} />
+            <Route path="/post"                     element={user ? <PostPage /> : <Navigate to="/login" />} />
+            <Route path="/post/:itemId"             element={user ? <PostDetailPage /> : <Navigate to="/login" />} />
+            <Route path="/people"                   element={user ? <PeoplePage /> : <Navigate to="/login" />} />
+            <Route path="/freelance"                element={user ? <FreelancePage /> : <Navigate to="/login" />} />
+            <Route path="/collab"                   element={user ? <CollabPage /> : <Navigate to="/login" />} />
+            <Route path="/messages"                 element={user ? <MessagesPage /> : <Navigate to="/login" />} />
+            <Route path="/notifications"            element={user ? <NotificationsPage /> : <Navigate to="/login" />} />
+            <Route path="/settings"                 element={user ? <SettingsPage /> : <Navigate to="/login" />} />
+            <Route path="/search"                   element={user ? <SearchPage /> : <Navigate to="/login" />} />
+            <Route path="/applications"             element={user ? <ApplicationsPage /> : <Navigate to="/login" />} />
+            <Route path="*"                         element={<Navigate to={user ? "/" : "/login"} />} />
+          </Routes>
+        </AuthGate>
       </Suspense>
     </BrowserRouter>
   );
