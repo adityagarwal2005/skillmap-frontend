@@ -186,3 +186,44 @@
 .cw-submit:hover:not(:disabled) { opacity: 0.88; }
 .cw-submit:active { transform: scale(0.98); }
 .cw-submit:disabled { opacity: 0.5; }
+
+/* ── v2: posting should feel like listing a real job ── */
+.cw-modal {
+  background: var(--surface-2);
+  border: 1px solid var(--hairline);
+  box-shadow: var(--e-3);
+}
+.cw-title { font-family: var(--font-display); letter-spacing: -0.04em; }
+.cw-close { transition: background var(--t-med) ease, transform var(--t-fast) var(--ease-out); }
+.cw-close:active { transform: scale(0.9); }
+
+.cw-label { color: var(--text-1); }
+.cw-input {
+  background: var(--surface-flat);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+}
+.cw-input:focus { border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-dim); background: #000; }
+
+/* The money field is the one that matters — make it look like it. */
+.cw-input.cw-money {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--brand);
+}
+
+.cw-media-pick {
+  border-radius: var(--r-md);
+  border: 1.5px dashed var(--hairline-str);
+  transition: border-color var(--t-med) ease, background var(--t-med) ease, color var(--t-med) ease;
+}
+.cw-media-pick:hover { border-color: var(--brand-line); background: var(--brand-dim); color: var(--brand-bright); }
+
+.cw-submit {
+  border-radius: var(--r-md);
+  box-shadow: var(--e-2);
+  transition: transform var(--t-fast) var(--ease-out), opacity var(--t-fast) ease;
+}
+.cw-cancel { border-radius: var(--r-md); border-color: var(--hairline-str); }

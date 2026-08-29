@@ -53,3 +53,14 @@
 }
 
 .toast-close:hover { color: var(--text-1); }
+/* ── v2: toasts match the marketplace surface language ── */
+.toast {
+  background: var(--surface-2);
+  border: 1px solid var(--hairline-str);
+  border-radius: var(--r-md);
+  box-shadow: var(--e-3);
+  font-weight: 600;
+  animation: slideUp var(--t-med) var(--ease-spring) both;
+}
+.toast.success { border-left: 3px solid var(--ok); }
+.toast.error   { border-left: 3px solid var(--danger); }

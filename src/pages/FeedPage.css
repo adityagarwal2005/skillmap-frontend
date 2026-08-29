@@ -1736,3 +1736,205 @@ video.post-media-el { cursor: default; object-fit: contain; background: #000; }
   background: rgba(255,255,255,0.08);
   box-shadow: inset 2px 0 0 var(--brand);
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   MARKETPLACE POLISH — PASS 2
+   Notifications, People, Applications, Search, Settings, Onboarding.
+   These all import FeedPage.css, so they're styled from here.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── Notifications: an activity feed, not a list of strings ── */
+.app-shell .notif-list { display: flex; flex-direction: column; gap: 8px; }
+.app-shell .notif-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+  padding: 15px 16px;
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-lg);
+  transition: border-color var(--t-med) ease, transform var(--t-med) var(--ease-spring);
+  animation: riseIn var(--t-slow) var(--ease-spring) both;
+}
+.app-shell .notif-card:hover { border-color: var(--hairline-str); transform: translateY(-2px); }
+.app-shell .notif-card.unread {
+  background: var(--surface-2);
+  box-shadow: inset 3px 0 0 var(--brand);
+}
+.app-shell .notif-icon {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--hairline);
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+.app-shell .notif-message { font-size: 0.9375rem; line-height: 1.5; color: var(--text-1); }
+.app-shell .notif-time { font-size: 0.75rem; color: var(--text-3); font-weight: 600; }
+.app-shell .notif-dot { background: var(--brand); box-shadow: 0 0 0 3px var(--brand-dim); }
+.app-shell .notif-unread-count {
+  background: var(--brand);
+  color: #fff;
+  font-weight: 800;
+  border-radius: var(--r-pill);
+  padding: 3px 10px;
+  font-size: 0.75rem;
+}
+.app-shell .notif-read-all { border-radius: var(--r-pill); border: 1px solid var(--hairline-str); }
+.app-shell .notif-action-btn { border-radius: var(--r-pill); font-weight: 700; }
+
+/* ── People: talent cards ── */
+.app-shell .people-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 12px;
+}
+.app-shell .person-card {
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-xl);
+  padding: 18px;
+  animation: riseIn var(--t-slow) var(--ease-spring) both;
+}
+.app-shell .person-card:hover { border-color: var(--hairline-str); box-shadow: var(--e-3); }
+.app-shell .person-card .person-name { color: var(--text-1); font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; }
+.app-shell .person-card .person-cat,
+.app-shell .person-card .person-headline,
+.app-shell .person-card .person-stat { color: var(--text-2); }
+.app-shell .person-card .person-footer { border-top-color: var(--hairline); }
+.app-shell .person-card .tag-skill {
+  background: rgba(255,255,255,0.06);
+  color: var(--text-2);
+  border-radius: var(--r-pill);
+}
+.app-shell .person-ava { background: var(--surface-2); border: 1px solid var(--hairline-str); }
+.app-shell .people-search {
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-xl);
+}
+.app-shell .people-search-input {
+  background: var(--surface-flat);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+}
+.app-shell .people-search-input:focus { border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-dim); }
+.app-shell .people-search-btn { border-radius: var(--r-md); background: #fff; color: #000; font-weight: 800; }
+.app-shell .friend-reqs {
+  background: var(--surface-2);
+  border: 1px solid var(--brand-line);
+  border-radius: var(--r-xl);
+}
+.app-shell .friend-reqs-count { background: var(--brand); color: #fff; }
+.app-shell .person-friend-btn { border-radius: var(--r-pill); font-weight: 700; }
+
+/* ── Applications: track your pitches ── */
+.app-shell .app-card {
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-xl);
+  padding: 17px 18px;
+  margin-bottom: 10px;
+  transition: border-color var(--t-med) ease, transform var(--t-med) var(--ease-spring);
+  animation: riseIn var(--t-slow) var(--ease-spring) both;
+}
+.app-shell .app-card:hover { border-color: var(--hairline-str); transform: translateY(-2px); }
+.app-shell .app-title {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--text-1);
+}
+.app-shell .app-pay { color: var(--brand); font-family: var(--font-display); font-weight: 800; letter-spacing: -0.02em; }
+.app-shell .app-status { border-radius: var(--r-pill); font-weight: 800; font-size: 0.6875rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 11px; }
+.app-shell .st-pending  { background: var(--warn-dim); color: var(--warn); }
+.app-shell .st-accepted { background: var(--ok-dim);   color: var(--ok); }
+.app-shell .st-declined { background: var(--danger-dim); color: var(--danger); }
+.app-shell .type-filters,
+.app-shell .apps-filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+
+/* ── Search results ── */
+.app-shell .post-card {
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-xl);
+  transition: border-color var(--t-med) ease, transform var(--t-med) var(--ease-spring);
+}
+.app-shell .post-card:hover { border-color: var(--hairline-str); transform: translateY(-2px); box-shadow: var(--e-2); }
+.app-shell .search-inline-input {
+  background: var(--surface-flat);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-pill);
+}
+.app-shell .search-inline-input:focus { border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-dim); }
+
+/* ── Settings + Onboarding surfaces ── */
+.app-shell .settings-section,
+.app-shell .invite-section,
+.app-shell .danger-zone {
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-xl);
+}
+.app-shell .danger-zone { border-color: rgba(255,69,58,0.28); }
+.app-shell .danger-title { color: var(--danger); }
+.app-shell .invite-link-input {
+  background: var(--surface-flat);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+}
+
+.onboard-card {
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-xl);
+  box-shadow: var(--e-3);
+  animation: slideUp var(--t-slow) var(--ease-spring) both;
+}
+.onboard-bar { background: rgba(255,255,255,0.08); border-radius: var(--r-pill); overflow: hidden; }
+.onboard-bar-fill {
+  background: linear-gradient(90deg, var(--brand), var(--brand-bright));
+  transition: width var(--t-slow) var(--ease-spring);
+}
+.onboard-title { font-family: var(--font-display); font-weight: 800; letter-spacing: -0.035em; }
+.category-card {
+  background: var(--surface-flat);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+  transition: border-color var(--t-med) ease, background var(--t-med) ease, transform var(--t-fast) var(--ease-out);
+}
+.category-card:hover { border-color: var(--hairline-str); }
+.category-card:active { transform: scale(0.97); }
+.category-card.selected {
+  border-color: var(--brand);
+  background: var(--brand-dim);
+  color: var(--brand-bright);
+}
+.location-captured {
+  background: var(--ok-dim);
+  border: 1px solid rgba(34,197,94,0.3);
+  border-radius: var(--r-md);
+  padding: 14px 16px;
+}
+.status-option {
+  background: var(--surface-flat);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+  transition: border-color var(--t-med) ease, background var(--t-med) ease;
+}
+.status-option.selected { border-color: var(--brand); background: var(--brand-dim); }
+
+/* ── Load-more: a real affordance ── */
+.app-shell .load-more-btn {
+  width: 100%;
+  height: 50px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--hairline-str);
+  background: none;
+  color: var(--text-1);
+  font-weight: 700;
+  transition: background var(--t-med) ease, border-color var(--t-med) ease;
+}
+.app-shell .load-more-btn:hover:not(:disabled) { background: rgba(255,255,255,0.06); border-color: var(--text-3); }

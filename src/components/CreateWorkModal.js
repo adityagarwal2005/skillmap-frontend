@@ -132,7 +132,7 @@ export default function CreateWorkModal({ kind, onClose, onCreated }) {
           {isFreelance && (
             <div className="cw-field">
               <label className="cw-label">Payment (₹)</label>
-              <input className="cw-input" type="number" required placeholder="e.g. 2000"
+              <input className="cw-input cw-money" type="number" required placeholder="e.g. 2000"
                 value={form.payment_amount} onChange={e => set('payment_amount', e.target.value)} />
             </div>
           )}

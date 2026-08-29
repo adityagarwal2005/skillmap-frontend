@@ -366,3 +366,55 @@
   .landing-cta-lg, .landing-cta-ghost { width: 100%; }
   .landing-footer { flex-direction: column; gap: 12px; text-align: center; justify-content: center; }
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   LANDING v2 — sell the marketplace, not the app.
+   ══════════════════════════════════════════════════════════════════ */
+.landing-nav {
+  background: rgba(0,0,0,0.72);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid var(--hairline);
+}
+.landing-nav-cta {
+  border-radius: var(--r-pill);
+  font-weight: 800;
+  box-shadow: var(--e-2);
+  transition: transform var(--t-fast) var(--ease-out), opacity var(--t-fast) ease;
+}
+.landing-nav-cta:active { transform: scale(0.96); }
+
+.landing-hero-inner { animation: slideUp var(--t-slow) var(--ease-spring) both; }
+.landing-hero-tag {
+  background: var(--brand-dim);
+  border-color: var(--brand-line);
+}
+
+.landing-cta-lg {
+  border-radius: var(--r-pill);
+  font-weight: 800;
+  box-shadow: var(--e-2);
+  transition: transform var(--t-fast) var(--ease-out), opacity var(--t-fast) ease, box-shadow var(--t-med) ease;
+}
+.landing-cta-lg:hover { box-shadow: var(--e-3); }
+.landing-cta-lg:active { transform: scale(0.97); }
+.landing-cta-ghost { border-radius: var(--r-pill); border-color: var(--hairline-str); }
+
+.landing-feature-card {
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-xl);
+  animation: riseIn var(--t-slow) var(--ease-spring) both;
+}
+.landing-feature-icon {
+  background: var(--brand-dim);
+  border: 1px solid var(--brand-line);
+  border-radius: var(--r-md);
+}
+
+.landing-step { border-top: 2px solid var(--hairline-str); }
+.landing-step-num { font-family: var(--font-display); color: var(--brand); }
+
+.landing-cta-band { border-top: 1px solid var(--hairline); }
+.landing-cta-band-title { font-family: var(--font-display); letter-spacing: -0.045em; }
+.landing-footer { border-top: 1px solid var(--hairline); }
