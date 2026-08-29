@@ -1,7 +1,12 @@
 .apl-page {
+  /* width:100% is load-bearing: .app-main is a flex column, so an item with
+     `margin: 0 auto` and no explicit width shrinks to fit its content instead
+     of filling the screen. That collapsed this page to a narrow centred strip
+     on mobile — most obvious while loading, when the text is short. */
+  width: 100%;
   max-width: 720px;
   margin: 0 auto;
-  padding: 20px 22px 96px;
+  padding: 20px 20px 96px;
   position: relative;
   z-index: 2;
 }
@@ -236,3 +241,21 @@
 .apl-meta { background: var(--surface-flat); border: 1px solid var(--hairline); border-radius: var(--r-lg); }
 .apl-price { color: var(--brand); }
 .apl-tick, .apl-cross, .apl-confirm, .apl-cancel, .apl-dm { border-radius: var(--r-pill); }
+
+/* ── Loading skeletons, shaped like the real applicant card ── */
+.apl-title-skel { height: 34px; width: 78%; border-radius: 10px; margin-bottom: 4px; }
+.apl-card-skel { animation: fadeIn var(--t-med) ease both; }
+.apl-skel-top { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.apl-skel-ava { width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0; }
+.apl-skel-name { height: 16px; width: 44%; }
+.apl-skel-line { height: 13px; width: 84%; margin-bottom: 16px; }
+.apl-skel-actions { height: 44px; width: 100%; border-radius: 12px; }
+
+/* Tighter gutters on small screens — 22px each side ate the card width. */
+@media (max-width: 520px) {
+  .apl-page { padding-left: 16px; padding-right: 16px; }
+  .apl-card { padding: 16px 15px 14px; }
+  .apl-actions { gap: 8px; }
+  .apl-meta { gap: 10px; padding: 12px 13px; }
+  .apl-status { margin-left: 0; }
+}

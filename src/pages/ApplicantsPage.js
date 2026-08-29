@@ -108,8 +108,10 @@ export default function ApplicantsPage() {
           <NotificationBell />
         </div>
 
-        <span className="apl-kind">{isFreelance ? 'Freelance' : 'Collab'}</span>
-        <h1 className="apl-title">{loading ? 'Loading…' : title || 'Post not found'}</h1>
+        <span className="apl-kind">{isFreelance ? 'Paid gig' : 'Collab'}</span>
+        {loading
+          ? <div className="ds-skel apl-title-skel" />
+          : <h1 className="apl-title">{title || 'Post not found'}</h1>}
 
         {post && (
           <div className="apl-meta">
@@ -123,14 +125,34 @@ export default function ApplicantsPage() {
 
         <div className="apl-count-row">
           <h2 className="apl-count">
-            {applicants.length} {applicants.length === 1 ? 'applicant' : 'applicants'}
+            {loading
+              ? 'Applicants'
+              : `${applicants.length} ${applicants.length === 1 ? 'applicant' : 'applicants'}`}
           </h2>
         </div>
 
         {loading ? (
-          <p className="menu-muted">Loading applicants…</p>
+          <div className="apl-list">
+            {[0, 1].map(n => (
+              <div key={n} className="apl-card apl-card-skel" style={{ animationDelay: `${n * 90}ms` }}>
+                <div className="apl-skel-top">
+                  <div className="ds-skel apl-skel-ava" />
+                  <div className="ds-skel apl-skel-name" />
+                </div>
+                <div className="ds-skel apl-skel-line" />
+                <div className="ds-skel apl-skel-actions" />
+              </div>
+            ))}
+          </div>
         ) : applicants.length === 0 ? (
-          <p className="menu-muted">No one has applied yet.</p>
+          <div className="state-box">
+            <h3>No applicants yet</h3>
+            <p>
+              It's live{tl && tl !== 'Expired' ? ` for another ${tl.replace(' left', '')}` : ''} —
+              people nearby will see it in their Work feed. You'll get a notification the moment
+              someone applies.
+            </p>
+          </div>
         ) : (
           <div className="apl-list">
             {applicants.map(a => {

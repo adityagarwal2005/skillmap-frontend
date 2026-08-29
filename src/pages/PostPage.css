@@ -1,7 +1,10 @@
 .post-page {
+  /* See .apl-page — .app-main is a flex column, so this needs an explicit
+     width or it shrinks to its content instead of filling the screen. */
+  width: 100%;
   max-width: 720px;
   margin: 0 auto;
-  padding: 28px 22px 96px;
+  padding: 28px 20px 96px;
   position: relative;
   z-index: 2;
 }
