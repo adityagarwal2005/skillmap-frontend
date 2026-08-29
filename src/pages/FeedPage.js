@@ -10,6 +10,7 @@ import Lightbox from '../components/Lightbox';
 import Logo from '../components/Logo';
 import NotificationBell from '../components/NotificationBell';
 import { cldAvatar, cldThumb } from '../utils/cloudinaryUrl';
+import usePoll from '../hooks/usePoll';
 import './FeedPage.css';
 
 function timeLeft(expiresAt) {
@@ -49,7 +50,6 @@ export default function FeedPage() {
   const [applying, setApplying] = useState(false);
   const [applied, setApplied]   = useState(false);
   const seenIds = useRef(new Set());
-  const pollRef = useRef(null);
 
   // Reset the apply form each time a different opportunity is opened.
   useEffect(() => { setApplyMsg(''); setApplied(false); }, [viewItem?.kind, viewItem?.id]);
@@ -111,31 +111,27 @@ export default function FeedPage() {
     finally { setLoading(false); }
   };
 
-  // Quietly poll for brand-new posts (freelance + collab) and prepend/flash
-  // anything that wasn't there before. No WebSocket, no manual-refresh
-  // requirement, no infra change.
-  useEffect(() => {
-    const poll = async () => {
-      try {
-        const r = await getFeed();
-        const fresh = r.data.feed || [];
-        const arrived = fresh.filter(it => !seenIds.current.has(`${it.kind}-${it.id}`));
-        if (arrived.length) {
-          arrived.forEach(it => seenIds.current.add(`${it.kind}-${it.id}`));
-          setItems(prev => [...arrived, ...prev]);
-          setNewIds(prev => {
-            const n = new Set(prev);
-            arrived.forEach(it => n.add(`${it.kind}-${it.id}`));
-            return n;
-          });
-          showToast(`${arrived.length} new post${arrived.length > 1 ? 's' : ''}`, 'success');
-        }
-      } catch { /* silent — polling shouldn't nag */ }
-    };
-    pollRef.current = setInterval(poll, 5000);
-    return () => clearInterval(pollRef.current);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // Quietly pick up brand-new posts and prepend/flash anything that wasn't
+  // there before. usePoll pauses while the tab is hidden and catches up on
+  // return, so a backgrounded app costs the API nothing. 20s rather than 5s:
+  // the feed is not a chat, and this is the single most-hit endpoint.
+  usePoll(async () => {
+    try {
+      const r = await getFeed();
+      const fresh = r.data.feed || [];
+      const arrived = fresh.filter(it => !seenIds.current.has(`${it.kind}-${it.id}`));
+      if (arrived.length) {
+        arrived.forEach(it => seenIds.current.add(`${it.kind}-${it.id}`));
+        setItems(prev => [...arrived, ...prev]);
+        setNewIds(prev => {
+          const n = new Set(prev);
+          arrived.forEach(it => n.add(`${it.kind}-${it.id}`));
+          return n;
+        });
+        showToast(`${arrived.length} new post${arrived.length > 1 ? 's' : ''}`, 'success');
+      }
+    } catch { /* silent — polling shouldn't nag */ }
+  }, 20000);
 
   const handleLoadMore = async () => {
     setLoadingMore(true);

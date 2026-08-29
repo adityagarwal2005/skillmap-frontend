@@ -9,6 +9,7 @@ import Lightbox from '../components/Lightbox';
 import CollabTasksPanel from '../components/CollabTasksPanel';
 import { cldAvatar, cldThumb } from '../utils/cloudinaryUrl';
 import AppShell from '../components/AppShell';
+import usePoll from '../hooks/usePoll';
 import NotificationBell from '../components/NotificationBell';
 import './FeedPage.css';
 import './MessagesPage.css';
@@ -36,7 +37,6 @@ export default function MessagesPage() {
   const [loadingMsgs, setLoadingMsgs]     = useState(false);
   const [sending, setSending]             = useState(false);
   const messagesEndRef                    = useRef(null);
-  const pollRef                           = useRef(null);
   const [searchParams]                    = useSearchParams();
 
   const [lightboxSrc, setLightboxSrc]      = useState(null);
@@ -52,12 +52,10 @@ export default function MessagesPage() {
   // manual refresh — no loading spinner, just a silent swap. The currently
   // open thread (activeConv) isn't touched by this, so it can't disrupt
   // what's on screen while you're actually reading a conversation.
-  useEffect(() => {
-    const id = setInterval(() => {
-      getConversations().then(res => setConversations(res.data.conversations || [])).catch(() => {});
-    }, 5000);
-    return () => clearInterval(id);
-  }, []);
+  // Conversation list: slower than the open thread, and paused when hidden.
+  usePoll(() => {
+    getConversations().then(res => setConversations(res.data.conversations || [])).catch(() => {});
+  }, 15000);
 
   // Keep the mobile bottom nav out of the way while actually in a thread —
   // it was competing with the input bar for the same reserved space,
@@ -70,14 +68,16 @@ export default function MessagesPage() {
   useEffect(() => { setShowTasks(false); setTypingUsers([]); }, [activeConv?.id]);
 
   useEffect(() => {
-    if (activeConv) {
-      loadMessages(activeConv.id);
-      // Near-real-time: poll the open thread every 2.5s on both people's screens.
-      pollRef.current = setInterval(() => loadMessages(activeConv.id), 2500);
-    }
-    return () => clearInterval(pollRef.current);
+    if (activeConv) loadMessages(activeConv.id);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeConv]);
+
+  // The open thread stays near-real-time (3s) — but only while a thread is
+  // actually open AND the tab is visible, so a backgrounded chat costs
+  // nothing. This is the one poll that genuinely needs to be fast.
+  usePoll(() => {
+    if (activeConv) loadMessages(activeConv.id);
+  }, 3000, !!activeConv);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });

@@ -5,6 +5,7 @@ import { getUnreadCount } from '../api/notifications';
 import { getUser } from '../api/users';
 import useInstallPrompt from '../hooks/useInstallPrompt';
 import usePageMeta from '../hooks/usePageMeta';
+import usePoll from '../hooks/usePoll';
 import { pushSupported, isPushEnabled, enablePush } from '../push';
 import '../pages/FeedPage.css';
 
@@ -134,13 +135,13 @@ export default function AppShell({
     }
   }, [user?.id]);
 
-  // Poll the unread count so the bell badge updates without a page refresh.
-  useEffect(() => {
-    const refresh = () => getUnreadCount().then(r => setUnread(r.data.unread_count || 0)).catch(() => {});
-    refresh();
-    const id = setInterval(refresh, 5000);
-    return () => clearInterval(id);
-  }, []);
+  // Desktop sidebar badge only — <NotificationBell/> fetches the same count
+  // for its own badge, so this deliberately runs slowly to avoid doubling
+  // the request rate on an endpoint every screen already hits.
+  const refreshUnread = () =>
+    getUnreadCount().then(r => setUnread(r.data.unread_count || 0)).catch(() => {});
+  useEffect(() => { refreshUnread(); }, []);
+  usePoll(refreshUnread, 60000);
 
   const activeId = active || deriveActive(location.pathname);
 

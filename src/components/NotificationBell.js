@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getUnreadCount } from '../api/notifications';
+import usePoll from '../hooks/usePoll';
 import './NotificationBell.css';
 
 const BELL = (
@@ -20,12 +21,9 @@ export default function NotificationBell({ className = '' }) {
   const navigate = useNavigate();
   const [unread, setUnread] = useState(0);
 
-  useEffect(() => {
-    const refresh = () => getUnreadCount().then(r => setUnread(r.data.unread_count || 0)).catch(() => {});
-    refresh();
-    const id = setInterval(refresh, 8000);
-    return () => clearInterval(id);
-  }, []);
+  const refresh = () => getUnreadCount().then(r => setUnread(r.data.unread_count || 0)).catch(() => {});
+  useEffect(() => { refresh(); }, []);
+  usePoll(refresh, 25000);
 
   return (
     <button className={`notif-bell ${className}`} aria-label="Notifications"

@@ -3,6 +3,7 @@ import { useToast } from '../context/ToastContext';
 import { getNotifications, markAsRead, markAllAsRead } from '../api/notifications';
 import { respondFriendRequest } from '../api/users';
 import AppShell from '../components/AppShell';
+import usePoll from '../hooks/usePoll';
 import { PostCardSkeleton } from '../components/Skeleton';
 import { cldAvatar } from '../utils/cloudinaryUrl';
 import './FeedPage.css';
@@ -47,7 +48,6 @@ export default function NotificationsPage() {
   const [statusOverride, setStatusOverride] = useState({});
   const [newIds, setNewIds] = useState(new Set());
   const seenIds = useRef(new Set());
-  const pollRef = useRef(null);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { load(); }, []);
@@ -69,22 +69,18 @@ export default function NotificationsPage() {
   // wasn't there before — same approach used across Feed/Collab/Freelance.
   // The topbar bell badge already polls separately every 30s; this keeps
   // the actual list in sync too, without a manual refresh.
-  useEffect(() => {
-    const poll = async () => {
-      try {
-        const res = await getNotifications();
-        const fresh = res.data.notifications || [];
-        const arrived = fresh.filter(n => !seenIds.current.has(n.id));
-        if (arrived.length) {
-          arrived.forEach(n => seenIds.current.add(n.id));
-          setNotifications(prev => [...arrived, ...prev]);
-          setNewIds(prev => { const n2 = new Set(prev); arrived.forEach(n => n2.add(n.id)); return n2; });
-        }
-      } catch { /* silent — polling shouldn't nag */ }
-    };
-    pollRef.current = setInterval(poll, 5000);
-    return () => clearInterval(pollRef.current);
-  }, []);
+  usePoll(async () => {
+    try {
+      const res = await getNotifications();
+      const fresh = res.data.notifications || [];
+      const arrived = fresh.filter(n => !seenIds.current.has(n.id));
+      if (arrived.length) {
+        arrived.forEach(n => seenIds.current.add(n.id));
+        setNotifications(prev => [...arrived, ...prev]);
+        setNewIds(prev => { const n2 = new Set(prev); arrived.forEach(n => n2.add(n.id)); return n2; });
+      }
+    } catch { /* silent — polling shouldn't nag */ }
+  }, 20000);
 
   const handleRead = async (id) => {
     try {

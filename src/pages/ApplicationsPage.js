@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useToast } from '../context/ToastContext';
 import { getMyApplications, completeWorkRequest } from '../api/work';
 import AppShell from '../components/AppShell';
+import usePoll from '../hooks/usePoll';
 import { PostCardSkeleton } from '../components/Skeleton';
 import './FeedPage.css';
 import './FreelancePage.css';   // reuses .wr-view-btn/.wr-close-btn/.wr-waiting for the complete/rate row
@@ -53,12 +54,9 @@ export default function ApplicationsPage() {
   // without a manual refresh — no loading spinner, just a silent swap since
   // this list is short and personal (not something the user scrolls deep
   // into), so a wholesale replace doesn't risk losing scroll position.
-  useEffect(() => {
-    const id = setInterval(() => {
-      getMyApplications().then(r => setApps(r.data.applications || [])).catch(() => {});
-    }, 5000);
-    return () => clearInterval(id);
-  }, []);
+  usePoll(() => {
+    getMyApplications().then(r => setApps(r.data.applications || [])).catch(() => {});
+  }, 20000);
 
   const handleCompleteJob = async (wrId) => {
     try {
