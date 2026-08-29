@@ -5,7 +5,6 @@ import { useAuth } from '../context/AuthContext';
 import { getFeed } from '../api/feed';
 import { respondToWorkRequest } from '../api/work';
 import { applyToCollab } from '../api/collab';
-import { PostCardSkeleton } from '../components/Skeleton';
 import AppShell from '../components/AppShell';
 import Lightbox from '../components/Lightbox';
 import Logo from '../components/Logo';
@@ -33,6 +32,13 @@ export default function FeedPage() {
   const [hasMore, setHasMore] = useState(false);
   const [workFilter, setWorkFilter] = useState('all');
   const [range, setRange]     = useState('5'); // 0.5 | 1 | 2 | 5 | 10 (km)
+  const [query, setQuery]     = useState('');
+  const [sort, setSort]       = useState('new');   // new | pay | near
+  const [category, setCategory] = useState('');    // skill-derived browse filter
+  const [saved, setSaved]     = useState(() => {
+    try { return new Set(JSON.parse(localStorage.getItem('smSaved') || '[]')); }
+    catch { return new Set(); }
+  });
   const [lightboxSrc, setLightboxSrc] = useState(null);
   const [showWelcome, setShowWelcome] = useState(
     () => localStorage.getItem('smWelcomeSeen') !== '1'
@@ -47,6 +53,19 @@ export default function FeedPage() {
 
   // Reset the apply form each time a different opportunity is opened.
   useEffect(() => { setApplyMsg(''); setApplied(false); }, [viewItem?.kind, viewItem?.id]);
+
+  // Saved gigs live in localStorage — a shortlist you can build while
+  // browsing without committing to applying yet.
+  const toggleSave = (item, e) => {
+    e.stopPropagation();
+    const key = `${item.kind}-${item.id}`;
+    setSaved(prev => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key); else next.add(key);
+      localStorage.setItem('smSaved', JSON.stringify([...next]));
+      return next;
+    });
+  };
 
   const handleApply = async () => {
     if (!viewItem) return;
@@ -176,36 +195,142 @@ export default function FeedPage() {
           );
         })()}
 
+        {/* Search + sort — browsing a marketplace without these is guesswork. */}
+        <div className="work-tools">
+          <div className="work-search">
+            <svg className="work-search-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              strokeWidth="2.2" strokeLinecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+            <input className="work-search-input"
+              placeholder="Search work, skills, people…"
+              value={query} onChange={e => setQuery(e.target.value)} />
+            {query && (
+              <button className="work-search-clear" onClick={() => setQuery('')} aria-label="Clear">×</button>
+            )}
+          </div>
+          <select className="work-sort" value={sort} onChange={e => setSort(e.target.value)}>
+            <option value="new">Newest</option>
+            <option value="pay">Highest pay</option>
+            <option value="near">Nearest</option>
+          </select>
+        </div>
+
         <div className="work-filter">
-          {['all', 'freelance', 'collab'].map(f => (
+          {['all', 'freelance', 'collab', 'saved'].map(f => (
             <button key={f}
               className={`work-filter-chip ${workFilter === f ? 'active' : ''}`}
               onClick={() => setWorkFilter(f)}>
-              {f === 'all' ? 'All work' : f === 'freelance' ? 'Paid gigs' : 'Collabs'}
+              {f === 'all' ? 'All work'
+                : f === 'freelance' ? 'Paid gigs'
+                : f === 'collab' ? 'Collabs'
+                : `Saved${saved.size ? ` (${saved.size})` : ''}`}
             </button>
           ))}
         </div>
 
+        {/* Browse by skill — the closest thing to marketplace categories, built
+            from what's actually on offer right now rather than a fixed list. */}
         {(() => {
-          const shown = items.filter(it =>
-            (workFilter === 'all' || it.kind === workFilter) &&
-            (it.distance_km == null || it.distance_km <= parseFloat(range))
+          const counts = {};
+          items.forEach(it => (it.skills || []).forEach(s => {
+            const k = s.trim();
+            if (k) counts[k] = (counts[k] || 0) + 1;
+          }));
+          const top = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 8);
+          if (top.length === 0) return null;
+          return (
+            <div className="work-cats">
+              {category && (
+                <button className="work-cat active" onClick={() => setCategory('')}>
+                  {category} <span className="work-cat-x">×</span>
+                </button>
+              )}
+              {top.filter(([s]) => s !== category).map(([s, n]) => (
+                <button key={s} className="work-cat" onClick={() => setCategory(s)}>
+                  {s} <span className="work-cat-n">{n}</span>
+                </button>
+              ))}
+            </div>
           );
+        })()}
+
+        {(() => {
+          const q = query.trim().toLowerCase();
+          const shown = items.filter(it => {
+            const key = `${it.kind}-${it.id}`;
+            if (workFilter === 'saved') { if (!saved.has(key)) return false; }
+            else if (workFilter !== 'all' && it.kind !== workFilter) return false;
+            if (it.distance_km != null && it.distance_km > parseFloat(range)) return false;
+            if (category && !(it.skills || []).some(s => s.toLowerCase() === category.toLowerCase())) return false;
+            if (q) {
+              const hay = [
+                it.title, it.description, it.user?.username, it.user?.category,
+                ...(it.skills || []),
+              ].filter(Boolean).join(' ').toLowerCase();
+              if (!hay.includes(q)) return false;
+            }
+            return true;
+          }).sort((a, b) => {
+            if (sort === 'pay') return (Number(b.payment_amount) || 0) - (Number(a.payment_amount) || 0);
+            if (sort === 'near') {
+              const da = a.distance_km ?? Infinity, db = b.distance_km ?? Infinity;
+              return da - db;
+            }
+            return 0; // 'new' — the feed already arrives newest-first
+          });
           if (loading) return (
-            <div className="loading-row">
-              <PostCardSkeleton /><PostCardSkeleton /><PostCardSkeleton />
+            <div className="work-grid">
+              {[0, 1, 2].map(n => (
+                <div key={n} className="wc-skeleton" style={{ animationDelay: `${n * 90}ms` }}>
+                  <div className="ds-skel sk-row-sm" />
+                  <div className="ds-skel sk-row-lg" />
+                  <div className="ds-skel sk-row-md" />
+                  <div className="sk-chips">
+                    <div className="ds-skel sk-chip" /><div className="ds-skel sk-chip" /><div className="ds-skel sk-chip" />
+                  </div>
+                  <div className="ds-skel sk-deal" />
+                </div>
+              ))}
             </div>
           );
-          if (shown.length === 0) return (
-          <div className="state-box">
-            <h3>Nothing here yet</h3>
-            <p>Post a freelance job or start a collab — or check back soon.</p>
-            <div className="state-box-actions">
-              <button className="opp-cta" onClick={() => navigate('/post')}>Post a job</button>
-              <button className="opp-cta ghost" onClick={() => navigate('/post')}>Start a collab</button>
-            </div>
-          </div>
-          );
+
+          /* Empty states that name the actual reason and offer the fix. */
+          if (shown.length === 0) {
+            const filtered = query || category || workFilter !== 'all';
+            if (workFilter === 'saved' && !query && !category) return (
+              <div className="state-box">
+                <h3>No saved work yet</h3>
+                <p>Tap the bookmark on any gig to keep it here while you decide.</p>
+                <div className="state-box-actions">
+                  <button className="opp-cta" onClick={() => setWorkFilter('all')}>Browse all work</button>
+                </div>
+              </div>
+            );
+            if (filtered) return (
+              <div className="state-box">
+                <h3>Nothing matches that</h3>
+                <p>
+                  {query ? <>No work matching “{query}”</> : 'No work'}
+                  {category && <> in <strong>{category}</strong></>} within {range} km.
+                </p>
+                <div className="state-box-actions">
+                  <button className="opp-cta" onClick={() => { setQuery(''); setCategory(''); setWorkFilter('all'); }}>
+                    Clear filters
+                  </button>
+                  <button className="opp-cta ghost" onClick={() => setRange('10')}>Widen to 10 km</button>
+                </div>
+              </div>
+            );
+            return (
+              <div className="state-box">
+                <h3>Nothing open near you</h3>
+                <p>Be the first — post a gig or start a collab and people nearby will see it.</p>
+                <div className="state-box-actions">
+                  <button className="opp-cta" onClick={() => navigate('/post')}>Post a gig</button>
+                  <button className="opp-cta ghost" onClick={() => setRange('10')}>Widen to 10 km</button>
+                </div>
+              </div>
+            );
+          }
           return (
             <div className="work-grid">
               {shown.map((item, i) => {
@@ -228,9 +353,21 @@ export default function FeedPage() {
                         {item.kind === 'freelance' ? 'Paid gig' : 'Collab'}
                       </span>
                       {isNew && <span className="wc-new">New</span>}
+                      <span className="wc-top-right">
                       {left && (
                         <span className={`wc-left ${urgent ? 'is-urgent' : ''}`}>{left}</span>
                       )}
+                      <button
+                        className={`wc-save ${saved.has(`${item.kind}-${item.id}`) ? 'is-saved' : ''}`}
+                        onClick={e => toggleSave(item, e)}
+                        aria-label={saved.has(`${item.kind}-${item.id}`) ? 'Remove from saved' : 'Save for later'}>
+                        <svg viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor"
+                          fill={saved.has(`${item.kind}-${item.id}`) ? 'currentColor' : 'none'}
+                          strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M6 4h12a1 1 0 0 1 1 1v15l-7-4.2L5 20V5a1 1 0 0 1 1-1z" />
+                        </svg>
+                      </button>
+                      </span>
                     </div>
 
                     <h2 className="wc-title">{item.title}</h2>
