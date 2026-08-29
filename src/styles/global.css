@@ -30,6 +30,48 @@
   --radius-lg:   18px;
   --shadow-sm:   0 2px 8px rgba(0,0,0,0.3);
   --shadow-md:   0 4px 24px rgba(0,0,0,0.4);
+
+  /* ── Marketplace design system ──────────────────────────────
+     Flat pure-black read as "list of things"; a talent marketplace needs
+     depth and hierarchy. Surfaces are near-black gradients separated by
+     hairlines, so cards feel like objects you can act on. */
+  --surface-1:   linear-gradient(180deg, #121212 0%, #0a0a0a 100%);
+  --surface-2:   linear-gradient(180deg, #171717 0%, #0e0e0e 100%);
+  --surface-flat:#101010;
+  --hairline:    rgba(255,255,255,0.10);
+  --hairline-str:rgba(255,255,255,0.20);
+
+  /* Accent — orange carries money, urgency and primary intent */
+  --brand:       #ef5f26;
+  --brand-bright:#ff8a5c;
+  --brand-dim:   rgba(239,95,38,0.14);
+  --brand-line:  rgba(239,95,38,0.38);
+
+  /* Semantic */
+  --ok:          #22c55e;
+  --ok-dim:      rgba(34,197,94,0.13);
+  --warn:        #f5a524;
+  --warn-dim:    rgba(245,165,36,0.13);
+  --danger:      #ff453a;
+  --danger-dim:  rgba(255,69,58,0.13);
+
+  /* Radii + elevation */
+  --r-sm: 10px;
+  --r-md: 14px;
+  --r-lg: 20px;
+  --r-xl: 26px;
+  --r-pill: 999px;
+  --e-1: 0 1px 2px rgba(0,0,0,0.4);
+  --e-2: 0 4px 16px rgba(0,0,0,0.45);
+  --e-3: 0 14px 38px rgba(0,0,0,0.55);
+  --e-brand: 0 8px 28px rgba(239,95,38,0.28);
+
+  /* Motion — one spring for everything that moves */
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out:    cubic-bezier(0.22, 1, 0.36, 1);
+  --t-fast: 0.14s;
+  --t-med:  0.24s;
+  --t-slow: 0.42s;
 }
 
 [data-theme="light"] {
@@ -225,3 +267,92 @@ body { text-rendering: optimizeLegibility; }
     scroll-behavior: auto !important;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   MARKETPLACE MOTION + PRIMITIVES
+   Shared vocabulary so every page moves and reads the same way.
+   ══════════════════════════════════════════════════════════════════ */
+
+@keyframes riseIn   { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes fadeIn   { from { opacity: 0; } to { opacity: 1; } }
+@keyframes popIn    { from { opacity: 0; transform: scale(0.94); } to { opacity: 1; transform: none; } }
+@keyframes slideUp  { from { transform: translateY(28px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes shimmer  { 0% { background-position: -420px 0; } 100% { background-position: 420px 0; } }
+@keyframes livePulse {
+  0%   { box-shadow: 0 0 0 0 rgba(34,197,94,0.55); }
+  70%  { box-shadow: 0 0 0 7px rgba(34,197,94,0); }
+  100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
+}
+@keyframes brandPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(239,95,38,0.5); }
+  70%  { box-shadow: 0 0 0 8px rgba(239,95,38,0); }
+  100% { box-shadow: 0 0 0 0 rgba(239,95,38,0); }
+}
+
+/* Stagger helper — set --i on children for a cascading entrance. */
+.stagger > * { animation: riseIn var(--t-slow) var(--ease-spring) both; }
+.stagger > *:nth-child(1) { animation-delay: 0ms; }
+.stagger > *:nth-child(2) { animation-delay: 45ms; }
+.stagger > *:nth-child(3) { animation-delay: 90ms; }
+.stagger > *:nth-child(4) { animation-delay: 135ms; }
+.stagger > *:nth-child(5) { animation-delay: 180ms; }
+.stagger > *:nth-child(6) { animation-delay: 225ms; }
+.stagger > *:nth-child(n+7) { animation-delay: 260ms; }
+
+/* ── Chips: the marketplace's core metadata unit ── */
+.ds-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 11px;
+  border-radius: var(--r-pill);
+  background: rgba(255,255,255,0.06);
+  color: var(--text-2);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+.ds-chip.is-brand { background: var(--brand-dim); color: var(--brand-bright); }
+.ds-chip.is-ok    { background: var(--ok-dim);    color: var(--ok); }
+.ds-chip.is-warn  { background: var(--warn-dim);  color: var(--warn); }
+
+/* ── Money: the number that matters most on a freelance platform ── */
+.ds-money {
+  font-family: var(--font-display);
+  font-weight: 800;
+  color: var(--brand);
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Live dot ── */
+.ds-live {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--ok);
+  flex-shrink: 0;
+  animation: livePulse 1.8s ease-out infinite;
+}
+
+/* ── Section label ── */
+.ds-eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+/* ── Skeleton shimmer ── */
+.ds-skel {
+  background: linear-gradient(90deg, #101010 8%, #1a1a1a 18%, #101010 33%);
+  background-size: 840px 100%;
+  animation: shimmer 1.3s linear infinite;
+  border-radius: var(--r-sm);
+}
+
+/* Every interactive surface gets the same press feedback. */
+.ds-press { transition: transform var(--t-fast) var(--ease-out), opacity var(--t-fast) ease; }
+.ds-press:active { transform: scale(0.97); }

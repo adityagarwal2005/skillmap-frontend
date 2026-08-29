@@ -509,3 +509,64 @@ video.msg-media { cursor: default; }
   .msg-input { min-width: 0; padding: 0 14px; }
   .msg-send-btn { padding: 0 16px; }
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   MESSAGES v2 — a real inbox: clearer rows, warmer bubbles.
+   ══════════════════════════════════════════════════════════════════ */
+.app-shell .convs-panel { background: var(--bg); border-right: 1px solid var(--hairline); }
+.app-shell .convs-header { background: var(--bg); border-bottom: 1px solid var(--hairline); }
+.app-shell .convs-title { font-family: var(--font-display); font-weight: 800; letter-spacing: -0.045em; }
+
+.app-shell .conv-item {
+  border-radius: var(--r-lg);
+  transition: background var(--t-med) ease, transform var(--t-fast) var(--ease-out);
+}
+.app-shell .conv-item:hover { background: rgba(255,255,255,0.05); }
+.app-shell .conv-item:active { transform: scale(0.99); }
+.app-shell .conv-item.active {
+  background: rgba(255,255,255,0.08);
+  box-shadow: inset 3px 0 0 var(--brand);
+}
+.app-shell .conv-ava {
+  background: var(--surface-2);
+  border: 1px solid var(--hairline);
+}
+.app-shell .conv-name { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; }
+
+/* Unread gets the brand dot */
+.app-shell .conv-unread { background: var(--brand); box-shadow: 0 0 0 3px var(--brand-dim); }
+
+.app-shell .thread-header {
+  background: var(--bg);
+  border-bottom: 1px solid var(--hairline);
+}
+.app-shell .thread-name { font-family: var(--font-display); font-weight: 800; letter-spacing: -0.03em; }
+
+/* Bubbles: mine white, theirs a soft dark card */
+.app-shell .msg-bubble {
+  border-radius: var(--r-lg);
+  animation: popIn var(--t-med) var(--ease-spring) both;
+}
+.app-shell .msg-row:not(.own) .msg-bubble {
+  background: var(--surface-2);
+  border: 1px solid var(--hairline);
+}
+
+/* Composer */
+.app-shell .msg-input-bar {
+  background: var(--bg);
+  border-top: 1px solid var(--hairline);
+}
+.app-shell .msg-input {
+  background: var(--surface-flat);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-pill);
+  transition: border-color var(--t-med) ease, box-shadow var(--t-med) ease;
+}
+.app-shell .msg-input:focus { border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-dim); }
+.app-shell .msg-send-btn {
+  border-radius: var(--r-pill);
+  background: #fff;
+  color: #000;
+  font-weight: 800;
+}

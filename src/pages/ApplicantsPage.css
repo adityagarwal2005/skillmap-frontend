@@ -216,3 +216,23 @@
 }
 .apl-dm:hover { opacity: 0.88; }
 .apl-dm:active { transform: scale(0.98); }
+
+/* ── v2: applicant cards read as candidate profiles ── */
+.apl-card {
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-xl);
+  transition: border-color var(--t-med) ease, transform var(--t-med) var(--ease-spring);
+}
+.apl-card:hover { border-color: var(--hairline-str); transform: translateY(-2px); }
+.apl-ava { background: var(--surface-2); border: 1px solid var(--hairline-str); }
+.apl-name { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.025em; }
+.apl-rating { color: var(--brand-bright); font-weight: 700; }
+.apl-skill {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-pill);
+}
+.apl-meta { background: var(--surface-flat); border: 1px solid var(--hairline); border-radius: var(--r-lg); }
+.apl-price { color: var(--brand); }
+.apl-tick, .apl-cross, .apl-confirm, .apl-cancel, .apl-dm { border-radius: var(--r-pill); }

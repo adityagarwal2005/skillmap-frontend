@@ -241,20 +241,51 @@ export default function PostPage() {
     <AppShell active="post">
       <div className="post-page">
         <div className="page-title-row">
-          <h1 className="post-page-title">Post</h1>
+          <div>
+            <span className="ds-eyebrow">Your listings</span>
+            <h1 className="post-page-title">Post</h1>
+          </div>
           <NotificationBell />
         </div>
+
+        {/* Seller dashboard — what's live, who's waiting, what it's worth. */}
+        {!loading && (jobs.length > 0 || collabs.length > 0) && (() => {
+          const live = [...jobs, ...collabs].filter(p => p.status !== 'closed').length;
+          const waiting = jobs.reduce((s, j) => s + (j.responses_count || 0), 0)
+                        + collabs.reduce((s, c) => s + (c.applicants || 0), 0);
+          const committed = jobs
+            .filter(j => j.status !== 'closed')
+            .reduce((s, j) => s + (Number(j.payment_amount) || 0), 0);
+          return (
+            <div className="market-pulse">
+              <div className="mp-stat">
+                <span className="mp-val"><span className="ds-live" />{live}</span>
+                <span className="mp-label">Live</span>
+              </div>
+              <div className="mp-stat">
+                <span className="mp-val">{waiting}</span>
+                <span className="mp-label">Waiting on you</span>
+              </div>
+              <div className="mp-stat">
+                <span className="mp-val is-money">₹{committed.toLocaleString('en-IN')}</span>
+                <span className="mp-label">Offered</span>
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Two big create actions */}
         <div className="post-new-grid">
           <button className="post-new-card" onClick={() => setCreateKind('freelance')}>
-            <span className="post-new-name">New freelance</span>
-            <span className="post-new-desc">Hire someone for paid work</span>
+            <span className="post-new-badge">Paid</span>
+            <span className="post-new-name">Post a gig</span>
+            <span className="post-new-desc">Hire someone on campus for paid work</span>
             <span className="post-new-arrow">→</span>
           </button>
           <button className="post-new-card" onClick={() => setCreateKind('collab')}>
-            <span className="post-new-name">New collab</span>
-            <span className="post-new-desc">Find teammates for a project</span>
+            <span className="post-new-badge is-collab">Team</span>
+            <span className="post-new-name">Start a collab</span>
+            <span className="post-new-desc">Find teammates for a project or hackathon</span>
             <span className="post-new-arrow">→</span>
           </button>
         </div>

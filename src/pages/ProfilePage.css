@@ -535,3 +535,121 @@
 
   .portfolio-grid { grid-template-columns: 1fr; }
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   PROFILE v2 — reads as a freelancer's card, not a settings screen.
+   ══════════════════════════════════════════════════════════════════ */
+.app-shell .profile-header {
+  position: relative;
+  overflow: hidden;
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-xl);
+  box-shadow: var(--e-2);
+  animation: riseIn var(--t-slow) var(--ease-spring) both;
+}
+/* Warm glow behind the avatar so the header has a focal point. */
+.app-shell .profile-header::before {
+  content: '';
+  position: absolute;
+  top: -80px; left: -60px;
+  width: 260px; height: 260px;
+  background: radial-gradient(circle, rgba(239,95,38,0.16), transparent 68%);
+  pointer-events: none;
+}
+
+.app-shell .profile-avatar {
+  width: 92px;
+  height: 92px;
+  background: var(--surface-2);
+  border: 1px solid var(--hairline-str);
+  box-shadow: var(--e-2);
+}
+
+.app-shell .profile-name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+}
+.app-shell .profile-category {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--brand-bright);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Stats read as credentials */
+.app-shell .profile-stats {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-lg);
+  padding: 16px 4px;
+}
+.app-shell .profile-stat + .profile-stat { border-left: 1px solid var(--hairline); }
+.app-shell .profile-stat-val {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+}
+.app-shell .profile-stat-label {
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+}
+
+/* Sections */
+.app-shell .profile-skills-section {
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-xl);
+  box-shadow: var(--e-1);
+  animation: riseIn var(--t-slow) var(--ease-spring) both;
+}
+.app-shell .section-title {
+  font-family: var(--font-display);
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+/* Skills as real, tappable credentials */
+.app-shell .skill-tag {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-pill);
+  padding: 7px 14px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  transition: border-color var(--t-med) ease, background var(--t-med) ease;
+}
+.app-shell .skill-tag:hover { border-color: var(--brand-line); background: var(--brand-dim); }
+.app-shell .skill-endorse-count {
+  background: var(--brand-dim);
+  color: var(--brand-bright);
+  font-weight: 800;
+}
+
+/* Primary action */
+.app-shell .profile-primary-btn {
+  border-radius: var(--r-pill);
+  box-shadow: var(--e-2);
+  transition: transform var(--t-fast) var(--ease-out), opacity var(--t-fast) ease;
+}
+.app-shell .profile-ghost-btn { border-radius: var(--r-pill); }
+
+/* Portfolio grid */
+.app-shell .portfolio-card {
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  transition: transform var(--t-med) var(--ease-spring),
+              border-color var(--t-med) ease, box-shadow var(--t-med) ease;
+}
+.app-shell .portfolio-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--hairline-str);
+  box-shadow: var(--e-3);
+}

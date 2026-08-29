@@ -149,12 +149,39 @@ export default function FeedPage() {
           </label>
         </div>
 
+        {/* Live market pulse — makes the page read as an active marketplace
+            rather than a static list. All derived from what's already loaded. */}
+        {!loading && items.length > 0 && (() => {
+          const paid = items.filter(it => it.kind === 'freelance');
+          const pot  = paid.reduce((s, it) => s + (Number(it.payment_amount) || 0), 0);
+          const near = items
+            .map(it => it.distance_km)
+            .filter(d => d != null)
+            .sort((a, b) => a - b)[0];
+          return (
+            <div className="market-pulse">
+              <div className="mp-stat">
+                <span className="mp-val"><span className="ds-live" />{items.length}</span>
+                <span className="mp-label">Open now</span>
+              </div>
+              <div className="mp-stat">
+                <span className="mp-val is-money">₹{pot.toLocaleString('en-IN')}</span>
+                <span className="mp-label">On the table</span>
+              </div>
+              <div className="mp-stat">
+                <span className="mp-val">{near != null ? `${near} km` : '—'}</span>
+                <span className="mp-label">Nearest</span>
+              </div>
+            </div>
+          );
+        })()}
+
         <div className="work-filter">
           {['all', 'freelance', 'collab'].map(f => (
             <button key={f}
               className={`work-filter-chip ${workFilter === f ? 'active' : ''}`}
               onClick={() => setWorkFilter(f)}>
-              {f === 'all' ? 'All' : f === 'freelance' ? 'Freelance' : 'Collab'}
+              {f === 'all' ? 'All work' : f === 'freelance' ? 'Paid gigs' : 'Collabs'}
             </button>
           ))}
         </div>
@@ -185,52 +212,79 @@ export default function FeedPage() {
                 const isNew = newIds.has(`${item.kind}-${item.id}`);
                 const appliedCount = item.kind === 'freelance' ? item.responses_count : item.applicants;
                 const near = item.distance_km != null && item.distance_km <= 2;
+                const left = timeLeft(item.expires_at);
+                const urgent = left && (left.endsWith('h left') || left === 'Expired');
+                const desc = item.description && item.description !== item.title ? item.description : null;
                 return (
-                  <button key={`${item.kind}-${item.id}`}
+                  <article key={`${item.kind}-${item.id}`}
                     className={`work-card ${item.kind} ${isNew ? 'is-new' : ''}`}
-                    style={{ animationDelay: `${i * 45}ms` }}
-                    onClick={() => setViewItem(item)}>
-                    <div className="work-card-head">
-                      <span className={`work-kind-tag ${item.kind}`}>
-                        <span className="work-kind-dot" />
-                        {item.kind === 'freelance' ? 'Freelance' : 'Collab'}
+                    style={{ animationDelay: `${Math.min(i, 8) * 45}ms` }}
+                    tabIndex={0} role="button"
+                    onClick={() => setViewItem(item)}
+                    onKeyDown={e => { if (e.key === 'Enter') setViewItem(item); }}>
+
+                    <div className="wc-top">
+                      <span className={`wc-kind ${item.kind}`}>
+                        {item.kind === 'freelance' ? 'Paid gig' : 'Collab'}
                       </span>
-                      {item.kind === 'freelance' && <span className="work-price">₹{item.payment_amount}</span>}
+                      {isNew && <span className="wc-new">New</span>}
+                      {left && (
+                        <span className={`wc-left ${urgent ? 'is-urgent' : ''}`}>{left}</span>
+                      )}
                     </div>
 
-                    <h2 className="work-card-title">{item.title}</h2>
+                    <h2 className="wc-title">{item.title}</h2>
+                    {desc && <p className="wc-desc">{desc}</p>}
 
                     {item.skills?.length > 0 && (
-                      <div className="work-tags">
-                        {item.skills.slice(0, 3).map(s => <span key={s} className="work-tag">{s}</span>)}
-                        {item.skills.length > 3 && <span className="work-tag more">+{item.skills.length - 3}</span>}
+                      <div className="wc-skills">
+                        {item.skills.slice(0, 4).map(s => <span key={s} className="wc-skill">{s}</span>)}
+                        {item.skills.length > 4 && <span className="wc-skill more">+{item.skills.length - 4}</span>}
                       </div>
                     )}
 
-                    <div className="work-card-foot">
-                      <span className="work-poster">
-                        <span className="work-ava">
+                    <div className="wc-deal">
+                      <div className="wc-budget">
+                        <span className="wc-budget-label">
+                          {item.kind === 'freelance' ? 'Budget' : 'Looking for'}
+                        </span>
+                        <span className="wc-budget-val">
+                          {item.kind === 'freelance' ? `₹${item.payment_amount}` : 'Teammates'}
+                        </span>
+                      </div>
+                      <span className="wc-cta">
+                        {item.kind === 'freelance' ? 'Apply' : 'Join'} <span className="wc-cta-arrow">→</span>
+                      </span>
+                    </div>
+
+                    <div className="wc-foot">
+                      <span className="wc-poster">
+                        <span className="wc-ava">
                           {item.user.profile_image
                             ? <img className="ava-img" src={cldAvatar(item.user.profile_image)} alt="" />
                             : item.user.username[0].toUpperCase()}
                         </span>
-                        <span className="work-poster-name">{item.user.username}</span>
+                        <span className="wc-poster-text">
+                          <span className="wc-poster-name">{item.user.username}</span>
+                          <span className="wc-poster-cat">{item.user.category || 'Independent'}</span>
+                        </span>
                       </span>
-                      <span className="work-meta">
+
+                      <span className="wc-signals">
                         {item.distance_km != null && (
-                          <span className={`work-dist ${near ? 'is-near' : ''}`}>
-                            <span className="work-dot" />{item.distance_km} km
+                          <span className={`wc-dist ${near ? 'is-near' : ''}`}>
+                            <span className="wc-dot" />{item.distance_km} km
                           </span>
                         )}
-                        {item.kind === 'freelance' && item.gender_preference && item.gender_preference !== 'any' && (
-                          <span className="work-metaitem">{item.gender_preference === 'male' ? 'Male' : 'Female'}</span>
+                        {appliedCount > 0 && (
+                          <span className="wc-applied">{appliedCount} applied</span>
                         )}
-                        {appliedCount > 0 && <span className="work-metaitem">{appliedCount} applied</span>}
-                        {item.kind === 'freelance' && timeLeft(item.expires_at) &&
-                          <span className="work-metaitem">{timeLeft(item.expires_at)}</span>}
+                        {item.kind === 'freelance' && item.gender_preference && item.gender_preference !== 'any' && (
+                          <span className="wc-pref">{item.gender_preference === 'male' ? 'Male only' : 'Female only'}</span>
+                        )}
                       </span>
                     </div>
-                  </button>
+                  </article>
                 );
               })}
             </div>
