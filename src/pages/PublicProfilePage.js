@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { getUserByUsername } from '../api/users';
 import { cldAvatar } from '../utils/cloudinaryUrl';
+import safeHref from '../utils/safeUrl';
 import usePageMeta from '../hooks/usePageMeta';
 import Logo from '../components/Logo';
 import './ProfilePage.css';
@@ -160,7 +161,9 @@ export default function PublicProfilePage() {
                     const raw = profile[s.key];
                     const url = s.key === 'whatsapp'
                       ? `https://wa.me/${String(raw).replace(/\D/g, '')}`
-                      : raw;
+                      : safeHref(raw);
+                    // Anything that isn't http(s) is dropped rather than linked.
+                    if (!url) return null;
                     return (
                       <a key={s.key} href={url} target="_blank" rel="noreferrer" className="social-card">
                         <span className={`social-glyph ${s.brand}`}>{s.icon}</span>

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import safeHref from '../utils/safeUrl';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
@@ -249,7 +250,7 @@ export default function PostDetailPage() {
                       </div>
                     )}
                     {links.map(m => (
-                      <a key={m.id} href={m.url} target="_blank" rel="noreferrer" className="post-ext-link">
+                      <a key={m.id} href={safeHref(m.url) || undefined} target="_blank" rel="noreferrer" className="post-ext-link">
                         ↗ View project
                       </a>
                     ))}
