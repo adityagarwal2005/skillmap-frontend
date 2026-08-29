@@ -653,3 +653,54 @@
   border-color: var(--hairline-str);
   box-shadow: var(--e-3);
 }
+
+/* ── Fixes from device testing (375px) ──────────────────────────────
+   1. Four stats across a phone made "2026" (SINCE) overrun the divider and
+      clip "1" (VIEWS): each cell was flex:1 but carried an extra 18px
+      padding-left on top of a 1.75rem display number. Size the number to the
+      space available and let the cells share width evenly instead.
+   2. The owner action area was a full-bleed white slab with an orphan
+      "Share profile" text link under it — visually unbalanced. It's now one
+      row: primary Edit + a compact outlined Share. */
+.app-shell .profile-stats {
+  display: flex;
+  gap: 0;
+}
+.app-shell .profile-stat {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 0 6px;
+  align-items: center;
+  text-align: center;
+}
+.app-shell .profile-stat + .profile-stat { padding-left: 6px; }
+.app-shell .profile-stat-val {
+  font-size: clamp(1.125rem, 5.2vw, 1.625rem);
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.app-shell .profile-stat-label {
+  font-size: 0.5625rem;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Balanced action row */
+.app-shell .profile-actions .profile-action-row { gap: 10px; flex-wrap: nowrap; }
+.app-shell .profile-primary-btn {
+  flex: 1 1 auto;
+  height: 50px;
+  font-size: 1rem;
+}
+.app-shell .profile-ghost-btn.is-compact {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 104px;
+  height: 50px;
+  padding: 0 22px;
+}

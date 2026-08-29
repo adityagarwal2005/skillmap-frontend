@@ -10,10 +10,10 @@
    change the CONTENT of a file under public/ that keeps the same filename
    (icons, favicon.ico, manifest.json, robot.png, etc.) — that's what
    actually forces browsers to purge the old cached bytes and refetch. */
-/* v4: new "Doit Here" wordmark icons (same filenames as the old mark), and
-   the Freelance/Collab board pages were deleted — an old cached bundle kept
-   routing to them after posting. Bumping purges both. */
-const CACHE = 'doithere-v4';
+/* v5: og-image.png and favicon.ico were still the OLD mark (they were missed
+   when the app icons were regenerated), so link previews and the browser tab
+   kept showing it. Both reuse their filenames, hence the bump. */
+const CACHE = 'doithere-v5';
 const APP_SHELL = ['/', '/index.html', '/manifest.json', '/favicon.ico'];
 
 self.addEventListener('install', (event) => {

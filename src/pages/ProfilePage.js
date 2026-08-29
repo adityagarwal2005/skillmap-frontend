@@ -313,11 +313,13 @@ export default function ProfilePage() {
 
               {isOwn ? (
                 <div className="profile-actions">
-                  <button className="profile-primary-btn" onClick={() => navigate(`/profile/${userId}/edit`)}>
-                    Edit profile
-                  </button>
-                  <div className="profile-more-links">
-                    <button onClick={handleShare}>Share profile</button>
+                  <div className="profile-action-row">
+                    <button className="profile-primary-btn" onClick={() => navigate(`/profile/${userId}/edit`)}>
+                      Edit profile
+                    </button>
+                    <button className="profile-ghost-btn is-compact" onClick={handleShare}>
+                      Share
+                    </button>
                   </div>
                 </div>
               ) : (
