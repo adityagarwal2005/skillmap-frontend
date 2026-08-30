@@ -41,6 +41,7 @@ export default function ApplicantsPage() {
   const [confirm, setConfirm]   = useState(null);   // { appId, action }
   const [busyId, setBusyId]     = useState(null);
   const [connected, setConnected] = useState({});   // appId -> conversation_id
+  const [cap, setCap] = useState({ people_needed: 1, hired_count: 0 });
 
   const load = useCallback(async () => {
     if (!user?.id) return;
@@ -51,11 +52,15 @@ export default function ApplicantsPage() {
           ? getMyWorkRequests(user.id).then(r => r.data.work_requests || [])
           : getMyCollabPosts().then(r => r.data.collab_posts || []),
         isFreelance
-          ? getWorkRequestResponses(id).then(r => r.data.applicants || [])
-          : getCollabApplicants(id).then(r => r.data.applicants || []),
+          ? getWorkRequestResponses(id).then(r => r.data)
+          : getCollabApplicants(id).then(r => r.data),
       ]);
       setPost(mine.find(p => String(p.id) === String(id)) || null);
-      setApps(apps);
+      setApps(apps.applicants || []);
+      setCap({
+        people_needed: apps.people_needed || 1,
+        hired_count: apps.hired_count || 0,
+      });
     } catch {
       showToast('Failed to load applicants', 'error');
     } finally {
@@ -91,7 +96,7 @@ export default function ApplicantsPage() {
       if (isFreelance) await rejectWorkApplicant(id, a.user_id);
       else             await respondToCollabRequest(a.id, 'declined');
       setApps(prev => prev.filter(x => appKey(x) !== key));
-      showToast(`${appName(a)} declined — they can apply again`, 'success');
+      showToast(`${appName(a)} declined`, 'success');
     } catch (err) {
       showToast(err.response?.data?.error || 'Could not decline', 'error');
     } finally { setBusyId(null); setConfirm(null); }
@@ -108,7 +113,7 @@ export default function ApplicantsPage() {
           <NotificationBell />
         </div>
 
-        <span className="apl-kind">{isFreelance ? 'Paid gig' : 'Collab'}</span>
+        <span className="apl-kind">{isFreelance ? 'Gig' : 'Collab'}</span>
         {loading
           ? <div className="ds-skel apl-title-skel" />
           : <h1 className="apl-title">{title || 'Post not found'}</h1>}
@@ -129,6 +134,11 @@ export default function ApplicantsPage() {
               ? 'Applicants'
               : `${applicants.length} ${applicants.length === 1 ? 'applicant' : 'applicants'}`}
           </h2>
+          {!loading && cap.people_needed > 1 && (
+            <span className={`apl-slots ${cap.hired_count >= cap.people_needed ? 'is-full' : ''}`}>
+              {cap.hired_count}/{cap.people_needed} spots filled
+            </span>
+          )}
         </div>
 
         {loading ? (
@@ -161,6 +171,8 @@ export default function ApplicantsPage() {
               const convId = connected[key];
               const isConfirm = confirm?.appId === key;
               const busy  = busyId === key;
+              const isHired = isFreelance ? a.hired : a.status === 'accepted';
+              const isFull = cap.hired_count >= cap.people_needed;
               return (
                 <div key={key} className="apl-card">
                   <div className="apl-card-top">
@@ -190,6 +202,10 @@ export default function ApplicantsPage() {
                       <button className="apl-dm" onClick={() => navigate(`/messages?c=${convId}`)}>
                         💬 Message {name}
                       </button>
+                    ) : isHired ? (
+                      <button className="apl-dm" onClick={() => profileId(a) && navigate(`/profile/${profileId(a)}`)}>
+                        ✓ Hired — view profile
+                      </button>
                     ) : isConfirm ? (
                       <>
                         <span className="apl-confirm-q">
@@ -209,9 +225,10 @@ export default function ApplicantsPage() {
                       </>
                     ) : (
                       <>
-                        <button className="apl-tick"
+                        <button className="apl-tick" disabled={isFull}
+                          title={isFull ? 'All spots are filled' : 'Accept'}
                           onClick={() => setConfirm({ appId: key, action: 'accept' })}>
-                          ✓ Accept
+                          {isFull ? 'Spots full' : '✓ Accept'}
                         </button>
                         <button className="apl-cross"
                           onClick={() => setConfirm({ appId: key, action: 'reject' })}>

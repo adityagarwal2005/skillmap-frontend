@@ -251,7 +251,7 @@ export default function OnboardingPage() {
               <div className="status-options">
                 {[
                   { value: 'not_available', label: 'Not Available', desc: 'Not looking for work right now' },
-                  { value: 'open_to_freelance', label: 'Open to Freelance', desc: 'Looking for paid freelance projects' },
+                  { value: 'open_to_freelance', label: 'Open to gigs', desc: 'Looking for paid gig work' },
                   { value: 'open_to_work', label: 'Open to Work', desc: 'Looking for full-time or part-time work' },
                 ].map(opt => (
                   <button key={opt.value}

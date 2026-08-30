@@ -214,7 +214,7 @@ export default function SettingsPage() {
             </div>
             <select className="settings-select" value={status} onChange={handleStatusChange}>
               <option value="not_available">Not Available</option>
-              <option value="open_to_freelance">Open to Freelance</option>
+              <option value="open_to_freelance">Open to gigs</option>
               <option value="open_to_work">Open to Work</option>
             </select>
           </div>

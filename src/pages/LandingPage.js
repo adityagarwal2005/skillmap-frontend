@@ -12,7 +12,7 @@ const ic = (paths) => (
 const FEATURES = [
   {
     icon: ic(<><rect x="3" y="7" width="18" height="13" rx="2" /><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /><path d="M3 12h18" /></>),
-    title: 'Freelance work',
+    title: 'Paid gigs',
     text: 'Post a paid job or pick one up — real work, real pay, right around campus.',
   },
   {
@@ -91,7 +91,7 @@ export default function LandingPage() {
           <div className="landing-hero-meta">
             <span>Portfolio</span>
             <span className="dot" />
-            <span>Freelance</span>
+            <span>Gigs</span>
             <span className="dot" />
             <span>Collab</span>
           </div>

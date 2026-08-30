@@ -103,7 +103,7 @@ export default function PostPage() {
       if (kind === 'collab') await respondToCollabRequest(a.id, 'declined');
       else await rejectWorkApplicant(item.id, a.user_id);
       setAppById(prev => ({ ...prev, [key]: (prev[key] || []).filter(x => appKey(kind, x) !== id) }));
-      showToast(`${appName(kind, a)} declined — they can apply again`, 'success');
+      showToast(`${appName(kind, a)} declined`, 'success');
       load();                                    // refresh applicant counts
     } catch (err) {
       showToast(err.response?.data?.error || 'Could not decline', 'error');
@@ -125,11 +125,19 @@ export default function PostPage() {
     } finally { setBusyId(null); setClosing(null); }
   };
 
+  // How many of this post's spots are taken. Shape differs per kind:
+  // gigs flag the response `hired`; collabs use status === 'accepted'.
+  const hiredOf = (kind, list) =>
+    list.filter(a => (kind === 'freelance' ? a.hired : a.status === 'accepted')).length;
+
   const renderApplicants = (kind, item) => {
     const key = `${kind}-${item.id}`;
     if (loadingApp === key) return <p className="mng-muted">Loading applicants…</p>;
     const list = appById[key] || [];
     if (list.length === 0) return <p className="mng-muted">No one has applied yet.</p>;
+    const needed = item.people_needed || 1;
+    const taken = hiredOf(kind, list);
+    const isFull = taken >= needed;
     return (
       <div className="mng-applicants">
         {list.map(a => {
@@ -138,6 +146,7 @@ export default function PostPage() {
           const convId = connected[`${key}:${id}`];
           const isConfirm = confirm && confirm.key === key && confirm.appId === id;
           const busy = busyId === id;
+          const isHired = kind === 'freelance' ? a.hired : a.status === 'accepted';
           return (
             <div key={id} className="mng-app">
               <div className="mng-app-id">
@@ -152,6 +161,8 @@ export default function PostPage() {
                 <button className="mng-dm-btn" onClick={() => navigate(`/messages?c=${convId}`)}>
                   💬 Message
                 </button>
+              ) : isHired ? (
+                <span className="mng-hired">✓ Hired</span>
               ) : isConfirm ? (
                 <div className="mng-confirm">
                   <span className="mng-confirm-q">
@@ -167,7 +178,8 @@ export default function PostPage() {
                 </div>
               ) : (
                 <div className="mng-actions">
-                  <button className="mng-tick" title="Accept"
+                  <button className="mng-tick" title={isFull ? 'All spots filled' : 'Accept'}
+                    disabled={isFull}
                     onClick={() => setConfirm({ key, appId: id, action: 'accept' })}>✓</button>
                   <button className="mng-cross" title="Decline"
                     onClick={() => setConfirm({ key, appId: id, action: 'reject' })}>✕</button>
@@ -205,6 +217,11 @@ export default function PostPage() {
               </span>
               {/* Opens the full applicant manager — room to read each pitch,
                   see their skills, and accept/decline from one place. */}
+              {(item.people_needed || 1) > 1 && (
+                <span className={`mng-slots ${(item.hired_count || 0) >= (item.people_needed || 1) ? 'is-full' : ''}`}>
+                  {item.hired_count || 0}/{item.people_needed} filled
+                </span>
+              )}
               <button className="mng-count is-link"
                 onClick={() => navigate(`/applicants/${kind}/${item.id}`)}>
                 {applied} {applied === 1 ? 'applicant' : 'applicants'} →
@@ -293,7 +310,7 @@ export default function PostPage() {
         <section className="menu-section">
           <div className="menu-head">
             <span className="menu-num">01</span>
-            <h2 className="menu-title">My Freelance</h2>
+            <h2 className="menu-title">My Gigs</h2>
             <span className="menu-count">{jobs.length} {jobs.length === 1 ? 'item' : 'items'}</span>
           </div>
           {loading ? (

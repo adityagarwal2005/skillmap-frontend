@@ -216,7 +216,7 @@ export default function FeedPage() {
               className={`work-filter-chip ${workFilter === f ? 'active' : ''}`}
               onClick={() => setWorkFilter(f)}>
               {f === 'all' ? 'All work'
-                : f === 'freelance' ? 'Paid gigs'
+                : f === 'freelance' ? 'Gigs'
                 : f === 'collab' ? 'Collabs'
                 : `Saved${saved.size ? ` (${saved.size})` : ''}`}
             </button>
@@ -346,7 +346,7 @@ export default function FeedPage() {
 
                     <div className="wc-top">
                       <span className={`wc-kind ${item.kind}`}>
-                        {item.kind === 'freelance' ? 'Paid gig' : 'Collab'}
+                        {item.kind === 'freelance' ? 'Gig' : 'Collab'}
                       </span>
                       {isNew && <span className="wc-new">New</span>}
                       <span className="wc-top-right">
@@ -407,6 +407,11 @@ export default function FeedPage() {
                         {item.distance_km != null && (
                           <span className={`wc-dist ${near ? 'is-near' : ''}`}>
                             <span className="wc-dot" />{item.distance_km} km
+                          </span>
+                        )}
+                        {(item.people_needed || 1) > 1 && (
+                          <span className="wc-slots">
+                            {Math.max(0, (item.people_needed || 1) - (item.hired_count || 0))} of {item.people_needed} left
                           </span>
                         )}
                         {appliedCount > 0 && (

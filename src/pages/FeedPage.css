@@ -2091,3 +2091,15 @@ video.post-media-el { cursor: default; object-fit: contain; background: #000; }
 }
 .work-filter::-webkit-scrollbar { display: none; }
 .work-filter-chip { white-space: nowrap; flex-shrink: 0; }
+
+/* Spots remaining on a multi-person opportunity card. */
+.wc-slots {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--brand);
+  background: var(--brand-dim);
+  padding: 4px 10px;
+  border-radius: var(--r-pill);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}

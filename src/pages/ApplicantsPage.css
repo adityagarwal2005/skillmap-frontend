@@ -259,3 +259,20 @@
   .apl-meta { gap: 10px; padding: 12px 13px; }
   .apl-status { margin-left: 0; }
 }
+
+/* ── Capacity banner + disabled accept once every spot is taken ── */
+.apl-count-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.apl-slots {
+  font-size: 0.8125rem;
+  font-weight: 800;
+  color: var(--brand);
+  background: var(--brand-dim);
+  border: 1px solid var(--brand-line);
+  padding: 6px 13px;
+  border-radius: var(--r-pill);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.apl-slots.is-full { color: var(--ok); background: var(--ok-dim); border-color: rgba(34,197,94,0.4); }
+.apl-tick:disabled { opacity: 0.4; cursor: not-allowed; }
+.apl-tick:disabled:hover { background: none; }

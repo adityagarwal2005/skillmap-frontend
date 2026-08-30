@@ -24,7 +24,7 @@ function TermsContent() {
 
       <h2>2. DoitHere is a connector, not a party to your agreements</h2>
       <p>
-        <strong>DoitHere does not process, hold, or guarantee any payment.</strong> Freelance jobs,
+        <strong>DoitHere does not process, hold, or guarantee any payment.</strong> Gigs,
         collabs, and any pay you arrange with another user are agreements directly between you and
         them — DoitHere has no part in that transaction, doesn't verify anyone's ability to pay or
         deliver, and isn't liable if a job goes badly, payment doesn't happen, or work isn't

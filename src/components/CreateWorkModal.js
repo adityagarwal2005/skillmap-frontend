@@ -34,7 +34,7 @@ export default function CreateWorkModal({ kind, onClose, onCreated }) {
     // collab
     title: '',
     // shared
-    skills: '', time_limit_hours: 24, range_km: 5,
+    skills: '', time_limit_hours: 24, range_km: 5, people_needed: 1,
   });
   const [media, setMedia]       = useState(null);
   const [location, setLocation] = useState({ lat: '', lon: '' });
@@ -61,6 +61,7 @@ export default function CreateWorkModal({ kind, onClose, onCreated }) {
           gender_preference: form.gender_preference,
           skills: form.skills,
           range_km: form.range_km,
+          people_needed: form.people_needed,
         }
       : {
           title: form.title,
@@ -68,6 +69,7 @@ export default function CreateWorkModal({ kind, onClose, onCreated }) {
           skills: form.skills,
           time_limit_hours: form.time_limit_hours,
           range_km: form.range_km,
+          people_needed: form.people_needed,
         };
     if (location.lat) {
       payload.latitude  = location.lat;
@@ -79,7 +81,7 @@ export default function CreateWorkModal({ kind, onClose, onCreated }) {
       setSubmitting(true);
       if (isFreelance) await createWorkRequest(payload);
       else             await createCollabPost(payload);
-      showToast(isFreelance ? 'Job posted!' : 'Collab created!', 'success');
+      showToast(isFreelance ? 'Gig posted!' : 'Collab created!', 'success');
       onCreated?.();
       onClose();
     } catch (err) {
@@ -109,7 +111,7 @@ export default function CreateWorkModal({ kind, onClose, onCreated }) {
     <div className="cw-overlay" onClick={onClose}>
       <div className="cw-modal" onClick={e => e.stopPropagation()}>
         <div className="cw-head">
-          <h2 className="cw-title">{isFreelance ? 'New freelance job' : 'New collab'}</h2>
+          <h2 className="cw-title">{isFreelance ? 'New gig' : 'New collab'}</h2>
           <button type="button" className="cw-close" onClick={onClose} aria-label="Close">×</button>
         </div>
 
@@ -125,7 +127,7 @@ export default function CreateWorkModal({ kind, onClose, onCreated }) {
           <div className="cw-field">
             <label className="cw-label">{isFreelance ? 'What do you need done?' : 'Description'}</label>
             <textarea className="cw-input cw-textarea" required rows={3}
-              placeholder={isFreelance ? 'Describe the job…' : 'Tell people about your project idea…'}
+              placeholder={isFreelance ? 'Describe the gig…' : 'Tell people about your project idea…'}
               value={form.description} onChange={e => set('description', e.target.value)} />
           </div>
 
@@ -144,6 +146,21 @@ export default function CreateWorkModal({ kind, onClose, onCreated }) {
             </label>
             <input className="cw-input" required={isFreelance} placeholder="React, Python, Figma"
               value={form.skills} onChange={e => set('skills', e.target.value)} />
+          </div>
+
+          <div className="cw-field">
+            <label className="cw-label">
+              {isFreelance ? 'People needed' : 'Teammates needed'}
+              <span className="cw-hint">up to 5</span>
+            </label>
+            <select className="cw-input cw-select" value={form.people_needed}
+              onChange={e => set('people_needed', Number(e.target.value))}>
+              {[1, 2, 3, 4, 5].map(n => (
+                <option key={n} value={n}>
+                  {n} {n === 1 ? 'person' : 'people'}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="cw-row">
@@ -197,7 +214,7 @@ export default function CreateWorkModal({ kind, onClose, onCreated }) {
           <div className="cw-actions">
             <button type="button" className="cw-cancel" onClick={onClose}>Cancel</button>
             <button type="submit" className="cw-submit" disabled={submitting}>
-              {submitting ? 'Posting…' : isFreelance ? 'Post job' : 'Create collab'}
+              {submitting ? 'Posting…' : isFreelance ? 'Post gig' : 'Create collab'}
             </button>
           </div>
         </form>

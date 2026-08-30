@@ -12,7 +12,7 @@ import './FeedPage.css';
 import './PeoplePage.css';
 
 const STATUS_LABELS = {
-  open_to_freelance: 'Open to Freelance',
+  open_to_freelance: 'Open to gigs',
   open_to_work:      'Open to Work',
   not_available:     'Not Available',
 };

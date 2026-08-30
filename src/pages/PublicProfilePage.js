@@ -19,7 +19,7 @@ const SOCIALS = [
 ];
 
 const statusLabel = {
-  open_to_freelance: 'Open to Freelance',
+  open_to_freelance: 'Open to gigs',
   open_to_work:      'Open to Work',
   not_available:     'Not Available',
 };
