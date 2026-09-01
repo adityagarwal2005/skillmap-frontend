@@ -72,12 +72,12 @@ export default function MessagesPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeConv]);
 
-  // The open thread stays near-real-time (3s) — but only while a thread is
+  // The open thread stays near-real-time (6s) — but only while a thread is
   // actually open AND the tab is visible, so a backgrounded chat costs
   // nothing. This is the one poll that genuinely needs to be fast.
   usePoll(() => {
     if (activeConv) loadMessages(activeConv.id);
-  }, 3000, !!activeConv);
+  }, 6000, !!activeConv);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
