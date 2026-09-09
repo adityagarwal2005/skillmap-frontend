@@ -36,10 +36,3 @@ export const verifyAndRegister = (username, email, password, otp, latitude, long
 
 export const refreshToken = (refresh) =>
   API.post('/users/token/refresh/', new URLSearchParams({ refresh }));
-
-export const register = (username, email, password, latitude, longitude) =>
-  API.post('/users/register/', new URLSearchParams({
-    username, email, password,
-    ...(latitude && { latitude }),
-    ...(longitude && { longitude }),
-  }));
