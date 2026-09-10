@@ -6,12 +6,14 @@ import { createCollabPost } from '../api/collab';
 import './CreateWorkModal.css';
 
 export const VISIBILITY_OPTIONS = [
-  { label: '1 hour',   hours: 1 },
   { label: '2 hours',  hours: 2 },
   { label: '6 hours',  hours: 6 },
   { label: '12 hours', hours: 12 },
   { label: '24 hours', hours: 24 },
+  { label: '48 hours', hours: 48 },
 ];
+
+export const MAX_VISIBILITY_HOURS = 48;
 
 const RANGE_OPTIONS = [0.5, 1, 2, 5, 10, 50];
 
@@ -34,7 +36,7 @@ export default function CreateWorkModal({ kind, onClose, onCreated }) {
     // collab
     title: '',
     // shared
-    skills: '', time_limit_hours: 24, range_km: 5, people_needed: 1,
+    skills: '', time_limit_hours: 48, range_km: 5, people_needed: 1,
   });
   const [media, setMedia]       = useState(null);
   const [location, setLocation] = useState({ lat: '', lon: '' });

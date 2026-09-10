@@ -392,7 +392,7 @@ export default function FeedPage() {
                         </span>
                       </div>
                       <span className="wc-cta">
-                        {item.kind === 'freelance' ? 'Apply' : 'Join'} <span className="wc-cta-arrow">→</span>
+                        Apply <span className="wc-cta-arrow">→</span>
                       </span>
                     </div>
 
@@ -534,7 +534,7 @@ export default function FeedPage() {
                   {viewItem.responses_count > 0 && <span className="opp-heat">{viewItem.responses_count} applied</span>}
                 </>
               ) : (
-                viewItem.applicants > 0 && <span className="opp-heat">{viewItem.applicants} people joined</span>
+                viewItem.applicants > 0 && <span className="opp-heat">{viewItem.applicants} applied</span>
               )}
               {viewItem.distance_km != null && <span className="opp-sub">📍 {viewItem.distance_km} km away</span>}
             </div>
@@ -559,7 +559,7 @@ export default function FeedPage() {
               {!applied && (
                 <button type="button" className="modal-submit"
                   onClick={handleApply} disabled={applying}>
-                  {applying ? 'Applying…' : viewItem.kind === 'freelance' ? 'Apply for job' : 'Join collab'}
+                  {applying ? 'Applying…' : viewItem.kind === 'freelance' ? 'Apply for gig' : 'Apply to collab'}
                 </button>
               )}
             </div>
