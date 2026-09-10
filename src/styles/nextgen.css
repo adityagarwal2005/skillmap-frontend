@@ -538,10 +538,23 @@ body::after {
   -webkit-backdrop-filter: var(--blur);
   border-top: 1px solid var(--glass-brd);
 }
-:root .app-shell .msg-bubble.is-me,
-:root .app-shell .msg-out .msg-bubble {
+/* Your own messages were the same flat white as every other white
+   surface; the brand makes the two sides of a thread readable at a
+   glance the way every messaging app people already use does. */
+:root .app-shell .msg-bubble.own {
   background: linear-gradient(180deg, var(--brand-bright), var(--brand));
+  border-color: transparent;
   box-shadow: var(--lift-brand);
+}
+:root .app-shell .msg-bubble.own .msg-text,
+:root .app-shell .msg-bubble.own .msg-time,
+:root .app-shell .msg-bubble.own .msg-tick { color: #fff; }
+:root .app-shell .msg-bubble.own .msg-time { opacity: 0.82; }
+
+:root .app-shell .msg-bubble:not(.own) {
+  background: var(--surface-2);
+  border: 1px solid var(--hairline);
+  box-shadow: var(--edge-light);
 }
 
 /* ═══════════════════════════════════════════════
