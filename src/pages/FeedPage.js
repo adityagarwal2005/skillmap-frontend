@@ -149,19 +149,21 @@ export default function FeedPage() {
         <div className="work-head">
           <div className="page-title-row">
             <h1 className="feed-heading work-heading">Work</h1>
-            <NotificationBell />
+            <div className="work-head-right">
+              <label className="range-pill">
+                <span className="range-dot" />
+                <span className="range-cap">Near me</span>
+                <select className="range-select" value={range} onChange={e => setRange(e.target.value)}>
+                  <option value="0.5">500 m</option>
+                  <option value="1">1 km</option>
+                  <option value="2">2 km</option>
+                  <option value="5">5 km</option>
+                  <option value="10">10 km</option>
+                </select>
+              </label>
+              <NotificationBell />
+            </div>
           </div>
-          <label className="range-pill">
-            <span className="range-dot" />
-            <span className="range-cap">Near me</span>
-            <select className="range-select" value={range} onChange={e => setRange(e.target.value)}>
-              <option value="0.5">500 m</option>
-              <option value="1">1 km</option>
-              <option value="2">2 km</option>
-              <option value="5">5 km</option>
-              <option value="10">10 km</option>
-            </select>
-          </label>
         </div>
 
         {/* Live market pulse — makes the page read as an active marketplace
@@ -191,7 +193,10 @@ export default function FeedPage() {
           );
         })()}
 
-        {/* Search + sort — browsing a marketplace without these is guesswork. */}
+        {/* Search, sort and the kind filter ride together in one bar that
+            sticks to the top on scroll — three separate stacked rows pushed
+            the first listing most of the way off the opening screen. */}
+        <div className="work-bar">
         <div className="work-tools">
           <div className="work-search">
             <svg className="work-search-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -221,6 +226,7 @@ export default function FeedPage() {
                 : `Saved${saved.size ? ` (${saved.size})` : ''}`}
             </button>
           ))}
+        </div>
         </div>
 
         {/* Browse by skill — the closest thing to marketplace categories, built
