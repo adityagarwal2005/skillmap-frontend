@@ -2,7 +2,7 @@ import { useLocation, useNavigate, Link } from 'react-router-dom';
 import usePageMeta from '../hooks/usePageMeta';
 import './LegalPage.css';
 
-const LAST_UPDATED = 'July 2026';
+const LAST_UPDATED = 'September 2026';
 
 function TermsContent() {
   return (
@@ -10,14 +10,14 @@ function TermsContent() {
       <p className="legal-updated">Last updated: {LAST_UPDATED}</p>
 
       <p>
-        DoitHere ("we", "us", "the platform") is a campus talent network that helps students
+        DoitHere ("we", "us", "the platform") is a hyperlocal talent network that helps you
         find skilled people nearby, post and apply to freelance work, and team up on collabs.
         By creating an account you agree to these terms.
       </p>
 
       <h2>1. Who can use DoitHere</h2>
       <p>
-        DoitHere is built for students on our campus. You must provide accurate information when
+        DoitHere is open to anyone who uses it lawfully. You must provide accurate information when
         you register, and you're responsible for keeping your account secure. You must be old
         enough to legally enter into agreements in your jurisdiction to use paid freelance features.
       </p>
@@ -154,7 +154,7 @@ export default function LegalPage() {
     title: isPrivacy ? 'Privacy Policy' : 'Terms of Service',
     description: isPrivacy
       ? 'How DoitHere collects, uses, and protects your data.'
-      : 'The terms that govern using DoitHere, the campus talent network.',
+      : 'The terms that govern using DoitHere.',
     path: isPrivacy ? '/privacy' : '/terms',
   });
 

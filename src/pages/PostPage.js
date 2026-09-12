@@ -229,9 +229,7 @@ export default function PostPage() {
             </div>
             {renderApplicants(kind, item)}
 
-            {item.status === 'closed' ? (
-              <p className="mng-closed">This post is closed — it's no longer visible to anyone.</p>
-            ) : closing === key ? (
+            {closing === key ? (
               <div className="mng-close-confirm">
                 <span className="mng-close-q">Close this post? It stops showing to everyone.</span>
                 <div className="mng-close-btns">
@@ -254,6 +252,12 @@ export default function PostPage() {
     );
   };
 
+  // Only what's still running. Expired and closed posts can't be seen or
+  // applied to anymore, so listing them just buried the live ones.
+  const isLive = (p) => p.status !== 'closed' && timeLeft(p.expires_at) !== 'Expired';
+  const liveJobs = jobs.filter(isLive);
+  const liveCollabs = collabs.filter(isLive);
+
   return (
     <AppShell active="post">
       <div className="post-page">
@@ -266,12 +270,11 @@ export default function PostPage() {
         </div>
 
         {/* Seller dashboard — what's live, who's waiting, what it's worth. */}
-        {!loading && (jobs.length > 0 || collabs.length > 0) && (() => {
-          const live = [...jobs, ...collabs].filter(p => p.status !== 'closed').length;
-          const waiting = jobs.reduce((s, j) => s + (j.responses_count || 0), 0)
-                        + collabs.reduce((s, c) => s + (c.applicants || 0), 0);
-          const committed = jobs
-            .filter(j => j.status !== 'closed')
+        {!loading && (liveJobs.length > 0 || liveCollabs.length > 0) && (() => {
+          const live = liveJobs.length + liveCollabs.length;
+          const waiting = liveJobs.reduce((s, j) => s + (j.responses_count || 0), 0)
+                        + liveCollabs.reduce((s, c) => s + (c.applicants || 0), 0);
+          const committed = liveJobs
             .reduce((s, j) => s + (Number(j.payment_amount) || 0), 0);
           return (
             <div className="market-pulse">
@@ -296,7 +299,7 @@ export default function PostPage() {
           <button className="post-new-card" onClick={() => setCreateKind('freelance')}>
             <span className="post-new-badge">Paid</span>
             <span className="post-new-name">Post a gig</span>
-            <span className="post-new-desc">Hire someone on campus for paid work</span>
+            <span className="post-new-desc">Hire someone nearby for paid work</span>
             <span className="post-new-arrow">→</span>
           </button>
           <button className="post-new-card" onClick={() => setCreateKind('collab')}>
@@ -311,15 +314,15 @@ export default function PostPage() {
           <div className="menu-head">
             <span className="menu-num">01</span>
             <h2 className="menu-title">My Gigs</h2>
-            <span className="menu-count">{jobs.length} {jobs.length === 1 ? 'item' : 'items'}</span>
+            <span className="menu-count">{liveJobs.length} {liveJobs.length === 1 ? 'item' : 'items'}</span>
           </div>
           {loading ? (
             <p className="menu-muted">Loading…</p>
-          ) : jobs.length === 0 ? (
-            <p className="menu-muted">No freelance posts yet.</p>
+          ) : liveJobs.length === 0 ? (
+            <p className="menu-muted">{jobs.length ? 'No live gigs right now.' : 'No gigs posted yet.'}</p>
           ) : (
             <div className="mng-list">
-              {jobs.map(j => renderRow(
+              {liveJobs.map(j => renderRow(
                 'freelance', j, j.description,
                 <span className="mng-price">₹{j.payment_amount}</span>,
                 j.status,
@@ -333,15 +336,15 @@ export default function PostPage() {
           <div className="menu-head">
             <span className="menu-num">02</span>
             <h2 className="menu-title">My Collab</h2>
-            <span className="menu-count">{collabs.length} {collabs.length === 1 ? 'item' : 'items'}</span>
+            <span className="menu-count">{liveCollabs.length} {liveCollabs.length === 1 ? 'item' : 'items'}</span>
           </div>
           {loading ? (
             <p className="menu-muted">Loading…</p>
-          ) : collabs.length === 0 ? (
-            <p className="menu-muted">No collab posts yet.</p>
+          ) : liveCollabs.length === 0 ? (
+            <p className="menu-muted">{collabs.length ? 'No live collabs right now.' : 'No collabs posted yet.'}</p>
           ) : (
             <div className="mng-list">
-              {collabs.map(c => renderRow(
+              {liveCollabs.map(c => renderRow(
                 'collab', c, c.title,
                 null,
                 c.status,

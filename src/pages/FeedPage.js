@@ -337,7 +337,6 @@ export default function FeedPage() {
             <div className="work-grid">
               {shown.map((item, i) => {
                 const isNew = newIds.has(`${item.kind}-${item.id}`);
-                const appliedCount = item.kind === 'freelance' ? item.responses_count : item.applicants;
                 const near = item.distance_km != null && item.distance_km <= 2;
                 const left = timeLeft(item.expires_at);
                 const urgent = left && (left.endsWith('h left') || left === 'Expired');
@@ -420,9 +419,6 @@ export default function FeedPage() {
                             {Math.max(0, (item.people_needed || 1) - (item.hired_count || 0))} of {item.people_needed} left
                           </span>
                         )}
-                        {appliedCount > 0 && (
-                          <span className="wc-applied">{appliedCount} applied</span>
-                        )}
                         {item.kind === 'freelance' && item.gender_preference && item.gender_preference !== 'any' && (
                           <span className="wc-pref">{item.gender_preference === 'male' ? 'Male only' : 'Female only'}</span>
                         )}
@@ -447,7 +443,7 @@ export default function FeedPage() {
           <div className="welcome-card" onClick={e => e.stopPropagation()}>
             <Logo size={2.2} className="welcome-badge-logo" />
             <h2 className="welcome-title">Welcome 👋</h2>
-            <p className="welcome-sub">Your campus talent network. Here are 3 quick ways to start:</p>
+            <p className="welcome-sub">Your local talent network. Here are 3 quick ways to start:</p>
 
             <button className="welcome-step" onClick={() => welcomeGo(`/profile/${user?.id}/edit`)}>
               <span className="welcome-step-num">1</span>
@@ -461,7 +457,7 @@ export default function FeedPage() {
             <button className="welcome-step" onClick={() => welcomeGo('/people')}>
               <span className="welcome-step-num">2</span>
               <span className="welcome-step-text">
-                <span className="welcome-step-name">Find people on campus</span>
+                <span className="welcome-step-name">Find people near you</span>
                 <span className="welcome-step-desc">Search by name or skill, and message anyone</span>
               </span>
               <span className="welcome-step-arrow">→</span>
@@ -527,15 +523,10 @@ export default function FeedPage() {
             )}
 
             <div className="opp-meta" style={{ marginBottom: 18 }}>
-              {viewItem.kind === 'freelance' ? (
-                <>
-                  <span className="opp-pay">₹{viewItem.payment_amount}</span>
-                  {timeLeft(viewItem.expires_at) && <span className="opp-sub">{timeLeft(viewItem.expires_at)}</span>}
-                  {viewItem.responses_count > 0 && <span className="opp-heat">{viewItem.responses_count} applied</span>}
-                </>
-              ) : (
-                viewItem.applicants > 0 && <span className="opp-heat">{viewItem.applicants} applied</span>
+              {viewItem.kind === 'freelance' && (
+                <span className="opp-pay">₹{viewItem.payment_amount}</span>
               )}
+              {timeLeft(viewItem.expires_at) && <span className="opp-sub">{timeLeft(viewItem.expires_at)}</span>}
               {viewItem.distance_km != null && <span className="opp-sub">📍 {viewItem.distance_km} km away</span>}
             </div>
 

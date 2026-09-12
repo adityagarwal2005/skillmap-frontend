@@ -308,16 +308,6 @@
 }
 .mng-close-yes:disabled { opacity: 0.6; }
 
-.mng-closed {
-  margin-top: 14px;
-  padding: 12px 14px;
-  border-radius: 12px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
-  font-size: 0.875rem;
-  color: var(--text-3);
-}
-
 @media (max-width: 520px) {
   .post-new-grid { grid-template-columns: 1fr; }
   .mng-app { flex-wrap: wrap; }

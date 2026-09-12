@@ -46,7 +46,7 @@ export default function ChooseUsernamePage() {
         <Logo size={2.25} />
         <h1 className="cu-title">Pick a username</h1>
         <p className="cu-sub">
-          This is how people on campus find and see you — not your email.
+          This is how people find and see you — not your email.
           You can change it later in Settings.
         </p>
 

@@ -155,6 +155,7 @@ body::after {
   -webkit-backdrop-filter: var(--blur);
   border-right: 1px solid var(--glass-brd);
 }
+:root .app-shell .sidebar-getapp { width: 100%; margin-top: 10px; }
 
 /* ═══════════════════════════════════════════════
    2 · Chrome — glass that floats

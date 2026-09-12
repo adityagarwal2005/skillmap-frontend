@@ -49,7 +49,7 @@ export default function PublicProfilePage() {
   usePageMeta({
     title: profile ? `${profile.username}${profile.category ? ` — ${profile.category}` : ''}` : username,
     description: profile
-      ? (profile.headline || profile.bio || `${profile.username} on DoitHere — ${profile.category || 'campus talent network'}.`)
+      ? (profile.headline || profile.bio || `${profile.username} on DoitHere — ${profile.category || 'hyperlocal talent network'}.`)
       : `${username} on DoitHere`,
     path: `/u/${username}`,
     // Not-found pages have nothing worth indexing; real profiles are the
@@ -181,7 +181,7 @@ export default function PublicProfilePage() {
             <div className="public-profile-join-banner">
               <div>
                 <strong>Want to hire {profile.username}, or get discovered like this?</strong>
-                <span>Join DoitHere — freelance work, collabs, and people right around your campus.</span>
+                <span>Join DoitHere — freelance work, collabs, and people right around you.</span>
               </div>
               <button className="public-profile-cta" onClick={() => navigate('/login?mode=register')}>
                 Join free

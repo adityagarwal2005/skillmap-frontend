@@ -703,14 +703,6 @@
 }
 .wc-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); flex-shrink: 0; }
 .wc-dist.is-near .wc-dot { animation: livePulse 1.8s ease-out infinite; }
-.wc-applied {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--text-2);
-  background: rgba(255,255,255,0.06);
-  padding: 4px 10px;
-  border-radius: var(--r-pill);
-}
 .wc-pref { font-size: 0.75rem; font-weight: 600; color: var(--text-3); }
 
 /* ── Live market pulse band ── */
@@ -1032,7 +1024,6 @@ video.post-media-el { cursor: default; object-fit: contain; background: #000; }
   border-radius: 999px;
 }
 .opp-sub { font-size: 0.8125rem; color: var(--text-2); font-weight: 600; }
-.opp-heat { font-size: 0.8125rem; font-weight: 700; color: #ff7a00; }
 
 .opp-cta {
   height: 42px;

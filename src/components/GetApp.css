@@ -1,0 +1,139 @@
+/* Fixed dark, like the landing page it mostly opens over — it's a promo
+   surface, and a light sheet over the dark landing read as a glitch. */
+.getapp-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(0,0,0,0.58);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: getappFade 0.2s ease both;
+}
+
+.getapp-sheet {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  margin: 0 12px calc(12px + env(safe-area-inset-bottom, 0px));
+  padding: 26px 22px 20px;
+  border-radius: 26px;
+  background: linear-gradient(180deg, #17171a, #0f0f11);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #f5f5f7;
+  text-align: center;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08);
+  animation: getappUp 0.38s cubic-bezier(0.22,1.2,0.36,1) both;
+}
+
+@media (min-width: 700px) {
+  .getapp-overlay { align-items: center; }
+  .getapp-sheet { margin: 0; }
+}
+
+.getapp-x {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  font-size: 1.375rem;
+  line-height: 1;
+  color: rgba(245,245,247,0.6);
+  transition: background 0.15s, color 0.15s;
+}
+.getapp-x:hover { background: rgba(255,255,255,0.08); color: #fff; }
+
+.getapp-icon {
+  display: block;
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 14px;
+  border-radius: 15px;
+  box-shadow: 0 8px 22px rgba(239,95,38,0.3), 0 0 0 1px rgba(255,255,255,0.1);
+}
+
+.getapp-title {
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  margin-bottom: 7px;
+}
+
+.getapp-sub {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: rgba(245,245,247,0.62);
+  max-width: 340px;
+  margin: 0 auto 18px;
+}
+
+.getapp-steps {
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 0;
+  text-align: left;
+}
+.getapp-steps li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 11px 13px;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: rgba(245,245,247,0.86);
+  border-radius: 14px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.getapp-steps li + li { margin-top: 8px; }
+
+.getapp-n {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #ff8a5c;
+  background: rgba(239,95,38,0.16);
+  border: 1px solid rgba(239,95,38,0.4);
+}
+
+.getapp-url {
+  margin: 0 auto 16px;
+  padding: 11px 16px;
+  width: fit-content;
+  max-width: 100%;
+  border-radius: 999px;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #ff8a5c;
+  background: rgba(239,95,38,0.1);
+  border: 1px solid rgba(239,95,38,0.3);
+  overflow-wrap: anywhere;
+}
+
+.getapp-done {
+  width: 100%;
+  height: 48px;
+  border-radius: 999px;
+  background: #f5f5f7;
+  color: #0a0a0a;
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+@keyframes getappFade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes getappUp {
+  from { opacity: 0; transform: translateY(28px) scale(0.98); }
+  to   { opacity: 1; transform: none; }
+}

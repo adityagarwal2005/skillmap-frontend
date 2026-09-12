@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import usePageMeta from '../hooks/usePageMeta';
 import Logo from '../components/Logo';
+import GetAppButton from '../components/GetApp';
 import './LandingPage.css';
 
 const ic = (paths) => (
@@ -9,7 +10,7 @@ const ic = (paths) => (
     strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{paths}</svg>
 );
 
-/* Real campus skills, scrolled as a marquee — reads as an actual talent
+/* Real skills people offer, scrolled as a marquee — reads as an actual talent
    pool rather than four abstract nouns in a row. */
 const SKILL_TICKER = [
   'Video editing', 'Poster design', 'Web dev', 'Photography', 'Content writing',
@@ -25,19 +26,19 @@ const SHOWCASE = [
     kind: 'gig', kindLabel: 'Gig', money: '₹800',
     title: 'Poster for our fest — need it by Friday',
     skills: ['Illustrator', 'Poster design'],
-    slots: '1 spot', applied: '4 applied', dist: '450 m',
+    slots: '1 spot', dist: '450 m',
   },
   {
     kind: 'collab', kindLabel: 'Collab', money: null,
     title: 'Hackathon team — looking for 2 devs',
     skills: ['React', 'Python'],
-    slots: '1 of 3 filled', applied: '7 applied', dist: '1.2 km',
+    slots: '1 of 3 filled', dist: '1.2 km',
   },
   {
     kind: 'gig', kindLabel: 'Gig', money: '₹1,500',
     title: 'Shoot + edit a 60s reel for my brand',
     skills: ['Premiere Pro', 'Videography'],
-    slots: '2 spots', applied: '2 applied', dist: '2.4 km',
+    slots: '2 spots', dist: '2.4 km',
   },
 ];
 
@@ -59,6 +60,13 @@ const FLOW = [
   },
 ];
 
+const DOWNLOAD_ICON = (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"
+    strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M12 3v12" /><path d="m7 10 5 5 5-5" /><path d="M5 21h14" />
+  </svg>
+);
+
 /**
  * Public marketing/preview page shown at '/' to anyone not logged in
  * (including anyone who clicked a referral link) instead of an instant,
@@ -67,10 +75,14 @@ const FLOW = [
 export default function LandingPage() {
   const navigate = useNavigate();
   const [referrer, setReferrer] = useState(null);
+  const heroRef = useRef(null);
+  const finalRef = useRef(null);
+  const [pastHero, setPastHero] = useState(false);
+  const [atFinal, setAtFinal] = useState(false);
 
   usePageMeta({
-    title: 'Campus Talent Network',
-    description: 'Find skilled people on your campus. Post gigs, start collabs, and get work done with people right around you.',
+    title: 'Find Work & Talent Near You',
+    description: 'Find skilled people near you. Post gigs, start collabs, and get work done with people right around you.',
     path: '/',
   });
 
@@ -98,6 +110,22 @@ export default function LandingPage() {
     return () => io.disconnect();
   }, []);
 
+  // The download pill follows the reader once the hero's own buttons have
+  // scrolled away, and steps aside at the closing section, which has its own.
+  useEffect(() => {
+    if (!('IntersectionObserver' in window)) return undefined;
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.target === heroRef.current) setPastHero(!e.isIntersecting && e.boundingClientRect.top < 0);
+        if (e.target === finalRef.current) setAtFinal(e.isIntersecting);
+      });
+    });
+    if (heroRef.current) io.observe(heroRef.current);
+    if (finalRef.current) io.observe(finalRef.current);
+    return () => io.disconnect();
+  }, []);
+  const showFloat = pastHero && !atFinal;
+
   const goRegister = () => navigate('/login?mode=register');
 
   return (
@@ -105,23 +133,24 @@ export default function LandingPage() {
       <header className="landing-nav">
         <Logo size={1.75} onClick={() => navigate('/')} />
         <div className="landing-nav-actions">
+          <GetAppButton className="landing-nav-getapp">Get the app</GetAppButton>
           <button className="landing-nav-signin" onClick={() => navigate('/login')}>Sign in</button>
           <button className="landing-nav-cta" onClick={goRegister}>Get started</button>
         </div>
       </header>
 
-      <section className="landing-hero">
+      <section className="landing-hero" ref={heroRef}>
         <div className="landing-hero-inner">
           {referrer && (
             <div className="landing-invite-pill">You were invited by @{referrer}</div>
           )}
-          <div className="landing-hero-tag">Hyperlocal campus talent network</div>
+          <div className="landing-hero-tag">Hyperlocal talent network</div>
           <h1 className="landing-hero-display">
             Get discovered<br />for what you<br /><em>actually</em> do.
           </h1>
           <p className="landing-hero-sub">
             Portfolios, gigs, and collaborators — matched to the
-            skills and people right around you, across campus.
+            skills and people right around you, wherever you are.
           </p>
           <div className="landing-hero-actions">
             <button className="landing-cta-lg" onClick={goRegister}>
@@ -176,7 +205,7 @@ export default function LandingPage() {
             <li>Sorted by what's genuinely near you</li>
           </ul>
           <button className="landing-cta-lg lp-inline-cta" onClick={goRegister}>
-            Browse your campus
+            Browse work near you
           </button>
         </div>
 
@@ -200,7 +229,6 @@ export default function LandingPage() {
                 <span className="lp-card-slots">{c.slots}</span>
               </div>
               <div className="lp-card-foot">
-                <span className="lp-card-applied">{c.applied}</span>
                 <span className="lp-card-btn">Apply</span>
               </div>
             </article>
@@ -212,7 +240,7 @@ export default function LandingPage() {
       <section className="lp-bento-wrap">
         <div className="landing-section-head" data-reveal>
           <span className="landing-eyebrow">What you get</span>
-          <h2 className="landing-section-title">Built for how campus actually works</h2>
+          <h2 className="landing-section-title">Built for how work actually gets done</h2>
         </div>
 
         <div className="lp-bento">
@@ -302,21 +330,32 @@ export default function LandingPage() {
       </section>
 
       {/* ── Closing ── */}
-      <section className="lp-final">
+      <section className="lp-final" ref={finalRef}>
         <div className="lp-final-glow" aria-hidden="true" />
         <div className="lp-final-inner" data-reveal>
           <Logo size={2.6} className="lp-final-logo" />
-          <h2 className="lp-final-title">Your campus<br />is hiring.</h2>
+          <h2 className="lp-final-title">Your city<br />is hiring.</h2>
           <p className="lp-final-sub">
             The people who can pay you, team up with you, or hire you are
             already a few minutes away. Go find them.
           </p>
-          <button className="landing-cta-lg lp-final-cta" onClick={goRegister}>
-            Get started free
-          </button>
+          <div className="lp-final-actions">
+            <button className="landing-cta-lg lp-final-cta" onClick={goRegister}>
+              Get started free
+            </button>
+            <GetAppButton className="landing-cta-ghost lp-final-getapp">
+              {DOWNLOAD_ICON} Download the app
+            </GetAppButton>
+          </div>
           <span className="lp-final-note">Free to join · No card needed</span>
         </div>
       </section>
+
+      {showFloat && (
+        <div className="lp-getapp-float">
+          <GetAppButton className="lp-getapp-pill">{DOWNLOAD_ICON} Download the app</GetAppButton>
+        </div>
+      )}
 
       <footer className="landing-footer">
         <Logo size={1.3} />

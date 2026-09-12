@@ -13,7 +13,8 @@
 /* v5: og-image.png and favicon.ico were still the OLD mark (they were missed
    when the app icons were regenerated), so link previews and the browser tab
    kept showing it. Both reuse their filenames, hence the bump. */
-const CACHE = 'doithere-v5';
+/* v6: manifest.json dropped "Campus" from the app name and description. */
+const CACHE = 'doithere-v6';
 const APP_SHELL = ['/', '/index.html', '/manifest.json', '/favicon.ico'];
 
 self.addEventListener('install', (event) => {

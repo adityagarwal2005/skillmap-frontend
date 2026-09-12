@@ -439,8 +439,7 @@
   margin-left: auto;
 }
 
-.lp-card-foot { display: flex; align-items: center; justify-content: space-between; }
-.lp-card-applied { font-size: 0.75rem; font-weight: 600; color: rgba(245,245,247,0.45); }
+.lp-card-foot { display: flex; align-items: center; justify-content: flex-end; }
 .lp-card-btn {
   font-size: 0.75rem;
   font-weight: 800;
@@ -786,6 +785,67 @@
 .landing-footer-links a:hover { color: #f5f5f7; }
 
 /* ══════════════════════════════════════════════════
+   Get the app
+   ══════════════════════════════════════════════════ */
+.landing-nav-getapp {
+  height: 36px;
+  padding: 0 15px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #f5f5f7;
+  font-weight: 700;
+  font-size: 0.875rem;
+  transition: background 0.15s, border-color 0.15s;
+}
+.landing-nav-getapp:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.34); }
+
+.lp-final-actions { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+.lp-final-getapp {
+  height: 54px;
+  padding: 0 28px;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 1.0625rem;
+  font-weight: 700;
+}
+
+/* Floats once the hero has scrolled off. Brand-filled because it's the
+   only persistent action on a long page. */
+.lp-getapp-float {
+  position: fixed;
+  left: 50%;
+  bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+  z-index: 30;
+  transform: translateX(-50%);
+  animation: lpFloatIn 0.45s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+.lp-getapp-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  height: 50px;
+  padding: 0 24px 0 19px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #ff8a5c, #ef5f26);
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.9375rem;
+  white-space: nowrap;
+  box-shadow: 0 10px 30px rgba(239,95,38,0.42), 0 2px 6px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.3);
+  transition: transform 0.16s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.22s;
+}
+.lp-getapp-pill:hover { transform: translateY(-2px); box-shadow: 0 16px 40px rgba(239,95,38,0.5), 0 2px 6px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.3); }
+.lp-getapp-pill:active { transform: scale(0.96); }
+.lp-getapp-pill svg,
+.lp-final-getapp svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+@keyframes lpFloatIn {
+  from { opacity: 0; transform: translate(-50%, 26px); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
+}
+
+/* ══════════════════════════════════════════════════
    Responsive
    ══════════════════════════════════════════════════ */
 @media (max-width: 900px) {
@@ -821,12 +881,16 @@
   .landing-hero-actions { flex-direction: column; width: 100%; }
   .landing-cta-lg, .landing-cta-ghost { width: 100%; }
   .lp-inline-cta, .lp-final-cta { width: 100%; }
+  .landing-nav-getapp { display: none; }
+  .lp-final-actions { flex-direction: column; }
+  .lp-final-getapp { width: 100%; justify-content: center; }
   .landing-footer { flex-direction: column; gap: 12px; text-align: center; justify-content: center; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .lp-ticker-track { animation: none; }
   .lp-radar-dot { animation: none; }
+  .lp-getapp-float { animation: none; }
   [data-reveal] { opacity: 1; transform: none; transition: none; }
   .lp-card:nth-child(2), .lp-card:nth-child(3), .lp-card:nth-child(4) { transform: none; }
 }

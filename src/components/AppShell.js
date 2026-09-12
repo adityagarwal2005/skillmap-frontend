@@ -6,6 +6,7 @@ import { getUser } from '../api/users';
 import useInstallPrompt from '../hooks/useInstallPrompt';
 import usePageMeta from '../hooks/usePageMeta';
 import usePoll from '../hooks/usePoll';
+import GetAppButton from './GetApp';
 import { pushSupported, isPushEnabled, enablePush } from '../push';
 import '../pages/FeedPage.css';
 
@@ -22,6 +23,7 @@ const I = {
   messages:      svg(<path d="M21 11.5a8 8 0 0 1-11.5 7.2L4 20l1.3-4.5A8 8 0 1 1 21 11.5z" />),
   profile:       svg(<><circle cx="12" cy="8" r="3.5" /><path d="M5.5 20a6.5 6.5 0 0 1 13 0" /></>),
   notifications: svg(<><path d="M18 8.5a6 6 0 0 0-12 0c0 6-2.5 8-2.5 8h17S18 14.5 18 8.5z" /><path d="M13.7 21a2 2 0 0 1-3.4 0" /></>),
+  download:      svg(<><path d="M12 3v12" /><path d="m7 10 5 5 5-5" /><path d="M5 21h14" /></>),
   settings:      svg(<><line x1="4" y1="21" x2="4" y2="13" /><line x1="4" y1="9" x2="4" y2="3" /><line x1="12" y1="21" x2="12" y2="12" /><line x1="12" y1="8" x2="12" y2="3" /><line x1="20" y1="21" x2="20" y2="15" /><line x1="20" y1="11" x2="20" y2="3" /><line x1="1.5" y1="13" x2="6.5" y2="13" /><line x1="9.5" y1="8" x2="14.5" y2="8" /><line x1="17.5" y1="15" x2="22.5" y2="15" /></>),
   create:        svg(<><circle cx="12" cy="12" r="9" /><path d="M12 8v8M8 12h8" /></>),
   applications:  svg(<><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" /><path d="M14 3v6h6" /><path d="M9 14l2 2 4-4" /></>),
@@ -233,6 +235,10 @@ export default function AppShell({
           <button className="sidebar-post-btn" onClick={() => navigate('/post')}>
             + Post work
           </button>
+          <GetAppButton className="sidebar-link sidebar-getapp">
+            <span className="sidebar-link-ic">{I.download}</span>
+            <span className="sidebar-link-label">Get the app</span>
+          </GetAppButton>
         </nav>
 
         <main className="app-main">
