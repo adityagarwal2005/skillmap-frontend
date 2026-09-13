@@ -70,25 +70,25 @@
 
 /* Chips and skeletons hardcode white-on-dark washes that vanish on a
    light ground, so they need explicit counterparts rather than tokens. */
-[data-theme="light"] .ds-chip,
-[data-theme="light"] .app-shell .work-cat,
-[data-theme="light"] .app-shell .wc-skill { background: rgba(0,0,0,0.05); }
+[data-theme="light"] .ds-chip { background: rgba(0,0,0,0.05); }
 [data-theme="light"] .ds-skel {
   background: linear-gradient(90deg, #eeeef1 8%, #f7f7f9 18%, #eeeef1 33%);
   background-size: 840px 100%;
 }
-
-/* Three more places that hardcode a colour for one theme and so invert
-   into unreadable on the other. */
-[data-theme="light"] .app-shell .wc-ava {
-  background: var(--surface-flat);
-  border: 1px solid var(--hairline-str);
-  color: var(--text-1);
-}
+/* The dock hardcodes white labels, which disappear on a light ground. */
 [data-theme="light"] .app-shell .mobile-nav-btn { color: rgba(0,0,0,0.5); }
 [data-theme="light"] .app-shell .mobile-nav-btn.active { color: #1d1d1f; }
 [data-theme="light"] .app-shell .mobile-nav-btn.is-create { color: #fff; }
 [data-theme="light"] .app-shell .mobile-nav-btn.active::before { background: rgba(0,0,0,0.06); }
+/* The desktop rail hardcodes white labels, icons and hover fills for the
+   dark theme, so on a light ground its whole nav went blank. */
+[data-theme="light"] .app-shell .sidebar .sidebar-group-label { color: var(--text-3); }
+[data-theme="light"] .app-shell .sidebar-link { color: var(--text-2); }
+[data-theme="light"] .app-shell .sidebar-link-ic { color: var(--text-3); }
+[data-theme="light"] .app-shell .sidebar-link:hover { background: rgba(0,0,0,0.05); color: var(--text-1); }
+[data-theme="light"] .app-shell .sidebar-link:hover .sidebar-link-ic { color: var(--text-1); }
+[data-theme="light"] .app-shell .sidebar-link.active { background: rgba(239,95,38,0.1); color: var(--text-1); }
+[data-theme="light"] .app-shell .sidebar-post-btn { background: var(--text-1); color: #fff; }
 /* The nudge banner painted itself solid black, which the light palette
    then wrote near-black text onto. */
 [data-theme="light"] .app-shell .profile-nudge {
@@ -225,7 +225,6 @@ body::after {
    Every card in the app gets the same physical treatment: a gradient
    body, a lit top edge, layered shadow, and a spring on hover/press.
    ═══════════════════════════════════════════════ */
-.app-shell .work-card,
 .app-shell .person-card,
 .app-shell .notif-card,
 .app-shell .portfolio-card,
@@ -244,7 +243,6 @@ body::after {
     border-color var(--t-med) ease;
 }
 
-.app-shell .work-card:hover,
 .app-shell .person-card:hover,
 .app-shell .portfolio-card:hover,
 .app-shell .post-new-card:hover,
@@ -254,32 +252,13 @@ body::after {
   border-color: var(--hairline-str);
 }
 
-.app-shell .work-card:active,
 .app-shell .person-card:active,
 .app-shell .conv-item:active,
 .app-shell .post-new-card:active { transform: scale(0.988); }
 
-/* A brand-tinted bloom that fades in from the corner on hover, so the
-   card lights up rather than just moving. */
-.app-shell .work-card { position: relative; overflow: hidden; isolation: isolate; }
-.app-shell .work-card::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background: radial-gradient(120% 90% at 100% 0%, rgba(239,95,38,0.13), transparent 58%);
-  opacity: 0;
-  transition: opacity var(--t-slow) ease;
-}
-.app-shell .work-card:hover::after { opacity: 1; }
-
 /* ═══════════════════════════════════════════════
    4 · Controls
    ═══════════════════════════════════════════════ */
-.app-shell .range-pill,
-.app-shell .work-search,
-.app-shell .work-sort,
 .app-shell .cat-chip,
 .app-shell .filter-chip {
   border-radius: var(--r-pill);
@@ -301,8 +280,7 @@ body::after {
 
 /* Focus ring reads as a soft halo rather than a hard outline. */
 .app-shell input:focus-visible,
-.app-shell textarea:focus-visible,
-.app-shell .work-search:focus-within {
+.app-shell textarea:focus-visible {
   outline: none;
   border-color: var(--brand-line);
   box-shadow: 0 0 0 3px rgba(239,95,38,0.16), var(--edge-light);
@@ -322,7 +300,6 @@ body::after {
    Screen titles were sized like section headers. On a phone the title
    is the whole masthead, so it can afford real scale.
    ═══════════════════════════════════════════════ */
-:root .app-shell .feed-heading,
 :root .app-shell .convs-title,
 :root .app-shell .people-heading,
 :root .app-shell .notif-title,
@@ -335,39 +312,10 @@ body::after {
 }
 
 /* ═══════════════════════════════════════════════
-   5b · Feed header — content first
-   Title, range, stats, search, sort, kind filter and skill chips were
-   seven stacked rows, so the first listing opened below the fold on a
-   phone. They now compress into a masthead, a slim stat strip, and one
-   bar that sticks as you scroll.
+   5b · Stat strip
+   The Post page's seller dashboard reads as one slim status line rather
+   than a boxed band of three numbers.
    ═══════════════════════════════════════════════ */
-:root .app-shell .work-head { margin-bottom: 14px; }
-:root .app-shell .work-head .page-title-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-:root .app-shell .work-head-right {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-shrink: 0;
-}
-:root .app-shell .work-head .range-pill {
-  height: 36px;
-  padding: 0 6px 0 12px;
-  background: var(--glass);
-  border: 1px solid var(--glass-brd);
-  backdrop-filter: var(--blur);
-  -webkit-backdrop-filter: var(--blur);
-}
-/* "Near me" is the label for a control the icon already implies; on a
-   phone the words cost more width than they earn. */
-@media (max-width: 460px) {
-  :root .app-shell .work-head .range-cap { display: none; }
-  :root .app-shell .work-head .range-pill { padding-left: 10px; }
-}
 
 /* Stat band → one slim line that reads as a status strip. */
 :root .app-shell .market-pulse {
@@ -409,41 +357,6 @@ body::after {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
-/* The sticky bar. Negative side margins let the glass bleed to the
-   screen edges while its contents stay on the page's own gutter. */
-:root .app-shell .work-bar {
-  position: sticky;
-  top: 0;
-  z-index: 12;
-  margin: 0 -20px 12px;
-  padding: 10px 20px;
-  background: var(--glass-strong);
-  backdrop-filter: var(--blur);
-  -webkit-backdrop-filter: var(--blur);
-  border-bottom: 1px solid var(--glass-brd);
-}
-:root .app-shell .work-bar .work-tools { margin-bottom: 9px; }
-:root .app-shell .work-bar .work-filter {
-  margin-bottom: 0;
-  overflow-x: auto;
-  scrollbar-width: none;
-}
-:root .app-shell .work-bar .work-filter::-webkit-scrollbar { display: none; }
-
-/* Skill chips scroll sideways instead of wrapping to a second and third
-   row, which is what made this block unbounded in height. */
-:root .app-shell .work-cats {
-  display: flex;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  gap: 7px;
-  padding-bottom: 3px;
-  margin-bottom: 14px;
-  scrollbar-width: none;
-}
-:root .app-shell .work-cats::-webkit-scrollbar { display: none; }
-:root .app-shell .work-cats .work-cat { flex-shrink: 0; }
 
 /* ═══════════════════════════════════════════════
    5c · Profile — give the person a stage
@@ -559,6 +472,61 @@ body::after {
 }
 
 /* ═══════════════════════════════════════════════
+   5e · Two products, two colours
+   A gig is money and carries the brand orange. A collab is people, and
+   until now had no colour of its own — grey beside orange read as the
+   lesser option rather than a different one.
+   ═══════════════════════════════════════════════ */
+:root {
+  --team:        #7b6cf6;
+  --team-bright: #a095ff;
+  --team-dim:    rgba(123,108,246,0.16);
+  --team-line:   rgba(123,108,246,0.42);
+}
+[data-theme="light"] {
+  --team:        #5b4be0;
+  --team-bright: #6a5bf0;
+  --team-dim:    rgba(91,75,224,0.1);
+  --team-line:   rgba(91,75,224,0.3);
+}
+
+/* ═══════════════════════════════════════════════
+   5f · Profile as a freelancer's card
+   ═══════════════════════════════════════════════ */
+:root .app-shell .pf-avail {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 26px;
+  margin-top: 8px;
+  padding: 0 11px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+:root .app-shell .pf-avail.is-on {
+  color: var(--ok);
+  background: var(--ok-dim);
+  border: 1px solid color-mix(in srgb, var(--ok) 32%, transparent);
+}
+:root .app-shell .pf-avail.is-off {
+  color: var(--text-2);
+  background: var(--surface-flat);
+  border: 1px dashed var(--hairline-str);
+}
+:root .app-shell .pf-avail.is-off:hover { color: var(--text-1); border-color: var(--text-3); }
+[data-theme="light"] .app-shell .pf-avail.is-on { color: #15803d; }
+:root .app-shell .pf-avail-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ok);
+  animation: livePulse 1.8s ease-out infinite;
+}
+:root .app-shell .pf-account-links { margin-top: 14px; }
+
+/* ═══════════════════════════════════════════════
    6 · Motion
    ═══════════════════════════════════════════════ */
 @keyframes ngRise {
@@ -568,33 +536,26 @@ body::after {
 
 /* Lists cascade in instead of appearing all at once. Capped at eight so
    a long feed doesn't leave the last rows waiting on a long delay. */
-.app-shell .work-list > *,
 .app-shell .people-grid > *,
 .app-shell .notif-list > *,
 .app-shell .conv-list > * {
   animation: ngRise var(--t-slow) var(--spring-soft) both;
 }
-.app-shell .work-list > *:nth-child(1),
 .app-shell .people-grid > *:nth-child(1),
 .app-shell .notif-list > *:nth-child(1),
 .app-shell .conv-list > *:nth-child(1) { animation-delay: 0ms; }
-.app-shell .work-list > *:nth-child(2),
 .app-shell .people-grid > *:nth-child(2),
 .app-shell .notif-list > *:nth-child(2),
 .app-shell .conv-list > *:nth-child(2) { animation-delay: 40ms; }
-.app-shell .work-list > *:nth-child(3),
 .app-shell .people-grid > *:nth-child(3),
 .app-shell .notif-list > *:nth-child(3),
 .app-shell .conv-list > *:nth-child(3) { animation-delay: 80ms; }
-.app-shell .work-list > *:nth-child(4),
 .app-shell .people-grid > *:nth-child(4),
 .app-shell .notif-list > *:nth-child(4),
 .app-shell .conv-list > *:nth-child(4) { animation-delay: 120ms; }
-.app-shell .work-list > *:nth-child(5),
 .app-shell .people-grid > *:nth-child(5),
 .app-shell .notif-list > *:nth-child(5),
 .app-shell .conv-list > *:nth-child(5) { animation-delay: 160ms; }
-.app-shell .work-list > *:nth-child(n+6),
 .app-shell .people-grid > *:nth-child(n+6),
 .app-shell .notif-list > *:nth-child(n+6),
 .app-shell .conv-list > *:nth-child(n+6) { animation-delay: 200ms; }
@@ -606,11 +567,9 @@ body::after {
    ═══════════════════════════════════════════════ */
 @media (prefers-reduced-motion: reduce) {
   body::before { animation: none; }
-  .app-shell .work-list > *,
   .app-shell .people-grid > *,
   .app-shell .notif-list > *,
   .app-shell .conv-list > * { animation: none; }
-  .app-shell .work-card:hover,
   .app-shell .person-card:hover,
   .app-shell .portfolio-card:hover,
   .app-shell .post-new-card:hover,

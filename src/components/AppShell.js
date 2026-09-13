@@ -79,12 +79,10 @@ function deriveActive(pathname) {
  *
  * Props:
  *   active   override the highlighted nav item (else derived from URL)
- *   robot    show the decorative hero robot (Work page only)
  */
 export default function AppShell({
   children,
   active,
-  robot = false,
 }) {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -307,12 +305,6 @@ export default function AppShell({
           );
         })}
       </nav>
-
-      {robot && (
-        <img className="feed-robot" src="/robot.png" alt="" aria-hidden="true"
-          onError={e => { e.currentTarget.style.display = 'none'; }} />
-      )}
-
     </div>
   );
 }

@@ -276,3 +276,7 @@
 .apl-slots.is-full { color: var(--ok); background: var(--ok-dim); border-color: rgba(34,197,94,0.4); }
 .apl-tick:disabled { opacity: 0.4; cursor: not-allowed; }
 .apl-tick:disabled:hover { background: none; }
+
+/* Collabs carry their own colour, matching the feed. */
+.apl-kind.is-collab { color: var(--team-bright); }
+[data-theme="light"] .apl-kind.is-collab { color: var(--team); }

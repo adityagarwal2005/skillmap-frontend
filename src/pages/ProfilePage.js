@@ -26,9 +26,16 @@ const REPORT_REASONS = [
   { value: 'other',         label: 'Other' },
 ];
 
+// The status a freelancer set in Settings, worded for someone deciding
+// whether to reach out. "Not available" shows nothing to visitors.
+const AVAILABILITY = {
+  open_to_freelance: 'Available for gigs',
+  open_to_work:      'Open to work',
+};
+
 export default function ProfilePage() {
   const { userId }              = useParams();
-  const { user: authUser }      = useAuth();
+  const { user: authUser, logoutUser } = useAuth();
   const { showToast }           = useToast();
   const navigate                = useNavigate();
 
@@ -234,7 +241,18 @@ export default function ProfilePage() {
     }
   };
 
-  const memberSince = profile?.created_at ? new Date(profile.created_at).getFullYear() : null;
+  // Two taps, so a stray tap on a phone can't sign someone out.
+  const [signOutArmed, setSignOutArmed] = useState(false);
+  useEffect(() => {
+    if (!signOutArmed) return undefined;
+    const t = setTimeout(() => setSignOutArmed(false), 3500);
+    return () => clearTimeout(t);
+  }, [signOutArmed]);
+  const handleSignOut = () => {
+    if (!signOutArmed) { setSignOutArmed(true); return; }
+    logoutUser();
+    navigate('/login');
+  };
 
   return (
     <AppShell active="profile">
@@ -265,40 +283,47 @@ export default function ProfilePage() {
                 <div className="profile-info">
                   <h1 className="profile-name">{profile.username}</h1>
                   <p className="profile-category">{profile.category || 'Independent'}</p>
+                  {AVAILABILITY[profile.status] ? (
+                    <span className="pf-avail is-on">
+                      <span className="pf-avail-dot" />{AVAILABILITY[profile.status]}
+                    </span>
+                  ) : isOwn && (
+                    <button type="button" className="pf-avail is-off" onClick={() => navigate('/settings')}>
+                      Not taking work · Change
+                    </button>
+                  )}
                 </div>
               </div>
 
               {profile.headline && <p className="profile-headline">{profile.headline}</p>}
 
               <div className="profile-stats">
+                <div className="profile-stat">
+                  <span className="profile-stat-val">
+                    {profile.review_count > 0 ? `★ ${profile.rating?.toFixed(1)}` : 'New'}
+                  </span>
+                  <span className="profile-stat-label">
+                    {profile.review_count > 0
+                      ? `${profile.review_count} review${profile.review_count === 1 ? '' : 's'}`
+                      : 'No reviews'}
+                  </span>
+                </div>
                 {(isOwn || portfolio.length > 0) && (
                   <div className="profile-stat">
                     <span className="profile-stat-val">{portfolio.length}</span>
-                    <span className="profile-stat-label">Work</span>
+                    <span className="profile-stat-label">{portfolio.length === 1 ? 'Project' : 'Projects'}</span>
                   </div>
                 )}
                 {(isOwn || (profile.skills?.length || 0) > 0) && (
                   <div className="profile-stat">
                     <span className="profile-stat-val">{profile.skills?.length || 0}</span>
-                    <span className="profile-stat-label">Skills</span>
-                  </div>
-                )}
-                {memberSince && (
-                  <div className="profile-stat">
-                    <span className="profile-stat-val">{memberSince}</span>
-                    <span className="profile-stat-label">Since</span>
+                    <span className="profile-stat-label">{(profile.skills?.length || 0) === 1 ? 'Skill' : 'Skills'}</span>
                   </div>
                 )}
                 {isOwn && (
                   <div className="profile-stat">
                     <span className="profile-stat-val">{profile.profile_views ?? 0}</span>
-                    <span className="profile-stat-label">Views</span>
-                  </div>
-                )}
-                {profile.review_count > 0 && (
-                  <div className="profile-stat">
-                    <span className="profile-stat-val">★ {profile.rating?.toFixed(1)}</span>
-                    <span className="profile-stat-label">Rating ({profile.review_count})</span>
+                    <span className="profile-stat-label">{(profile.profile_views ?? 0) === 1 ? 'View' : 'Views'}</span>
                   </div>
                 )}
                 {!isOwn && profile.mutual_friends_count > 0 && (
@@ -319,6 +344,15 @@ export default function ProfilePage() {
                     </button>
                     <button className="profile-ghost-btn is-compact" onClick={handleShare}>
                       Share
+                    </button>
+                  </div>
+                  <div className="profile-more-links pf-account-links">
+                    <button onClick={() => navigate('/applications')}>My applications</button>
+                    <span>·</span>
+                    <button onClick={() => navigate('/settings')}>Settings</button>
+                    <span>·</span>
+                    <button className="is-danger" onClick={handleSignOut}>
+                      {signOutArmed ? 'Confirm sign out' : 'Sign out'}
                     </button>
                   </div>
                 </div>
@@ -432,13 +466,13 @@ export default function ProfilePage() {
             </div>
             )}
 
-            {/* Work — same ghost-town guard as Skills above. */}
+            {/* Projects — same ghost-town guard as Skills above. */}
             {(isOwn || portfolio.length > 0) && (
             <div className="profile-skills-section">
-              <h3 className="section-title">Work</h3>
+              <h3 className="section-title">Projects</h3>
               {portfolio.length === 0 ? (
                 <p className="no-skills">
-                  {isOwn ? "You haven't posted any work yet." : 'No work posted yet.'}
+                  {isOwn ? "You haven't added any projects yet." : 'No projects yet.'}
                 </p>
               ) : (
                 <div className="portfolio-grid">

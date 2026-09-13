@@ -65,7 +65,8 @@
   border-radius: var(--r-pill);
   margin-bottom: 14px;
 }
-.post-new-badge.is-collab { color: var(--text-2); background: rgba(255,255,255,0.08); }
+.post-new-badge.is-collab { color: var(--team-bright); background: var(--team-dim); }
+[data-theme="light"] .post-new-badge.is-collab { color: var(--team); }
 
 .post-new-name {
   font-family: var(--font-display);

@@ -894,3 +894,8 @@
   [data-reveal] { opacity: 1; transform: none; transition: none; }
   .lp-card:nth-child(2), .lp-card:nth-child(3), .lp-card:nth-child(4) { transform: none; }
 }
+
+/* Collabs carry their own colour, matching the app. */
+.lp-card.is-collab .lp-card-stripe { background: #7b6cf6; }
+.lp-card-kind.is-collab { color: #a095ff; background: rgba(123,108,246,0.16); }
+.lp-card.is-collab:hover { border-color: rgba(123,108,246,0.5); }

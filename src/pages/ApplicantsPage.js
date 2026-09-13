@@ -113,7 +113,7 @@ export default function ApplicantsPage() {
           <NotificationBell />
         </div>
 
-        <span className="apl-kind">{isFreelance ? 'Gig' : 'Collab'}</span>
+        <span className={`apl-kind ${isFreelance ? '' : 'is-collab'}`}>{isFreelance ? 'Gig' : 'Collab'}</span>
         {loading
           ? <div className="ds-skel apl-title-skel" />
           : <h1 className="apl-title">{title || 'Post not found'}</h1>}

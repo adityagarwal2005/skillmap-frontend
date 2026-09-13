@@ -4,76 +4,236 @@
   padding: 28px 24px 60px;
 }
 
-.apps-hero { margin-bottom: 20px; }
-/* .apps-heading gets its size from the shared editorial-heading rule in FeedPage.css */
+.apps-hero { margin-bottom: 18px; }
+/* .apps-heading gets its size from the shared editorial-heading rule in nextgen.css */
 .apps-heading { color: var(--text-1); }
 .apps-sub { font-size: 0.9375rem; color: var(--text-2); margin-top: 8px; }
 
-.apps-filters { margin-bottom: 20px; }
-
-.app-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 16px 18px;
-  margin-bottom: 10px;
-  cursor: pointer;
-  transition: transform 0.18s var(--ease-out-expo, ease), box-shadow 0.18s, border-color 0.15s;
-  animation: cardIn 0.3s ease both;
+/* ── Summary ── */
+.trk-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
 }
-.app-card:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(0,0,0,0.09); border-color: var(--border-md); }
-
-.app-card-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 10px;
+.trk-sum {
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
+  box-shadow: var(--edge-light);
 }
-
-.app-title {
-  font-size: 1rem;
-  font-weight: 700;
+.trk-sum-val {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
   color: var(--text-1);
-  line-height: 1.35;
-  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+.trk-sum-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.trk-sum.is-ok .trk-sum-val { color: var(--ok); }
+
+.trk-filters { display: flex; gap: 6px; margin-bottom: 16px; }
+.trk-filter {
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text-2);
+  background: var(--surface-flat);
+  border: 1px solid var(--hairline);
+}
+.trk-filter.is-on { color: var(--bg); background: var(--text-1); border-color: var(--text-1); }
+
+/* ── Tracker card ── */
+.trk-list { display: flex; flex-direction: column; gap: 12px; }
+.trk-card {
+  --tone: var(--brand);
+  --tone-bright: var(--brand-bright);
+  --tone-dim: var(--brand-dim);
+  position: relative;
+  overflow: hidden;
+  padding: 16px 18px 16px 22px;
+  border-radius: 22px;
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
+  box-shadow: var(--lift-1), var(--edge-light);
+  animation: ngRise var(--t-slow) var(--spring-soft) both;
+}
+.trk-card.is-team {
+  --tone: var(--team);
+  --tone-bright: var(--team-bright);
+  --tone-dim: var(--team-dim);
+}
+.trk-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--tone);
 }
 
-.app-meta {
+.trk-top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.trk-kind {
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 9px;
+  border-radius: 999px;
+  font-size: 0.625rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--tone-bright);
+  background: var(--tone-dim);
+}
+.trk-pay {
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  font-weight: 800;
+  color: var(--tone);
+  font-variant-numeric: tabular-nums;
+}
+.trk-ago { margin-left: auto; font-size: 0.75rem; color: var(--text-3); white-space: nowrap; }
+
+.trk-title {
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  color: var(--text-1);
+}
+.trk-by { margin-top: 4px; font-size: 0.8125rem; color: var(--text-3); text-align: left; }
+.trk-by strong { font-weight: 700; color: var(--text-2); }
+.trk-by:hover strong { color: var(--text-1); text-decoration: underline; }
+
+.trk-line { margin-top: 12px; font-size: 0.9375rem; font-weight: 800; letter-spacing: -0.01em; }
+.trk-line.tone-ok { color: var(--ok); }
+.trk-line.tone-wait { color: var(--text-1); }
+.trk-line.tone-fail { color: var(--text-3); }
+
+/* ── Steps ──
+   Equal-width steps, each with its dot at the left edge; the connector is
+   drawn by the *following* step back to the one before it, so its colour
+   can reflect whether that earlier step was reached. */
+.trk-steps { list-style: none; display: flex; margin: 12px 0 0; padding: 0; }
+.trk-step {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+.trk-step + .trk-step::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  right: calc(100% + 4px);
+  width: calc(100% - 30px);
+  height: 2px;
+  border-radius: 2px;
+  background: var(--hairline-str);
+}
+.trk-step.is-done + .trk-step::before { background: var(--tone); }
+.trk-step.is-done + .trk-step.is-failed::before { background: var(--hairline-str); }
+
+.trk-dot {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: var(--surface-flat);
+  border: 2px solid var(--hairline-str);
+}
+.trk-dot svg { width: 12px; height: 12px; }
+.trk-step.is-done .trk-dot { background: var(--tone); border-color: var(--tone); }
+.trk-step.is-current .trk-dot {
+  border-color: var(--tone);
+  animation: trkPulse 1.8s ease-in-out infinite;
+}
+.trk-step.is-current .trk-dot::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--tone);
+}
+.trk-step.is-failed .trk-dot { color: var(--text-3); background: var(--surface-2); }
+.trk-label {
+  max-width: 100%;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.trk-step.is-done .trk-label,
+.trk-step.is-current .trk-label { color: var(--text-1); }
+
+@keyframes trkPulse {
+  0%, 100% { box-shadow: 0 0 0 3px var(--tone-dim); }
+  50%      { box-shadow: 0 0 0 7px var(--tone-dim); }
+}
+
+/* ── Next step ── */
+.trk-actions {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 10px;
-}
-.app-by { font-size: 0.8125rem; color: var(--text-2); font-weight: 600; }
-.app-by:hover { color: var(--text-1); text-decoration: underline; }
-.app-pay { font-size: 0.9375rem; font-weight: 800; color: var(--text-1); }
-
-.app-complete-row {
-  margin-top: 12px;
+  gap: 10px;
+  margin-top: 14px;
   padding-top: 12px;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid var(--hairline);
 }
-.app-ago { font-size: 0.75rem; color: var(--text-3); margin-left: auto; }
-
-/* Status pills */
-.app-status {
-  font-size: 0.6875rem;
-  font-weight: 800;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  padding: 4px 10px;
+.trk-note { flex: 1; min-width: 170px; font-size: 0.8125rem; color: var(--text-2); }
+.trk-btn {
+  height: 38px;
+  padding: 0 16px;
   border-radius: 999px;
-  white-space: nowrap;
+  font-size: 0.8125rem;
+  font-weight: 800;
+  color: #fff;
+  background: linear-gradient(180deg, var(--tone-bright), var(--tone));
+  box-shadow: var(--edge-strong);
 }
-.st-pending  { background: var(--elevated); color: var(--text-2); }
-.st-accepted { background: #e9f9ef; color: #12864a; }
-.st-declined { background: #fdeaea; color: #c0392b; }
-.st-filled   { background: var(--elevated); color: var(--text-3); }
-[data-theme="dark"] .st-accepted { background: rgba(18,134,74,0.2); color: #58d08a; }
-[data-theme="dark"] .st-declined { background: rgba(192,57,43,0.2); color: #f08a7f; }
+.trk-btn.is-ghost {
+  color: var(--text-1);
+  background: var(--surface-flat);
+  border: 1px solid var(--hairline-str);
+  box-shadow: none;
+}
+.trk-btn:disabled { opacity: 0.6; }
+
+[data-theme="light"] .trk-kind { color: var(--tone); }
+[data-theme="light"] .trk-line.tone-ok,
+[data-theme="light"] .trk-sum.is-ok .trk-sum-val { color: #15803d; }
 
 @media (max-width: 600px) {
   .apps-wrapper { padding: 22px 16px 60px; }
+  .trk-sum { padding: 10px 12px; }
+  .trk-sum-val { font-size: 1.25rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trk-card { animation: none; }
+  .trk-step.is-current .trk-dot { animation: none; box-shadow: 0 0 0 4px var(--tone-dim); }
 }

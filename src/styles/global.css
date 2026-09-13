@@ -116,7 +116,6 @@ body {
    Set --font-display so heading rules across pages can opt in consistently. */
 :root { --font-display: 'Space Grotesk', 'Inter', -apple-system, sans-serif; }
 
-.feed-heading,
 .landing-hero-display,
 .convs-title,
 .section-title,
@@ -134,11 +133,6 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   font-feature-settings: 'ss01', 'ss02';
-}
-
-/* Prices/counts read cleaner with tabular (monospaced) figures */
-.opp-pay {
-  font-variant-numeric: tabular-nums;
 }
 
 button  { cursor: pointer; border: none; outline: none; font-family: inherit; background: none; }

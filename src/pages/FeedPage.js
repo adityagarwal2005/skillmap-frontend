@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
@@ -10,8 +10,10 @@ import Lightbox from '../components/Lightbox';
 import Logo from '../components/Logo';
 import NotificationBell from '../components/NotificationBell';
 import { cldAvatar, cldThumb } from '../utils/cloudinaryUrl';
+import { SKILL_CATEGORIES, categoriesOf, categoryById } from '../utils/skillCategories';
 import usePoll from '../hooks/usePoll';
 import './FeedPage.css';
+import './Marketplace.css';
 
 function timeLeft(expiresAt) {
   if (!expiresAt) return null;
@@ -20,6 +22,193 @@ function timeLeft(expiresAt) {
   const hrs = Math.floor(diff / 3600000);
   if (hrs < 24) return `${hrs}h left`;
   return `${Math.floor(hrs / 24)}d left`;
+}
+
+const money = (n) => `₹${Math.round(Number(n) || 0).toLocaleString('en-IN')}`;
+const distance = (km) => (km < 1 ? `${Math.round(km * 1000)} m` : `${km} km`);
+
+const RANGES = [
+  { value: '0.5', label: '500 m' },
+  { value: '1', label: '1 km' },
+  { value: '2', label: '2 km' },
+  { value: '5', label: '5 km' },
+  { value: '10', label: '10 km' },
+];
+const RANGE_LABEL = Object.fromEntries(RANGES.map(r => [r.value, r.label]));
+
+const svg = (paths) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+    strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{paths}</svg>
+);
+const I = {
+  pin:     svg(<><path d="M12 21s-7-5.6-7-11a7 7 0 1 1 14 0c0 5.4-7 11-7 11z" /><circle cx="12" cy="10" r="2.6" /></>),
+  clock:   svg(<><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></>),
+  search:  svg(<><circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" /></>),
+  chevron: svg(<path d="m6 9 6 6 6-6" />),
+  wallet:  svg(<><rect x="2.5" y="6" width="19" height="14" rx="3" /><path d="M2.5 10.5h19" /><path d="M16 15h2" /><path d="M6 6V5a2 2 0 0 1 2-2h8" /></>),
+  team:    svg(<><circle cx="9" cy="8" r="3.2" /><path d="M3 20a6 6 0 0 1 12 0" /><circle cx="17.5" cy="9" r="2.4" /><path d="M16 14.2a4.8 4.8 0 0 1 5 4.8" /></>),
+  x:       svg(<path d="M18 6 6 18M6 6l12 12" />),
+  check:   svg(<path d="M20 6 9 17l-5-5" />),
+  plus:    svg(<path d="M12 5v14M5 12h14" />),
+  arrow:   svg(<path d="M5 12h14M13 6l6 6-6 6" />),
+};
+
+const Bookmark = ({ on }) => (
+  <svg viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor" fill={on ? 'currentColor' : 'none'}
+    strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M6 4h12a1 1 0 0 1 1 1v15l-7-4.2L5 20V5a1 1 0 0 1 1-1z" />
+  </svg>
+);
+
+function Avatar({ user, className = '' }) {
+  return (
+    <span className={`mk-ava ${className}`}>
+      {user.profile_image
+        ? <img className="ava-img" src={cldAvatar(user.profile_image)} alt="" />
+        : (user.username?.[0] || '?').toUpperCase()}
+    </span>
+  );
+}
+
+/* A collab reads as a lobby: the host's seat, then one seat per person
+   they're looking for, filled as people are accepted. */
+function Seats({ host, needed, filled }) {
+  const shown = Math.min(needed, 5);
+  const taken = Math.min(filled, shown);
+  return (
+    <div className="mk-seats" aria-label={`${filled} of ${needed} seats filled`}>
+      <Avatar user={host} className="mk-seat is-host" />
+      {Array.from({ length: shown }, (_, i) => (
+        <span key={i} className={`mk-seat ${i < taken ? 'is-filled' : 'is-open'}`}>
+          {i < taken ? I.check : I.plus}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function Skills({ skills, limit = 3 }) {
+  if (!skills?.length) return null;
+  const extra = skills.length - limit;
+  return (
+    <div className="mk-skills">
+      {skills.slice(0, limit).map(s => <span key={s} className="mk-skill">{s}</span>)}
+      {extra > 0 && <span className="mk-skill is-more">+{extra}</span>}
+    </div>
+  );
+}
+
+function SaveButton({ saved, onClick }) {
+  return (
+    <button type="button" className={`mk-save ${saved ? 'is-saved' : ''}`} onClick={onClick}
+      aria-pressed={saved} aria-label={saved ? 'Remove from saved' : 'Save for later'}>
+      <Bookmark on={saved} />
+    </button>
+  );
+}
+
+function MetaChips({ item }) {
+  const left = timeLeft(item.expires_at);
+  const urgent = !!left && (left.endsWith('h left') || left === 'Expired');
+  return (
+    <>
+      {left && <span className={`mk-chip ${urgent ? 'is-urgent' : ''}`}>{I.clock}{left}</span>}
+      {item.distance_km != null && <span className="mk-chip">{I.pin}{distance(item.distance_km)}</span>}
+    </>
+  );
+}
+
+// The card is one big button; keys pressed on the save button inside it
+// shouldn't also open the listing.
+const cardKeys = (open) => (e) => {
+  if (e.target !== e.currentTarget) return;
+  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
+};
+
+function GigCard({ item, isNew, saved, onSave, onOpen, style }) {
+  const needed = item.people_needed || 1;
+  const spotsLeft = Math.max(0, needed - (item.hired_count || 0));
+  return (
+    <article className={`mk-card is-gig ${isNew ? 'is-new' : ''}`} style={style}
+      tabIndex={0} role="button" onClick={onOpen} onKeyDown={cardKeys(onOpen)}
+      aria-label={`Paid gig, ${money(item.payment_amount)}: ${item.title}`}>
+      <div className="mk-ticket">
+        <div className="mk-payout">
+          <span className="mk-eyebrow">Payout</span>
+          <span className="mk-payout-val">{money(item.payment_amount)}</span>
+        </div>
+        <div className="mk-ticket-meta"><MetaChips item={item} /></div>
+      </div>
+      <div className="mk-perf" aria-hidden="true" />
+      <div className="mk-body">
+        <div className="mk-body-top">
+          <span className="mk-kind is-gig">Paid gig</span>
+          {isNew && <span className="mk-new">New</span>}
+          {needed > 1 && <span className="mk-cap">Hiring {needed} · {spotsLeft} left</span>}
+          <SaveButton saved={saved} onClick={onSave} />
+        </div>
+        <h3 className="mk-title">{item.description || item.title}</h3>
+        <Skills skills={item.skills} />
+        <div className="mk-foot">
+          <span className="mk-poster">
+            <Avatar user={item.user} />
+            <span className="mk-poster-text">
+              <span className="mk-poster-name">{item.user.username}</span>
+              <span className="mk-poster-sub">
+                {item.gender_preference && item.gender_preference !== 'any'
+                  ? (item.gender_preference === 'male' ? 'Male applicants only' : 'Female applicants only')
+                  : (item.user.category || 'Independent')}
+              </span>
+            </span>
+          </span>
+          <span className="mk-cta is-gig">Apply</span>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function TeamCard({ item, isNew, saved, onSave, onOpen, style }) {
+  const needed = item.people_needed || 1;
+  const filled = item.hired_count || 0;
+  const open = Math.max(0, needed - filled);
+  const desc = item.description && item.description !== item.title ? item.description : null;
+  return (
+    <article className={`mk-card is-team ${isNew ? 'is-new' : ''}`} style={style}
+      tabIndex={0} role="button" onClick={onOpen} onKeyDown={cardKeys(onOpen)}
+      aria-label={`Team forming, ${open} open: ${item.title}`}>
+      <div className="mk-lobby">
+        <div className="mk-lobby-row">
+          <Seats host={item.user} needed={needed} filled={filled} />
+          <div className="mk-lobby-count">
+            <span className="mk-lobby-open">{open}</span>
+            <span className="mk-eyebrow">{open === 1 ? 'seat open' : 'seats open'}</span>
+          </div>
+        </div>
+        <div className="mk-ticket-meta"><MetaChips item={item} /></div>
+      </div>
+      <div className="mk-body">
+        <div className="mk-body-top">
+          <span className="mk-kind is-team">Team forming</span>
+          {isNew && <span className="mk-new">New</span>}
+          <SaveButton saved={saved} onClick={onSave} />
+        </div>
+        <h3 className="mk-title">{item.title}</h3>
+        {desc && <p className="mk-desc">{desc}</p>}
+        <Skills skills={item.skills} />
+        <div className="mk-foot">
+          <span className="mk-poster">
+            <Avatar user={item.user} />
+            <span className="mk-poster-text">
+              <span className="mk-poster-sub">Hosted by</span>
+              <span className="mk-poster-name">{item.user.username}</span>
+            </span>
+          </span>
+          <span className="mk-cta is-team">Apply</span>
+        </div>
+      </div>
+    </article>
+  );
 }
 
 export default function FeedPage() {
@@ -31,11 +220,12 @@ export default function FeedPage() {
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(false);
-  const [workFilter, setWorkFilter] = useState('all');
-  const [range, setRange]     = useState('5'); // 0.5 | 1 | 2 | 5 | 10 (km)
+  const [kind, setKind]       = useState('all');     // all | freelance | collab
+  const [savedOnly, setSavedOnly] = useState(false);
+  const [range, setRange]     = useState('5');
   const [query, setQuery]     = useState('');
-  const [sort, setSort]       = useState('new');   // new | pay | near
-  const [category, setCategory] = useState('');    // skill-derived browse filter
+  const [sort, setSort]       = useState('new');     // new | pay | near
+  const [category, setCategory] = useState('');      // SKILL_CATEGORIES id
   const [saved, setSaved]     = useState(() => {
     try { return new Set(JSON.parse(localStorage.getItem('smSaved') || '[]')); }
     catch { return new Set(); }
@@ -54,7 +244,14 @@ export default function FeedPage() {
   // Reset the apply form each time a different opportunity is opened.
   useEffect(() => { setApplyMsg(''); setApplied(false); }, [viewItem?.kind, viewItem?.id]);
 
-  // Saved gigs live in localStorage — a shortlist you can build while
+  useEffect(() => {
+    if (!viewItem) return undefined;
+    const onKey = (e) => { if (e.key === 'Escape') setViewItem(null); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [viewItem]);
+
+  // Saved listings live in localStorage — a shortlist you can build while
   // browsing without committing to applying yet.
   const toggleSave = (item, e) => {
     e.stopPropagation();
@@ -143,295 +340,267 @@ export default function FeedPage() {
     finally { setLoadingMore(false); }
   };
 
+  // Everything on the page — the headline, the tile counts, the skill rail —
+  // describes what's inside the chosen radius, not the whole loaded feed.
+  const km = parseFloat(range);
+  const inRange = useMemo(
+    () => items.filter(it => it.distance_km == null || it.distance_km <= km),
+    [items, km],
+  );
+  const gigs = inRange.filter(it => it.kind === 'freelance');
+  const teams = inRange.filter(it => it.kind === 'collab');
+  const pot = gigs.reduce((s, it) => s + (Number(it.payment_amount) || 0), 0);
+  const nearest = inRange.map(it => it.distance_km).filter(d => d != null).sort((a, b) => a - b)[0];
+
+  const catCounts = useMemo(() => {
+    const counts = {};
+    inRange.forEach(it => categoriesOf(it).forEach(id => { counts[id] = (counts[id] || 0) + 1; }));
+    return counts;
+  }, [inRange]);
+  // Busiest categories first; the sort is stable, so empty ones keep the
+  // taxonomy's own order at the end.
+  const rail = useMemo(
+    () => [...SKILL_CATEGORIES].sort((a, b) => (catCounts[b.id] || 0) - (catCounts[a.id] || 0)),
+    [catCounts],
+  );
+
+  const q = query.trim().toLowerCase();
+  const shown = inRange.filter(it => {
+    if (savedOnly && !saved.has(`${it.kind}-${it.id}`)) return false;
+    if (kind !== 'all' && it.kind !== kind) return false;
+    if (category && !categoriesOf(it).has(category)) return false;
+    if (q) {
+      const hay = [it.title, it.description, it.user?.username, it.user?.category, ...(it.skills || [])]
+        .filter(Boolean).join(' ').toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  }).sort((a, b) => {
+    if (sort === 'pay') return (Number(b.payment_amount) || 0) - (Number(a.payment_amount) || 0);
+    if (sort === 'near') return (a.distance_km ?? Infinity) - (b.distance_km ?? Infinity);
+    return 0; // 'new' — the feed already arrives newest-first
+  });
+
+  const clearAll = () => { setKind('all'); setCategory(''); setSavedOnly(false); setQuery(''); };
+  const tokens = [
+    kind !== 'all' && { key: 'kind', label: kind === 'freelance' ? 'Paid gigs' : 'Teams', clear: () => setKind('all') },
+    category && { key: 'cat', label: categoryById(category)?.label, clear: () => setCategory('') },
+    savedOnly && { key: 'saved', label: 'Saved', clear: () => setSavedOnly(false) },
+  ].filter(Boolean);
+
+  const resultsTitle = savedOnly ? 'Saved'
+    : category ? categoryById(category)?.label
+    : kind === 'freelance' ? 'Paid gigs'
+    : kind === 'collab' ? 'Teams forming'
+    : sort === 'pay' ? 'Best paying'
+    : sort === 'near' ? 'Closest to you'
+    : 'Fresh near you';
+
+  const renderEmpty = () => {
+    const filtered = !!(q || category || kind !== 'all');
+    const widen = range !== '10' && (
+      <button className="opp-cta ghost" onClick={() => setRange('10')}>Widen to 10 km</button>
+    );
+    if (savedOnly && !filtered) return (
+      <div className="state-box">
+        <h3>Nothing saved yet</h3>
+        <p>Tap the bookmark on any listing to shortlist it here while you decide.</p>
+        <div className="state-box-actions">
+          <button className="opp-cta" onClick={() => setSavedOnly(false)}>Browse everything</button>
+        </div>
+      </div>
+    );
+    if (filtered || savedOnly) return (
+      <div className="state-box">
+        <h3>Nothing matches that</h3>
+        <p>
+          {q ? <>No listings matching “{query}”</> : 'No listings'}
+          {category && <> in <strong>{categoryById(category)?.label}</strong></>} within {RANGE_LABEL[range]}.
+        </p>
+        <div className="state-box-actions">
+          <button className="opp-cta" onClick={clearAll}>Clear filters</button>
+          {widen}
+        </div>
+      </div>
+    );
+    return (
+      <div className="state-box">
+        <h3>Nothing open near you yet</h3>
+        <p>Be the first — post a gig or start a team, and people nearby will see it.</p>
+        <div className="state-box-actions">
+          <button className="opp-cta" onClick={() => navigate('/post')}>Post a gig</button>
+          {widen}
+        </div>
+      </div>
+    );
+  };
+
+  const isGigView = viewItem?.kind === 'freelance';
+  const viewNeeded = viewItem?.people_needed || 1;
+  const viewFilled = viewItem?.hired_count || 0;
+
   return (
-    <AppShell active="work" robot>
-      <div className="feed-main">
-        <div className="work-head">
-          <div className="page-title-row">
-            <h1 className="feed-heading work-heading">Work</h1>
-            <div className="work-head-right">
-              <label className="range-pill">
-                <span className="range-dot" />
-                <span className="range-cap">Near me</span>
-                <select className="range-select" value={range} onChange={e => setRange(e.target.value)}>
-                  <option value="0.5">500 m</option>
-                  <option value="1">1 km</option>
-                  <option value="2">2 km</option>
-                  <option value="5">5 km</option>
-                  <option value="10">10 km</option>
-                </select>
-              </label>
-              <NotificationBell />
-            </div>
-          </div>
-        </div>
-
-        {/* Live market pulse — makes the page read as an active marketplace
-            rather than a static list. All derived from what's already loaded. */}
-        {!loading && items.length > 0 && (() => {
-          const paid = items.filter(it => it.kind === 'freelance');
-          const pot  = paid.reduce((s, it) => s + (Number(it.payment_amount) || 0), 0);
-          const near = items
-            .map(it => it.distance_km)
-            .filter(d => d != null)
-            .sort((a, b) => a - b)[0];
-          return (
-            <div className="market-pulse">
-              <div className="mp-stat">
-                <span className="mp-val"><span className="ds-live" />{items.length}</span>
-                <span className="mp-label">Open now</span>
-              </div>
-              <div className="mp-stat">
-                <span className="mp-val is-money">₹{pot.toLocaleString('en-IN')}</span>
-                <span className="mp-label">On the table</span>
-              </div>
-              <div className="mp-stat">
-                <span className="mp-val">{near != null ? `${near} km` : '—'}</span>
-                <span className="mp-label">Nearest</span>
-              </div>
-            </div>
-          );
-        })()}
-
-        {/* Search, sort and the kind filter ride together in one bar that
-            sticks to the top on scroll — three separate stacked rows pushed
-            the first listing most of the way off the opening screen. */}
-        <div className="work-bar">
-        <div className="work-tools">
-          <div className="work-search">
-            <svg className="work-search-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-              strokeWidth="2.2" strokeLinecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-            <input className="work-search-input"
-              placeholder="Search work, skills, people…"
-              value={query} onChange={e => setQuery(e.target.value)} />
-            {query && (
-              <button className="work-search-clear" onClick={() => setQuery('')} aria-label="Clear">×</button>
-            )}
-          </div>
-          <select className="work-sort" value={sort} onChange={e => setSort(e.target.value)}>
-            <option value="new">Newest</option>
-            <option value="pay">Highest pay</option>
-            <option value="near">Nearest</option>
-          </select>
-        </div>
-
-        <div className="work-filter">
-          {['all', 'freelance', 'collab', 'saved'].map(f => (
-            <button key={f}
-              className={`work-filter-chip ${workFilter === f ? 'active' : ''}`}
-              onClick={() => setWorkFilter(f)}>
-              {f === 'all' ? 'All work'
-                : f === 'freelance' ? 'Gigs'
-                : f === 'collab' ? 'Collabs'
-                : `Saved${saved.size ? ` (${saved.size})` : ''}`}
+    <AppShell active="work">
+      <div className="feed-main mk">
+        <header className="mk-top">
+          <label className="mk-loc">
+            <span className="mk-loc-ic">{I.pin}</span>
+            <span className="mk-loc-text">
+              <span className="mk-loc-eyebrow">Work near you</span>
+              <span className="mk-loc-value">Within {RANGE_LABEL[range]} {I.chevron}</span>
+            </span>
+            <select className="mk-loc-select" value={range} aria-label="Distance"
+              onChange={e => setRange(e.target.value)}>
+              {RANGES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
+            </select>
+          </label>
+          <div className="mk-top-actions">
+            <button type="button" className={`mk-icon-btn ${savedOnly ? 'is-on' : ''}`}
+              onClick={() => setSavedOnly(v => !v)} aria-pressed={savedOnly}
+              aria-label={`Saved listings (${saved.size})`}>
+              <Bookmark on={savedOnly} />
+              {saved.size > 0 && <span className="mk-icon-badge">{saved.size}</span>}
             </button>
-          ))}
+            <NotificationBell />
+          </div>
+        </header>
+
+        <div className="mk-lead">
+          <section className="mk-hero">
+            <h1 className="mk-hero-title">
+              {loading ? 'Finding work near you…'
+                : pot > 0 ? <><span className="mk-hero-money">{money(pot)}</span> in paid gigs near you</>
+                : inRange.length > 0 ? 'Work is waiting near you'
+                : 'Your area is wide open'}
+            </h1>
+            {!loading && (
+              <p className="mk-hero-sub">
+                {nearest != null
+                  ? <>Closest opportunity is <strong>{distance(nearest)}</strong> away</>
+                  : inRange.length > 0
+                    ? <><strong>{inRange.length}</strong> open right now, updated live</>
+                    : 'Post the first listing around here and people nearby will see it'}
+              </p>
+            )}
+          </section>
+
+          <div className="mk-intents">
+            <button type="button" className={`mk-intent is-gig ${kind === 'freelance' ? 'is-on' : ''}`}
+              aria-pressed={kind === 'freelance'}
+              onClick={() => setKind(k => (k === 'freelance' ? 'all' : 'freelance'))}>
+              <span className="mk-intent-ic">{I.wallet}</span>
+              <span className="mk-intent-text">
+                <span className="mk-intent-name">Earn</span>
+                <span className="mk-intent-sub">
+                  {loading ? 'Paid gigs' : `${gigs.length} paid ${gigs.length === 1 ? 'gig' : 'gigs'}`}
+                </span>
+              </span>
+            </button>
+            <button type="button" className={`mk-intent is-team ${kind === 'collab' ? 'is-on' : ''}`}
+              aria-pressed={kind === 'collab'}
+              onClick={() => setKind(k => (k === 'collab' ? 'all' : 'collab'))}>
+              <span className="mk-intent-ic">{I.team}</span>
+              <span className="mk-intent-text">
+                <span className="mk-intent-name">Team up</span>
+                <span className="mk-intent-sub">
+                  {loading ? 'Teams forming' : `${teams.length} ${teams.length === 1 ? 'team' : 'teams'} forming`}
+                </span>
+              </span>
+            </button>
+          </div>
         </div>
+
+        <div className="mk-section-head">
+          <h2 className="mk-section-title">Browse by skill</h2>
+          {category && <button type="button" className="mk-link" onClick={() => setCategory('')}>Clear</button>}
         </div>
-
-        {/* Browse by skill — the closest thing to marketplace categories, built
-            from what's actually on offer right now rather than a fixed list. */}
-        {(() => {
-          const counts = {};
-          items.forEach(it => (it.skills || []).forEach(s => {
-            const k = s.trim();
-            if (k) counts[k] = (counts[k] || 0) + 1;
-          }));
-          const top = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 8);
-          if (top.length === 0) return null;
-          return (
-            <div className="work-cats">
-              {category && (
-                <button className="work-cat active" onClick={() => setCategory('')}>
-                  {category} <span className="work-cat-x">×</span>
-                </button>
-              )}
-              {top.filter(([s]) => s !== category).map(([s, n]) => (
-                <button key={s} className="work-cat" onClick={() => setCategory(s)}>
-                  {s} <span className="work-cat-n">{n}</span>
-                </button>
-              ))}
-            </div>
-          );
-        })()}
-
-        {(() => {
-          const q = query.trim().toLowerCase();
-          const shown = items.filter(it => {
-            const key = `${it.kind}-${it.id}`;
-            if (workFilter === 'saved') { if (!saved.has(key)) return false; }
-            else if (workFilter !== 'all' && it.kind !== workFilter) return false;
-            if (it.distance_km != null && it.distance_km > parseFloat(range)) return false;
-            if (category && !(it.skills || []).some(s => s.toLowerCase() === category.toLowerCase())) return false;
-            if (q) {
-              const hay = [
-                it.title, it.description, it.user?.username, it.user?.category,
-                ...(it.skills || []),
-              ].filter(Boolean).join(' ').toLowerCase();
-              if (!hay.includes(q)) return false;
-            }
-            return true;
-          }).sort((a, b) => {
-            if (sort === 'pay') return (Number(b.payment_amount) || 0) - (Number(a.payment_amount) || 0);
-            if (sort === 'near') {
-              const da = a.distance_km ?? Infinity, db = b.distance_km ?? Infinity;
-              return da - db;
-            }
-            return 0; // 'new' — the feed already arrives newest-first
-          });
-          if (loading) return (
-            <div className="work-grid">
-              {[0, 1, 2].map(n => (
-                <div key={n} className="wc-skeleton" style={{ animationDelay: `${n * 90}ms` }}>
-                  <div className="ds-skel sk-row-sm" />
-                  <div className="ds-skel sk-row-lg" />
-                  <div className="ds-skel sk-row-md" />
-                  <div className="sk-chips">
-                    <div className="ds-skel sk-chip" /><div className="ds-skel sk-chip" /><div className="ds-skel sk-chip" />
-                  </div>
-                  <div className="ds-skel sk-deal" />
-                </div>
-              ))}
-            </div>
-          );
-
-          /* Empty states that name the actual reason and offer the fix. */
-          if (shown.length === 0) {
-            const filtered = query || category || workFilter !== 'all';
-            if (workFilter === 'saved' && !query && !category) return (
-              <div className="state-box">
-                <h3>No saved work yet</h3>
-                <p>Tap the bookmark on any gig to keep it here while you decide.</p>
-                <div className="state-box-actions">
-                  <button className="opp-cta" onClick={() => setWorkFilter('all')}>Browse all work</button>
-                </div>
-              </div>
-            );
-            if (filtered) return (
-              <div className="state-box">
-                <h3>Nothing matches that</h3>
-                <p>
-                  {query ? <>No work matching “{query}”</> : 'No work'}
-                  {category && <> in <strong>{category}</strong></>} within {range} km.
-                </p>
-                <div className="state-box-actions">
-                  <button className="opp-cta" onClick={() => { setQuery(''); setCategory(''); setWorkFilter('all'); }}>
-                    Clear filters
-                  </button>
-                  <button className="opp-cta ghost" onClick={() => setRange('10')}>Widen to 10 km</button>
-                </div>
-              </div>
-            );
+        <div className="mk-rail">
+          {rail.map(c => {
+            const n = catCounts[c.id] || 0;
+            const on = category === c.id;
             return (
-              <div className="state-box">
-                <h3>Nothing open near you</h3>
-                <p>Be the first — post a gig or start a collab and people nearby will see it.</p>
-                <div className="state-box-actions">
-                  <button className="opp-cta" onClick={() => navigate('/post')}>Post a gig</button>
-                  <button className="opp-cta ghost" onClick={() => setRange('10')}>Widen to 10 km</button>
-                </div>
-              </div>
+              <button key={c.id} type="button" style={{ '--cat': c.hue }} aria-pressed={on}
+                className={`mk-cat ${on ? 'is-on' : ''} ${n ? '' : 'is-empty'}`}
+                onClick={() => setCategory(on ? '' : c.id)}>
+                <span className="mk-cat-ic">
+                  {c.icon}
+                  {n > 0 && <span className="mk-cat-n">{n}</span>}
+                </span>
+                <span className="mk-cat-name">{c.label}</span>
+              </button>
             );
-          }
-          return (
-            <div className="work-grid">
-              {shown.map((item, i) => {
-                const isNew = newIds.has(`${item.kind}-${item.id}`);
-                const near = item.distance_km != null && item.distance_km <= 2;
-                const left = timeLeft(item.expires_at);
-                const urgent = left && (left.endsWith('h left') || left === 'Expired');
-                const desc = item.description && item.description !== item.title ? item.description : null;
-                return (
-                  <article key={`${item.kind}-${item.id}`}
-                    className={`work-card ${item.kind} ${isNew ? 'is-new' : ''}`}
-                    style={{ animationDelay: `${Math.min(i, 8) * 45}ms` }}
-                    tabIndex={0} role="button"
-                    onClick={() => setViewItem(item)}
-                    onKeyDown={e => { if (e.key === 'Enter') setViewItem(item); }}>
+          })}
+        </div>
 
-                    <div className="wc-top">
-                      <span className={`wc-kind ${item.kind}`}>
-                        {item.kind === 'freelance' ? 'Gig' : 'Collab'}
-                      </span>
-                      {isNew && <span className="wc-new">New</span>}
-                      <span className="wc-top-right">
-                      {left && (
-                        <span className={`wc-left ${urgent ? 'is-urgent' : ''}`}>{left}</span>
-                      )}
-                      <button
-                        className={`wc-save ${saved.has(`${item.kind}-${item.id}`) ? 'is-saved' : ''}`}
-                        onClick={e => toggleSave(item, e)}
-                        aria-label={saved.has(`${item.kind}-${item.id}`) ? 'Remove from saved' : 'Save for later'}>
-                        <svg viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor"
-                          fill={saved.has(`${item.kind}-${item.id}`) ? 'currentColor' : 'none'}
-                          strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M6 4h12a1 1 0 0 1 1 1v15l-7-4.2L5 20V5a1 1 0 0 1 1-1z" />
-                        </svg>
-                      </button>
-                      </span>
-                    </div>
-
-                    <h2 className="wc-title">{item.title}</h2>
-                    {desc && <p className="wc-desc">{desc}</p>}
-
-                    {item.skills?.length > 0 && (
-                      <div className="wc-skills">
-                        {item.skills.slice(0, 4).map(s => <span key={s} className="wc-skill">{s}</span>)}
-                        {item.skills.length > 4 && <span className="wc-skill more">+{item.skills.length - 4}</span>}
-                      </div>
-                    )}
-
-                    <div className="wc-deal">
-                      <div className="wc-budget">
-                        <span className="wc-budget-label">
-                          {item.kind === 'freelance' ? 'Budget' : 'Looking for'}
-                        </span>
-                        <span className="wc-budget-val">
-                          {item.kind === 'freelance' ? `₹${item.payment_amount}` : 'Teammates'}
-                        </span>
-                      </div>
-                      <span className="wc-cta">
-                        Apply <span className="wc-cta-arrow">→</span>
-                      </span>
-                    </div>
-
-                    <div className="wc-foot">
-                      <span className="wc-poster">
-                        <span className="wc-ava">
-                          {item.user.profile_image
-                            ? <img className="ava-img" src={cldAvatar(item.user.profile_image)} alt="" />
-                            : item.user.username[0].toUpperCase()}
-                        </span>
-                        <span className="wc-poster-text">
-                          <span className="wc-poster-name">{item.user.username}</span>
-                          <span className="wc-poster-cat">{item.user.category || 'Independent'}</span>
-                        </span>
-                      </span>
-
-                      <span className="wc-signals">
-                        {item.distance_km != null && (
-                          <span className={`wc-dist ${near ? 'is-near' : ''}`}>
-                            <span className="wc-dot" />{item.distance_km} km
-                          </span>
-                        )}
-                        {(item.people_needed || 1) > 1 && (
-                          <span className="wc-slots">
-                            {Math.max(0, (item.people_needed || 1) - (item.hired_count || 0))} of {item.people_needed} left
-                          </span>
-                        )}
-                        {item.kind === 'freelance' && item.gender_preference && item.gender_preference !== 'any' && (
-                          <span className="wc-pref">{item.gender_preference === 'male' ? 'Male only' : 'Female only'}</span>
-                        )}
-                      </span>
-                    </div>
-                  </article>
-                );
-              })}
+        {/* Search and sort stick on scroll; whatever filters are switched on
+            ride along underneath, so you can always see and undo them. */}
+        <div className="mk-bar">
+          <div className="mk-bar-row">
+            <label className="mk-search">
+              <span className="mk-search-ic">{I.search}</span>
+              <input className="mk-search-input" type="text" aria-label="Search listings"
+                placeholder="Search gigs, skills or people"
+                value={query} onChange={e => setQuery(e.target.value)} />
+              {query && (
+                <button type="button" className="mk-search-clear" onClick={() => setQuery('')}
+                  aria-label="Clear search">{I.x}</button>
+              )}
+            </label>
+            <select className="mk-sort" value={sort} aria-label="Sort" onChange={e => setSort(e.target.value)}>
+              <option value="new">Newest</option>
+              <option value="pay">Top pay</option>
+              <option value="near">Nearest</option>
+            </select>
+          </div>
+          {tokens.length > 0 && (
+            <div className="mk-tokens">
+              {tokens.map(t => (
+                <button key={t.key} type="button" className="mk-token" onClick={t.clear}
+                  aria-label={`Remove filter: ${t.label}`}>
+                  {t.label}{I.x}
+                </button>
+              ))}
+              {tokens.length > 1 && <button type="button" className="mk-link" onClick={clearAll}>Clear all</button>}
             </div>
-          );
-        })()}
+          )}
+        </div>
 
-        {!loading && hasMore && workFilter === 'all' && (
+        <div className="mk-results-head">
+          <h2 className="mk-section-title">{resultsTitle}</h2>
+          {!loading && <span className="mk-results-n">{shown.length} open</span>}
+        </div>
+
+        {loading ? (
+          <div className="mk-grid">
+            {[0, 1, 2].map(n => (
+              <div key={n} className="mk-skel-card" style={{ animationDelay: `${n * 90}ms` }}>
+                <div className="ds-skel sk-lg" />
+                <div className="ds-skel sk-md" />
+                <div className="ds-skel sk-sm" />
+                <div className="ds-skel sk-foot" />
+              </div>
+            ))}
+          </div>
+        ) : shown.length === 0 ? renderEmpty() : (
+          <div className="mk-grid">
+            {shown.map((item, i) => {
+              const key = `${item.kind}-${item.id}`;
+              const props = {
+                item,
+                isNew: newIds.has(key),
+                saved: saved.has(key),
+                onSave: (e) => toggleSave(item, e),
+                onOpen: () => setViewItem(item),
+                style: { animationDelay: `${Math.min(i, 8) * 45}ms` },
+              };
+              return item.kind === 'freelance'
+                ? <GigCard key={key} {...props} />
+                : <TeamCard key={key} {...props} />;
+            })}
+          </div>
+        )}
+
+        {!loading && hasMore && !savedOnly && (
           <button className="load-more-btn" onClick={handleLoadMore} disabled={loadingMore}>
             {loadingMore ? 'Loading…' : 'Load more'}
           </button>
@@ -463,11 +632,11 @@ export default function FeedPage() {
               <span className="welcome-step-arrow">→</span>
             </button>
 
-            <button className="welcome-step" onClick={dismissWelcome}>
+            <button className="welcome-step" onClick={() => welcomeGo('/post')}>
               <span className="welcome-step-num">3</span>
               <span className="welcome-step-text">
-                <span className="welcome-step-name">Post an update</span>
-                <span className="welcome-step-desc">Share what you're working on or looking for</span>
+                <span className="welcome-step-name">Post a gig or start a team</span>
+                <span className="welcome-step-desc">Hire someone nearby, or find people to build with</span>
               </span>
               <span className="welcome-step-arrow">→</span>
             </button>
@@ -480,80 +649,96 @@ export default function FeedPage() {
       {lightboxSrc && <Lightbox src={lightboxSrc} onClose={() => setLightboxSrc(null)} />}
 
       {viewItem && (
-        <div className="modal-overlay" onClick={() => setViewItem(null)}>
-          <div className="modal-box" onClick={e => e.stopPropagation()}>
-            <div className="post-top" style={{ marginBottom: 14 }}>
-              <div className="post-ava"
-                onClick={() => { setViewItem(null); navigate(`/profile/${viewItem.user.id}`); }}>
-                {viewItem.user.profile_image
-                  ? <img className="ava-img" src={cldAvatar(viewItem.user.profile_image)} alt="" />
-                  : viewItem.user.username[0].toUpperCase()}
+        <div className="mk-sheet-overlay" onClick={() => setViewItem(null)}>
+          <div className={`mk-sheet ${isGigView ? 'is-gig' : 'is-team'}`} role="dialog" aria-modal="true"
+            aria-labelledby="mk-sheet-title" onClick={e => e.stopPropagation()}>
+            <button type="button" className="mk-sheet-x" onClick={() => setViewItem(null)}
+              aria-label="Close">{I.x}</button>
+
+            {isGigView ? (
+              <div className="mk-sheet-hero">
+                <span className="mk-kind is-gig">Paid gig</span>
+                <span className="mk-sheet-payout">{money(viewItem.payment_amount)}</span>
+                <span className="mk-eyebrow">Payout</span>
               </div>
-              <div className="post-meta">
-                <span className="post-author"
-                  onClick={() => { setViewItem(null); navigate(`/profile/${viewItem.user.id}`); }}>
-                  {viewItem.user.username}
+            ) : (
+              <div className="mk-sheet-hero">
+                <span className="mk-kind is-team">Team forming</span>
+                <Seats host={viewItem.user} needed={viewNeeded} filled={viewFilled} />
+                <span className="mk-eyebrow">
+                  {Math.max(0, viewNeeded - viewFilled)} of {viewNeeded} {viewNeeded === 1 ? 'seat' : 'seats'} open
                 </span>
-                <span className="post-author-cat">{viewItem.user.category || 'Independent'}</span>
               </div>
-              <span className={`opp-kind ${viewItem.kind}`}>
-                {viewItem.kind === 'freelance' ? 'Freelance' : 'Collab'}
-              </span>
+            )}
+
+            <div className="mk-sheet-meta">
+              <MetaChips item={viewItem} />
+              {isGigView && viewNeeded > 1 && (
+                <span className="mk-chip">
+                  Hiring {viewNeeded} · {Math.max(0, viewNeeded - viewFilled)} left
+                </span>
+              )}
+              {isGigView && viewItem.gender_preference && viewItem.gender_preference !== 'any' && (
+                <span className="mk-chip">
+                  {viewItem.gender_preference === 'male' ? 'Male applicants only' : 'Female applicants only'}
+                </span>
+              )}
             </div>
 
-            <h2 className="modal-title" style={{ marginBottom: 8 }}>{viewItem.title}</h2>
-
-            {viewItem.description && viewItem.description !== viewItem.title && (
-              <p className="wr-desc" style={{ marginBottom: 14 }}>{viewItem.description}</p>
+            <h2 id="mk-sheet-title" className="mk-sheet-title">
+              {isGigView ? (viewItem.description || viewItem.title) : viewItem.title}
+            </h2>
+            {!isGigView && viewItem.description && viewItem.description !== viewItem.title && (
+              <p className="mk-sheet-desc">{viewItem.description}</p>
             )}
 
             {viewItem.media && (
-              <div className="post-media" style={{ marginBottom: 14 }}>
+              <div className="mk-sheet-media">
                 {viewItem.media_type === 'video'
-                  ? <video className="post-media-el" src={viewItem.media} controls playsInline />
-                  : <img className="post-media-el" src={cldThumb(viewItem.media)} alt=""
+                  ? <video src={viewItem.media} controls playsInline />
+                  : <img src={cldThumb(viewItem.media)} alt=""
                       onClick={() => setLightboxSrc(viewItem.media)} />}
               </div>
             )}
 
-            {viewItem.skills?.length > 0 && (
-              <div className="post-tags" style={{ marginBottom: 14 }}>
-                {viewItem.skills.map(s => <span key={s} className="tag tag-skill">{s}</span>)}
-              </div>
-            )}
+            <Skills skills={viewItem.skills} limit={12} />
 
-            <div className="opp-meta" style={{ marginBottom: 18 }}>
-              {viewItem.kind === 'freelance' && (
-                <span className="opp-pay">₹{viewItem.payment_amount}</span>
-              )}
-              {timeLeft(viewItem.expires_at) && <span className="opp-sub">{timeLeft(viewItem.expires_at)}</span>}
-              {viewItem.distance_km != null && <span className="opp-sub">📍 {viewItem.distance_km} km away</span>}
-            </div>
+            <button type="button" className="mk-sheet-poster"
+              onClick={() => { setViewItem(null); navigate(`/profile/${viewItem.user.id}`); }}>
+              <Avatar user={viewItem.user} className="is-lg" />
+              <span className="mk-poster-text">
+                <span className="mk-poster-sub">{isGigView ? 'Posted by' : 'Hosted by'}</span>
+                <span className="mk-poster-name">{viewItem.user.username}</span>
+                <span className="mk-poster-sub">{viewItem.user.category || 'Independent'}</span>
+              </span>
+              <span className="mk-sheet-poster-go">{I.arrow}</span>
+            </button>
 
-            {/* Applying happens right here — the separate Freelance/Collab
-                board pages the old flow linked out to are gone. */}
             {applied ? (
-              <p className="apply-done">✓ Applied — you'll hear back in Messages.</p>
-            ) : (
-              <div className="modal-field">
-                <label className="modal-label">
-                  Message <span style={{ fontWeight: 400, color: 'var(--text-3)' }}>optional</span>
-                </label>
-                <textarea className="modal-textarea" rows={2}
-                  placeholder="Why are you a good fit?"
-                  value={applyMsg} onChange={e => setApplyMsg(e.target.value)} />
-              </div>
-            )}
-
-            <div className="modal-actions">
-              <button type="button" className="modal-cancel" onClick={() => setViewItem(null)}>Close</button>
-              {!applied && (
-                <button type="button" className="modal-submit"
-                  onClick={handleApply} disabled={applying}>
-                  {applying ? 'Applying…' : viewItem.kind === 'freelance' ? 'Apply for gig' : 'Apply to collab'}
+              <div className="mk-applied">
+                <span className="mk-applied-ic">{I.check}</span>
+                <span className="mk-applied-text">
+                  <strong>Application sent</strong>
+                  <span>Track where it stands anytime.</span>
+                </span>
+                <button type="button" className="mk-link" onClick={() => navigate('/applications')}>
+                  Track →
                 </button>
-              )}
-            </div>
+              </div>
+            ) : (
+              <>
+                <label className="mk-field-label" htmlFor="mk-pitch">
+                  Your pitch <span>optional</span>
+                </label>
+                <textarea id="mk-pitch" className="mk-pitch" rows={3}
+                  placeholder={isGigView ? 'Why are you the right person for this?' : 'What would you bring to the team?'}
+                  value={applyMsg} onChange={e => setApplyMsg(e.target.value)} />
+                <button type="button" className={`mk-apply ${isGigView ? 'is-gig' : 'is-team'}`}
+                  onClick={handleApply} disabled={applying}>
+                  {applying ? 'Sending…' : isGigView ? `Apply · ${money(viewItem.payment_amount)}` : 'Apply to collab'}
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}

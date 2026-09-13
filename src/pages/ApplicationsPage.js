@@ -6,21 +6,7 @@ import AppShell from '../components/AppShell';
 import usePoll from '../hooks/usePoll';
 import { PostCardSkeleton } from '../components/Skeleton';
 import './FeedPage.css';
-import './FreelancePage.css';   // reuses .wr-view-btn/.wr-close-btn/.wr-waiting for the complete/rate row
 import './ApplicationsPage.css';
-
-const STATUS_LABEL = {
-  pending:  'Pending',
-  accepted: 'Accepted',
-  declined: 'Declined',
-  filled:   'Filled by someone else',
-};
-const STATUS_CLASS = {
-  pending:  'st-pending',
-  accepted: 'st-accepted',
-  declined: 'st-declined',
-  filled:   'st-filled',
-};
 
 function ago(dateStr) {
   if (!dateStr) return '';
@@ -29,6 +15,93 @@ function ago(dateStr) {
   const m = Math.floor(secs / 60); if (m < 60) return `${m}m ago`;
   const h = Math.floor(m / 60);    if (h < 24) return `${h}h ago`;
   return `${Math.floor(h / 24)}d ago`;
+}
+
+const money = (n) => `₹${Math.round(Number(n) || 0).toLocaleString('en-IN')}`;
+
+const icon = (paths) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"
+    strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{paths}</svg>
+);
+const CHECK = icon(<path d="M20 6 9 17l-5-5" />);
+const CROSS = icon(<path d="M18 6 6 18M6 6l12 12" />);
+
+const isDone = (a) => a.completed_by_poster && a.completed_by_worker;
+
+/* Where an application stands, laid out like order tracking: what's done,
+   what's happening now, and — for a gig — what's still ahead. */
+function trackerFor(a) {
+  const gig = a.kind === 'freelance';
+  const applied = { label: 'Applied', state: 'done' };
+
+  if (a.status === 'declined') {
+    return { tone: 'fail', line: 'Not selected this time', steps: [applied, { label: 'Not selected', state: 'failed' }] };
+  }
+  if (a.status === 'filled') {
+    return {
+      tone: 'fail',
+      line: gig ? 'Filled by someone else' : 'The team filled up',
+      steps: [applied, { label: 'Filled', state: 'failed' }],
+    };
+  }
+  if (a.status === 'closed') {
+    return { tone: 'fail', line: 'Closed before a decision', steps: [applied, { label: 'Closed', state: 'failed' }] };
+  }
+  if (a.status === 'pending') {
+    return {
+      tone: 'wait',
+      line: `Waiting on ${a.posted_by}`,
+      steps: gig
+        ? [applied, { label: 'Hired', state: 'current' }, { label: 'Done', state: 'todo' }]
+        : [applied, { label: 'On the team', state: 'current' }],
+    };
+  }
+  if (!gig) {
+    return { tone: 'ok', line: "You're on the team", steps: [applied, { label: 'On the team', state: 'done' }] };
+  }
+  const done = isDone(a);
+  return {
+    tone: 'ok',
+    line: done ? 'Completed' : "You're hired",
+    steps: [
+      applied,
+      { label: 'Hired', state: 'done' },
+      { label: done ? 'Done' : 'In progress', state: done ? 'done' : 'current' },
+    ],
+  };
+}
+
+/* The one thing to do next, if there is one. Mark-complete only appears
+   where the backend will accept it: the first hire, once the gig is fully
+   staffed (complete_work_request requires status 'assigned'). */
+function NextStep({ a, completingId, onComplete, navigate }) {
+  if (a.status !== 'accepted') return null;
+
+  const row = (note, button) => (
+    <div className="trk-actions">
+      <span className="trk-note">{note}</span>
+      {button}
+    </div>
+  );
+  const messages = (ghost) => (
+    <button type="button" className={`trk-btn ${ghost ? 'is-ghost' : ''}`} onClick={() => navigate('/messages')}>
+      Open messages
+    </button>
+  );
+
+  if (a.kind === 'collab') return row('Say hi to the team and get started.', messages(false));
+  if (isDone(a)) {
+    return row(`Nice work. Leave ${a.posted_by} a rating.`,
+      <button type="button" className="trk-btn" onClick={() => navigate(`/profile/${a.posted_by_id}`)}>★ Rate</button>);
+  }
+  if (a.is_primary_hire && a.wr_status === 'assigned') {
+    if (a.completed_by_worker) return row(`You marked it done — waiting for ${a.posted_by} to confirm.`, null);
+    return row(`Finished? Mark it done and ${a.posted_by} confirms.`,
+      <button type="button" className="trk-btn" disabled={completingId === a.id} onClick={() => onComplete(a.id)}>
+        {completingId === a.id ? '…' : 'Mark complete'}
+      </button>);
+  }
+  return row(`Sort out the details with ${a.posted_by} in Messages.`, messages(true));
 }
 
 export default function ApplicationsPage() {
@@ -50,15 +123,12 @@ export default function ApplicationsPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { loadApps(); }, []);
 
-  // Quietly poll so a status change (accepted/declined elsewhere) shows up
-  // without a manual refresh — no loading spinner, just a silent swap since
-  // this list is short and personal (not something the user scrolls deep
-  // into), so a wholesale replace doesn't risk losing scroll position.
+  // A decision made on the other side shows up without a manual refresh.
   usePoll(() => {
     getMyApplications().then(r => setApps(r.data.applications || [])).catch(() => {});
   }, 20000);
 
-  const handleCompleteJob = async (wrId) => {
+  const handleComplete = async (wrId) => {
     try {
       setCompletingId(wrId);
       const res = await completeWorkRequest(wrId);
@@ -75,6 +145,8 @@ export default function ApplicationsPage() {
   };
 
   const shown = apps.filter(a => filter === 'all' || a.kind === filter);
+  const waiting = apps.filter(a => a.status === 'pending').length;
+  const won = apps.filter(a => a.status === 'accepted').length;
 
   return (
     <AppShell active="applications">
@@ -84,12 +156,29 @@ export default function ApplicationsPage() {
           <p className="apps-sub">Everything you've applied to, and where it stands.</p>
         </div>
 
-        <div className="type-filters apps-filters">
-          {['all', 'freelance', 'collab'].map(t => (
-            <button key={t}
-              className={`type-filter-btn ${filter === t ? 'active' : ''}`}
-              onClick={() => setFilter(t)}>
-              {t === 'all' ? 'All' : t[0].toUpperCase() + t.slice(1)}
+        {!loading && apps.length > 0 && (
+          <div className="trk-summary">
+            <div className="trk-sum">
+              <span className="trk-sum-val">{waiting}</span>
+              <span className="trk-sum-label">Waiting</span>
+            </div>
+            <div className="trk-sum is-ok">
+              <span className="trk-sum-val">{won}</span>
+              <span className="trk-sum-label">Hired</span>
+            </div>
+            <div className="trk-sum">
+              <span className="trk-sum-val">{apps.length}</span>
+              <span className="trk-sum-label">Applied</span>
+            </div>
+          </div>
+        )}
+
+        <div className="trk-filters">
+          {[['all', 'All'], ['freelance', 'Gigs'], ['collab', 'Teams']].map(([id, label]) => (
+            <button key={id} type="button" aria-pressed={filter === id}
+              className={`trk-filter ${filter === id ? 'is-on' : ''}`}
+              onClick={() => setFilter(id)}>
+              {label}
             </button>
           ))}
         </div>
@@ -98,52 +187,47 @@ export default function ApplicationsPage() {
           <div className="loading-row"><PostCardSkeleton /><PostCardSkeleton /><PostCardSkeleton /></div>
         ) : shown.length === 0 ? (
           <div className="state-box">
-            <h3>No applications yet</h3>
-            <p>Apply to a freelance job or collab and it'll show up here.</p>
+            <h3>{apps.length ? 'Nothing in this list' : 'No applications yet'}</h3>
+            <p>Apply to a gig or a team and you can follow it here, step by step.</p>
             <div className="state-box-actions">
-              <button className="opp-cta" onClick={() => navigate('/')}>Browse work</button>
+              <button className="opp-cta" onClick={() => navigate('/')}>Find work near you</button>
             </div>
           </div>
         ) : (
-          shown.map(a => (
-            <div key={`${a.kind}-${a.id}`} className="app-card"
-              onClick={() => navigate('/')}>
-              <div className="app-card-top">
-                <span className={`opp-kind ${a.kind}`}>{a.kind === 'freelance' ? 'Freelance' : 'Collab'}</span>
-                <span className={`app-status ${STATUS_CLASS[a.status] || 'st-pending'}`}>
-                  {STATUS_LABEL[a.status] || a.status}
-                </span>
-              </div>
-              <h2 className="app-title">{a.title}</h2>
-              <div className="app-meta">
-                <span className="app-by"
-                  onClick={e => { e.stopPropagation(); navigate(`/profile/${a.posted_by_id}`); }}>
-                  by {a.posted_by}
-                </span>
-                {a.kind === 'freelance' && a.payment_amount != null && (
-                  <span className="app-pay">₹{a.payment_amount}</span>
-                )}
-                <span className="app-ago">Applied {ago(a.applied_at)}</span>
-              </div>
+          <div className="trk-list">
+            {shown.map((a, i) => {
+              const gig = a.kind === 'freelance';
+              const t = trackerFor(a);
+              return (
+                <article key={`${a.kind}-${a.id}`} className={`trk-card ${gig ? 'is-gig' : 'is-team'}`}
+                  style={{ animationDelay: `${Math.min(i, 8) * 40}ms` }}>
+                  <div className="trk-top">
+                    <span className="trk-kind">{gig ? 'Paid gig' : 'Team'}</span>
+                    {gig && a.payment_amount != null && <span className="trk-pay">{money(a.payment_amount)}</span>}
+                    <span className="trk-ago">Applied {ago(a.applied_at)}</span>
+                  </div>
+                  <h2 className="trk-title">{a.title}</h2>
+                  <button type="button" className="trk-by" onClick={() => navigate(`/profile/${a.posted_by_id}`)}>
+                    {gig ? 'Posted by' : 'Hosted by'} <strong>{a.posted_by}</strong>
+                  </button>
 
-              {a.kind === 'freelance' && a.status === 'accepted' && (
-                <div className="app-complete-row" onClick={e => e.stopPropagation()}>
-                  {a.wr_status === 'closed' ? (
-                    <button className="wr-view-btn" onClick={() => navigate(`/profile/${a.posted_by_id}`)}>
-                      ★ Rate {a.posted_by}
-                    </button>
-                  ) : a.completed_by_worker ? (
-                    <span className="wr-waiting">Waiting for {a.posted_by} to confirm…</span>
-                  ) : (
-                    <button className="wr-close-btn" onClick={() => handleCompleteJob(a.id)}
-                      disabled={completingId === a.id}>
-                      {completingId === a.id ? '…' : 'Mark Complete'}
-                    </button>
-                  )}
-                </div>
-              )}
-            </div>
-          ))
+                  <p className={`trk-line tone-${t.tone}`}>{t.line}</p>
+                  <ol className="trk-steps">
+                    {t.steps.map(s => (
+                      <li key={s.label} className={`trk-step is-${s.state}`}>
+                        <span className="trk-dot">
+                          {s.state === 'done' ? CHECK : s.state === 'failed' ? CROSS : null}
+                        </span>
+                        <span className="trk-label">{s.label}</span>
+                      </li>
+                    ))}
+                  </ol>
+
+                  <NextStep a={a} completingId={completingId} onComplete={handleComplete} navigate={navigate} />
+                </article>
+              );
+            })}
+          </div>
         )}
       </div>
     </AppShell>
