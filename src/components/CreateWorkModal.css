@@ -1,37 +1,51 @@
+/* Create a gig or collab. Token-based throughout so it reads in both
+   themes: the old sheet hardcoded white text and a black focus fill, which
+   made typing invisible in light mode the moment a field was focused. */
 .cw-overlay {
   position: fixed;
   inset: 0;
   z-index: 400;
-  background: rgba(0,0,0,0.75);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  padding: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   animation: cwFade 0.2s ease both;
 }
-@keyframes cwFade { from { opacity: 0; } to { opacity: 1; } }
-
 @media (min-width: 640px) {
   .cw-overlay { align-items: center; padding: 24px; }
 }
 
 .cw-modal {
+  --tone: var(--brand);
+  --tone-bright: var(--brand-bright);
+  --tone-dim: var(--brand-dim);
+  --tone-line: var(--brand-line);
   width: 100%;
-  max-width: 520px;
-  max-height: 92vh;
+  max-width: 560px;
+  max-height: 94vh;
   overflow-y: auto;
-  background: #0a0a0a;
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 24px 24px 0 0;
-  padding: 22px 22px 28px;
-  animation: cwUp 0.28s cubic-bezier(0.16,1,0.3,1) both;
+  overscroll-behavior: contain;
+  padding: 22px 20px calc(22px + env(safe-area-inset-bottom, 0px));
+  border-radius: 26px 26px 0 0;
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
+  box-shadow: var(--lift-3), var(--edge-strong);
+  color: var(--text-1);
+  animation: cwUp 0.32s var(--spring-soft) both;
 }
-@keyframes cwUp { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
-
+.cw-modal.is-team {
+  --tone: var(--team);
+  --tone-bright: var(--team-bright);
+  --tone-dim: var(--team-dim);
+  --tone-line: var(--team-line);
+}
 @media (min-width: 640px) {
-  .cw-modal { border-radius: 24px; }
+  .cw-modal { border-radius: 26px; }
+}
+@media (min-width: 960px) {
+  .cw-modal { max-width: 960px; padding: 26px 28px; }
 }
 
 .cw-head {
@@ -39,79 +53,165 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 22px;
+  margin-bottom: 18px;
 }
-
+.cw-eyebrow {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--tone-bright);
+}
+[data-theme="light"] .cw-eyebrow { color: var(--tone); }
 .cw-title {
   font-family: var(--font-display);
   font-size: clamp(1.75rem, 6vw, 2.125rem);
   font-weight: 800;
   letter-spacing: -0.04em;
   line-height: 1;
-  color: #ffffff;
+  color: var(--text-1);
 }
-
 .cw-close {
+  flex-shrink: 0;
   width: 36px;
   height: 36px;
   border-radius: 50%;
   font-size: 1.5rem;
   line-height: 1;
-  color: rgba(255,255,255,0.6);
-  flex-shrink: 0;
-  transition: background 0.15s, color 0.15s;
+  color: var(--text-2);
+  background: var(--surface-flat);
+  border: 1px solid var(--hairline);
 }
-.cw-close:hover { background: rgba(255,255,255,0.08); color: #fff; }
+.cw-close:hover { color: var(--text-1); }
 
-.cw-form { display: flex; flex-direction: column; gap: 16px; }
+/* Phone: fields, then the preview, then the buttons — so the last thing
+   you see before posting is the card itself. Desktop: preview alongside. */
+.cw-form { display: flex; flex-direction: column; gap: 18px; }
+@media (min-width: 960px) {
+  .cw-form {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 350px;
+    grid-template-areas: "fields preview" "actions preview";
+    column-gap: 30px;
+    row-gap: 18px;
+    align-items: start;
+  }
+  .cw-fields { grid-area: fields; }
+  .cw-preview { grid-area: preview; position: sticky; top: 0; }
+  .cw-actions { grid-area: actions; }
+}
 
+.cw-fields { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
 .cw-field { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
-
 .cw-row { display: flex; gap: 12px; }
 .cw-row .cw-field { flex: 1; }
 
 .cw-label {
-  font-size: 0.8125rem;
-  font-weight: 700;
-  color: rgba(255,255,255,0.9);
-  letter-spacing: -0.01em;
   display: flex;
   align-items: center;
   gap: 8px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--text-1);
 }
-
-.cw-hint {
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: rgba(255,255,255,0.4);
-}
+.cw-hint { font-size: 0.75rem; font-weight: 500; color: var(--text-3); }
 
 .cw-input {
   width: 100%;
   height: 50px;
   padding: 0 15px;
   border-radius: 14px;
-  background: #131313;
-  border: 1px solid rgba(255,255,255,0.12);
-  color: #ffffff;
+  background: var(--surface-flat);
+  border: 1px solid var(--hairline);
+  color: var(--text-1);
   font-family: inherit;
-  font-size: 0.9375rem;
+  font-size: 16px;
   font-weight: 500;
-  transition: border-color 0.15s, background 0.15s;
+  transition: border-color var(--t-med) ease, box-shadow var(--t-med) ease;
 }
-.cw-input::placeholder { color: rgba(255,255,255,0.32); }
-.cw-input:focus { border-color: #ffffff; background: #000000; }
-
+.cw-input::placeholder { color: var(--text-3); }
+.cw-input:focus,
+:root .app-shell .cw-input:focus-visible {
+  outline: none;
+  border-color: var(--tone-line);
+  box-shadow: 0 0 0 3px var(--tone-dim);
+}
 .cw-textarea {
   height: auto;
-  min-height: 88px;
+  min-height: 96px;
   padding: 13px 15px;
   line-height: 1.5;
   resize: vertical;
 }
+.cw-select {
+  cursor: pointer;
+  padding-right: 36px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--surface-flat) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 14px center / 13px;
+}
+.cw-select option { background: var(--bg); color: var(--text-1); }
 
-.cw-select { cursor: pointer; }
-.cw-select option { background: #131313; color: #fff; }
+/* The budget is the number that matters, so it's set like one. */
+.cw-money-wrap { position: relative; }
+.cw-money-wrap::before {
+  content: '₹';
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--tone);
+  pointer-events: none;
+}
+.cw-input.cw-money {
+  padding-left: 34px;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--tone);
+}
+
+.cw-chips { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.cw-chip-label { margin-right: 2px; font-size: 0.72rem; font-weight: 700; color: var(--text-3); }
+.cw-chip {
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--text-2);
+  background: var(--surface-flat);
+  border: 1px solid var(--hairline);
+  transition: color var(--t-fast) ease, border-color var(--t-fast) ease, background var(--t-fast) ease;
+}
+.cw-chip:hover { color: var(--text-1); border-color: var(--hairline-str); }
+.cw-chip.is-on { color: var(--tone); background: var(--tone-dim); border-color: var(--tone-line); }
+
+.cw-seg { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.cw-seg button {
+  height: 44px;
+  border-radius: 12px;
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  font-weight: 800;
+  color: var(--text-2);
+  background: var(--surface-flat);
+  border: 1px solid var(--hairline);
+  transition: color var(--t-fast) ease, background var(--t-fast) ease, transform var(--t-fast) var(--spring);
+}
+.cw-seg button:active { transform: scale(0.94); }
+.cw-seg button.is-on {
+  color: #fff;
+  background: linear-gradient(180deg, var(--tone-bright), var(--tone));
+  border-color: transparent;
+  box-shadow: var(--edge-strong);
+}
 
 .cw-media-pick {
   display: flex;
@@ -119,15 +219,14 @@
   justify-content: center;
   height: 50px;
   border-radius: 14px;
-  border: 1.5px dashed rgba(255,255,255,0.2);
-  color: rgba(255,255,255,0.55);
+  border: 1.5px dashed var(--hairline-str);
+  color: var(--text-2);
   font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
-  transition: border-color 0.15s, color 0.15s;
+  transition: border-color var(--t-med) ease, background var(--t-med) ease, color var(--t-med) ease;
 }
-.cw-media-pick:hover { border-color: rgba(255,255,255,0.4); color: #fff; }
-
+.cw-media-pick:hover { border-color: var(--tone-line); background: var(--tone-dim); color: var(--text-1); }
 .cw-media-chip {
   display: flex;
   align-items: center;
@@ -136,94 +235,68 @@
   height: 50px;
   padding: 0 12px 0 15px;
   border-radius: 14px;
-  background: #131313;
-  border: 1px solid rgba(255,255,255,0.12);
+  background: var(--surface-flat);
+  border: 1px solid var(--hairline);
 }
 .cw-media-name {
   font-size: 0.875rem;
-  color: rgba(255,255,255,0.8);
+  color: var(--text-2);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .cw-media-chip button {
+  flex-shrink: 0;
   width: 28px;
   height: 28px;
   border-radius: 50%;
   font-size: 1.125rem;
   line-height: 1;
-  color: rgba(255,255,255,0.6);
-  flex-shrink: 0;
+  color: var(--text-2);
 }
-.cw-media-chip button:hover { background: rgba(255,255,255,0.1); color: #fff; }
 
-.cw-actions { display: flex; gap: 12px; margin-top: 8px; }
+.cw-preview { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.cw-preview-label {
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.cw-preview-card { pointer-events: none; }
+.cw-preview-card .mk-card { animation: none; }
 
+.cw-actions { display: flex; gap: 12px; }
 .cw-cancel {
   height: 52px;
-  padding: 0 24px;
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,0.2);
-  background: none;
-  color: #ffffff;
+  padding: 0 22px;
+  border-radius: 999px;
   font-size: 0.9375rem;
-  font-weight: 600;
-  transition: background 0.15s;
+  font-weight: 700;
+  color: var(--text-1);
+  background: var(--surface-flat);
+  border: 1px solid var(--hairline-str);
 }
-.cw-cancel:hover { background: rgba(255,255,255,0.08); }
-
 .cw-submit {
   flex: 1;
   height: 52px;
-  border-radius: 14px;
-  background: #ffffff;
-  color: #000000;
+  border-radius: 999px;
   font-size: 1rem;
   font-weight: 800;
-  letter-spacing: -0.01em;
-  transition: opacity 0.15s, transform 0.14s ease;
+  color: #fff;
+  background: linear-gradient(180deg, var(--tone-bright), var(--tone));
+  box-shadow: 0 10px 26px var(--tone-dim), var(--edge-strong);
+  transition: transform var(--t-fast) var(--spring), opacity var(--t-fast) ease;
 }
-.cw-submit:hover:not(:disabled) { opacity: 0.88; }
 .cw-submit:active { transform: scale(0.98); }
-.cw-submit:disabled { opacity: 0.5; }
+.cw-submit:disabled { opacity: 0.55; }
 
-/* ── v2: posting should feel like listing a real job ── */
-.cw-modal {
-  background: var(--surface-2);
-  border: 1px solid var(--hairline);
-  box-shadow: var(--e-3);
-}
-.cw-title { font-family: var(--font-display); letter-spacing: -0.04em; }
-.cw-close { transition: background var(--t-med) ease, transform var(--t-fast) var(--ease-out); }
-.cw-close:active { transform: scale(0.9); }
-
-.cw-label { color: var(--text-1); }
-.cw-input {
-  background: var(--surface-flat);
-  border: 1px solid var(--hairline);
-  border-radius: var(--r-md);
-}
-.cw-input:focus { border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-dim); background: #000; }
-
-/* The money field is the one that matters — make it look like it. */
-.cw-input.cw-money {
-  font-family: var(--font-display);
-  font-size: 1.25rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  color: var(--brand);
+@keyframes cwFade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes cwUp {
+  from { transform: translateY(24px); opacity: 0; }
+  to   { transform: none; opacity: 1; }
 }
 
-.cw-media-pick {
-  border-radius: var(--r-md);
-  border: 1.5px dashed var(--hairline-str);
-  transition: border-color var(--t-med) ease, background var(--t-med) ease, color var(--t-med) ease;
+@media (prefers-reduced-motion: reduce) {
+  .cw-overlay, .cw-modal { animation: none; }
 }
-.cw-media-pick:hover { border-color: var(--brand-line); background: var(--brand-dim); color: var(--brand-bright); }
-
-.cw-submit {
-  border-radius: var(--r-md);
-  box-shadow: var(--e-2);
-  transition: transform var(--t-fast) var(--ease-out), opacity var(--t-fast) ease;
-}
-.cw-cancel { border-radius: var(--r-md); border-color: var(--hairline-str); }
