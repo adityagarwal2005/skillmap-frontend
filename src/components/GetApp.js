@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import useInstallPrompt from '../hooks/useInstallPrompt';
 import './GetApp.css';
 
@@ -91,7 +92,11 @@ export default function GetAppButton({ className = '', children }) {
       <button type="button" className={className} onClick={handleClick}>
         {children}
       </button>
-      {sheetOpen && <GetAppSheet onClose={() => setSheetOpen(false)} />}
+      {/* Portalled to <body>: the buttons live inside the glass nav, the
+          sidebar and the floating pill, and backdrop-filter or transform on
+          any of those turns position:fixed into "fixed to that box" — the
+          sheet centred on a 70px-tall nav and its top half went off-screen. */}
+      {sheetOpen && createPortal(<GetAppSheet onClose={() => setSheetOpen(false)} />, document.body)}
     </>
   );
 }

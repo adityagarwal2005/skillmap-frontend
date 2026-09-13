@@ -339,3 +339,18 @@
 }
 .mng-tick:disabled { opacity: 0.35; cursor: not-allowed; }
 .mng-tick:disabled:hover { background: none; }
+
+/* ── Completion nudge on gigs with hires ── */
+.mng-complete {
+  width: 100%;
+  margin: 0 0 12px;
+  padding: 11px 14px;
+  border-radius: 12px;
+  text-align: left;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--ok);
+  background: var(--ok-dim);
+  border: 1px solid color-mix(in srgb, var(--ok) 30%, transparent);
+}
+[data-theme="light"] .mng-complete { color: #15803d; }

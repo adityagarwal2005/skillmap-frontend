@@ -525,6 +525,22 @@ body::after {
   animation: livePulse 1.8s ease-out infinite;
 }
 :root .app-shell .pf-account-links { margin-top: 14px; }
+:root .app-shell .pf-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+:root .app-shell .pf-add {
+  height: 32px;
+  padding: 0 14px;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 800;
+  color: var(--text-1);
+  background: var(--surface-flat);
+  border: 1px solid var(--hairline-str);
+}
 
 /* ═══════════════════════════════════════════════
    6 · Motion

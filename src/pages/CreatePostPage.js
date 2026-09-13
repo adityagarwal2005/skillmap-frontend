@@ -1,18 +1,20 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../context/ToastContext';
+import { useAuth } from '../context/AuthContext';
 import { createPortfolioItem, addMedia } from '../api/portfolio';
 import { prepareMediaFile } from '../utils/mediaUpload';
 import AppShell from '../components/AppShell';
 import './FeedPage.css';
 import './CreatePostPage.css';
 
-const TYPES = ['project', 'design', 'photo', 'baked_good', 'artwork', 'video', 'other'];
+const TYPES = ['project', 'design', 'photo', 'artwork', 'video', 'other'];
 const MAX_PHOTOS = 4;
 
 export default function CreatePostPage() {
   const { showToast }        = useToast();
   const navigate             = useNavigate();
+  const { user }             = useAuth();
 
   const [form, setForm] = useState({
     title: '', description: '', portfolio_type: 'project',
@@ -63,22 +65,23 @@ export default function CreatePostPage() {
         }));
       }
 
-      showToast('Post created successfully!', 'success');
-      navigate('/');
+      showToast('Project added', 'success');
+      // The feed shows gigs and collabs, not projects; land where this appears.
+      navigate(`/profile/${user.id}`);
     } catch (err) {
-      showToast(err.response?.data?.error || 'Failed to create post', 'error');
+      showToast(err.response?.data?.error || 'Could not add the project', 'error');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <AppShell>
+    <AppShell active="profile">
       <div className="create-wrapper">
         <button className="profile-back" onClick={() => navigate(-1)}>← Back</button>
         <div className="create-box">
-          <h1 className="create-title">Post your work</h1>
-          <p className="create-sub">Keep it short and visual. No essays.</p>
+          <h1 className="create-title">Add a project</h1>
+          <p className="create-sub">Show what you've made. People hire from proof.</p>
 
           <form onSubmit={handleSubmit} className="create-form">
             <div className="create-field">
@@ -147,7 +150,7 @@ export default function CreatePostPage() {
                 Cancel
               </button>
               <button type="submit" className="create-submit" disabled={loading}>
-                {loading ? 'Posting...' : 'Post Work'}
+                {loading ? 'Adding…' : 'Add project'}
               </button>
             </div>
           </form>

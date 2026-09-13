@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { getNotifications, markAsRead, markAllAsRead } from '../api/notifications';
 import { respondFriendRequest } from '../api/users';
@@ -20,10 +22,35 @@ const TYPE_ICONS = {
   comment:           '💬',
   referral:          '🎉',
   job_complete:      '🏁',
+  job_review:        '🧾',
+  job_confirm:       '✅',
   friend_request:    '👋',
   friend_accepted:   '🤝',
   collab_match:      '🧩',
 };
+
+// Where tapping a notification should take you. job_complete carries the
+// person to rate as its actor, so it opens their profile.
+function linkFor(n, myId) {
+  switch (n.type) {
+    case 'message':           return '/messages';
+    case 'proposal':
+    case 'job_review':        return '/post';
+    case 'proposal_accepted':
+    case 'proposal_declined':
+    case 'work_assigned':
+    case 'job_confirm':       return '/applications';
+    case 'job_complete':      return n.actor_id ? `/profile/${n.actor_id}` : '/applications';
+    case 'work_request':
+    case 'collab_match':      return '/';
+    case 'reaction':
+    case 'comment':           return myId ? `/profile/${myId}` : null;
+    case 'friend_request':
+    case 'friend_accepted':   return n.actor_id ? `/profile/${n.actor_id}` : '/people';
+    case 'referral':          return '/settings';
+    default:                  return null;
+  }
+}
 
 function timeAgo(dateStr) {
   const diff = Date.now() - new Date(dateStr).getTime();
@@ -39,6 +66,8 @@ function timeAgo(dateStr) {
 
 export default function NotificationsPage() {
   const { showToast }        = useToast();
+  const navigate             = useNavigate();
+  const { user }             = useAuth();
 
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading]             = useState(true);
@@ -87,6 +116,12 @@ export default function NotificationsPage() {
       await markAsRead(id);
       setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
     } catch {}
+  };
+
+  const handleOpen = (n) => {
+    if (!n.is_read) handleRead(n.id);
+    const to = linkFor(n, user?.id);
+    if (to) navigate(to);
   };
 
   const handleReadAll = async () => {
@@ -146,7 +181,9 @@ export default function NotificationsPage() {
               return (
                 <div key={n.id}
                   className={`notif-card ${!n.is_read ? 'unread' : ''} ${newIds.has(n.id) ? 'is-new' : ''}`}
-                  onClick={() => handleRead(n.id)}>
+                  role="button" tabIndex={0}
+                  onClick={() => handleOpen(n)}
+                  onKeyDown={e => { if (e.target === e.currentTarget && e.key === 'Enter') handleOpen(n); }}>
                   <div className="notif-icon">
                     {n.actor_avatar
                       ? <img className="notif-actor-ava" src={cldAvatar(n.actor_avatar)} alt="" />

@@ -469,7 +469,14 @@ export default function ProfilePage() {
             {/* Projects — same ghost-town guard as Skills above. */}
             {(isOwn || portfolio.length > 0) && (
             <div className="profile-skills-section">
-              <h3 className="section-title">Projects</h3>
+              <div className="pf-section-head">
+                <h3 className="section-title">Projects</h3>
+                {isOwn && (
+                  <button type="button" className="pf-add" onClick={() => navigate('/create-post')}>
+                    + Add project
+                  </button>
+                )}
+              </div>
               {portfolio.length === 0 ? (
                 <p className="no-skills">
                   {isOwn ? "You haven't added any projects yet." : 'No projects yet.'}

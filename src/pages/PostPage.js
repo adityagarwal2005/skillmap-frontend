@@ -227,6 +227,13 @@ export default function PostPage() {
                 {applied} {applied === 1 ? 'applicant' : 'applicants'} →
               </button>
             </div>
+            {kind === 'freelance' && (item.hired_count || 0) > 0 && (
+              <button className="mng-complete" onClick={() => navigate(`/applicants/freelance/${item.id}`)}>
+                {item.completed_by_poster ? 'Marked complete — waiting for your hire'
+                  : item.completed_by_worker ? 'Your hire marked it done — confirm →'
+                  : 'Work delivered? Mark it complete →'}
+              </button>
+            )}
             {renderApplicants(kind, item)}
 
             {closing === key ? (

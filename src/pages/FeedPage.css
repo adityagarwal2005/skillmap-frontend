@@ -493,7 +493,7 @@
 
 /* ── Pill filter buttons (Search + Collab type filters) ──
    Shared here in FeedPage.css (loaded on every page) so pages that use them
-   don't have to import SearchPage.css just to get their styles. */
+   don't have to import another page's stylesheet just to get their styles. */
 .type-filters {
   display: flex;
   gap: 6px;

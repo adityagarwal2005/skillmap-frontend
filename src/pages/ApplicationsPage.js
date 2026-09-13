@@ -71,9 +71,8 @@ function trackerFor(a) {
   };
 }
 
-/* The one thing to do next, if there is one. Mark-complete only appears
-   where the backend will accept it: the first hire, once the gig is fully
-   staffed (complete_work_request requires status 'assigned'). */
+/* The one thing to do next, if there is one. Any hire can mark a gig done
+   while it's still open, and the poster confirms from their side. */
 function NextStep({ a, completingId, onComplete, navigate }) {
   if (a.status !== 'accepted') return null;
 
@@ -94,14 +93,17 @@ function NextStep({ a, completingId, onComplete, navigate }) {
     return row(`Nice work. Leave ${a.posted_by} a rating.`,
       <button type="button" className="trk-btn" onClick={() => navigate(`/profile/${a.posted_by_id}`)}>★ Rate</button>);
   }
-  if (a.is_primary_hire && a.wr_status === 'assigned') {
-    if (a.completed_by_worker) return row(`You marked it done — waiting for ${a.posted_by} to confirm.`, null);
-    return row(`Finished? Mark it done and ${a.posted_by} confirms.`,
+  if (a.wr_status !== 'closed') {
+    if (a.completed_by_worker) return row(`Marked done — waiting for ${a.posted_by} to confirm.`, messages(true));
+    return row(
+      a.completed_by_poster
+        ? `${a.posted_by} marked it done — confirm to close it out.`
+        : `Finished? Mark it done and ${a.posted_by} confirms.`,
       <button type="button" className="trk-btn" disabled={completingId === a.id} onClick={() => onComplete(a.id)}>
-        {completingId === a.id ? '…' : 'Mark complete'}
+        {completingId === a.id ? '…' : a.completed_by_poster ? 'Confirm done' : 'Mark complete'}
       </button>);
   }
-  return row(`Sort out the details with ${a.posted_by} in Messages.`, messages(true));
+  return row(`${a.posted_by} closed this gig. Sort out anything left in Messages.`, messages(true));
 }
 
 export default function ApplicationsPage() {

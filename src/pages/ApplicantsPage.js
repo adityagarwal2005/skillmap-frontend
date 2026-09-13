@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import {
   getMyWorkRequests, getWorkRequestResponses, assignWorkRequest, rejectWorkApplicant,
+  completeWorkRequest,
 } from '../api/work';
 import { getMyCollabPosts, getCollabApplicants, respondToCollabRequest } from '../api/collab';
 import AppShell from '../components/AppShell';
@@ -42,6 +43,7 @@ export default function ApplicantsPage() {
   const [busyId, setBusyId]     = useState(null);
   const [connected, setConnected] = useState({});   // appId -> conversation_id
   const [cap, setCap] = useState({ people_needed: 1, hired_count: 0 });
+  const [completing, setCompleting] = useState(false);
 
   const load = useCallback(async () => {
     if (!user?.id) return;
@@ -102,6 +104,20 @@ export default function ApplicantsPage() {
     } finally { setBusyId(null); setConfirm(null); }
   };
 
+  const doComplete = async () => {
+    setCompleting(true);
+    try {
+      const r = await completeWorkRequest(id);
+      showToast(r.data.status === 'closed'
+        ? 'Done on both sides — rate the people you hired'
+        : 'Marked complete — waiting for your hire to confirm', 'success');
+      load();
+    } catch (err) {
+      showToast(err.response?.data?.error || 'Could not mark complete', 'error');
+    } finally { setCompleting(false); }
+  };
+
+  const done = !!post && post.status === 'closed' && post.completed_by_poster && post.completed_by_worker;
   const title = post ? (isFreelance ? post.description : post.title) : '';
   const tl = post ? timeLeft(post.expires_at) : null;
 
@@ -121,9 +137,11 @@ export default function ApplicantsPage() {
         {post && (
           <div className="apl-meta">
             {isFreelance && <span className="apl-price">₹{post.payment_amount}</span>}
-            <span className={`apl-time ${tl === 'Expired' ? 'is-expired' : ''}`}>
-              {tl ? `⏳ ${tl}` : 'No expiry set'}
-            </span>
+            {post.status !== 'closed' && (
+              <span className={`apl-time ${tl === 'Expired' ? 'is-expired' : ''}`}>
+                {tl ? `⏳ ${tl}` : 'No expiry set'}
+              </span>
+            )}
             <span className="apl-status">{post.status}</span>
           </div>
         )}
@@ -140,6 +158,30 @@ export default function ApplicantsPage() {
             </span>
           )}
         </div>
+
+        {isFreelance && post && (post.hired_count || 0) > 0 && (
+          <div className={`apl-done ${post.status === 'closed' && !done ? 'is-closed' : ''}`}>
+            <span className="apl-done-text">
+              <strong>
+                {done ? 'Completed ✓'
+                  : post.status === 'closed' ? 'Closed'
+                  : post.completed_by_poster ? 'Marked complete'
+                  : post.completed_by_worker ? 'Your hire marked it done'
+                  : 'Work delivered?'}
+              </strong>
+              {done ? 'Rate the people you hired from their cards below.'
+                : post.status === 'closed' ? 'This gig was closed before it was marked complete.'
+                : post.completed_by_poster ? 'Waiting for your hire to confirm.'
+                : post.completed_by_worker ? 'Confirm to close the gig and verify it on their profile.'
+                : 'Mark it complete once the work is in; your hire confirms from their side.'}
+            </span>
+            {!done && post.status !== 'closed' && !post.completed_by_poster && (
+              <button type="button" className="apl-done-btn" disabled={completing} onClick={doComplete}>
+                {completing ? '…' : post.completed_by_worker ? 'Confirm done' : 'Mark complete'}
+              </button>
+            )}
+          </div>
+        )}
 
         {loading ? (
           <div className="apl-list">
@@ -204,8 +246,13 @@ export default function ApplicantsPage() {
                       </button>
                     ) : isHired ? (
                       <button className="apl-dm" onClick={() => profileId(a) && navigate(`/profile/${profileId(a)}`)}>
-                        ✓ Hired — view profile
+                        {done ? `★ Rate ${name}` : '✓ Hired — view profile'}
                       </button>
+                    ) : post?.status === 'closed' ? (
+                      // Accept/Decline on a closed post only ever came back as an error.
+                      <span className="apl-closed-note">
+                        {isFreelance ? 'This gig is closed' : 'This collab is closed'}
+                      </span>
                     ) : isConfirm ? (
                       <>
                         <span className="apl-confirm-q">

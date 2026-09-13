@@ -36,7 +36,6 @@ const PeoplePage       = lazyRetry(() => import('./pages/PeoplePage'));
 const MessagesPage     = lazyRetry(() => import('./pages/MessagesPage'));
 const NotificationsPage = lazyRetry(() => import('./pages/NotificationsPage'));
 const SettingsPage     = lazyRetry(() => import('./pages/SettingsPage'));
-const SearchPage       = lazyRetry(() => import('./pages/SearchPage'));
 const OnboardingPage   = lazyRetry(() => import('./pages/OnboardingPage'));
 const EditProfilePage  = lazyRetry(() => import('./pages/EditProfilePage'));
 const ApplicationsPage = lazyRetry(() => import('./pages/ApplicationsPage'));
@@ -111,7 +110,7 @@ function App() {
             <Route path="/messages"                 element={user ? <MessagesPage /> : <Navigate to="/login" />} />
             <Route path="/notifications"            element={user ? <NotificationsPage /> : <Navigate to="/login" />} />
             <Route path="/settings"                 element={user ? <SettingsPage /> : <Navigate to="/login" />} />
-            <Route path="/search"                   element={user ? <SearchPage /> : <Navigate to="/login" />} />
+            <Route path="/search"                   element={<Navigate to="/" replace />} />
             <Route path="/applications"             element={user ? <ApplicationsPage /> : <Navigate to="/login" />} />
             <Route path="/applicants/:kind/:id"     element={user ? <ApplicantsPage /> : <Navigate to="/login" />} />
             <Route path="*"                         element={<Navigate to={user ? "/" : "/login"} />} />
