@@ -225,7 +225,6 @@ body::after {
    Every card in the app gets the same physical treatment: a gradient
    body, a lit top edge, layered shadow, and a spring on hover/press.
    ═══════════════════════════════════════════════ */
-.app-shell .person-card,
 .app-shell .notif-card,
 .app-shell .portfolio-card,
 .app-shell .apl-card,
@@ -243,7 +242,6 @@ body::after {
     border-color var(--t-med) ease;
 }
 
-.app-shell .person-card:hover,
 .app-shell .portfolio-card:hover,
 .app-shell .post-new-card:hover,
 .app-shell .apl-card:hover {
@@ -252,7 +250,6 @@ body::after {
   border-color: var(--hairline-str);
 }
 
-.app-shell .person-card:active,
 .app-shell .conv-item:active,
 .app-shell .post-new-card:active { transform: scale(0.988); }
 
@@ -552,27 +549,20 @@ body::after {
 
 /* Lists cascade in instead of appearing all at once. Capped at eight so
    a long feed doesn't leave the last rows waiting on a long delay. */
-.app-shell .people-grid > *,
 .app-shell .notif-list > *,
 .app-shell .conv-list > * {
   animation: ngRise var(--t-slow) var(--spring-soft) both;
 }
-.app-shell .people-grid > *:nth-child(1),
 .app-shell .notif-list > *:nth-child(1),
 .app-shell .conv-list > *:nth-child(1) { animation-delay: 0ms; }
-.app-shell .people-grid > *:nth-child(2),
 .app-shell .notif-list > *:nth-child(2),
 .app-shell .conv-list > *:nth-child(2) { animation-delay: 40ms; }
-.app-shell .people-grid > *:nth-child(3),
 .app-shell .notif-list > *:nth-child(3),
 .app-shell .conv-list > *:nth-child(3) { animation-delay: 80ms; }
-.app-shell .people-grid > *:nth-child(4),
 .app-shell .notif-list > *:nth-child(4),
 .app-shell .conv-list > *:nth-child(4) { animation-delay: 120ms; }
-.app-shell .people-grid > *:nth-child(5),
 .app-shell .notif-list > *:nth-child(5),
 .app-shell .conv-list > *:nth-child(5) { animation-delay: 160ms; }
-.app-shell .people-grid > *:nth-child(n+6),
 .app-shell .notif-list > *:nth-child(n+6),
 .app-shell .conv-list > *:nth-child(n+6) { animation-delay: 200ms; }
 
@@ -583,10 +573,8 @@ body::after {
    ═══════════════════════════════════════════════ */
 @media (prefers-reduced-motion: reduce) {
   body::before { animation: none; }
-  .app-shell .people-grid > *,
-  .app-shell .notif-list > *,
+    .app-shell .notif-list > *,
   .app-shell .conv-list > * { animation: none; }
-  .app-shell .person-card:hover,
   .app-shell .portfolio-card:hover,
   .app-shell .post-new-card:hover,
   .app-shell .apl-card:hover { transform: none; }

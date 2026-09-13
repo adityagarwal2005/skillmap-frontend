@@ -2,17 +2,28 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import { getCategories, addSkill, editUser, sendPhoneOTP, verifyPhoneOTP } from '../api/users';
-import { updateStatus } from '../api/users';
+import { getCategories, addSkill, editUser, sendPhoneOTP, verifyPhoneOTP, updateStatus } from '../api/users';
 import Logo from '../components/Logo';
+import { SKILL_CATEGORIES, categoryByBackendName } from '../utils/skillCategories';
 import './OnboardingPage.css';
 
-const STEPS = ['Category', 'Skills', 'Verify', 'Status', 'Location'];
+const STEPS = ['You', 'Skills', 'Verify', 'Availability', 'Location'];
+
+const STATUS_OPTIONS = [
+  { value: 'open_to_freelance', label: 'Taking gigs',      desc: 'Show me paid work nearby and let people hire me', tone: 'gig' },
+  { value: 'open_to_work',      label: 'Open to work',     desc: 'Looking for part-time or full-time roles',      tone: 'work' },
+  { value: 'not_available',     label: 'Just hiring',      desc: "I'm here to post gigs and find people",          tone: 'off' },
+];
+
+// Until a category is picked, suggest a spread from the busiest ones.
+const STARTER_SKILLS = SKILL_CATEGORIES.slice(0, 4).flatMap(c => c.skills.slice(0, 3));
+
+const sameSkill = (a, b) => a.toLowerCase() === b.toLowerCase();
 
 export default function OnboardingPage() {
-  const { user } = useAuth();
-  const { showToast }       = useToast();
-  const navigate            = useNavigate();
+  const { user }      = useAuth();
+  const { showToast } = useToast();
+  const navigate      = useNavigate();
 
   const [step, setStep]             = useState(0);
   const [categories, setCategories] = useState([]);
@@ -26,7 +37,7 @@ export default function OnboardingPage() {
   const [phoneVerified, setPhoneVerified] = useState(false);
   const [sendingOtp, setSendingOtp] = useState(false);
   const [verifyingOtp, setVerifyingOtp] = useState(false);
-  const [status, setStatus]         = useState('not_available');
+  const [status, setStatus]         = useState(null);   // only saved if picked
   const [location, setLocation]     = useState({ lat: '', lon: '' });
   const [saving, setSaving]         = useState(false);
   const [gettingLoc, setGettingLoc] = useState(false);
@@ -40,13 +51,19 @@ export default function OnboardingPage() {
 
   useEffect(() => { loadCategories(); }, []);
 
-  const addLocalSkill = () => {
+  const selectedMeta = selectedCat ? categoryByBackendName(selectedCat.name) : null;
+  const suggestions  = selectedMeta?.skills || STARTER_SKILLS;
+  const hasSkill     = (s) => skills.some(x => sameSkill(x, s));
+
+  const toggleSkill = (s) => setSkills(prev => (
+    prev.some(x => sameSkill(x, s)) ? prev.filter(x => !sameSkill(x, s)) : [...prev, s]
+  ));
+
+  const addTypedSkill = () => {
     const s = skillInput.trim();
-    if (s && !skills.includes(s)) setSkills(prev => [...prev, s]);
+    if (s && !hasSkill(s)) setSkills(prev => [...prev, s]);
     setSkillInput('');
   };
-
-  const removeLocalSkill = (s) => setSkills(prev => prev.filter(x => x !== s));
 
   const getLocation = () => {
     if (!navigator.geolocation) { showToast('Geolocation not supported', 'error'); return; }
@@ -55,7 +72,6 @@ export default function OnboardingPage() {
       pos => {
         setLocation({ lat: pos.coords.latitude, lon: pos.coords.longitude });
         setGettingLoc(false);
-        showToast('Location captured!', 'success');
       },
       () => { showToast('Could not get location', 'error'); setGettingLoc(false); }
     );
@@ -92,11 +108,11 @@ export default function OnboardingPage() {
       if (selectedCat) payload.category_id = selectedCat.id;
       if (location.lat) { payload.latitude = location.lat; payload.longitude = location.lon; }
       if (Object.keys(payload).length > 0) await editUser(user.id, payload);
-      if (status !== 'not_available') await updateStatus(status);
+      if (status) await updateStatus(status);
       for (const skill of skills) {
         try { await addSkill(user.id, skill); } catch {}
       }
-      showToast('Profile set up!', 'success');
+      showToast("You're in. Here's what's near you.", 'success');
       navigate('/');
     } catch {
       showToast('Something went wrong', 'error');
@@ -108,66 +124,64 @@ export default function OnboardingPage() {
     // categories actually loaded.
     if (step === 0) return !!selectedCat || categoriesFailed;
     if (step === 1) return skills.length > 0;
-    // Connect an account — optional at onboarding (most new users don't have
-    // a LinkedIn/GitHub handy yet). Still required before posting/accepting
-    // work (require_contact() on the backend), so it's just deferred, not
-    // dropped — Settings and this page both let you add one any time. A
-    // Google sign-in also counts, so anyone who used it here already has it.
-    if (step === 2) return true;
-    if (step === 3) return true;
-    if (step === 4) return true;
-    return false;
+    // Verify, availability and location are optional. A verified contact is
+    // still required before posting or accepting work (require_contact() on
+    // the backend), so verification is deferred, not dropped.
+    return true;
   };
 
+  // Skipping the last step still has to save the category and skills
+  // picked earlier — it used to navigate away and drop them.
   const handleNext = () => {
     if (step < STEPS.length - 1) setStep(s => s + 1);
     else handleFinish();
   };
 
-  return (
-    <div className="onboard-page">
-      <div className="onboard-card">
+  const isLast = step === STEPS.length - 1;
 
-        {/* Wordmark */}
-        <div className="onboard-wordmark">
-          <Logo size={2.4} className="onboard-logo" />
+  return (
+    <div className="ob-page">
+      <div className="ob-card">
+        <div className="ob-top">
+          <Logo size={2} />
+          <span className="ob-count">Step {step + 1} of {STEPS.length} · {STEPS[step]}</span>
         </div>
 
-        {/* Progress */}
-        <div className="onboard-progress">
+        <div className="ob-progress" role="progressbar" aria-label="Profile setup"
+          aria-valuemin={1} aria-valuemax={STEPS.length} aria-valuenow={step + 1}>
           {STEPS.map((s, i) => (
-            <div key={s} className={`onboard-step ${i === step ? 'active' : ''} ${i < step ? 'done' : ''}`}>
-              <div className="onboard-step-dot">{i < step ? '✓' : i + 1}</div>
-              <span className="onboard-step-label">{s}</span>
-            </div>
+            <span key={s} className={`ob-seg ${i < step ? 'is-done' : ''} ${i === step ? 'is-on' : ''}`} />
           ))}
         </div>
 
-        <div className="onboard-bar">
-          <div className="onboard-bar-fill" style={{ width: `${((step + 1) / STEPS.length) * 100}%` }} />
-        </div>
-
-        {/* Step Content */}
-        <div className="onboard-content">
-
+        <div className="ob-content" key={step}>
           {step === 0 && (
             <>
-              <h2 className="onboard-title">What best describes you?</h2>
-              <p className="onboard-sub">Pick your primary category — you can change this later</p>
+              <span className="ob-eyebrow">Set up your profile</span>
+              <h1 className="ob-title">What do you do best?</h1>
+              <p className="ob-sub">Pick the closest fit. It decides which gigs and people you see first, and you can change it later.</p>
               {categoriesFailed ? (
-                <div className="no-skills" style={{ display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'flex-start' }}>
-                  <span>Couldn't load categories — you can skip this for now and set it later in Settings.</span>
-                  <button type="button" className="create-cancel" onClick={loadCategories}>Try again</button>
+                <div className="ob-note">
+                  <span>Couldn't load categories. Skip for now and set it later in Settings.</span>
+                  <button type="button" className="ob-ghost" onClick={loadCategories}>Try again</button>
                 </div>
               ) : (
-                <div className="category-grid">
-                  {categories.map(c => (
-                    <button key={c.id}
-                      className={`category-card ${selectedCat?.id === c.id ? 'selected' : ''}`}
-                      onClick={() => setSelectedCat(c)}>
-                      <span className="category-name">{c.name}</span>
-                    </button>
-                  ))}
+                <div className="ob-cats">
+                  {categories.length === 0
+                    ? Array.from({ length: 9 }, (_, i) => <span key={i} className="ob-cat is-loading" />)
+                    : categories.map(c => {
+                        const meta = categoryByBackendName(c.name);
+                        const on = selectedCat?.id === c.id;
+                        return (
+                          <button key={c.id} type="button" aria-pressed={on} title={c.name}
+                            className={`ob-cat ${on ? 'is-on' : ''}`}
+                            style={meta ? { '--hue': meta.hue } : undefined}
+                            onClick={() => setSelectedCat(c)}>
+                            <span className="ob-cat-icon">{meta?.icon || c.name[0]}</span>
+                            <span className="ob-cat-name">{meta?.label || c.name}</span>
+                          </button>
+                        );
+                      })}
                 </div>
               )}
             </>
@@ -175,90 +189,97 @@ export default function OnboardingPage() {
 
           {step === 1 && (
             <>
-              <h2 className="onboard-title">Add your skills</h2>
-              <p className="onboard-sub">What can you do? Add as many as you like</p>
-              <div className="skill-input-row">
-                <input className="create-input" style={{ flex: 1 }}
-                  placeholder="e.g. React, Figma, Python"
+              <span className="ob-eyebrow">{selectedMeta?.label || 'Your skills'}</span>
+              <h1 className="ob-title">What can people hire you for?</h1>
+              <p className="ob-sub">Tap the ones you're good at, or type your own. Gigs that need them will find you.</p>
+              <div className="ob-row">
+                <input className="ob-input" placeholder="Type a skill and press Enter"
                   value={skillInput}
                   onChange={e => setSkillInput(e.target.value)}
-                  onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addLocalSkill(); } }} />
-                <button type="button" className="create-submit" onClick={addLocalSkill}>Add</button>
+                  onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addTypedSkill(); } }} />
+                <button type="button" className="ob-ghost" onClick={addTypedSkill} disabled={!skillInput.trim()}>Add</button>
               </div>
-              <div className="skills-list" style={{ marginTop: '14px' }}>
-                {skills.map(s => (
-                  <span key={s} className="skill-tag">
-                    {s}
-                    <button className="skill-remove" onClick={() => removeLocalSkill(s)}>×</button>
-                  </span>
+              <div className="ob-chips">
+                {/* Typed skills lead; suggestions hold their place when tapped. */}
+                {[...skills.filter(s => !suggestions.some(x => sameSkill(x, s))), ...suggestions].map(s => (
+                  <button key={s} type="button" aria-pressed={hasSkill(s)}
+                    className={`ob-chip ${hasSkill(s) ? 'is-on' : ''}`}
+                    onClick={() => toggleSkill(s)}>
+                    {hasSkill(s) ? '✓' : '+'} {s}
+                  </button>
                 ))}
-                {skills.length === 0 && <span className="no-skills">No skills added yet</span>}
               </div>
+              <p className="ob-meta">
+                {skills.length === 0 ? 'Add at least one to continue'
+                  : `${skills.length} ${skills.length === 1 ? 'skill' : 'skills'} added`}
+              </p>
             </>
           )}
 
           {step === 2 && (
             <>
-              <h2 className="onboard-title">Verify your phone <span style={{fontWeight:400,color:'var(--text-3)',fontSize:'0.7em'}}>(optional)</span></h2>
-              <p className="onboard-sub">
-                We'll send a code on WhatsApp so people can trust who they're dealing with. You can skip this — you'll just need it before posting or accepting work.
+              <span className="ob-eyebrow">Optional</span>
+              <h1 className="ob-title">Verify your number</h1>
+              <p className="ob-sub">
+                A WhatsApp code shows people they're dealing with someone real. You can skip it now, but you'll need it before posting or taking on work.
               </p>
-
               {phoneVerified ? (
-                <div className="location-captured">
-                  <span className="location-icon">✅</span>
+                <div className="ob-done">
+                  <span className="ob-done-mark" aria-hidden="true">✓</span>
                   <div>
-                    <div className="location-label">Phone verified</div>
-                    <div className="location-coords">{phone}</div>
+                    <div className="ob-done-title">Number verified</div>
+                    <div className="ob-done-sub">{phone}</div>
                   </div>
                 </div>
               ) : !phoneSent ? (
-                <div className="skill-input-row">
-                  <input className="create-input" style={{ flex: 1 }} type="tel"
-                    placeholder="e.g. +91 98765 43210"
+                <div className="ob-row">
+                  <input className="ob-input" type="tel" inputMode="tel" autoComplete="tel"
+                    placeholder="+91 98765 43210"
                     value={phone}
                     onChange={e => setPhone(e.target.value)}
                     onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleSendPhoneOtp(); } }} />
-                  <button type="button" className="create-submit" onClick={handleSendPhoneOtp} disabled={sendingOtp}>
+                  <button type="button" className="ob-primary is-inline" onClick={handleSendPhoneOtp} disabled={sendingOtp}>
                     {sendingOtp ? 'Sending…' : 'Send code'}
                   </button>
                 </div>
               ) : (
-                <div>
-                  <div className="skill-input-row">
-                    <input className="create-input otp-input" style={{ flex: 1 }}
+                <>
+                  <div className="ob-row">
+                    <input className="ob-input is-otp" inputMode="numeric" autoComplete="one-time-code"
                       placeholder="000000" maxLength={6}
                       value={phoneOtp}
                       onChange={e => setPhoneOtp(e.target.value)}
                       onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleVerifyPhoneOtp(); } }} />
-                    <button type="button" className="create-submit" onClick={handleVerifyPhoneOtp} disabled={verifyingOtp}>
+                    <button type="button" className="ob-primary is-inline" onClick={handleVerifyPhoneOtp} disabled={verifyingOtp}>
                       {verifyingOtp ? 'Verifying…' : 'Verify'}
                     </button>
                   </div>
-                  <p className="otp-resend">
-                    Didn't get it?{' '}
-                    <span onClick={() => { setPhoneSent(false); setPhoneOtp(''); }}>Go back</span>
+                  <p className="ob-meta">
+                    Sent to {phone}.{' '}
+                    <button type="button" className="ob-link" onClick={() => { setPhoneSent(false); setPhoneOtp(''); }}>
+                      Change number
+                    </button>
                   </p>
-                </div>
+                </>
               )}
             </>
           )}
 
           {step === 3 && (
             <>
-              <h2 className="onboard-title">Set your availability</h2>
-              <p className="onboard-sub">Let people know if you're open to work</p>
-              <div className="status-options">
-                {[
-                  { value: 'not_available', label: 'Not Available', desc: 'Not looking for work right now' },
-                  { value: 'open_to_freelance', label: 'Open to gigs', desc: 'Looking for paid gig work' },
-                  { value: 'open_to_work', label: 'Open to Work', desc: 'Looking for full-time or part-time work' },
-                ].map(opt => (
-                  <button key={opt.value}
-                    className={`status-option ${status === opt.value ? 'selected' : ''}`}
+              <span className="ob-eyebrow">Availability</span>
+              <h1 className="ob-title">Are you taking work?</h1>
+              <p className="ob-sub">This shows on your profile. Change it any time from Settings.</p>
+              <div className="ob-options" role="radiogroup" aria-label="Availability">
+                {STATUS_OPTIONS.map(opt => (
+                  <button key={opt.value} type="button" role="radio" aria-checked={status === opt.value}
+                    className={`ob-option is-${opt.tone} ${status === opt.value ? 'is-on' : ''}`}
                     onClick={() => setStatus(opt.value)}>
-                    <span className="status-option-label">{opt.label}</span>
-                    <span className="status-option-desc">{opt.desc}</span>
+                    <span className="ob-option-dot" aria-hidden="true" />
+                    <span className="ob-option-text">
+                      <span className="ob-option-label">{opt.label}</span>
+                      <span className="ob-option-desc">{opt.desc}</span>
+                    </span>
                   </button>
                 ))}
               </div>
@@ -267,45 +288,39 @@ export default function OnboardingPage() {
 
           {step === 4 && (
             <>
-              <h2 className="onboard-title">Share your location</h2>
-              <p className="onboard-sub">Powers radius filtering on freelance/collab posts — only city-level precision is shown. People search doesn't use this.</p>
-              <div className="location-box">
-                {location.lat ? (
-                  <div className="location-captured">
-                    <span className="location-icon">📍</span>
-                    <div>
-                      <div className="location-label">Location captured</div>
-                      <div className="location-coords">You're all set — only your city-level area is used</div>
-                    </div>
+              <span className="ob-eyebrow">Last step</span>
+              <h1 className="ob-title">Where are you?</h1>
+              <p className="ob-sub">Gigs and collabs are matched by distance, so this is what makes your feed local. Other people see how far away you are, never where.</p>
+              {location.lat ? (
+                <div className="ob-done">
+                  <span className="ob-done-mark" aria-hidden="true">✓</span>
+                  <div>
+                    <div className="ob-done-title">Location set</div>
+                    <div className="ob-done-sub">Your feed will show what's closest first</div>
                   </div>
-                ) : (
-                  <button className="location-btn" onClick={getLocation} disabled={gettingLoc}>
-                    {gettingLoc ? 'Getting location...' : '📍 Share my location'}
-                  </button>
-                )}
-              </div>
+                </div>
+              ) : (
+                <button type="button" className="ob-locate" onClick={getLocation} disabled={gettingLoc}>
+                  <span className="ob-locate-pulse" aria-hidden="true" />
+                  {gettingLoc ? 'Finding you…' : 'Use my location'}
+                </button>
+              )}
             </>
           )}
         </div>
 
-        {/* Actions */}
-        <div className="onboard-actions">
-          {/* Category and Skills are required — Connect, Status, and Location can be skipped */}
-          {step >= 2 ? (
-            <button className="onboard-skip" onClick={() => {
-              if (step < STEPS.length - 1) setStep(s => s + 1);
-              else navigate('/');
-            }}>
-              Skip
-            </button>
-          ) : <span />}
-          <div style={{ display: 'flex', gap: '10px' }}>
-            {step > 0 && (
-              <button className="create-cancel" onClick={() => setStep(s => s - 1)}>Back</button>
+        <div className="ob-actions">
+          {step > 0
+            ? <button type="button" className="ob-ghost" onClick={() => setStep(s => s - 1)}>Back</button>
+            : <span />}
+          <div className="ob-actions-right">
+            {step >= 2 && (
+              <button type="button" className="ob-link" onClick={handleNext} disabled={saving}>
+                {isLast ? 'Skip and finish' : 'Skip'}
+              </button>
             )}
-            <button className="create-submit" onClick={handleNext}
-              disabled={saving || !canNext()}>
-              {saving ? 'Saving...' : step === STEPS.length - 1 ? 'Finish' : 'Next →'}
+            <button type="button" className="ob-primary" onClick={handleNext} disabled={saving || !canNext()}>
+              {saving ? 'Saving…' : isLast ? 'Finish' : 'Continue'}
             </button>
           </div>
         </div>

@@ -53,6 +53,10 @@ export const verifyPhoneOTP = (phone, otp) =>
 export const searchUsers = (params) =>
   API.get('/users/search/', { params });
 
+// Newest members, excluding yourself and anyone blocked either way.
+export const discoverUsers = (params) =>
+  API.get('/users/discover/', { params });
+
 export const getMyReferrals = () =>
   API.get('/users/referrals/');
 

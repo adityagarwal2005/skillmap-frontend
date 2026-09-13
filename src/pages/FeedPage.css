@@ -53,14 +53,12 @@
 
 /* Content cards — consistent soft-lift interaction everywhere */
 .app-shell .portfolio-card,
-.app-shell .person-card,
 .app-shell .notif-card {
   transition: transform 0.24s var(--ease-out-expo, ease),
               box-shadow 0.24s var(--ease-out-expo, ease),
               border-color 0.24s ease;
 }
-.app-shell .portfolio-card:hover,
-.app-shell .person-card:hover {
+.app-shell .portfolio-card:hover {
   transform: translateY(-3px);
   box-shadow: 0 14px 34px rgba(0,0,0,0.13);
   border-color: var(--border-md);
@@ -1389,51 +1387,6 @@
 }
 .app-shell .notif-read-all { border-radius: var(--r-pill); border: 1px solid var(--hairline-str); }
 .app-shell .notif-action-btn { border-radius: var(--r-pill); font-weight: 700; }
-
-/* ── People: talent cards ── */
-.app-shell .people-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 12px;
-}
-.app-shell .person-card {
-  background: var(--surface-1);
-  border: 1px solid var(--hairline);
-  border-radius: var(--r-xl);
-  padding: 18px;
-  animation: riseIn var(--t-slow) var(--ease-spring) both;
-}
-.app-shell .person-card:hover { border-color: var(--hairline-str); box-shadow: var(--e-3); }
-.app-shell .person-card .person-name { color: var(--text-1); font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; }
-.app-shell .person-card .person-cat,
-.app-shell .person-card .person-headline,
-.app-shell .person-card .person-stat { color: var(--text-2); }
-.app-shell .person-card .person-footer { border-top-color: var(--hairline); }
-.app-shell .person-card .tag-skill {
-  background: rgba(255,255,255,0.06);
-  color: var(--text-2);
-  border-radius: var(--r-pill);
-}
-.app-shell .person-ava { background: var(--surface-2); border: 1px solid var(--hairline-str); }
-.app-shell .people-search {
-  background: var(--surface-1);
-  border: 1px solid var(--hairline);
-  border-radius: var(--r-xl);
-}
-.app-shell .people-search-input {
-  background: var(--surface-flat);
-  border: 1px solid var(--hairline);
-  border-radius: var(--r-md);
-}
-.app-shell .people-search-input:focus { border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-dim); }
-.app-shell .people-search-btn { border-radius: var(--r-md); background: #fff; color: #000; font-weight: 800; }
-.app-shell .friend-reqs {
-  background: var(--surface-2);
-  border: 1px solid var(--brand-line);
-  border-radius: var(--r-xl);
-}
-.app-shell .friend-reqs-count { background: var(--brand); color: #fff; }
-.app-shell .person-friend-btn { border-radius: var(--r-pill); font-weight: 700; }
 
 /* ── Applications: track your pitches ── */
 .app-shell .app-card {
