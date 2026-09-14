@@ -111,6 +111,7 @@ export default function CreateWorkModal({ kind, onClose, onCreated }) {
     payment_amount: budget,
     people_needed: Number(form.people_needed) || 1,
     hired_count: 0,
+    created_at: new Date().toISOString(),
     // A minute's slack so a fresh 48-hour post previews as "48h left", not 47.
     expires_at: new Date(Date.now() + Number(form.time_limit_hours) * 3600000 + 60000).toISOString(),
     distance_km: null,

@@ -5,22 +5,49 @@ import '../pages/Marketplace.css';
    shared by the feed and the create-post preview, so what a poster sees
    while writing is exactly what people nearby will see. */
 
+const MIN = 60000;
 const HOUR = 3600000;
 
-// Listings run 48 hours at most, so hours are the unit that means something:
-// "1d left" would cover anything from 24 to 47 hours.
-export function timeLeft(expiresAt) {
+// Django's str(datetime) reads "2026-09-14 10:22:33.123456+00:00". The space
+// and six-digit fraction are outside the format Safari's Date parser accepts,
+// so normalise before parsing rather than trusting the browser.
+export function parseTs(value) {
+  if (!value) return NaN;
+  return new Date(String(value).replace(' ', 'T').replace(/(\.\d{3})\d+/, '$1')).getTime();
+}
+
+/** Time left in a listing's window, the way people say it: 35m, 4h 12m, 14h. */
+export function timeLeft(expiresAt, now = Date.now()) {
   if (!expiresAt) return null;
-  const diff = new Date(expiresAt) - Date.now();
+  const diff = parseTs(expiresAt) - now;
+  if (Number.isNaN(diff)) return null;
   if (diff <= 0) return 'Expired';
-  if (diff < HOUR) return `${Math.max(1, Math.floor(diff / 60000))}m left`;
+  if (diff < HOUR) return `${Math.max(1, Math.floor(diff / MIN))}m left`;
   const hrs = Math.floor(diff / HOUR);
+  const mins = Math.floor((diff % HOUR) / MIN);
+  if (hrs < 10) return mins ? `${hrs}h ${mins}m left` : `${hrs}h left`;
   if (hrs <= 48) return `${hrs}h left`;
   return `${Math.floor(hrs / 24)}d left`;
 }
 
+/** Share of the listing's window still to run, from 1 (just posted) to 0. */
+export function windowLeft(item, now = Date.now()) {
+  const end = parseTs(item.expires_at);
+  const start = parseTs(item.created_at);
+  if (Number.isNaN(end)) return 1;
+  if (Number.isNaN(start) || end <= start) return end > now ? 1 : 0;
+  return Math.min(1, Math.max(0, (end - now) / (end - start)));
+}
+
+export const isUrgent = (item, now = Date.now()) => {
+  const left = parseTs(item.expires_at) - now;
+  return !Number.isNaN(left) && left < 3 * HOUR;
+};
+
 export const money = (n) => `₹${Math.round(Number(n) || 0).toLocaleString('en-IN')}`;
-export const distance = (km) => (km < 1 ? `${Math.round(km * 1000)} m` : `${km} km`);
+export const distance = (km) => (
+  km < 0.1 ? 'Under 100 m' : km < 1 ? `${Math.round(km * 1000)} m` : `${km} km`
+);
 
 const svg = (paths) => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
@@ -93,14 +120,25 @@ function SaveButton({ saved, onClick }) {
   );
 }
 
-export function MetaChips({ item }) {
-  const left = timeLeft(item.expires_at);
-  const urgent = !!left && new Date(item.expires_at) - Date.now() < 6 * HOUR;
+export function MetaChips({ item, now }) {
+  const left = timeLeft(item.expires_at, now);
   return (
     <>
-      {left && <span className={`mk-chip ${urgent ? 'is-urgent' : ''}`}>{ICONS.clock}{left}</span>}
+      {left && (
+        <span className={`mk-chip is-time ${isUrgent(item, now) ? 'is-urgent' : ''}`}>{ICONS.clock}{left}</span>
+      )}
       {item.distance_km != null && <span className="mk-chip">{ICONS.pin}{distance(item.distance_km)}</span>}
     </>
+  );
+}
+
+/* A hairline across the top of the card that burns down as the listing's
+   window runs out — how long is left, readable without reading. */
+function Fuse({ item, now }) {
+  if (!item.expires_at) return null;
+  return (
+    <span className={`mk-fuse ${isUrgent(item, now) ? 'is-urgent' : ''}`}
+      style={{ '--left': windowLeft(item, now) }} aria-hidden="true" />
   );
 }
 
@@ -117,12 +155,13 @@ const cardProps = (interactive, onOpen, label) => (interactive
   ? { tabIndex: 0, role: 'button', onClick: onOpen, onKeyDown: cardKeys(onOpen), 'aria-label': label }
   : {});
 
-export function GigCard({ item, isNew, saved, onSave, onOpen, style, interactive = true }) {
+export function GigCard({ item, now, isNew, saved, onSave, onOpen, style, interactive = true }) {
   const needed = item.people_needed || 1;
   const spotsLeft = Math.max(0, needed - (item.hired_count || 0));
   return (
     <article className={`mk-card is-gig ${isNew ? 'is-new' : ''}`} style={style}
       {...cardProps(interactive, onOpen, `Paid gig, ${money(item.payment_amount)}: ${item.title}`)}>
+      <Fuse item={item} now={now} />
       <div className="mk-ticket">
         <div className="mk-payout">
           <span className="mk-eyebrow">Payout</span>
@@ -130,7 +169,7 @@ export function GigCard({ item, isNew, saved, onSave, onOpen, style, interactive
             {Number(item.payment_amount) > 0 ? money(item.payment_amount) : '₹ —'}
           </span>
         </div>
-        <div className="mk-ticket-meta"><MetaChips item={item} /></div>
+        <div className="mk-ticket-meta"><MetaChips item={item} now={now} /></div>
       </div>
       <div className="mk-perf" aria-hidden="true" />
       <div className="mk-body">
@@ -161,7 +200,7 @@ export function GigCard({ item, isNew, saved, onSave, onOpen, style, interactive
   );
 }
 
-export function TeamCard({ item, isNew, saved, onSave, onOpen, style, interactive = true }) {
+export function TeamCard({ item, now, isNew, saved, onSave, onOpen, style, interactive = true }) {
   const needed = item.people_needed || 1;
   const filled = item.hired_count || 0;
   const open = Math.max(0, needed - filled);
@@ -169,6 +208,7 @@ export function TeamCard({ item, isNew, saved, onSave, onOpen, style, interactiv
   return (
     <article className={`mk-card is-team ${isNew ? 'is-new' : ''}`} style={style}
       {...cardProps(interactive, onOpen, `Team forming, ${open} open: ${item.title}`)}>
+      <Fuse item={item} now={now} />
       <div className="mk-lobby">
         <div className="mk-lobby-row">
           <Seats host={item.user} needed={needed} filled={filled} />
@@ -177,7 +217,7 @@ export function TeamCard({ item, isNew, saved, onSave, onOpen, style, interactiv
             <span className="mk-eyebrow">{open === 1 ? 'seat open' : 'seats open'}</span>
           </div>
         </div>
-        <div className="mk-ticket-meta"><MetaChips item={item} /></div>
+        <div className="mk-ticket-meta"><MetaChips item={item} now={now} /></div>
       </div>
       <div className="mk-body">
         <div className="mk-body-top">

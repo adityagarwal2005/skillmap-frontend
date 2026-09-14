@@ -1,18 +1,20 @@
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
 import { getFeed } from '../api/feed';
 import { respondToWorkRequest } from '../api/work';
 import { applyToCollab } from '../api/collab';
+import { editUser } from '../api/users';
 import AppShell from '../components/AppShell';
 import Lightbox from '../components/Lightbox';
 import Logo from '../components/Logo';
 import NotificationBell from '../components/NotificationBell';
 import { cldThumb } from '../utils/cloudinaryUrl';
-import { ICONS as I, money, distance, Bookmark, Avatar, Seats, Skills, MetaChips, GigCard, TeamCard } from '../components/ListingCard';
+import { ICONS as I, money, distance, parseTs, Bookmark, Avatar, Seats, Skills, MetaChips, GigCard, TeamCard } from '../components/ListingCard';
 import { SKILL_CATEGORIES, categoriesOf, categoryById } from '../utils/skillCategories';
 import usePoll from '../hooks/usePoll';
+import useNow from '../hooks/useNow';
 import './FeedPage.css';
 import './Marketplace.css';
 
@@ -25,6 +27,30 @@ const RANGES = [
 ];
 const RANGE_LABEL = Object.fromEntries(RANGES.map(r => [r.value, r.label]));
 
+// One position fix, resolved to null on refusal or timeout rather than thrown.
+function locateDevice() {
+  return new Promise(resolve => {
+    if (!navigator.geolocation) { resolve(null); return; }
+    navigator.geolocation.getCurrentPosition(
+      pos => resolve({ lat: +pos.coords.latitude.toFixed(5), lon: +pos.coords.longitude.toFixed(5) }),
+      () => resolve(null),
+      { timeout: 10000, maximumAge: 300000 },
+    );
+  });
+}
+
+// "today 6:40 pm", "tomorrow 9:00 am", "Wed 11:30 am"
+function closesAt(ts) {
+  const d = new Date(parseTs(ts));
+  if (Number.isNaN(d.getTime())) return '';
+  const time = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  if (d.toDateString() === new Date().toDateString()) return `today ${time}`;
+  if (d.toDateString() === tomorrow.toDateString()) return `tomorrow ${time}`;
+  return `${d.toLocaleDateString([], { weekday: 'short' })} ${time}`;
+}
+
 export default function FeedPage() {
   const { showToast }         = useToast();
   const { user }              = useAuth();
@@ -36,9 +62,12 @@ export default function FeedPage() {
   const [hasMore, setHasMore] = useState(false);
   const [kind, setKind]       = useState('all');     // all | freelance | collab
   const [savedOnly, setSavedOnly] = useState(false);
-  const [range, setRange]     = useState('5');
+  const [range, setRange]     = useState(() => {
+    try { const v = localStorage.getItem('smRange'); return RANGE_LABEL[v] ? v : '5'; }
+    catch { return '5'; }
+  });
   const [query, setQuery]     = useState('');
-  const [sort, setSort]       = useState('new');     // new | pay | near
+  const [sort, setSort]       = useState('match');   // match | soon | pay | near
   const [category, setCategory] = useState('');      // SKILL_CATEGORIES id
   const [saved, setSaved]     = useState(() => {
     try { return new Set(JSON.parse(localStorage.getItem('smSaved') || '[]')); }
@@ -54,6 +83,13 @@ export default function FeedPage() {
   const [applying, setApplying] = useState(false);
   const [applied, setApplied]   = useState(false);
   const seenIds = useRef(new Set());
+  const [origin, setOrigin] = useState(null);         // a fresh device fix; null → profile location
+  const [originChecked, setOriginChecked] = useState(false);
+  const [needsLocation, setNeedsLocation] = useState(false);
+  const [locating, setLocating] = useState(false);
+  const now = useNow(30000);
+
+  useEffect(() => { try { localStorage.setItem('smRange', range); } catch {} }, [range]);
 
   // Reset the apply form each time a different opportunity is opened.
   useEffect(() => { setApplyMsg(''); setApplied(false); }, [viewItem?.kind, viewItem?.id]);
@@ -105,30 +141,67 @@ export default function FeedPage() {
   };
   const welcomeGo = (path) => { dismissWelcome(); navigate(path); };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { loadFeed(); }, []);
+  const toast = useRef(showToast);
+  toast.current = showToast;
+  const request = useRef(0);
 
-  const loadFeed = async () => {
+  // Read the device on load only when the browser already allows it, so the
+  // feed never opens on a permission prompt. Otherwise the server falls back
+  // to the location saved on the profile.
+  useEffect(() => {
+    let alive = true;
+    const settle = (fix) => {
+      if (!alive) return;
+      if (fix) setOrigin(fix);
+      setOriginChecked(true);
+    };
+    let query = null;
+    try { query = navigator.permissions?.query({ name: 'geolocation' }); } catch { query = null; }
+    if (!query) settle(null);
+    else query.then(s => (s.state === 'granted' ? locateDevice().then(settle) : settle(null)))
+      .catch(() => settle(null));
+    return () => { alive = false; };
+  }, []);
+
+  const feedParams = useMemo(
+    () => (origin ? { radius: range, lat: origin.lat, lon: origin.lon } : { radius: range }),
+    [range, origin],
+  );
+
+  // A new range or location refetches; `request` drops any response that
+  // lands after a newer one was asked for.
+  const loadFeed = useCallback(async () => {
+    const id = ++request.current;
     setLoading(true);
     try {
-      const r = await getFeed();
+      const r = await getFeed(feedParams);
+      if (id !== request.current) return;
       const fresh = r.data.feed || [];
+      setNeedsLocation(!!r.data.location_required);
       setItems(fresh);
       setHasMore(!!r.data.has_more);
       // Baseline of what we've seen — a full (re)load never flashes anything.
       seenIds.current = new Set(fresh.map(it => `${it.kind}-${it.id}`));
       setNewIds(new Set());
-    } catch { showToast('Failed to load feed', 'error'); }
-    finally { setLoading(false); }
-  };
+    } catch {
+      if (id === request.current) toast.current('Failed to load feed', 'error');
+    } finally {
+      if (id === request.current) setLoading(false);
+    }
+  }, [feedParams]);
+
+  useEffect(() => { if (originChecked) loadFeed(); }, [originChecked, loadFeed]);
 
   // Quietly pick up brand-new posts and prepend/flash anything that wasn't
   // there before. usePoll pauses while the tab is hidden and catches up on
   // return, so a backgrounded app costs the API nothing. 20s rather than 5s:
   // the feed is not a chat, and this is the single most-hit endpoint.
   usePoll(async () => {
+    if (!originChecked || loading || needsLocation) return;
+    const id = request.current;
     try {
-      const r = await getFeed();
+      const r = await getFeed(feedParams);
+      if (id !== request.current) return;
       const fresh = r.data.feed || [];
       const arrived = fresh.filter(it => !seenIds.current.has(`${it.kind}-${it.id}`));
       if (arrived.length) {
@@ -145,21 +218,44 @@ export default function FeedPage() {
   }, 20000);
 
   const handleLoadMore = async () => {
+    const id = request.current;
     setLoadingMore(true);
     try {
-      const r = await getFeed({ offset: items.length });
-      setItems(prev => [...prev, ...(r.data.feed || [])]);
+      const r = await getFeed({ ...feedParams, offset: items.length });
+      if (id !== request.current) return;
+      // Posts picked up by polling shift the offsets; skip any repeats.
+      setItems(prev => {
+        const have = new Set(prev.map(it => `${it.kind}-${it.id}`));
+        return [...prev, ...(r.data.feed || []).filter(it => !have.has(`${it.kind}-${it.id}`))];
+      });
       setHasMore(!!r.data.has_more);
     } catch { showToast('Failed to load more', 'error'); }
     finally { setLoadingMore(false); }
   };
 
+  const shareLocation = async () => {
+    setLocating(true);
+    const fix = await locateDevice();
+    setLocating(false);
+    if (!fix) {
+      showToast('Location is blocked. Allow it for this site in your browser settings.', 'error');
+      return;
+    }
+    setOrigin(fix);
+    // Saved to the profile as well, so the next visit works without asking.
+    if (user?.id) editUser(user.id, { latitude: fix.lat, longitude: fix.lon }).catch(() => {});
+  };
+
   // Everything on the page — the headline, the tile counts, the skill rail —
   // describes what's inside the chosen radius, not the whole loaded feed.
+  // The server already cuts to the range and to listings whose window is
+  // open; this keeps the page honest between refreshes, as windows close
+  // while you're looking.
   const km = parseFloat(range);
   const inRange = useMemo(
-    () => items.filter(it => it.distance_km == null || it.distance_km <= km),
-    [items, km],
+    () => items.filter(it => it.distance_km != null && it.distance_km <= km
+      && parseTs(it.expires_at) > now),
+    [items, km, now],
   );
   const gigs = inRange.filter(it => it.kind === 'freelance');
   const teams = inRange.filter(it => it.kind === 'collab');
@@ -192,7 +288,8 @@ export default function FeedPage() {
   }).sort((a, b) => {
     if (sort === 'pay') return (Number(b.payment_amount) || 0) - (Number(a.payment_amount) || 0);
     if (sort === 'near') return (a.distance_km ?? Infinity) - (b.distance_km ?? Infinity);
-    return 0; // 'new' — the feed already arrives newest-first
+    if (sort === 'soon') return parseTs(a.expires_at) - parseTs(b.expires_at);
+    return 0; // 'match' — the server's ranking: your skills and category first
   });
 
   const clearAll = () => { setKind('all'); setCategory(''); setSavedOnly(false); setQuery(''); };
@@ -206,14 +303,26 @@ export default function FeedPage() {
     : category ? categoryById(category)?.label
     : kind === 'freelance' ? 'Paid gigs'
     : kind === 'collab' ? 'Teams forming'
+    : sort === 'soon' ? 'Ending soon'
     : sort === 'pay' ? 'Best paying'
     : sort === 'near' ? 'Closest to you'
-    : 'Fresh near you';
+    : 'Live near you';
 
   const renderEmpty = () => {
+    if (needsLocation) return (
+      <div className="mk-locate">
+        <span className="mk-radar" aria-hidden="true"><i /><i />{I.pin}</span>
+        <h3>Where should we look?</h3>
+        <p>DoitHere only shows gigs and collabs within your range, so it needs your location. People see how far away you are, never where.</p>
+        <button type="button" className="mk-apply is-gig mk-locate-btn" onClick={shareLocation} disabled={locating}>
+          {locating ? 'Finding you…' : 'Use my location'}
+        </button>
+      </div>
+    );
     const filtered = !!(q || category || kind !== 'all');
-    const widen = range !== '10' && (
-      <button className="opp-cta ghost" onClick={() => setRange('10')}>Widen to 10 km</button>
+    const wider = RANGES[RANGES.findIndex(r => r.value === range) + 1];
+    const widen = wider && (
+      <button className="opp-cta ghost" onClick={() => setRange(wider.value)}>Widen to {wider.label}</button>
     );
     if (savedOnly && !filtered) return (
       <div className="state-box">
@@ -239,8 +348,8 @@ export default function FeedPage() {
     );
     return (
       <div className="state-box">
-        <h3>Nothing open near you yet</h3>
-        <p>Be the first — post a gig or start a team, and people nearby will see it.</p>
+        <h3>Nothing live within {RANGE_LABEL[range]}</h3>
+        <p>Listings only show while their window is open. Post a gig or start a team and people nearby will see it.</p>
         <div className="state-box-actions">
           <button className="opp-cta" onClick={() => navigate('/post')}>Post a gig</button>
           {widen}
@@ -252,6 +361,7 @@ export default function FeedPage() {
   const isGigView = viewItem?.kind === 'freelance';
   const viewNeeded = viewItem?.people_needed || 1;
   const viewFilled = viewItem?.hired_count || 0;
+  const viewClosed = !!viewItem && !(parseTs(viewItem.expires_at) > now);
 
   return (
     <AppShell active="work">
@@ -283,16 +393,20 @@ export default function FeedPage() {
           <section className="mk-hero">
             <h1 className="mk-hero-title">
               {loading ? 'Finding work near you…'
+                : needsLocation ? 'See what’s around you'
                 : pot > 0 ? <><span className="mk-hero-money">{money(pot)}</span> in paid gigs near you</>
                 : inRange.length > 0 ? 'Work is waiting near you'
                 : 'Your area is wide open'}
             </h1>
             {!loading && (
               <p className="mk-hero-sub">
-                {nearest != null
-                  ? <>Closest opportunity is <strong>{distance(nearest)}</strong> away</>
+                {needsLocation ? 'Share your location to see gigs and collabs in your range'
                   : inRange.length > 0
-                    ? <><strong>{inRange.length}</strong> open right now, updated live</>
+                    ? <>
+                        <span className="mk-live" aria-hidden="true" />
+                        <strong>{inRange.length}</strong> live within {RANGE_LABEL[range]}
+                        {nearest != null && <> · closest <strong>{distance(nearest)}</strong> away</>}
+                      </>
                     : 'Post the first listing around here and people nearby will see it'}
               </p>
             )}
@@ -353,7 +467,7 @@ export default function FeedPage() {
             <label className="mk-search">
               <span className="mk-search-ic">{I.search}</span>
               <input className="mk-search-input" type="text" aria-label="Search listings"
-                placeholder="Search gigs, skills or people"
+                placeholder="Search gigs or skills"
                 value={query} onChange={e => setQuery(e.target.value)} />
               {query && (
                 <button type="button" className="mk-search-clear" onClick={() => setQuery('')}
@@ -361,7 +475,8 @@ export default function FeedPage() {
               )}
             </label>
             <select className="mk-sort" value={sort} aria-label="Sort" onChange={e => setSort(e.target.value)}>
-              <option value="new">Newest</option>
+              <option value="match">For you</option>
+              <option value="soon">Ending soon</option>
               <option value="pay">Top pay</option>
               <option value="near">Nearest</option>
             </select>
@@ -381,7 +496,7 @@ export default function FeedPage() {
 
         <div className="mk-results-head">
           <h2 className="mk-section-title">{resultsTitle}</h2>
-          {!loading && <span className="mk-results-n">{shown.length} open</span>}
+          {!loading && <span className="mk-results-n">{shown.length} live</span>}
         </div>
 
         {loading ? (
@@ -401,6 +516,7 @@ export default function FeedPage() {
               const key = `${item.kind}-${item.id}`;
               const props = {
                 item,
+                now,
                 isNew: newIds.has(key),
                 saved: saved.has(key),
                 onSave: (e) => toggleSave(item, e),
@@ -441,7 +557,7 @@ export default function FeedPage() {
               <span className="welcome-step-num">2</span>
               <span className="welcome-step-text">
                 <span className="welcome-step-name">Find people near you</span>
-                <span className="welcome-step-desc">Search by name or skill, and message anyone</span>
+                <span className="welcome-step-desc">Look people up by username and message them</span>
               </span>
               <span className="welcome-step-arrow">→</span>
             </button>
@@ -486,7 +602,8 @@ export default function FeedPage() {
             )}
 
             <div className="mk-sheet-meta">
-              <MetaChips item={viewItem} />
+              <MetaChips item={viewItem} now={now} />
+              {viewItem.expires_at && <span className="mk-chip">Closes {closesAt(viewItem.expires_at)}</span>}
               {isGigView && viewNeeded > 1 && (
                 <span className="mk-chip">
                   Hiring {viewNeeded} · {Math.max(0, viewNeeded - viewFilled)} left
@@ -548,8 +665,9 @@ export default function FeedPage() {
                   placeholder={isGigView ? 'Why are you the right person for this?' : 'What would you bring to the team?'}
                   value={applyMsg} onChange={e => setApplyMsg(e.target.value)} />
                 <button type="button" className={`mk-apply ${isGigView ? 'is-gig' : 'is-team'}`}
-                  onClick={handleApply} disabled={applying}>
-                  {applying ? 'Sending…' : isGigView ? `Apply · ${money(viewItem.payment_amount)}` : 'Apply to collab'}
+                  onClick={handleApply} disabled={applying || viewClosed}>
+                  {viewClosed ? 'This listing has closed'
+                    : applying ? 'Sending…' : isGigView ? `Apply · ${money(viewItem.payment_amount)}` : 'Apply to collab'}
                 </button>
               </>
             )}

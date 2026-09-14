@@ -11,24 +11,18 @@ import {
 import AppShell from '../components/AppShell';
 import NotificationBell from '../components/NotificationBell';
 import CreateWorkModal from '../components/CreateWorkModal';
+import { timeLeft, windowLeft, isUrgent, parseTs, money } from '../components/ListingCard';
+import useNow from '../hooks/useNow';
 import './FeedPage.css';
 import './PostPage.css';
 
-function timeLeft(expiresAt) {
-  if (!expiresAt) return null;
-  const diff = new Date(expiresAt) - Date.now();
-  if (diff <= 0) return 'Expired';
-  const mins = Math.floor(diff / 60000);
-  if (mins < 60) return `${mins} min left`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ${mins % 60}m left`;
-  return `${Math.floor(hrs / 24)}d ${hrs % 24}h left`;
-}
+const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
 
 export default function PostPage() {
   const { user }   = useAuth();
   const { showToast } = useToast();
   const navigate   = useNavigate();
+  const now        = useNow(30000);
   const [jobs, setJobs]       = useState([]);
   const [collabs, setCollabs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -159,7 +153,7 @@ export default function PostPage() {
 
               {convId ? (
                 <button className="mng-dm-btn" onClick={() => navigate(`/messages?c=${convId}`)}>
-                  💬 Message
+                  Message
                 </button>
               ) : isHired ? (
                 <span className="mng-hired">✓ Hired</span>
@@ -179,9 +173,9 @@ export default function PostPage() {
               ) : (
                 <div className="mng-actions">
                   <button className="mng-tick" title={isFull ? 'All spots filled' : 'Accept'}
-                    disabled={isFull}
+                    aria-label={`Accept ${name}`} disabled={isFull}
                     onClick={() => setConfirm({ key, appId: id, action: 'accept' })}>✓</button>
-                  <button className="mng-cross" title="Decline"
+                  <button className="mng-cross" title="Decline" aria-label={`Decline ${name}`}
                     onClick={() => setConfirm({ key, appId: id, action: 'reject' })}>✕</button>
                 </div>
               )}
@@ -192,16 +186,30 @@ export default function PostPage() {
     );
   };
 
-  const renderRow = (kind, item, title, priceEl, sub, applied) => {
+  // phase: 'live' — still showing to people nearby and taking applications.
+  //        'progress' — a gig with people hired that isn't finished yet.
+  const renderRow = (kind, item, title, priceEl, phase) => {
     const key = `${kind}-${item.id}`;
     const isOpen = openKey === key;
-    const tl = timeLeft(item.expires_at);
+    const live = phase === 'live';
+    const applied = kind === 'freelance' ? (item.responses_count || 0) : (item.applicants || 0);
+    const hired = item.hired_count || 0;
+    const urgent = live && isUrgent(item, now);
+    const sub = live
+      ? `${timeLeft(item.expires_at, now)} · ${plural(applied, 'applicant', 'applicants')}`
+      : `${hired} hired · ${item.completed_by_poster ? 'waiting for your hire to confirm'
+          : item.completed_by_worker ? 'your hire marked it done'
+          : 'mark it complete once delivered'}`;
     return (
-      <div key={key} className={`mng-item ${isOpen ? 'is-open' : ''}`}>
-        <button className="mng-head" onClick={() => toggle(kind, item)}>
+      <div key={key} className={`mng-item ${kind === 'collab' ? 'is-team' : 'is-gig'} ${isOpen ? 'is-open' : ''}`}>
+        {live && (
+          <span className={`mk-fuse ${urgent ? 'is-urgent' : ''}`}
+            style={{ '--left': windowLeft(item, now) }} aria-hidden="true" />
+        )}
+        <button className="mng-head" onClick={() => toggle(kind, item)} aria-expanded={isOpen}>
           <span className="mng-head-main">
             <span className="mng-title">{title}</span>
-            <span className="mng-sub">{sub}</span>
+            <span className={`mng-sub ${urgent ? 'is-urgent' : ''} ${live ? '' : 'is-progress'}`}>{sub}</span>
           </span>
           <span className="mng-head-right">
             {priceEl}
@@ -212,22 +220,23 @@ export default function PostPage() {
         {isOpen && (
           <div className="mng-panel">
             <div className="mng-meta">
-              <span className={`mng-time ${tl === 'Expired' ? 'is-expired' : ''}`}>
-                {tl ? `⏳ ${tl}` : 'No expiry set'}
+              <span className="mng-time">
+                {live ? `Visible for ${timeLeft(item.expires_at, now).replace(' left', '')} more`
+                  : 'No longer showing in the feed'}
               </span>
-              {/* Opens the full applicant manager — room to read each pitch,
-                  see their skills, and accept/decline from one place. */}
               {(item.people_needed || 1) > 1 && (
-                <span className={`mng-slots ${(item.hired_count || 0) >= (item.people_needed || 1) ? 'is-full' : ''}`}>
-                  {item.hired_count || 0}/{item.people_needed} filled
+                <span className={`mng-slots ${hired >= (item.people_needed || 1) ? 'is-full' : ''}`}>
+                  {hired}/{item.people_needed} filled
                 </span>
               )}
+              {/* Opens the full applicant manager — room to read each pitch,
+                  see their skills, and accept/decline from one place. */}
               <button className="mng-count is-link"
                 onClick={() => navigate(`/applicants/${kind}/${item.id}`)}>
-                {applied} {applied === 1 ? 'applicant' : 'applicants'} →
+                {plural(applied, 'applicant', 'applicants')} →
               </button>
             </div>
-            {kind === 'freelance' && (item.hired_count || 0) > 0 && (
+            {kind === 'freelance' && hired > 0 && (
               <button className="mng-complete" onClick={() => navigate(`/applicants/freelance/${item.id}`)}>
                 {item.completed_by_poster ? 'Marked complete — waiting for your hire'
                   : item.completed_by_worker ? 'Your hire marked it done — confirm →'
@@ -238,7 +247,10 @@ export default function PostPage() {
 
             {closing === key ? (
               <div className="mng-close-confirm">
-                <span className="mng-close-q">Close this post? It stops showing to everyone.</span>
+                <span className="mng-close-q">
+                  {live ? 'Close this post? It stops showing to everyone.'
+                    : 'Close this gig without marking it complete?'}
+                </span>
                 <div className="mng-close-btns">
                   <button className="mng-close-yes" disabled={busyId === key}
                     onClick={() => doClose(kind, item)}>
@@ -250,7 +262,7 @@ export default function PostPage() {
               </div>
             ) : (
               <button className="mng-close-btn" onClick={() => setClosing(key)}>
-                Close this post early
+                {live ? 'Close this post early' : 'Close without completing'}
               </button>
             )}
           </div>
@@ -259,11 +271,32 @@ export default function PostPage() {
     );
   };
 
-  // Only what's still running. Expired and closed posts can't be seen or
-  // applied to anymore, so listing them just buried the live ones.
-  const isLive = (p) => p.status !== 'closed' && timeLeft(p.expires_at) !== 'Expired';
-  const liveJobs = jobs.filter(isLive);
-  const liveCollabs = collabs.filter(isLive);
+  // Only what's current. A post is live while it's open and inside its
+  // window. A gig with people hired stays on as "in progress" past its window
+  // until it's completed or closed, since that's where completion happens.
+  // Everything else (closed, or ran out with nobody hired) drops off.
+  const inWindow = (p) => parseTs(p.expires_at) > now;
+  const liveJobs = jobs.filter(j => j.status === 'open' && inWindow(j));
+  const activeJobs = jobs.filter(j => !(j.status === 'open' && inWindow(j))
+    && j.status !== 'closed' && (j.hired_count || 0) > 0);
+  const liveCollabs = collabs.filter(c => c.status === 'open' && inWindow(c));
+
+  const sections = [
+    {
+      key: 'gigs', title: 'Live gigs', items: liveJobs,
+      empty: 'Nothing live. Post a gig and it shows to people nearby for up to 48 hours.',
+      row: j => renderRow('freelance', j, j.description, <span className="mng-price">{money(j.payment_amount)}</span>, 'live'),
+    },
+    activeJobs.length > 0 && {
+      key: 'progress', title: 'In progress', items: activeJobs,
+      row: j => renderRow('freelance', j, j.description, <span className="mng-price">{money(j.payment_amount)}</span>, 'progress'),
+    },
+    {
+      key: 'collabs', title: 'Live collabs', items: liveCollabs,
+      empty: 'Nothing live. Start a collab to find teammates nearby.',
+      row: c => renderRow('collab', c, c.title, null, 'live'),
+    },
+  ].filter(Boolean);
 
   return (
     <AppShell active="post">
@@ -294,7 +327,7 @@ export default function PostPage() {
                 <span className="mp-label">Waiting on you</span>
               </div>
               <div className="mp-stat">
-                <span className="mp-val is-money">₹{committed.toLocaleString('en-IN')}</span>
+                <span className="mp-val is-money">{money(committed)}</span>
                 <span className="mp-label">Offered</span>
               </div>
             </div>
@@ -317,49 +350,22 @@ export default function PostPage() {
           </button>
         </div>
 
-        <section className="menu-section">
-          <div className="menu-head">
-            <span className="menu-num">01</span>
-            <h2 className="menu-title">My Gigs</h2>
-            <span className="menu-count">{liveJobs.length} {liveJobs.length === 1 ? 'item' : 'items'}</span>
-          </div>
-          {loading ? (
-            <p className="menu-muted">Loading…</p>
-          ) : liveJobs.length === 0 ? (
-            <p className="menu-muted">{jobs.length ? 'No live gigs right now.' : 'No gigs posted yet.'}</p>
-          ) : (
-            <div className="mng-list">
-              {liveJobs.map(j => renderRow(
-                'freelance', j, j.description,
-                <span className="mng-price">₹{j.payment_amount}</span>,
-                j.status,
-                j.responses_count || 0,
-              ))}
+        {sections.map((sec, n) => (
+          <section key={sec.key} className="menu-section">
+            <div className="menu-head">
+              <span className="menu-num">{String(n + 1).padStart(2, '0')}</span>
+              <h2 className="menu-title">{sec.title}</h2>
+              <span className="menu-count">{plural(sec.items.length, 'item', 'items')}</span>
             </div>
-          )}
-        </section>
-
-        <section className="menu-section">
-          <div className="menu-head">
-            <span className="menu-num">02</span>
-            <h2 className="menu-title">My Collab</h2>
-            <span className="menu-count">{liveCollabs.length} {liveCollabs.length === 1 ? 'item' : 'items'}</span>
-          </div>
-          {loading ? (
-            <p className="menu-muted">Loading…</p>
-          ) : liveCollabs.length === 0 ? (
-            <p className="menu-muted">{collabs.length ? 'No live collabs right now.' : 'No collabs posted yet.'}</p>
-          ) : (
-            <div className="mng-list">
-              {liveCollabs.map(c => renderRow(
-                'collab', c, c.title,
-                null,
-                c.status,
-                c.applicants || 0,
-              ))}
-            </div>
-          )}
-        </section>
+            {loading ? (
+              <p className="menu-muted">Loading…</p>
+            ) : sec.items.length === 0 ? (
+              <p className="menu-muted">{sec.empty}</p>
+            ) : (
+              <div className="mng-list">{sec.items.map(sec.row)}</div>
+            )}
+          </section>
+        ))}
       </div>
 
       {createKind && (
