@@ -88,5 +88,8 @@ export const removeSkill = (userId, skill) =>
 export const getUserPortfolio = (userId, params = {}) =>
   API.get(`/portfolio/user/${userId}/`, { params });
 
+export const getUserReviews = (userId) =>
+  API.get(`/reviews/user/${userId}/`);
+
 export const addReview = (revieweeId, data) =>
   API.post(`/reviews/user/${revieweeId}/add/`, new URLSearchParams(data));

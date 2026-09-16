@@ -8,7 +8,7 @@ import {
   sendFriendRequest, respondFriendRequest, removeFriend,
 } from '../api/users';
 import { startConversation } from '../api/work';
-import { endorseSkill, addReview } from '../api/users';
+import { endorseSkill, addReview, getUserReviews } from '../api/users';
 import { ProfileHeaderSkeleton } from '../components/Skeleton';
 import AppShell from '../components/AppShell';
 import NotificationBell from '../components/NotificationBell';
@@ -28,6 +28,11 @@ const REPORT_REASONS = [
 
 // The status a freelancer set in Settings, worded for someone deciding
 // whether to reach out. "Not available" shows nothing to visitors.
+const reviewDate = (ts) => {
+  const d = new Date(ts);
+  return Number.isNaN(d.getTime()) ? '' : d.toLocaleDateString([], { month: 'short', year: 'numeric' });
+};
+
 const AVAILABILITY = {
   open_to_freelance: 'Available for gigs',
   open_to_work:      'Open to work',
@@ -41,6 +46,8 @@ export default function ProfilePage() {
 
   const [profile, setProfile]       = useState(null);
   const [portfolio, setPortfolio]   = useState([]);
+  const [reviews, setReviews]       = useState([]);
+  const [allReviews, setAllReviews] = useState(false);
   const [loading, setLoading]       = useState(true);
   const [skillInput, setSkillInput] = useState('');
   const [addingSkill, setAddingSkill] = useState(false);
@@ -62,13 +69,16 @@ export default function ProfilePage() {
   const loadProfile = async () => {
     try {
       setLoading(true);
-      const [uRes, pRes] = await Promise.all([
+      const [uRes, pRes, rRes] = await Promise.all([
         getUser(userId),
         getUserPortfolio(userId).catch(() => ({ data: { items: [] } })),
+        getUserReviews(userId).catch(() => ({ data: { reviews: [] } })),
       ]);
       setProfile(uRes.data);
       setFriendStatus(uRes.data.friendship_status || 'none');
       setPortfolio(pRes.data.items || []);
+      // Newest first — the endpoint returns them oldest-first.
+      setReviews([...(rRes.data.reviews || [])].reverse());
       setAvatarBroken(false);
     } catch {
       showToast('Failed to load profile', 'error');
@@ -422,6 +432,50 @@ export default function ProfilePage() {
               </div>
             )}
 
+
+            {/* What people who've actually worked with them say. The rating
+                in the header is the average of exactly these. */}
+            {(isOwn || reviews.length > 0) && (
+            <div className="profile-skills-section">
+              <div className="pf-section-head">
+                <h3 className="section-title">Reviews</h3>
+                {reviews.length > 0 && (
+                  <span className="pf-review-avg">
+                    ★ {Number(profile.rating || 0).toFixed(1)} · {reviews.length}
+                  </span>
+                )}
+              </div>
+              {reviews.length === 0 ? (
+                <p className="no-skills">
+                  No reviews yet. Finish a gig and the person who hired you can rate you.
+                </p>
+              ) : (
+                <>
+                  <div className="pf-reviews">
+                    {(allReviews ? reviews : reviews.slice(0, 3)).map(r => (
+                      <article key={r.id} className="pf-review">
+                        <div className="pf-review-top">
+                          <span className="pf-review-stars" aria-label={`${r.rating} out of 5`}>
+                            {'★★★★★'.slice(0, r.rating)}
+                            <span className="is-off">{'★★★★★'.slice(r.rating)}</span>
+                          </span>
+                          <span className="pf-review-when">{reviewDate(r.created_at)}</span>
+                        </div>
+                        {r.comment && <p className="pf-review-text">{r.comment}</p>}
+                        <button type="button" className="pf-review-from"
+                          onClick={() => navigate(`/u/${r.from}`)}>{r.from}</button>
+                      </article>
+                    ))}
+                  </div>
+                  {reviews.length > 3 && (
+                    <button type="button" className="pf-add" onClick={() => setAllReviews(v => !v)}>
+                      {allReviews ? 'Show fewer' : `Show all ${reviews.length}`}
+                    </button>
+                  )}
+                </>
+              )}
+            </div>
+            )}
 
             {/* Skills — hidden on other people's profiles while empty, so a new
                 platform doesn't read as a ghost town; still shown to the owner

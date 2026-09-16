@@ -704,3 +704,41 @@
   height: 50px;
   padding: 0 22px;
 }
+
+/* ── Reviews: what people who've worked with them said ── */
+.pf-review-avg {
+  font-size: 0.875rem;
+  font-weight: 800;
+  color: var(--brand);
+  font-variant-numeric: tabular-nums;
+}
+.pf-reviews { display: flex; flex-direction: column; gap: 10px; }
+.pf-review {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: var(--surface-flat);
+  border: 1px solid var(--hairline);
+}
+.pf-review-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.pf-review-stars { font-size: 0.875rem; letter-spacing: 0.08em; color: var(--brand); }
+.pf-review-stars .is-off { color: var(--hairline-str); }
+.pf-review-when { font-size: 0.75rem; color: var(--text-3); }
+.pf-review-text {
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--text-1);
+  white-space: pre-wrap;
+}
+.pf-review-from {
+  align-self: flex-start;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--text-2);
+  transition: color var(--t-fast) ease;
+}
+.pf-review-from::before { content: '— '; }
+.pf-review-from:hover { color: var(--text-1); }
+
