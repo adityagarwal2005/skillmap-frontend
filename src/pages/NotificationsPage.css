@@ -1,139 +1,225 @@
+/* Notifications — a timeline of what happened to your work.
+   Each row is typed by what it means: money and gigs carry the brand,
+   finished work is green, a decline is amber, people are violet. */
 .notif-wrapper {
-  max-width: 640px;
+  max-width: 680px;
   margin: 0 auto;
-  padding: 28px 24px 60px;
+  padding: 28px 24px 80px;
 }
 
 .notif-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 20px;
+  gap: 14px;
+  margin-bottom: 18px;
 }
-
+.notif-head-main { min-width: 0; }
 .notif-title {
-  font-size: 1.125rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.875rem, 5vw, 2.5rem);
   font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 1;
   color: var(--text-1);
-  letter-spacing: -0.3px;
 }
-
-.notif-unread-count {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--text-3);
-  margin-top: 2px;
-  display: block;
-}
-
+.notif-sub { margin-top: 8px; font-size: 0.9375rem; color: var(--text-2); }
 .notif-read-all {
+  flex-shrink: 0;
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 999px;
   font-size: 0.8125rem;
-  font-weight: 600;
-  color: var(--navy-bright);
-  padding: 6px 12px;
-  border: 1px solid var(--border-md);
-  border-radius: var(--radius-sm);
-  transition: all 0.12s;
+  font-weight: 700;
+  white-space: nowrap;
+  color: var(--text-1);
+  background: var(--surface-flat);
+  border: 1px solid var(--hairline-str);
+  transition: background var(--t-fast) ease, border-color var(--t-fast) ease;
+}
+.notif-read-all:hover { background: var(--hairline); }
+
+.notif-filters { display: flex; gap: 8px; margin-bottom: 22px; }
+.notif-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text-2);
+  background: var(--surface-flat);
+  border: 1px solid var(--hairline);
+  transition: color var(--t-fast) ease, background var(--t-fast) ease, border-color var(--t-fast) ease;
+}
+.notif-filter span {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+}
+.notif-filter:hover { color: var(--text-1); }
+.notif-filter.is-on {
+  color: #fff;
+  background: linear-gradient(180deg, var(--brand-bright), var(--brand));
+  border-color: transparent;
+  box-shadow: var(--edge-strong);
+}
+.notif-filter.is-on span { color: rgba(255,255,255,0.8); }
+
+.notif-group { margin-bottom: 24px; }
+.notif-group-title {
+  margin-bottom: 10px;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-3);
 }
 
-.notif-read-all:hover { background: var(--elevated); }
-
-.notif-list { display: flex; flex-direction: column; gap: 4px; }
+.notif-list { display: flex; flex-direction: column; gap: 8px; }
 
 .notif-card {
+  --tone: var(--text-3);
+  --tone-dim: var(--surface-flat);
+  --tone-line: var(--hairline);
+  position: relative;
   display: flex;
   align-items: flex-start;
-  gap: 12px;
+  gap: 13px;
   padding: 14px 16px;
-  background: #ffffff;
-  border: 1px solid rgba(0,0,0,0.06);
-  border-radius: var(--radius-md);
+  border-radius: 18px;
   cursor: pointer;
-  transition: background 0.12s, border-color 0.12s, box-shadow 0.15s;
-  position: relative;
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
+  box-shadow: var(--lift-1), var(--edge-light);
+  transition:
+    transform var(--t-med) var(--spring-soft),
+    border-color var(--t-med) ease,
+    box-shadow var(--t-med) ease;
 }
+.notif-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--hairline-str);
+  box-shadow: var(--lift-2), var(--edge-strong);
+}
+.notif-card:active { transform: scale(0.995); }
+.notif-card:focus-visible { outline: 2px solid var(--tone); outline-offset: 2px; }
+.notif-card.is-gig  { --tone: var(--brand); --tone-dim: var(--brand-dim); --tone-line: var(--brand-line); }
+.notif-card.is-team { --tone: var(--team);  --tone-dim: var(--team-dim);  --tone-line: var(--team-line); }
+.notif-card.is-ok   { --tone: var(--ok);    --tone-dim: var(--ok-dim);    --tone-line: color-mix(in srgb, var(--ok) 32%, transparent); }
+.notif-card.is-warn { --tone: var(--warn);  --tone-dim: var(--warn-dim);  --tone-line: color-mix(in srgb, var(--warn) 32%, transparent); }
 
-.notif-card:hover { box-shadow: 0 8px 20px rgba(0,0,0,0.12); border-color: rgba(0,0,0,0.1); }
-.notif-card.unread { background: #fafafa; border-color: rgba(0,0,0,0.1); }
+/* Unread reads as unread without shouting: a tinted edge and a dot. */
+.notif-card.unread { border-color: var(--tone-line); background: var(--surface-2); }
+.notif-card.is-new { animation: notifIn 0.4s var(--spring-soft) both; }
 
-/* Uber-style white card — same pattern as .opp-card in FeedPage.css */
 .notif-icon {
-  font-size: 1.125rem;
+  position: relative;
+  display: grid;
+  place-items: center;
   flex-shrink: 0;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0,0,0,0.05);
-  border-radius: 50%;
-  border: 1px solid rgba(0,0,0,0.08);
+  width: 40px;
+  height: 40px;
+  border-radius: 13px;
+  overflow: visible;
+  color: var(--tone);
+  background: var(--tone-dim);
+  border: 1px solid var(--tone-line);
 }
-
-.notif-body { flex: 1; min-width: 0; }
-
-.notif-message {
-  font-size: 0.875rem;
-  color: #0a0a0a;
-  line-height: 1.5;
-  margin-bottom: 3px;
-}
-
-.notif-time {
-  font-size: 0.75rem;
-  color: #8a8a8f;
-}
-
-.notif-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #ef5f26;
-  flex-shrink: 0;
-  margin-top: 4px;
-}
-
+.notif-icon svg { width: 19px; height: 19px; }
 .notif-actor-ava {
   width: 100%;
   height: 100%;
-  border-radius: 50%;
+  border-radius: 12px;
   object-fit: cover;
 }
+/* With an avatar, the type glyph rides on its corner instead of being lost. */
+.notif-icon-badge { display: none; }
+.notif-icon:has(.notif-actor-ava) { background: none; border-color: transparent; }
+.notif-icon:has(.notif-actor-ava) .notif-icon-badge {
+  position: absolute;
+  right: -5px;
+  bottom: -5px;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  color: #fff;
+  background: var(--tone);
+  box-shadow: 0 0 0 2px var(--bg);
+}
+.notif-icon:has(.notif-actor-ava) .notif-icon-badge svg { width: 11px; height: 11px; }
 
-.notif-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 8px;
+.notif-body { flex: 1; min-width: 0; }
+.notif-message {
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  color: var(--text-1);
+}
+.notif-card.unread .notif-message { font-weight: 600; }
+.notif-meta { display: flex; align-items: center; gap: 8px; margin-top: 5px; }
+.notif-kind {
+  font-size: 0.625rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--tone);
+}
+.notif-time { font-size: 0.75rem; color: var(--text-3); }
+
+.notif-dot {
+  flex-shrink: 0;
+  width: 9px;
+  height: 9px;
+  margin-top: 6px;
+  border-radius: 50%;
+  background: var(--tone);
+  box-shadow: 0 0 0 3px var(--tone-dim);
 }
 
+.notif-actions { display: flex; gap: 8px; margin-top: 10px; }
 .notif-action-btn {
-  height: 32px;
+  height: 34px;
   padding: 0 16px;
-  border-radius: 20px;
-  border: 1px solid var(--border-md);
+  border-radius: 999px;
   font-size: 0.8125rem;
-  font-weight: 700;
-  transition: all 0.15s;
+  font-weight: 800;
+  transition: opacity var(--t-fast) ease, background var(--t-fast) ease;
 }
-
 .notif-action-btn:disabled { opacity: 0.6; cursor: default; }
-
-.notif-action-btn.is-accept { background: #22a559; border-color: #22a559; color: #fff; }
-.notif-action-btn.is-accept:hover:not(:disabled) { opacity: 0.88; }
-
-.notif-action-btn.is-decline { background: none; color: var(--text-2); }
-.notif-action-btn.is-decline:hover:not(:disabled) { background: var(--elevated); color: var(--text-1); }
+.notif-action-btn.is-accept { color: #fff; background: var(--ok); }
+.notif-action-btn.is-accept:hover:not(:disabled) { opacity: 0.9; }
+.notif-action-btn.is-decline {
+  color: var(--text-2);
+  background: var(--surface-flat);
+  border: 1px solid var(--hairline);
+}
+.notif-action-btn.is-decline:hover:not(:disabled) { color: var(--text-1); background: var(--hairline); }
 
 .notif-friend-state {
   display: inline-block;
-  margin-top: 8px;
+  margin-top: 10px;
   font-size: 0.8125rem;
-  font-weight: 700;
-  color: var(--text-2);
+  font-weight: 800;
+  color: var(--ok);
+}
+
+@keyframes notifIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: none; }
 }
 
 @media (max-width: 480px) {
-  .notif-wrapper { padding: 20px 16px 48px; }
-  .notif-header { flex-wrap: wrap; gap: 10px; }
-  .notif-card { padding: 12px 14px; }
+  .notif-wrapper { padding: 20px 16px 96px; }
+  .notif-card { padding: 13px 14px; border-radius: 16px; }
+  .notif-header { flex-wrap: wrap; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .notif-card, .notif-card.is-new { animation: none; }
+  .notif-card:hover { transform: none; }
 }
