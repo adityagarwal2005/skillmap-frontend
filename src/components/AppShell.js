@@ -3,12 +3,16 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getUnreadCount } from '../api/notifications';
 import { getUser } from '../api/users';
+import { getConversations } from '../api/work';
 import useInstallPrompt from '../hooks/useInstallPrompt';
 import usePageMeta from '../hooks/usePageMeta';
 import usePoll from '../hooks/usePoll';
 import GetAppButton from './GetApp';
+import Logo from './Logo';
+import { cldAvatar } from '../utils/cloudinaryUrl';
 import { pushSupported, isPushEnabled, enablePush } from '../push';
 import '../pages/FeedPage.css';
+import '../styles/shell.css';
 
 const svg = (children) => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -99,6 +103,7 @@ export default function AppShell({
   // re-applies whatever was last stored (Settings still writes it).
   const [theme] = useState(localStorage.getItem('themeV2') || 'dark');
   const [unread, setUnread] = useState(0);
+  const [msgUnread, setMsgUnread] = useState(0);
   const [profile, setProfile] = useState(null);
   const [nudgeDismissed, setNudgeDismissed] = useState(
     () => localStorage.getItem('smNudgeDismissed') === '1'
@@ -138,10 +143,18 @@ export default function AppShell({
   // Desktop sidebar badge only — <NotificationBell/> fetches the same count
   // for its own badge, so this deliberately runs slowly to avoid doubling
   // the request rate on an endpoint every screen already hits.
-  const refreshUnread = () =>
+  const refreshUnread = () => {
     getUnreadCount().then(r => setUnread(r.data.unread_count || 0)).catch(() => {});
+    // Unread messages deserve a badge as much as notifications do; the
+    // conversation list already counts them per thread.
+    getConversations()
+      .then(r => setMsgUnread((r.data.conversations || []).reduce((n, c) => n + (c.unread || 0), 0)))
+      .catch(() => {});
+  };
   useEffect(() => { refreshUnread(); }, []);
   usePoll(refreshUnread, 60000);
+
+  const badgeFor = (id) => (id === 'notifications' ? unread : id === 'messages' ? msgUnread : 0);
 
   const activeId = active || deriveActive(location.pathname);
 
@@ -214,6 +227,10 @@ export default function AppShell({
           page title instead of floating over content. */}
       <div className="app-body">
         <nav className="sidebar">
+          <button type="button" className="sidebar-brand" aria-label="DoitHere home"
+            onClick={() => navigate('/')}>
+            <Logo size={1.5} />
+          </button>
           {NAV.map(group => (
             <div className="sidebar-group" key={group.group}>
               <div className="sidebar-group-label">{group.group}</div>
@@ -223,8 +240,10 @@ export default function AppShell({
                   onClick={() => handleNav(item)}>
                   <span className="sidebar-link-ic">{item.icon}</span>
                   <span className="sidebar-link-label">{item.label}</span>
-                  {item.id === 'notifications' && unread > 0 && (
-                    <span className="sidebar-badge">{unread > 9 ? '9+' : unread}</span>
+                  {badgeFor(item.id) > 0 && (
+                    <span className="sidebar-badge">
+                      {badgeFor(item.id) > 9 ? '9+' : badgeFor(item.id)}
+                    </span>
                   )}
                 </button>
               ))}
@@ -237,6 +256,20 @@ export default function AppShell({
             <span className="sidebar-link-ic">{I.download}</span>
             <span className="sidebar-link-label">Get the app</span>
           </GetAppButton>
+
+          {/* Who you're signed in as — the shell never said. */}
+          <button type="button" className="sidebar-me"
+            onClick={() => navigate(`/profile/${user?.id}`)}>
+            <span className="sidebar-me-ava">
+              {profile?.profile_image
+                ? <img className="ava-img" src={cldAvatar(profile.profile_image, 80)} alt="" />
+                : (user?.username?.[0] || '?').toUpperCase()}
+            </span>
+            <span className="sidebar-me-text">
+              <span className="sidebar-me-name">{user?.username || 'You'}</span>
+              <span className="sidebar-me-sub">{profile?.category || 'View profile'}</span>
+            </span>
+          </button>
         </nav>
 
         <main className="app-main">
@@ -301,6 +334,11 @@ export default function AppShell({
               onClick={() => handleNav(item)}>
               {item.icon}
               <span>{item.label}</span>
+              {badgeFor(item.id) > 0 && (
+                <span className="mobile-nav-badge">
+                  {badgeFor(item.id) > 9 ? '9+' : badgeFor(item.id)}
+                </span>
+              )}
             </button>
           );
         })}
