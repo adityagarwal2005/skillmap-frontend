@@ -5,9 +5,8 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import {
   getComments, addComment, editComment, deleteComment, reactToItem,
-  editPortfolioItem, deletePortfolioItem,
+  editPortfolioItem, deletePortfolioItem, getPortfolioItem,
 } from '../api/portfolio';
-import { getFeed } from '../api/feed';
 import { getUser, reportContent } from '../api/users';
 import AppShell from '../components/AppShell';
 import { PostCardSkeleton } from '../components/Skeleton';
@@ -60,14 +59,16 @@ export default function PostDetailPage() {
   const loadAll = async () => {
     try {
       setLoading(true);
-      const [feedRes, commentsRes] = await Promise.all([
-        getFeed(),
+      // Straight to the item. This used to search the feed, which only
+      // carries gigs and collabs, so a project never turned up — and a gig
+      // that happened to share the id would render in its place.
+      const [itemRes, commentsRes] = await Promise.all([
+        getPortfolioItem(itemId),
         getComments(itemId),
       ]);
-      const found = feedRes.data.feed?.find(i => i.id === parseInt(itemId));
-      setItem(found || null);
+      setItem(itemRes.data || null);
       setComments(commentsRes.data.comments || []);
-      if (found) setReactionCount(found.reactions);
+      setReactionCount(itemRes.data?.reactions || 0);
     } catch {
       showToast('Failed to load post', 'error');
     } finally {
