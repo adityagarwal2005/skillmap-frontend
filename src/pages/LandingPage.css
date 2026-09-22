@@ -899,3 +899,241 @@
 .lp-card.is-collab .lp-card-stripe { background: #7b6cf6; }
 .lp-card-kind.is-collab { color: #a095ff; background: rgba(123,108,246,0.16); }
 .lp-card.is-collab:hover { border-color: rgba(123,108,246,0.5); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   HERO, PART TWO — show the product.
+
+   The hero said what DoitHere is but never showed it, so a first-time
+   visitor had to imagine the thing. On a laptop the copy moves left and
+   a real listing sits beside it: the same payout ticket and collab lobby
+   the app actually renders. Colours stay hardcoded here, like the rest
+   of this file — see the note at the top.
+   ═══════════════════════════════════════════════════════════════════ */
+@media (min-width: 1040px) {
+  .landing-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
+    align-items: center;
+    gap: clamp(32px, 5vw, 72px);
+    text-align: left;
+    padding-top: clamp(48px, 7vw, 92px);
+    padding-bottom: clamp(48px, 7vw, 92px);
+  }
+  .landing-hero-inner { max-width: 560px; }
+  .landing-hero-sub { margin-left: 0; }
+  .landing-hero-actions { justify-content: flex-start; }
+  .landing-hero-meta { justify-content: flex-start; }
+}
+
+.lp-hero-art { display: none; }
+@media (min-width: 1040px) {
+  .lp-hero-art {
+    position: relative;
+    z-index: 2;
+    display: block;
+    animation: landingFadeUp 0.9s cubic-bezier(0.16,1,0.3,1) 0.12s both;
+  }
+}
+
+.lp-frame {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 420px;
+  margin-left: auto;
+  padding: 16px;
+  border-radius: 30px;
+  background: linear-gradient(180deg, rgba(28,28,30,0.96), rgba(14,14,15,0.96));
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow:
+    0 40px 90px rgba(0,0,0,0.6),
+    inset 0 1px 0 rgba(255,255,255,0.07);
+  animation: lpFloat 7s ease-in-out infinite;
+}
+
+.lp-frame-top { display: flex; align-items: center; gap: 10px; padding: 4px 6px 2px; }
+.lp-frame-pin {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+  color: #ff8a5c;
+  background: rgba(239,95,38,0.16);
+  border: 1px solid rgba(239,95,38,0.34);
+}
+.lp-frame-pin svg { width: 17px; height: 17px; }
+.lp-frame-loc { display: flex; flex-direction: column; line-height: 1.25; flex: 1; }
+.lp-frame-loc b { font-size: 0.9375rem; font-weight: 800; letter-spacing: -0.02em; color: #f5f5f7; }
+.lp-frame-loc i { font-style: normal; font-size: 0.75rem; color: rgba(245,245,247,0.5); }
+.lp-frame-live {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 0 rgba(34,197,94,0.5);
+  animation: lpPulse 2s ease-out infinite;
+}
+
+.lp-mini {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(20,20,22,0.98), rgba(12,12,13,0.98));
+  border: 1px solid rgba(255,255,255,0.09);
+}
+.lp-mini-fuse {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 62%;
+  height: 3px;
+  background: linear-gradient(90deg, #ef5f26, #ff8a5c);
+}
+.lp-mini-ticket {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 15px 16px 12px;
+  background: linear-gradient(135deg, rgba(239,95,38,0.16), transparent 72%);
+}
+.lp-mini-eyebrow {
+  font-size: 0.5625rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(245,245,247,0.45);
+}
+.lp-mini-pay {
+  font-family: var(--font-display);
+  font-size: 1.875rem;
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 1;
+  color: #ef5f26;
+}
+.lp-mini-meta { margin-top: 4px; font-size: 0.72rem; font-weight: 700; color: rgba(245,245,247,0.52); }
+
+.lp-mini-lobby {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 15px 16px 12px;
+  background: linear-gradient(135deg, rgba(123,108,246,0.18), transparent 72%);
+}
+.lp-mini-seats { display: flex; }
+.lp-mini-seats i {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  margin-left: -7px;
+  border-radius: 50%;
+  font-style: normal;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #f5f5f7;
+  background: #2a2a2e;
+  border: 2px solid #0f0f10;
+}
+.lp-mini-seats i:first-child { margin-left: 0; }
+.lp-mini-seats i.is-on { color: #fff; background: #7b6cf6; }
+.lp-mini-seats i.is-open { color: #a095ff; background: rgba(123,108,246,0.18); border-style: dashed; }
+.lp-mini-open { font-size: 0.75rem; color: rgba(245,245,247,0.55); }
+.lp-mini-open b {
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  font-weight: 800;
+  color: #a095ff;
+  margin-right: 5px;
+}
+
+.lp-mini-body { display: flex; flex-direction: column; gap: 9px; padding: 12px 16px 15px; }
+.lp-mini-kind {
+  align-self: flex-start;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 0.5625rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.lp-mini-kind.is-gig { color: #ff8a5c; background: rgba(239,95,38,0.16); }
+.lp-mini-kind.is-team { color: #a095ff; background: rgba(123,108,246,0.18); }
+.lp-mini-body h3 {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  color: #f5f5f7;
+}
+.lp-mini-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.lp-mini-chips span {
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: rgba(245,245,247,0.66);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.lp-mini-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+}
+.lp-mini-who {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: rgba(245,245,247,0.78);
+}
+.lp-mini-who i {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-style: normal;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  color: #f5f5f7;
+  background: #2a2a2e;
+}
+.lp-mini-apply {
+  padding: 7px 15px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #fff;
+  background: linear-gradient(180deg, #ff8a5c, #ef5f26);
+}
+.lp-mini-apply.is-team { background: linear-gradient(180deg, #a095ff, #7b6cf6); }
+
+/* The skill band was the same grey as the page behind it. */
+.lp-ticker-chip {
+  color: rgba(245,245,247,0.82);
+  background: rgba(255,255,255,0.055);
+  border-color: rgba(255,255,255,0.11);
+}
+
+@keyframes lpFloat {
+  0%, 100% { transform: translateY(0) rotate(-0.5deg); }
+  50%      { transform: translateY(-14px) rotate(0.5deg); }
+}
+@keyframes lpPulse {
+  70%, 100% { box-shadow: 0 0 0 8px transparent; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-frame, .lp-frame-live, .lp-hero-art { animation: none; }
+}
+

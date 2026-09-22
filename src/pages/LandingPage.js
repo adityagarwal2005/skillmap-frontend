@@ -168,6 +168,53 @@ export default function LandingPage() {
             <span>Collab</span>
           </div>
         </div>
+        <div className="lp-hero-art" aria-hidden="true">
+          <div className="lp-frame">
+            <div className="lp-frame-top">
+              <span className="lp-frame-pin">
+                {ic(<><path d="M12 21s-7-5.6-7-11a7 7 0 1 1 14 0c0 5.4-7 11-7 11z" /><circle cx="12" cy="10" r="2.6" /></>)}
+              </span>
+              <span className="lp-frame-loc">
+                <b>Within 5 km</b>
+                <i>7 live right now</i>
+              </span>
+              <span className="lp-frame-live" />
+            </div>
+
+            <article className="lp-mini is-gig">
+              <span className="lp-mini-fuse" />
+              <div className="lp-mini-ticket">
+                <span className="lp-mini-eyebrow">Payout</span>
+                <span className="lp-mini-pay">₹1,200</span>
+                <span className="lp-mini-meta">2h 35m left · 700 m</span>
+              </div>
+              <div className="lp-mini-body">
+                <span className="lp-mini-kind is-gig">Paid gig</span>
+                <h3>Shoot + edit a 60s reel for my brand</h3>
+                <div className="lp-mini-chips"><span>Premiere Pro</span><span>Videography</span></div>
+                <div className="lp-mini-foot">
+                  <span className="lp-mini-who"><i>K</i> kabir</span>
+                  <span className="lp-mini-apply">Apply</span>
+                </div>
+              </div>
+            </article>
+
+            <article className="lp-mini is-team">
+              <div className="lp-mini-lobby">
+                <span className="lp-mini-seats"><i>M</i><i className="is-on">✓</i><i className="is-open">+</i></span>
+                <span className="lp-mini-open"><b>2</b> seats open</span>
+              </div>
+              <div className="lp-mini-body">
+                <span className="lp-mini-kind is-team">Team forming</span>
+                <h3>Hackathon team — looking for 2 devs</h3>
+                <div className="lp-mini-foot">
+                  <span className="lp-mini-who"><i>M</i> meher</span>
+                  <span className="lp-mini-apply is-team">Apply</span>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
         <div className="landing-hero-glow" aria-hidden="true" />
       </section>
 
