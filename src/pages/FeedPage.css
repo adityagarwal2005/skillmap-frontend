@@ -514,50 +514,76 @@
 .type-filter-btn.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
 [data-theme="light"] .type-filter-btn.active { background: #000000; }
 
-/* ── "Finish your profile" nudge (app-wide, dismissible) ── */
+/* ── The app-wide nudge bar (finish your profile / install / notifications).
+   It was a pure-black bar with white text, which sat outside the card
+   system in dark and turned into a black slab in light. ── */
 .profile-nudge {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 14px;
   flex-wrap: wrap;
-  margin: 18px auto 0;
   max-width: 900px;
-  padding: 14px 18px;
-  background: #000000;
-  border-radius: var(--radius-lg);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.14);
+  margin: 16px auto 0;
+  padding: 14px 16px 14px 18px;
+  border-radius: 18px;
+  background:
+    linear-gradient(90deg, var(--brand-dim), transparent 42%),
+    var(--surface-1);
+  border: 1px solid var(--hairline);
+  box-shadow: var(--lift-1), var(--edge-light);
   animation: cardIn 0.3s ease both;
 }
+/* A lit edge, so it reads as a prompt rather than another card. */
+.profile-nudge::before {
+  content: '';
+  position: absolute;
+  top: 14px;
+  bottom: 14px;
+  left: 0;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: linear-gradient(180deg, var(--brand-bright), var(--brand));
+}
 
-.profile-nudge-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.profile-nudge-text strong { font-size: 0.9375rem; font-weight: 800; color: #fff; letter-spacing: -0.01em; }
-.profile-nudge-text span { font-size: 0.8125rem; color: rgba(245,245,247,0.72); }
+.profile-nudge-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.profile-nudge-text strong {
+  font-size: 0.9375rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--text-1);
+}
+.profile-nudge-text span { font-size: 0.8125rem; line-height: 1.5; color: var(--text-2); }
 
-.profile-nudge-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.profile-nudge-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 
 .profile-nudge-cta {
-  height: 34px;
-  padding: 0 16px;
-  background: #fff;
-  color: #0a0a0a;
+  height: 38px;
+  padding: 0 18px;
+  border-radius: 999px;
   font-size: 0.8125rem;
-  font-weight: 700;
-  border-radius: var(--radius-pill, 999px);
-  transition: opacity 0.15s;
+  font-weight: 800;
+  color: #fff;
+  background: linear-gradient(180deg, var(--brand-bright), var(--brand));
+  box-shadow: var(--edge-strong);
+  transition: transform var(--t-fast) var(--spring), opacity var(--t-fast) ease;
 }
-.profile-nudge-cta:hover { opacity: 0.85; }
+.profile-nudge-cta:hover { opacity: 0.94; }
+.profile-nudge-cta:active { transform: scale(0.97); }
 
 .profile-nudge-x {
-  width: 44px;
-  height: 44px;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
   font-size: 1.25rem;
   line-height: 1;
-  color: rgba(245,245,247,0.6);
-  border-radius: 50%;
-  transition: background 0.15s, color 0.15s;
+  color: var(--text-3);
+  transition: background var(--t-fast) ease, color var(--t-fast) ease;
 }
-.profile-nudge-x:hover { background: rgba(255,255,255,0.12); color: #fff; }
+.profile-nudge-x:hover { background: var(--hairline); color: var(--text-1); }
 
 /* ── "What do you want to post?" chooser sheet ── */
 
