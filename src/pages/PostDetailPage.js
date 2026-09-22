@@ -14,6 +14,19 @@ import { cldAvatar, cldThumb } from '../utils/cloudinaryUrl';
 import './FeedPage.css';
 import './PostDetailPage.css';
 
+const ric = (paths) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9"
+    strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{paths}</svg>
+);
+const REACTIONS = [
+  { type: 'fire', label: 'Fire',
+    icon: ric(<path d="M12 22c4 0 7-2.7 7-6.5 0-4.5-4.5-6-4.5-10.5 0 0-3 1.5-3 5.5 0 1.6-1 2.5-2 2.5S8 12 8 10c-1.6 1.4-3 3.2-3 5.5C5 19.3 8 22 12 22z" />) },
+  { type: 'love', label: 'Love',
+    icon: ric(<path d="M12 20s-7-4.4-7-9a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 4.6-7 9-7 9z" />) },
+  { type: 'like', label: 'Like',
+    icon: ric(<><path d="M7 10v11H4a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1z" /><path d="M7 10l4.5-7a2 2 0 0 1 3.4 2L13 10h5.5a2 2 0 0 1 2 2.4l-1.4 7A2 2 0 0 1 17 21H7" /></>) },
+];
+
 const REPORT_REASONS = [
   { value: 'spam',          label: 'Spam' },
   { value: 'harassment',    label: 'Harassment or bullying' },
@@ -35,8 +48,8 @@ export default function PostDetailPage() {
   const [submitting, setSubmitting]   = useState(false);
   const [editingId, setEditingId]     = useState(null);
   const [editText, setEditText]       = useState('');
-  const [reacted, setReacted]         = useState(false);
-  const [reactionCount, setReactionCount] = useState(0);
+  const [counts, setCounts]           = useState({ fire: 0, love: 0, like: 0 });
+  const [myReaction, setMyReaction]   = useState(null);
   const [postEditing, setPostEditing] = useState(false);
   const [postForm, setPostForm]       = useState({ title: '', description: '' });
   const [savingPost, setSavingPost]   = useState(false);
@@ -68,7 +81,8 @@ export default function PostDetailPage() {
       ]);
       setItem(itemRes.data || null);
       setComments(commentsRes.data.comments || []);
-      setReactionCount(itemRes.data?.reactions || 0);
+      setCounts(itemRes.data?.reaction_counts || { fire: 0, love: 0, like: 0 });
+      setMyReaction(itemRes.data?.my_reaction || null);
     } catch {
       showToast('Failed to load post', 'error');
     } finally {
@@ -76,12 +90,28 @@ export default function PostDetailPage() {
     }
   };
 
+  // One reaction per person: picking the same one again removes it,
+  // picking another switches it. Mirror that locally, then confirm.
   const handleReact = async (type) => {
+    const prevCounts = counts;
+    const prevMine = myReaction;
+    const next = { ...counts };
+    if (prevMine === type) {
+      next[type] = Math.max(0, next[type] - 1);
+      setMyReaction(null);
+    } else {
+      if (prevMine) next[prevMine] = Math.max(0, next[prevMine] - 1);
+      next[type] += 1;
+      setMyReaction(type);
+    }
+    setCounts(next);
     try {
       await reactToItem(itemId, type);
-      setReacted(prev => !prev);
-      setReactionCount(prev => reacted ? prev - 1 : prev + 1);
-    } catch { showToast('Failed to react', 'error'); }
+    } catch {
+      setCounts(prevCounts);
+      setMyReaction(prevMine);
+      showToast('Failed to react', 'error');
+    }
   };
 
   const startEdit = () => {
@@ -267,15 +297,16 @@ export default function PostDetailPage() {
               )}
 
               <div className="detail-reactions">
-                {['fire', 'love', 'like'].map(type => (
-                  <button key={type}
-                    className={`reaction-pill ${reacted && type === 'fire' ? 'active' : ''}`}
-                    onClick={() => handleReact(type)}>
-                    {type === 'fire' ? '🔥' : type === 'love' ? '❤️' : '👍'}
-                    {type === 'fire' ? reactionCount : 0}
+                {REACTIONS.map(r => (
+                  <button key={r.type} type="button"
+                    aria-pressed={myReaction === r.type} aria-label={r.label}
+                    className={`reaction-pill is-${r.type} ${myReaction === r.type ? 'active' : ''}`}
+                    onClick={() => handleReact(r.type)}>
+                    {r.icon}
+                    <span>{counts[r.type] || 0}</span>
                   </button>
                 ))}
-                {item.verified && <span className="verified-pill">✓ Verified Work</span>}
+                {item.verified && <span className="verified-pill">✓ Verified work</span>}
               </div>
             </div>
 
