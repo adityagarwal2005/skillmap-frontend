@@ -51,19 +51,29 @@ export default function ChooseUsernamePage() {
         </p>
 
         <form onSubmit={handleSubmit} className="cu-form">
-          <div className="cu-input-wrap">
+          <label className="cu-input-wrap" htmlFor="cu-name">
             <span className="cu-at">@</span>
             <input
+              id="cu-name"
               className="cu-input"
               value={username}
               onChange={e => { setUsername(clean(e.target.value)); setError(''); }}
               placeholder="yourname"
               autoFocus
               autoComplete="off"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
               maxLength={30}
             />
-          </div>
-          {error && <p className="cu-error">{error}</p>}
+          </label>
+          {/* The handle is a real address — show the one they're claiming. */}
+          <p className="cu-preview">
+            doithere.in/u/<strong>{username.trim() || 'yourname'}</strong>
+          </p>
+          <p className={`cu-error ${error ? 'is-on' : ''}`} role="alert">
+            {error || (tooShort && username.length > 0 ? 'At least 3 characters' : '\u00a0')}
+          </p>
           <button className="cu-submit" type="submit" disabled={saving || tooShort}>
             {saving ? 'Saving…' : 'Continue'}
           </button>

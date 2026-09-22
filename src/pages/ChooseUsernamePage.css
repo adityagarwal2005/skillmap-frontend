@@ -1,98 +1,128 @@
+/* The one-time handle step after a Google sign-in. It used to hardcode
+   pure black and white, so it ignored the light theme and didn't match
+   the sign-in page it follows. */
 .cu-page {
-  min-height: 100vh;
-  background: #000000;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: 100vh;
+  min-height: 100dvh;
   padding: 24px;
+  overflow: hidden;
+  background:
+    radial-gradient(60% 45% at 50% 0%, var(--brand-dim), transparent 68%),
+    var(--bg);
 }
 
 .cu-box {
-  width: 100%;
-  max-width: 420px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
   gap: 8px;
+  width: 100%;
+  max-width: 440px;
+  padding: clamp(26px, 5vw, 38px);
+  text-align: center;
+  border-radius: 28px;
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
+  box-shadow: var(--lift-3), var(--edge-light);
+  animation: cuIn 0.45s var(--spring-soft) both;
 }
 
 .cu-title {
+  margin-top: 18px;
   font-family: var(--font-display);
-  font-size: clamp(1.875rem, 6vw, 2.5rem);
+  font-size: clamp(1.75rem, 6vw, 2.25rem);
   font-weight: 800;
   letter-spacing: -0.04em;
-  color: #ffffff;
-  margin-top: 20px;
+  line-height: 1.05;
+  color: var(--text-1);
 }
-
 .cu-sub {
+  max-width: 34ch;
+  margin-bottom: 10px;
   font-size: 0.9375rem;
   line-height: 1.55;
-  color: rgba(255,255,255,0.6);
-  max-width: 340px;
-  margin-bottom: 12px;
+  color: var(--text-2);
 }
 
-.cu-form {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  margin-top: 14px;
-}
+.cu-form { display: flex; flex-direction: column; width: 100%; margin-top: 10px; }
 
 .cu-input-wrap {
   display: flex;
   align-items: center;
-  height: 56px;
+  height: 58px;
   padding: 0 18px;
   border-radius: 16px;
-  background: #0d0d0d;
-  border: 1.5px solid rgba(255,255,255,0.14);
-  transition: border-color 0.15s;
+  cursor: text;
+  background: var(--surface-flat);
+  border: 1px solid var(--hairline);
+  transition: border-color var(--t-med) ease, box-shadow var(--t-med) ease;
 }
-.cu-input-wrap:focus-within { border-color: #ffffff; }
-
+.cu-input-wrap:focus-within {
+  border-color: var(--brand-line);
+  box-shadow: 0 0 0 3px var(--brand-dim);
+}
 .cu-at {
+  margin-right: 4px;
   font-family: var(--font-display);
   font-size: 1.25rem;
-  font-weight: 700;
-  color: rgba(255,255,255,0.4);
-  margin-right: 4px;
+  font-weight: 800;
+  color: var(--text-3);
 }
-
 .cu-input {
   flex: 1;
+  min-width: 0;
   background: none;
   border: none;
   outline: none;
-  color: #ffffff;
   font-family: var(--font-display);
   font-size: 1.25rem;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: -0.01em;
+  color: var(--text-1);
 }
-.cu-input::placeholder { color: rgba(255,255,255,0.3); }
+.cu-input::placeholder { color: var(--text-3); font-weight: 700; }
+
+.cu-preview {
+  margin-top: 10px;
+  font-size: 0.8125rem;
+  color: var(--text-3);
+  word-break: break-all;
+}
+.cu-preview strong { color: var(--brand); font-weight: 800; }
 
 .cu-error {
+  min-height: 1.2em;
+  margin: 6px 0 4px;
   font-size: 0.8125rem;
-  font-weight: 600;
-  color: #ff453a;
-  text-align: left;
-  margin-top: -4px;
+  font-weight: 700;
+  color: transparent;
+  transition: color var(--t-fast) ease;
 }
+.cu-error.is-on { color: var(--danger); }
 
 .cu-submit {
   height: 54px;
-  border-radius: 16px;
-  background: #ffffff;
-  color: #000000;
+  margin-top: 6px;
+  border-radius: 999px;
   font-size: 1rem;
   font-weight: 800;
-  letter-spacing: -0.01em;
-  transition: opacity 0.15s, transform 0.14s ease;
+  color: #fff;
+  background: linear-gradient(180deg, var(--brand-bright), var(--brand));
+  box-shadow: 0 12px 28px var(--brand-dim), var(--edge-strong);
+  transition: transform var(--t-fast) var(--spring), opacity var(--t-fast) ease;
 }
-.cu-submit:hover:not(:disabled) { opacity: 0.88; }
-.cu-submit:active { transform: scale(0.98); }
-.cu-submit:disabled { opacity: 0.4; cursor: default; }
+.cu-submit:active:not(:disabled) { transform: scale(0.98); }
+.cu-submit:disabled { opacity: 0.45; cursor: default; box-shadow: none; }
+
+@keyframes cuIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cu-box { animation: none; }
+}
