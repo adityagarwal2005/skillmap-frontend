@@ -6,7 +6,7 @@ import { createPortfolioItem, addMedia } from '../api/portfolio';
 import { prepareMediaFile } from '../utils/mediaUpload';
 import AppShell from '../components/AppShell';
 import './FeedPage.css';
-import './CreatePostPage.css';
+import '../styles/forms.css';
 
 const TYPES = ['project', 'design', 'photo', 'artwork', 'video', 'other'];
 const MAX_PHOTOS = 4;
@@ -53,9 +53,7 @@ export default function CreatePostPage() {
       // Photos upload to the already-created item in parallel and don't
       // block navigation — the item exists as soon as createPortfolioItem
       // resolves, so there's no reason to sit on the create screen waiting
-      // for every photo's own Cloudinary round-trip one at a time (that was
-      // a straight-up sequential for-loop — 4 photos took ~4x one photo's
-      // upload time before the user saw anything).
+      // for every photo's own Cloudinary round-trip one at a time.
       if (photos.length > 0) {
         Promise.all(photos.map(file => {
           const fd = new FormData();
@@ -77,84 +75,101 @@ export default function CreatePostPage() {
 
   return (
     <AppShell active="profile">
-      <div className="create-wrapper">
-        <button className="profile-back" onClick={() => navigate(-1)}>← Back</button>
-        <div className="create-box">
-          <h1 className="create-title">Add a project</h1>
-          <p className="create-sub">Show what you've made. People hire from proof.</p>
+      <div className="fm-page">
+        <button className="fm-back" onClick={() => navigate(-1)}>← Back</button>
 
-          <form onSubmit={handleSubmit} className="create-form">
-            <div className="create-field">
-              <label className="create-label">Title *</label>
-              <input name="title" className="create-input"
-                placeholder="What did you build?" maxLength={100}
-                value={form.title} onChange={handleChange} required />
-              <span className="create-counter">{form.title.length}/100</span>
+        <header className="fm-head">
+          <h1 className="fm-title">Add a project</h1>
+          <p className="fm-sub">Show what you've made. People hire from proof.</p>
+        </header>
+
+        <form onSubmit={handleSubmit}>
+          <section className="fm-card">
+            <h2 className="fm-card-title">The work</h2>
+
+            <div className="fm-field">
+              <label className="fm-label" htmlFor="cp-title">Title</label>
+              <input id="cp-title" name="title" className="fm-input"
+                placeholder="What did you make?" maxLength={100} required
+                value={form.title} onChange={handleChange} />
+              <span className="fm-counter">{form.title.length}/100</span>
             </div>
 
-            <div className="create-field">
-              <label className="create-label">Description * <span className="create-hint">Max 200 characters — keep it short</span></label>
-              <textarea name="description" className="create-textarea"
-                placeholder="What is it? What did you use? Keep it to 1-2 lines."
-                maxLength={200} rows={3}
-                value={form.description} onChange={handleChange} required />
-              <span className="create-counter">{form.description.length}/200</span>
+            <div className="fm-field">
+              <label className="fm-label" htmlFor="cp-desc">
+                Description <span className="fm-hint">one or two lines</span>
+              </label>
+              <textarea id="cp-desc" name="description" className="fm-input fm-textarea"
+                placeholder="What is it, and what did you use?" maxLength={200} rows={3} required
+                value={form.description} onChange={handleChange} />
+              <span className="fm-counter">{form.description.length}/200</span>
             </div>
 
-            <div className="create-field">
-              <label className="create-label">Type *</label>
-              <select name="portfolio_type" className="create-select"
+            <div className="fm-field">
+              <label className="fm-label" htmlFor="cp-type">Type</label>
+              <select id="cp-type" name="portfolio_type" className="fm-input fm-select"
                 value={form.portfolio_type} onChange={handleChange}>
                 {TYPES.map(t => (
-                  <option key={t} value={t}>{t.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase())}</option>
+                  <option key={t} value={t}>{t.replace(/\b\w/g, c => c.toUpperCase())}</option>
                 ))}
               </select>
             </div>
+          </section>
 
-            <div className="create-field">
-              <label className="create-label">Skills used <span className="create-hint">comma separated — unknown ones become tags</span></label>
-              <input name="skills" className="create-input"
-                placeholder="React, Python, Figma"
-                value={form.skills} onChange={handleChange} />
-            </div>
-
-            <div className="create-field">
-              <label className="create-label">Tags <span className="create-hint">comma separated</span></label>
-              <input name="tags" className="create-input"
-                placeholder="dashboard, ai, ecommerce"
-                value={form.tags} onChange={handleChange} />
-            </div>
-
-            <div className="create-field">
-              <label className="create-label">Photos <span className="create-hint">up to {MAX_PHOTOS} — show your work</span></label>
-              <div className="photo-grid">
+          <section className="fm-card">
+            <h2 className="fm-card-title">Photos</h2>
+            <div className="fm-field">
+              <label className="fm-label">
+                Show it <span className="fm-hint">up to {MAX_PHOTOS} — work with a photo gets picked more</span>
+              </label>
+              <div className="fm-photos">
                 {photos.map((file, i) => (
-                  <div className="photo-thumb" key={i}>
+                  <div className="fm-photo" key={i}>
                     <img src={URL.createObjectURL(file)} alt={`upload ${i + 1}`} />
-                    <button type="button" className="photo-remove"
+                    <button type="button" className="fm-photo-x"
                       onClick={() => removePhoto(i)} aria-label="Remove photo">×</button>
                   </div>
                 ))}
                 {photos.length < MAX_PHOTOS && (
-                  <label className="photo-add">
+                  <label className="fm-photo-add">
                     <input type="file" accept="image/*" multiple hidden onChange={handlePhotos} />
                     <span>＋</span>
-                    <span className="photo-add-text">Add photo</span>
+                    <span className="fm-photo-add-text">Add photo</span>
                   </label>
                 )}
               </div>
             </div>
+          </section>
 
-            <div className="create-actions">
-              <button type="button" className="create-cancel" onClick={() => navigate(-1)}>
-                Cancel
-              </button>
-              <button type="submit" className="create-submit" disabled={loading}>
-                {loading ? 'Adding…' : 'Add project'}
-              </button>
+          <section className="fm-card">
+            <h2 className="fm-card-title">Findability</h2>
+
+            <div className="fm-field">
+              <label className="fm-label" htmlFor="cp-skills">
+                Skills used <span className="fm-hint">comma separated</span>
+              </label>
+              <input id="cp-skills" name="skills" className="fm-input"
+                placeholder="React, Python, Figma"
+                value={form.skills} onChange={handleChange} />
             </div>
-          </form>
-        </div>
+
+            <div className="fm-field">
+              <label className="fm-label" htmlFor="cp-tags">
+                Tags <span className="fm-hint">comma separated</span>
+              </label>
+              <input id="cp-tags" name="tags" className="fm-input"
+                placeholder="dashboard, ai, ecommerce"
+                value={form.tags} onChange={handleChange} />
+            </div>
+          </section>
+
+          <div className="fm-actions">
+            <button type="button" className="fm-cancel" onClick={() => navigate(-1)}>Cancel</button>
+            <button type="submit" className="fm-submit" disabled={loading}>
+              {loading ? 'Adding…' : 'Add project'}
+            </button>
+          </div>
+        </form>
       </div>
     </AppShell>
   );

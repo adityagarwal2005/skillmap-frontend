@@ -1,0 +1,232 @@
+/* ═══════════════════════════════════════════════════════════════════
+   FORMS — one set of fields for every form in the app.
+
+   Edit profile and Add a project each had their own stylesheet with their
+   own input height, radius and label size, so the same control looked
+   different depending on where you met it. This is that control, once,
+   matching the create-gig modal.
+   ═══════════════════════════════════════════════════════════════════ */
+.fm-page {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px clamp(16px, 4vw, 24px) 96px;
+}
+
+.fm-back {
+  margin-bottom: 14px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text-2);
+  transition: color var(--t-fast) ease;
+}
+.fm-back:hover { color: var(--text-1); }
+
+.fm-head { margin-bottom: 22px; }
+.fm-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.875rem, 5vw, 2.5rem);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 1;
+  color: var(--text-1);
+}
+.fm-sub { margin-top: 8px; font-size: 0.9375rem; line-height: 1.55; color: var(--text-2); }
+
+.fm-card {
+  margin-bottom: 14px;
+  padding: 18px;
+  border-radius: 22px;
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
+  box-shadow: var(--lift-1), var(--edge-light);
+}
+.fm-card-title {
+  margin-bottom: 14px;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.fm-field { display: flex; flex-direction: column; gap: 7px; margin-bottom: 16px; }
+.fm-field:last-child { margin-bottom: 0; }
+.fm-row { display: flex; gap: 12px; }
+.fm-row .fm-field { flex: 1; min-width: 0; }
+
+.fm-label {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--text-1);
+}
+.fm-hint { font-size: 0.75rem; font-weight: 500; color: var(--text-3); }
+.fm-counter { align-self: flex-end; font-size: 0.6875rem; color: var(--text-3); font-variant-numeric: tabular-nums; }
+
+.fm-input {
+  width: 100%;
+  height: 52px;
+  padding: 0 16px;
+  border-radius: 14px;
+  background: var(--surface-flat);
+  border: 1px solid var(--hairline);
+  color: var(--text-1);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 500;
+  transition: border-color var(--t-med) ease, box-shadow var(--t-med) ease;
+}
+.fm-input::placeholder { color: var(--text-3); }
+.fm-input:focus,
+:root .app-shell .fm-input:focus-visible {
+  outline: none;
+  border-color: var(--brand-line);
+  box-shadow: 0 0 0 3px var(--brand-dim);
+}
+.fm-textarea {
+  height: auto;
+  min-height: 104px;
+  padding: 14px 16px;
+  line-height: 1.55;
+  resize: vertical;
+}
+.fm-select {
+  cursor: pointer;
+  padding-right: 40px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--surface-flat) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 15px center / 13px;
+}
+.fm-select option { background: var(--bg); color: var(--text-1); }
+
+/* Photo / avatar */
+.fm-avatar { display: flex; align-items: center; gap: 16px; }
+.fm-avatar-pic {
+  display: grid;
+  place-items: center;
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text-1);
+  background: var(--surface-2);
+  border: 1px solid var(--hairline-str);
+  box-shadow: 0 0 0 5px var(--brand-dim);
+}
+.fm-avatar-pic img { width: 100%; height: 100%; object-fit: cover; }
+.fm-avatar-btn {
+  display: inline-flex;
+  align-items: center;
+  height: 42px;
+  padding: 0 18px;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  color: var(--text-1);
+  background: var(--surface-flat);
+  border: 1px solid var(--hairline-str);
+  transition: background var(--t-fast) ease;
+}
+.fm-avatar-btn:hover { background: var(--hairline); }
+
+.fm-photos { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 10px; }
+.fm-photo {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--hairline);
+}
+.fm-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.fm-photo-x {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  font-size: 1rem;
+  line-height: 1;
+  color: #fff;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+}
+.fm-photo-add {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  aspect-ratio: 1;
+  border-radius: 16px;
+  cursor: pointer;
+  color: var(--text-2);
+  background: var(--surface-flat);
+  border: 1.5px dashed var(--hairline-str);
+  transition: border-color var(--t-med) ease, color var(--t-med) ease, background var(--t-med) ease;
+}
+.fm-photo-add:hover { border-color: var(--brand-line); background: var(--brand-dim); color: var(--text-1); }
+.fm-photo-add span:first-child { font-size: 1.25rem; font-weight: 800; }
+.fm-photo-add-text { font-size: 0.72rem; font-weight: 600; }
+
+/* Actions */
+.fm-actions { display: flex; gap: 12px; margin-top: 18px; }
+.fm-cancel {
+  height: 52px;
+  padding: 0 22px;
+  border-radius: 999px;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--text-1);
+  background: var(--surface-flat);
+  border: 1px solid var(--hairline-str);
+  transition: background var(--t-fast) ease;
+}
+.fm-cancel:hover { background: var(--hairline); }
+.fm-submit {
+  flex: 1;
+  height: 52px;
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 800;
+  color: #fff;
+  background: linear-gradient(180deg, var(--brand-bright), var(--brand));
+  box-shadow: 0 12px 28px var(--brand-dim), var(--edge-strong);
+  transition: transform var(--t-fast) var(--spring), opacity var(--t-fast) ease;
+}
+.fm-submit:active:not(:disabled) { transform: scale(0.98); }
+.fm-submit:disabled { opacity: 0.55; box-shadow: none; }
+
+.fm-inline-btn {
+  align-self: flex-start;
+  height: 44px;
+  padding: 0 20px;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text-1);
+  background: var(--surface-flat);
+  border: 1px solid var(--hairline-str);
+  transition: background var(--t-fast) ease, color var(--t-fast) ease;
+}
+.fm-inline-btn:hover:not(:disabled) { background: var(--hairline); }
+.fm-inline-btn.is-done { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 40%, transparent); }
+.fm-inline-btn:disabled { opacity: 0.6; }
+
+.fm-loading { padding: 80px 24px; text-align: center; color: var(--text-2); }
+
+@media (max-width: 560px) {
+  .fm-row { flex-direction: column; gap: 0; }
+  .fm-actions { flex-direction: column-reverse; }
+  .fm-cancel, .fm-submit { width: 100%; }
+}

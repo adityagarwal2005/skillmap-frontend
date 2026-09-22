@@ -90,66 +90,66 @@ export default function PublicProfilePage() {
     : null;
 
   return (
-    <div className="pp-page">
-      <header className="pp-topbar">
-        <Link to="/" className="pp-brand" aria-label="DoitHere home"><Logo size={1.4} /></Link>
-        <button type="button" className="pp-join" onClick={join}>Join DoitHere</button>
+    <div className="pub-page">
+      <header className="pub-topbar">
+        <Link to="/" className="pub-brand" aria-label="DoitHere home"><Logo size={1.4} /></Link>
+        <button type="button" className="pub-join" onClick={join}>Join DoitHere</button>
       </header>
 
       {loading ? (
-        <div className="pp-state">Loading…</div>
+        <div className="pub-state">Loading…</div>
       ) : notFound || !profile ? (
-        <div className="pp-state">
+        <div className="pub-state">
           <h1>No one here by that name</h1>
           <p>The link may be old, or the username changed.</p>
-          <button type="button" className="pp-join" onClick={() => navigate('/')}>Go to DoitHere</button>
+          <button type="button" className="pub-join" onClick={() => navigate('/')}>Go to DoitHere</button>
         </div>
       ) : (
-        <main className="pp-main">
-          <section className="pp-hero">
-            <div className="pp-hero-glow" aria-hidden="true" />
-            <span className="pp-avatar">
+        <main className="pub-main">
+          <section className="pub-hero">
+            <div className="pub-hero-glow" aria-hidden="true" />
+            <span className="pub-avatar">
               {profile.profile_image && !avatarBroken
                 ? <img className="ava-img" src={cldAvatar(profile.profile_image, 240)} alt={profile.username}
                     onError={() => setAvatarBroken(true)} />
                 : profile.username[0].toUpperCase()}
             </span>
-            <h1 className="pp-name">{profile.username}</h1>
-            <p className="pp-category">{profile.category || 'Independent'}</p>
+            <h1 className="pub-name">{profile.username}</h1>
+            <p className="pub-category">{profile.category || 'Independent'}</p>
             {avail && (
-              <span className={`pp-avail is-${avail.tone}`}><i aria-hidden="true" />{avail.label}</span>
+              <span className={`pub-avail is-${avail.tone}`}><i aria-hidden="true" />{avail.label}</span>
             )}
-            {profile.headline && <p className="pp-headline">{profile.headline}</p>}
+            {profile.headline && <p className="pub-headline">{profile.headline}</p>}
 
-            <div className="pp-stats">
-              <div className="pp-stat">
-                <span className="pp-stat-val">{rating > 0 ? `★ ${rating.toFixed(1)}` : 'New'}</span>
-                <span className="pp-stat-label">
+            <div className="pub-stats">
+              <div className="pub-stat">
+                <span className="pub-stat-val">{rating > 0 ? `★ ${rating.toFixed(1)}` : 'New'}</span>
+                <span className="pub-stat-label">
                   {profile.review_count > 0
                     ? `${profile.review_count} review${profile.review_count === 1 ? '' : 's'}`
                     : 'No reviews yet'}
                 </span>
               </div>
               {skills.length > 0 && (
-                <div className="pp-stat">
-                  <span className="pp-stat-val">{skills.length}</span>
-                  <span className="pp-stat-label">{skills.length === 1 ? 'Skill' : 'Skills'}</span>
+                <div className="pub-stat">
+                  <span className="pub-stat-val">{skills.length}</span>
+                  <span className="pub-stat-label">{skills.length === 1 ? 'Skill' : 'Skills'}</span>
                 </div>
               )}
               {projects.length > 0 && (
-                <div className="pp-stat">
-                  <span className="pp-stat-val">{projects.length}</span>
-                  <span className="pp-stat-label">{projects.length === 1 ? 'Project' : 'Projects'}</span>
+                <div className="pub-stat">
+                  <span className="pub-stat-val">{projects.length}</span>
+                  <span className="pub-stat-label">{projects.length === 1 ? 'Project' : 'Projects'}</span>
                 </div>
               )}
             </div>
 
-            <div className="pp-hero-actions">
-              <button type="button" className="pp-cta" onClick={join}>
+            <div className="pub-hero-actions">
+              <button type="button" className="pub-cta" onClick={join}>
                 Hire {profile.username}
               </button>
               {whatsapp && (
-                <a className="pp-ghost" href={whatsapp} target="_blank" rel="noreferrer">
+                <a className="pub-ghost" href={whatsapp} target="_blank" rel="noreferrer">
                   {WhatsAppIcon} WhatsApp
                 </a>
               )}
@@ -157,22 +157,22 @@ export default function PublicProfilePage() {
           </section>
 
           {profile.bio && (
-            <section className="pp-section">
-              <h2 className="pp-section-title">About</h2>
-              <p className="pp-bio">{profile.bio}</p>
+            <section className="pub-section">
+              <h2 className="pub-section-title">About</h2>
+              <p className="pub-bio">{profile.bio}</p>
             </section>
           )}
 
           {skills.length > 0 && (
-            <section className="pp-section">
-              <h2 className="pp-section-title">Skills</h2>
-              <div className="pp-skills">
+            <section className="pub-section">
+              <h2 className="pub-section-title">Skills</h2>
+              <div className="pub-skills">
                 {skills.map(sk => (
-                  <span key={sk.name} className={`pp-skill ${sk.verified_endorsements > 0 ? 'is-verified' : ''}`}>
+                  <span key={sk.name} className={`pub-skill ${sk.verified_endorsements > 0 ? 'is-verified' : ''}`}>
                     {sk.name}
                     {sk.endorsements > 0 && <b>{sk.endorsements}</b>}
                     {sk.verified_endorsements > 0 && (
-                      <span className="pp-skill-check" title="Endorsed by someone who's worked with them">✓</span>
+                      <span className="pub-skill-check" title="Endorsed by someone who's worked with them">✓</span>
                     )}
                   </span>
                 ))}
@@ -181,21 +181,21 @@ export default function PublicProfilePage() {
           )}
 
           {projects.length > 0 && (
-            <section className="pp-section">
-              <h2 className="pp-section-title">Work</h2>
-              <div className="pp-projects">
+            <section className="pub-section">
+              <h2 className="pub-section-title">Work</h2>
+              <div className="pub-projects">
                 {projects.slice(0, 6).map(p => (
-                  <article key={p.id} className="pp-project">
+                  <article key={p.id} className="pub-project">
                     {p.media?.[0]?.url && p.media[0].media_type === 'image' && (
-                      <img className="pp-project-img" src={cldThumb(p.media[0].url, 600)} alt="" loading="lazy" />
+                      <img className="pub-project-img" src={cldThumb(p.media[0].url, 600)} alt="" loading="lazy" />
                     )}
-                    <div className="pp-project-body">
-                      <div className="pp-project-top">
-                        <span className="pp-project-type">{p.portfolio_type}</span>
-                        {p.verified && <span className="pp-project-verified">✓ Verified</span>}
+                    <div className="pub-project-body">
+                      <div className="pub-project-top">
+                        <span className="pub-project-type">{p.portfolio_type}</span>
+                        {p.verified && <span className="pub-project-verified">✓ Verified</span>}
                       </div>
-                      <h3 className="pp-project-title">{p.title}</h3>
-                      {p.description && <p className="pp-project-desc">{p.description}</p>}
+                      <h3 className="pub-project-title">{p.title}</h3>
+                      {p.description && <p className="pub-project-desc">{p.description}</p>}
                     </div>
                   </article>
                 ))}
@@ -204,45 +204,45 @@ export default function PublicProfilePage() {
           )}
 
           {reviews.length > 0 && (
-            <section className="pp-section">
-              <div className="pp-section-head">
-                <h2 className="pp-section-title">Reviews</h2>
-                <span className="pp-review-avg">★ {rating.toFixed(1)} · {reviews.length}</span>
+            <section className="pub-section">
+              <div className="pub-section-head">
+                <h2 className="pub-section-title">Reviews</h2>
+                <span className="pub-review-avg">★ {rating.toFixed(1)} · {reviews.length}</span>
               </div>
-              <div className="pp-reviews">
+              <div className="pub-reviews">
                 {(allReviews ? reviews : reviews.slice(0, 3)).map(r => (
-                  <article key={r.id} className="pp-review">
-                    <div className="pp-review-top">
-                      <span className="pp-review-stars" aria-label={`${r.rating} out of 5`}>
+                  <article key={r.id} className="pub-review">
+                    <div className="pub-review-top">
+                      <span className="pub-review-stars" aria-label={`${r.rating} out of 5`}>
                         {'★★★★★'.slice(0, r.rating)}
                         <span className="is-off">{'★★★★★'.slice(r.rating)}</span>
                       </span>
-                      <span className="pp-review-when">{reviewDate(r.created_at)}</span>
+                      <span className="pub-review-when">{reviewDate(r.created_at)}</span>
                     </div>
-                    {r.comment && <p className="pp-review-text">{r.comment}</p>}
-                    <span className="pp-review-from">{r.from}</span>
+                    {r.comment && <p className="pub-review-text">{r.comment}</p>}
+                    <span className="pub-review-from">{r.from}</span>
                   </article>
                 ))}
               </div>
               {reviews.length > 3 && (
-                <button type="button" className="pp-more" onClick={() => setAllReviews(v => !v)}>
+                <button type="button" className="pub-more" onClick={() => setAllReviews(v => !v)}>
                   {allReviews ? 'Show fewer' : `Show all ${reviews.length} reviews`}
                 </button>
               )}
             </section>
           )}
 
-          <section className="pp-final">
-            <h2 className="pp-final-title">Want to work with {profile.username}?</h2>
-            <p className="pp-final-sub">
+          <section className="pub-final">
+            <h2 className="pub-final-title">Want to work with {profile.username}?</h2>
+            <p className="pub-final-sub">
               Join DoitHere to message them, hire them for a gig, or get found the same way —
               by people right around you.
             </p>
-            <div className="pp-final-actions">
-              <button type="button" className="pp-cta" onClick={join}>Join free</button>
-              <button type="button" className="pp-ghost" onClick={() => navigate('/')}>See how it works</button>
+            <div className="pub-final-actions">
+              <button type="button" className="pub-cta" onClick={join}>Join free</button>
+              <button type="button" className="pub-ghost" onClick={() => navigate('/')}>See how it works</button>
             </div>
-            <span className="pp-final-note">Free to join · No card needed</span>
+            <span className="pub-final-note">Free to join · No card needed</span>
           </section>
         </main>
       )}

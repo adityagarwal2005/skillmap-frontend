@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import { deleteUser, updateStatus, getBlockedUsers, unblockUser, getMyReferrals } from '../api/users';
+import {
+  deleteUser, updateStatus, getBlockedUsers, unblockUser, getMyReferrals, getUser,
+} from '../api/users';
 import { pushSupported, isPushEnabled, enablePush, disablePush } from '../push';
 import AppShell from '../components/AppShell';
 import { cldAvatar } from '../utils/cloudinaryUrl';
@@ -10,13 +12,65 @@ import useInstallPrompt from '../hooks/useInstallPrompt';
 import './FeedPage.css';
 import './SettingsPage.css';
 
+const ic = (paths) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"
+    strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{paths}</svg>
+);
+const IC = {
+  gift:   ic(<><rect x="3" y="9" width="18" height="12" rx="2" /><path d="M3 13h18M12 9v12" /><path d="M12 9S9.5 4 7.5 5s.5 4 4.5 4zM12 9s2.5-5 4.5-4-.5 4-4.5 4z" /></>),
+  user:   ic(<><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" /></>),
+  bell:   ic(<><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.7 21a2 2 0 0 1-3.4 0" /></>),
+  wallet: ic(<><rect x="2.5" y="6" width="19" height="14" rx="3" /><path d="M2.5 10.5h19M16 15h2" /></>),
+  moon:   ic(<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />),
+  shield: ic(<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />),
+  doc:    ic(<><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><path d="M14 2v6h6" /></>),
+  phone:  ic(<><rect x="6" y="2" width="12" height="20" rx="3" /><path d="M11 18h2" /></>),
+  danger: ic(<><path d="M12 9v5M12 17.5h.01" /><path d="M10.3 3.9 2.6 17.1A2 2 0 0 0 4.3 20h15.4a2 2 0 0 0 1.7-2.9L13.7 3.9a2 2 0 0 0-3.4 0z" /></>),
+};
+
+const STATUSES = [
+  { value: 'open_to_freelance', label: 'Taking gigs' },
+  { value: 'open_to_work',      label: 'Open to work' },
+  { value: 'not_available',     label: 'Not available' },
+];
+
+function Section({ icon, title, children }) {
+  return (
+    <section className="st-card">
+      <h2 className="st-card-title"><span className="st-card-ic">{icon}</span>{title}</h2>
+      {children}
+    </section>
+  );
+}
+
+function Row({ label, sub, children }) {
+  return (
+    <div className="st-row">
+      <div className="st-row-text">
+        <span className="st-row-label">{label}</span>
+        {sub && <span className="st-row-sub">{sub}</span>}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function Toggle({ on, busy, onChange, label }) {
+  return (
+    <button type="button" role="switch" aria-checked={on} aria-label={label}
+      className={`st-toggle ${on ? 'is-on' : ''}`} disabled={busy} onClick={onChange}>
+      <span className="st-toggle-dot" />
+    </button>
+  );
+}
+
 export default function SettingsPage() {
   const { user, logoutUser } = useAuth();
   const { showToast }        = useToast();
   const navigate             = useNavigate();
 
   const [theme, setTheme]       = useState(localStorage.getItem('themeV2') || 'dark');
-  const [status, setStatus]     = useState('not_available');
+  const [status, setStatus]     = useState(null);   // null until the real one loads
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [blockedUsers, setBlockedUsers] = useState([]);
   const [pushOn, setPushOn] = useState(false);
@@ -30,6 +84,22 @@ export default function SettingsPage() {
   useEffect(() => {
     getMyReferrals().then(r => setReferrals(r.data.referrals || [])).catch(() => {});
   }, []);
+
+  // The control used to open on "Not available" whatever the account
+  // actually said, so it read as a setting that had reset itself.
+  useEffect(() => {
+    if (!user?.id) return;
+    getUser(user.id).then(r => setStatus(r.data.status || 'not_available')).catch(() => {});
+  }, [user?.id]);
+
+  useEffect(() => {
+    getBlockedUsers().then(r => setBlockedUsers(r.data.blocked_users || [])).catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('themeV2', theme);
+  }, [theme]);
 
   const inviteLink = `${window.location.origin}/join/${user?.username || ''}`;
 
@@ -69,15 +139,6 @@ export default function SettingsPage() {
     } finally { setPushBusy(false); }
   };
 
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('themeV2', theme);
-  }, [theme]);
-
-  useEffect(() => {
-    getBlockedUsers().then(r => setBlockedUsers(r.data.blocked_users || [])).catch(() => {});
-  }, []);
-
   const handleUnblock = async (blockedUserId) => {
     try {
       await unblockUser(blockedUserId);
@@ -86,13 +147,16 @@ export default function SettingsPage() {
     } catch { showToast('Failed to unblock', 'error'); }
   };
 
-  const handleStatusChange = async e => {
-    const val = e.target.value;
+  const pickStatus = async (val) => {
+    const previous = status;
     setStatus(val);
     try {
       await updateStatus(val);
-      showToast('Status updated', 'success');
-    } catch { showToast('Failed to update status', 'error'); }
+      showToast('Availability updated', 'success');
+    } catch {
+      setStatus(previous);
+      showToast('Failed to update availability', 'error');
+    }
   };
 
   const handleDeleteAccount = async () => {
@@ -105,205 +169,153 @@ export default function SettingsPage() {
 
   return (
     <AppShell active="settings">
-      <div className="settings-wrapper">
-        <button className="profile-back" onClick={() => navigate(-1)}>← Back</button>
-        <h1 className="settings-title">Settings</h1>
+      <div className="st-wrap">
+        <button className="st-back" onClick={() => navigate(-1)}>← Back</button>
+        <header className="st-head">
+          <h1 className="st-title">Settings</h1>
+          <p className="st-sub">Your account, what people can see, and how DoitHere reaches you.</p>
+        </header>
 
-        {/* Invite friends — every user is a growth channel */}
-        <div className="settings-section invite-section">
-          <h2 className="settings-section-title">Invite friends</h2>
-          <p className="invite-sub">
-            Share your link — when someone joins using it, they show up here.
+        <Section icon={IC.gift} title="Invite friends">
+          <p className="st-note">
+            The network is only as good as who's on it. Share your link — anyone who joins
+            with it shows up here.
           </p>
-          <div className="invite-link-row">
-            <input className="invite-link-input" readOnly value={inviteLink}
-              onFocus={e => e.target.select()} />
-            <button className="settings-save-btn" onClick={handleCopyInvite}>
+          <div className="st-invite">
+            <input className="st-invite-link" readOnly value={inviteLink}
+              aria-label="Your invite link" onFocus={e => e.target.select()} />
+            <button type="button" className="st-btn is-primary" onClick={handleCopyInvite}>
               {copiedInvite ? 'Copied ✓' : 'Copy'}
             </button>
-            <button className="settings-save-btn" onClick={handleShareInvite}>Share</button>
+            <button type="button" className="st-btn" onClick={handleShareInvite}>Share</button>
           </div>
           {referrals.length > 0 && (
-            <div className="invite-list">
-              <span className="invite-count">
-                {referrals.length} {referrals.length === 1 ? 'person' : 'people'} joined using your invite
+            <div className="st-referrals">
+              <span className="st-referrals-count">
+                {referrals.length} {referrals.length === 1 ? 'person' : 'people'} joined with your link
               </span>
-              <div className="invite-avatars">
+              <div className="st-referral-avas">
                 {referrals.slice(0, 8).map(r => (
-                  <div key={r.id} className="invite-ava" title={r.username}
+                  <button type="button" key={r.id} className="st-referral-ava" title={r.username}
                     onClick={() => navigate(`/profile/${r.id}`)}>
                     {r.profile_image
                       ? <img className="ava-img" src={cldAvatar(r.profile_image)} alt="" />
                       : r.username[0].toUpperCase()}
-                  </div>
+                  </button>
                 ))}
               </div>
             </div>
           )}
-        </div>
+        </Section>
 
-        {/* Profile & account — everything editable lives on one page now */}
-        <div className="settings-section">
-          <h2 className="settings-section-title">Profile & account</h2>
-          <div className="settings-row">
-            <div className="settings-row-info">
-              <span className="settings-row-label">Edit profile</span>
-              <span className="settings-row-sub">Name, email, date of birth, password, and social links</span>
-            </div>
-            <button className="settings-save-btn"
-              onClick={() => navigate(`/profile/${user.id}/edit`)}>
-              Edit →
-            </button>
-          </div>
-          <div className="settings-row">
-            <div className="settings-row-info">
-              <span className="settings-row-label">Sign out</span>
-              <span className="settings-row-sub">Sign out of DoitHere on this device</span>
-            </div>
-            <button className="settings-save-btn" onClick={() => { logoutUser(); navigate('/login'); }}>
-              Sign out
-            </button>
-          </div>
-        </div>
-
-        {/* App */}
-        {(canInstall || installed) && (
-          <div className="settings-section">
-            <h2 className="settings-section-title">App</h2>
-            <div className="settings-row">
-              <div className="settings-row-info">
-                <span className="settings-row-label">Install DoitHere</span>
-                <span className="settings-row-sub">
-                  {installed
-                    ? 'Already installed on this device'
-                    : 'Add it to your home screen for a faster, full-screen experience'}
-                </span>
-              </div>
-              {!installed && (
-                <button className="settings-save-btn" onClick={promptInstall}>Install</button>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Notifications */}
-        {pushSupported() && (
-          <div className="settings-section">
-            <h2 className="settings-section-title">Notifications</h2>
-            <div className="settings-row">
-              <div className="settings-row-info">
-                <span className="settings-row-label">Push notifications</span>
-                <span className="settings-row-sub">
-                  Get pinged for messages, applications, and matching jobs — even when the app is closed.
-                </span>
-              </div>
-              <button className="settings-save-btn" onClick={handleTogglePush} disabled={pushBusy}>
-                {pushBusy ? '…' : pushOn ? 'Turn off' : 'Turn on'}
+        <Section icon={IC.wallet} title="Availability">
+          <Row label="Are you taking work?"
+            sub="Shown on your profile and next to your name." />
+          <div className="st-choices" role="radiogroup" aria-label="Availability">
+            {STATUSES.map(s => (
+              <button key={s.value} type="button" role="radio"
+                aria-checked={status === s.value}
+                className={`st-choice ${status === s.value ? 'is-on' : ''}`}
+                disabled={status === null}
+                onClick={() => pickStatus(s.value)}>
+                {s.label}
               </button>
-            </div>
+            ))}
           </div>
+        </Section>
+
+        <Section icon={IC.user} title="Profile & account">
+          <Row label="Edit profile" sub="Name, email, date of birth, password">
+            <button type="button" className="st-btn"
+              onClick={() => navigate(`/profile/${user.id}/edit`)}>Edit</button>
+          </Row>
+          <Row label="Sign out" sub="On this device only">
+            <button type="button" className="st-btn"
+              onClick={() => { logoutUser(); navigate('/login'); }}>Sign out</button>
+          </Row>
+        </Section>
+
+        {pushSupported() && (
+          <Section icon={IC.bell} title="Notifications">
+            <Row label="Push notifications"
+              sub="Messages, applications and new work nearby — even when the app is closed.">
+              <Toggle on={pushOn} busy={pushBusy} onChange={handleTogglePush}
+                label="Push notifications" />
+            </Row>
+          </Section>
         )}
 
-        {/* Availability */}
-        <div className="settings-section">
-          <h2 className="settings-section-title">Availability</h2>
-          <div className="settings-row">
-            <div className="settings-row-info">
-              <span className="settings-row-label">Status</span>
-              <span className="settings-row-sub">Let people know if you're available</span>
-            </div>
-            <select className="settings-select" value={status} onChange={handleStatusChange}>
-              <option value="not_available">Not Available</option>
-              <option value="open_to_freelance">Open to gigs</option>
-              <option value="open_to_work">Open to Work</option>
-            </select>
-          </div>
-        </div>
+        {(canInstall || installed) && (
+          <Section icon={IC.phone} title="App">
+            <Row label="Install DoitHere"
+              sub={installed ? 'Already installed on this device' : 'Full screen, and faster to open'}>
+              {!installed && (
+                <button type="button" className="st-btn is-primary" onClick={promptInstall}>Install</button>
+              )}
+            </Row>
+          </Section>
+        )}
 
-        {/* Appearance */}
-        <div className="settings-section">
-          <h2 className="settings-section-title">Appearance</h2>
-          <div className="settings-row">
-            <div className="settings-row-info">
-              <span className="settings-row-label">Theme</span>
-              <span className="settings-row-sub">Choose your preferred theme</span>
-            </div>
-            <div className="theme-toggle-row">
-              <button className={`theme-toggle-btn ${theme === 'light' ? 'active' : ''}`}
-                onClick={() => setTheme('light')}>Light</button>
-              <button className={`theme-toggle-btn ${theme === 'dark' ? 'active' : ''}`}
-                onClick={() => setTheme('dark')}>Dark</button>
-            </div>
+        <Section icon={IC.moon} title="Appearance">
+          <Row label="Theme" sub="Light or dark, on this device." />
+          <div className="st-choices" role="radiogroup" aria-label="Theme">
+            {['light', 'dark'].map(t => (
+              <button key={t} type="button" role="radio" aria-checked={theme === t}
+                className={`st-choice ${theme === t ? 'is-on' : ''}`}
+                onClick={() => setTheme(t)}>
+                {t === 'light' ? 'Light' : 'Dark'}
+              </button>
+            ))}
           </div>
-        </div>
+        </Section>
 
-        {/* Privacy & Safety */}
-        <div className="settings-section">
-          <h2 className="settings-section-title">Privacy & safety</h2>
+        <Section icon={IC.shield} title="Privacy & safety">
           {blockedUsers.length === 0 ? (
-            <div className="settings-row">
-              <div className="settings-row-info">
-                <span className="settings-row-label">Blocked users</span>
-                <span className="settings-row-sub">You haven't blocked anyone</span>
-              </div>
-            </div>
+            <Row label="Blocked people" sub="You haven't blocked anyone." />
           ) : (
             blockedUsers.map(b => (
-              <div className="settings-row" key={b.id}>
-                <div className="settings-row-info">
-                  <span className="settings-row-label">{b.username}</span>
-                  <span className="settings-row-sub">Blocked</span>
-                </div>
-                <button className="settings-save-btn" onClick={() => handleUnblock(b.id)}>
+              <Row key={b.id} label={b.username} sub="Blocked">
+                <button type="button" className="st-btn" onClick={() => handleUnblock(b.id)}>
                   Unblock
                 </button>
-              </div>
+              </Row>
             ))
           )}
-        </div>
+        </Section>
 
-        {/* Legal */}
-        <div className="settings-section">
-          <h2 className="settings-section-title">Legal</h2>
-          <div className="settings-row">
-            <div className="settings-row-info">
-              <span className="settings-row-label">Terms of Service</span>
-            </div>
-            <button className="settings-save-btn" onClick={() => navigate('/terms')}>View</button>
-          </div>
-          <div className="settings-row">
-            <div className="settings-row-info">
-              <span className="settings-row-label">Privacy Policy</span>
-            </div>
-            <button className="settings-save-btn" onClick={() => navigate('/privacy')}>View</button>
-          </div>
-        </div>
+        <Section icon={IC.doc} title="Legal">
+          <Row label="Terms of Service">
+            <button type="button" className="st-btn" onClick={() => navigate('/terms')}>View</button>
+          </Row>
+          <Row label="Privacy Policy">
+            <button type="button" className="st-btn" onClick={() => navigate('/privacy')}>View</button>
+          </Row>
+        </Section>
 
-        {/* Danger Zone */}
-        <div className="settings-section danger-zone">
-          <h2 className="settings-section-title danger-title">Danger Zone</h2>
+        <section className="st-card is-danger">
+          <h2 className="st-card-title"><span className="st-card-ic">{IC.danger}</span>Danger zone</h2>
           {!confirmDelete ? (
-            <div className="settings-row">
-              <div className="settings-row-info">
-                <span className="settings-row-label">Delete Account</span>
-                <span className="settings-row-sub">Permanently delete your account and all data</span>
-              </div>
-              <button className="delete-btn" onClick={() => setConfirmDelete(true)}>
-                Delete Account
+            <Row label="Delete account" sub="Your profile, posts, messages and reviews. Permanent.">
+              <button type="button" className="st-btn is-danger" onClick={() => setConfirmDelete(true)}>
+                Delete
               </button>
-            </div>
+            </Row>
           ) : (
-            <div className="delete-confirm">
-              <p className="delete-confirm-text">Are you sure? This cannot be undone.</p>
-              <div className="delete-confirm-actions">
-                <button className="create-cancel" onClick={() => setConfirmDelete(false)}>Cancel</button>
-                <button className="delete-btn-confirm" onClick={handleDeleteAccount}>
-                  Yes, delete my account
+            <div className="st-confirm">
+              <p className="st-confirm-text">
+                This deletes everything and can't be undone. Are you sure?
+              </p>
+              <div className="st-confirm-actions">
+                <button type="button" className="st-btn" onClick={() => setConfirmDelete(false)}>
+                  Keep my account
+                </button>
+                <button type="button" className="st-btn is-danger-solid" onClick={handleDeleteAccount}>
+                  Yes, delete it
                 </button>
               </div>
             </div>
           )}
-        </div>
+        </section>
       </div>
     </AppShell>
   );

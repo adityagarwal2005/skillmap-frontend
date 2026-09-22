@@ -1137,3 +1137,105 @@
   .lp-frame, .lp-frame-live, .lp-hero-art { animation: none; }
 }
 
+/* ═══════════════════════════════════════════════════════════════════
+   BELOW THE FOLD — PASS 3
+
+   The lower half was structurally fine but visually flat: cards, page and
+   gaps all sat within a few percent of the same black, so the eye had
+   nothing to hold. This gives each band its own ground, each card a lit
+   edge, and the section headers room to breathe.
+   ═══════════════════════════════════════════════════════════════════ */
+.lp-bento-wrap,
+.lp-flow-wrap {
+  position: relative;
+  padding-top: clamp(64px, 9vw, 120px);
+  padding-bottom: clamp(64px, 9vw, 120px);
+}
+/* A band a shade lighter than the page, edged with hairlines. */
+.lp-bento-wrap {
+  background: linear-gradient(180deg, #0d0d0e 0%, #0a0a0a 100%);
+  border-top: 1px solid rgba(255,255,255,0.07);
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+
+.landing-section-head { margin-bottom: clamp(28px, 4vw, 44px); }
+.landing-eyebrow {
+  display: inline-block;
+  margin-bottom: 12px;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #ff8a5c;
+}
+.landing-section-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4.6vw, 3.25rem);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+  color: #f5f5f7;
+}
+
+.lp-cell {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(26,26,28,0.95), rgba(16,16,17,0.95));
+  border: 1px solid rgba(255,255,255,0.09);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.05) inset, 0 20px 50px rgba(0,0,0,0.45);
+  transition: transform 0.3s cubic-bezier(0.16,1,0.3,1), border-color 0.3s ease;
+}
+.lp-cell:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.16); }
+/* Each cell carries a faint wash of the colour of the thing it describes. */
+.lp-cell::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0.85;
+  background: radial-gradient(120% 90% at 0% 0%, rgba(239,95,38,0.13), transparent 62%);
+}
+.lp-cell-team::after,
+.lp-cell-chat::after { background: radial-gradient(120% 90% at 0% 0%, rgba(123,108,246,0.15), transparent 62%); }
+.lp-cell-proof::after { background: radial-gradient(120% 90% at 0% 0%, rgba(34,197,94,0.13), transparent 62%); }
+
+.lp-cell-ic {
+  color: #ff8a5c;
+  background: rgba(239,95,38,0.15);
+  border: 1px solid rgba(239,95,38,0.32);
+}
+.lp-cell-team .lp-cell-ic,
+.lp-cell-chat .lp-cell-ic {
+  color: #a095ff;
+  background: rgba(123,108,246,0.16);
+  border-color: rgba(123,108,246,0.34);
+}
+.lp-cell-proof .lp-cell-ic {
+  color: #4ade80;
+  background: rgba(34,197,94,0.14);
+  border-color: rgba(34,197,94,0.32);
+}
+.lp-cell h3 { color: #f5f5f7; letter-spacing: -0.025em; }
+.lp-cell p { color: rgba(245,245,247,0.66); line-height: 1.6; }
+
+/* Flow: a lit track with three stops, rather than three paragraphs. */
+.lp-flow-line {
+  background: linear-gradient(90deg, transparent, rgba(239,95,38,0.45) 18%, rgba(123,108,246,0.45) 82%, transparent);
+  opacity: 0.9;
+}
+.lp-flow-orb {
+  color: #ff8a5c;
+  background: linear-gradient(180deg, rgba(32,32,34,0.98), rgba(18,18,19,0.98));
+  border: 1px solid rgba(239,95,38,0.34);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.5), 0 0 0 6px rgba(239,95,38,0.07);
+}
+.lp-flow-num {
+  color: rgba(245,245,247,0.34);
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+.lp-flow-step h3 { color: #f5f5f7; letter-spacing: -0.025em; }
+.lp-flow-step p { color: rgba(245,245,247,0.62); line-height: 1.6; }
+
