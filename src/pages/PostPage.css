@@ -166,7 +166,7 @@
   margin-bottom: 12px;
   background: var(--surface-flat);
   border: 1px solid var(--hairline);
-  border-radius: 14px;
+  border-radius: 10px;
   flex-wrap: wrap;
 }
 .mng-time { font-size: 0.875rem; font-weight: 700; color: var(--text-1); font-variant-numeric: tabular-nums; }
@@ -192,7 +192,7 @@
   padding: 12px 14px;
   background: var(--surface-flat);
   border: 1px solid var(--hairline);
-  border-radius: 14px;
+  border-radius: 10px;
 }
 .mng-app-id { display: flex; align-items: center; gap: 11px; min-width: 0; flex: 1; }
 .mng-app-ava {
@@ -294,7 +294,7 @@
   margin-top: 14px;
   padding: 14px;
   border: 1px solid rgba(255,69,58,0.35);
-  border-radius: 14px;
+  border-radius: 10px;
   background: rgba(255,69,58,0.06);
 }
 .mng-close-q {

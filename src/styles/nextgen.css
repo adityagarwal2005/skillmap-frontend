@@ -187,7 +187,7 @@ body::after {
   .app-shell .mobile-nav-btn {
     position: relative;
     padding: 7px 0 6px;
-    border-radius: 18px;
+    border-radius: 10px;
     isolation: isolate;
     transition: color var(--t-med) ease, transform var(--t-fast) var(--spring);
   }
@@ -197,7 +197,7 @@ body::after {
     position: absolute;
     inset: 0;
     z-index: -1;
-    border-radius: 18px;
+    border-radius: 10px;
     background: rgba(255,255,255,0.09);
     box-shadow: var(--edge-light);
     opacity: 0;
@@ -211,7 +211,7 @@ body::after {
   .app-shell .mobile-nav-btn.is-create::before {
     opacity: 1;
     transform: scale(1);
-    background: linear-gradient(180deg, var(--brand-bright), var(--brand));
+    background: var(--brand);
     box-shadow: var(--lift-brand), var(--edge-strong);
   }
   .app-shell .mobile-nav-btn.is-create { color: #fff; }
@@ -303,9 +303,11 @@ body::after {
 :root .app-shell .apps-heading,
 :root .app-shell .settings-title,
 :root .app-shell .search-heading {
-  font-size: clamp(2.5rem, 11vw, 3.5rem);
-  letter-spacing: -0.048em;
-  line-height: 0.94;
+  /* Was up to 56px, which is a poster, not a page title — and it
+     outranked each page's own rule. */
+  font-size: clamp(1.375rem, 2.6vw, 1.75rem);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
 }
 
 /* ═══════════════════════════════════════════════
@@ -453,7 +455,7 @@ body::after {
    surface; the brand makes the two sides of a thread readable at a
    glance the way every messaging app people already use does. */
 :root .app-shell .msg-bubble.own {
-  background: linear-gradient(180deg, var(--brand-bright), var(--brand));
+  background: var(--brand);
   border-color: transparent;
   box-shadow: var(--lift-brand);
 }

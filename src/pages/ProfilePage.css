@@ -21,7 +21,7 @@
   padding: 30px 30px 26px;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 26px;
+  border-radius: 16px;
   margin-bottom: 14px;
   box-shadow: 0 1px 2px rgba(0,0,0,0.2), 0 12px 40px rgba(0,0,0,0.22);
 }
@@ -65,7 +65,7 @@
 .profile-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
 
 .profile-name {
-  font-size: clamp(1.875rem, 7vw, 2.5rem);
+  font-size: clamp(1.5rem, 3vw, 2rem);
   font-weight: 800;
   color: var(--text-1);
   letter-spacing: -0.04em;
@@ -149,7 +149,7 @@
   min-width: 0;
   height: 48px;
   padding: 0 22px;
-  border-radius: 14px;
+  border-radius: 10px;
   background: var(--text-1);
   color: var(--bg);
   font-size: 0.9375rem;
@@ -169,7 +169,7 @@
   min-width: 0;
   height: 48px;
   padding: 0 18px;
-  border-radius: 14px;
+  border-radius: 10px;
   border: 1px solid var(--border-md);
   background: none;
   color: var(--text-1);
@@ -207,7 +207,7 @@
 .profile-skills-section {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 24px;
+  border-radius: 14px;
   padding: 26px 28px;
   margin-bottom: 14px;
   box-shadow: 0 1px 2px rgba(0,0,0,0.2), 0 12px 40px rgba(0,0,0,0.18);
@@ -234,7 +234,7 @@
   background: var(--elevated);
   border: 1px solid var(--border);
   padding: 5px 13px;
-  border-radius: 20px;
+  border-radius: 12px;
   transition: all 0.15s;
 }
 
@@ -314,7 +314,7 @@
   height: 34px;
   background: var(--elevated);
   border: 1px solid var(--border);
-  border-radius: 20px;
+  border-radius: 12px;
   padding: 0 14px;
   font-size: 0.875rem;
   color: var(--text-1);
@@ -336,7 +336,7 @@
   color: var(--bg);
   font-size: 0.875rem;
   font-weight: 600;
-  border-radius: 20px;
+  border-radius: 12px;
   transition: opacity 0.15s;
 }
 
@@ -389,7 +389,7 @@
   color: var(--text-2);
   background: var(--elevated);
   padding: 3px 9px;
-  border-radius: 20px;
+  border-radius: 12px;
 }
 
 .verified-dot {
@@ -398,7 +398,7 @@
   color: var(--green);
   background: var(--green-low);
   padding: 3px 9px;
-  border-radius: 20px;
+  border-radius: 12px;
 }
 
 .portfolio-card-title {
@@ -438,12 +438,12 @@
   box-shadow: 0 12px 28px rgba(0,0,0,0.22);
 }
 .app-shell .profile-name {
-  font-size: clamp(1.875rem, 7vw, 2.5rem);
+  font-size: clamp(1.5rem, 3vw, 2rem);
   letter-spacing: -0.04em;
 }
 .app-shell .profile-header,
-.app-shell .profile-skills-section { border-radius: 18px; }
-.app-shell .portfolio-card { border-radius: 16px; }
+.app-shell .profile-skills-section { border-radius: 10px; }
+.app-shell .portfolio-card { border-radius: 10px; }
 .app-shell .section-title {
   font-family: var(--font-mono, monospace);
   font-size: 0.75rem;
@@ -466,7 +466,7 @@
   padding: 16px 18px;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: 10px;
   transition: transform 0.22s var(--ease-out-expo, ease),
               box-shadow 0.22s var(--ease-out-expo, ease),
               border-color 0.22s ease;
@@ -718,7 +718,7 @@
   flex-direction: column;
   gap: 7px;
   padding: 14px 16px;
-  border-radius: 16px;
+  border-radius: 10px;
   background: var(--surface-flat);
   border: 1px solid var(--hairline);
 }

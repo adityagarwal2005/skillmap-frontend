@@ -18,7 +18,7 @@
   width: 100%;
   max-width: 560px;
   padding: 28px 32px;
-  border-radius: 28px;
+  border-radius: 16px;
   background: var(--surface-1);
   border: 1px solid var(--hairline);
   box-shadow: var(--lift-3), var(--edge-strong);
@@ -116,7 +116,7 @@
   gap: 10px;
   min-height: 92px;
   padding: 13px;
-  border-radius: 16px;
+  border-radius: 10px;
   text-align: left;
   background: var(--surface-flat);
   border: 1px solid var(--hairline);
@@ -158,7 +158,7 @@
   min-width: 0;
   height: 50px;
   padding: 0 15px;
-  border-radius: 14px;
+  border-radius: 10px;
   background: var(--surface-flat);
   border: 1px solid var(--hairline);
   color: var(--text-1);
@@ -203,7 +203,7 @@
   gap: 14px;
   width: 100%;
   padding: 15px 16px;
-  border-radius: 16px;
+  border-radius: 10px;
   text-align: left;
   background: var(--surface-flat);
   border: 1px solid var(--hairline);
@@ -237,7 +237,7 @@
   align-items: center;
   gap: 14px;
   padding: 16px 18px;
-  border-radius: 16px;
+  border-radius: 10px;
   background: var(--green-low);
   border: 1px solid color-mix(in srgb, var(--green) 45%, transparent);
 }
@@ -263,7 +263,7 @@
   gap: 12px;
   width: 100%;
   height: 58px;
-  border-radius: 16px;
+  border-radius: 10px;
   font-size: 1rem;
   font-weight: 800;
   color: var(--text-1);
@@ -298,12 +298,12 @@
   font-size: 0.9375rem;
   font-weight: 800;
   color: #fff;
-  background: linear-gradient(180deg, var(--brand-bright), var(--brand));
-  box-shadow: 0 10px 24px var(--brand-dim), var(--edge-strong);
+  background: var(--brand);
+  box-shadow: var(--e-1);
   transition: transform var(--t-fast) var(--spring), opacity var(--t-fast) ease;
   white-space: nowrap;
 }
-.ob-primary.is-inline { height: 50px; padding: 0 20px; border-radius: 14px; }
+.ob-primary.is-inline { height: 50px; padding: 0 20px; border-radius: 10px; }
 .ob-primary:active:not(:disabled) { transform: scale(0.97); }
 .ob-primary:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
 
@@ -318,7 +318,7 @@
   border: 1px solid var(--hairline-str);
   white-space: nowrap;
 }
-.ob-row .ob-ghost { height: 50px; border-radius: 14px; }
+.ob-row .ob-ghost { height: 50px; border-radius: 10px; }
 .ob-ghost:disabled { opacity: 0.45; }
 
 .ob-link {
@@ -350,7 +350,7 @@
 
 @media (max-width: 480px) {
   .ob-page { padding: 12px; align-items: flex-start; }
-  .ob-card { padding: 22px 18px; border-radius: 24px; }
+  .ob-card { padding: 22px 18px; border-radius: 14px; }
   .ob-cats { grid-template-columns: repeat(2, 1fr); }
   .ob-count { font-size: 0.7rem; }
 }

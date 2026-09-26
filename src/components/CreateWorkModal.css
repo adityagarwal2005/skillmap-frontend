@@ -28,7 +28,7 @@
   overflow-y: auto;
   overscroll-behavior: contain;
   padding: 22px 20px calc(22px + env(safe-area-inset-bottom, 0px));
-  border-radius: 26px 26px 0 0;
+  border-radius: 16px 26px 0 0;
   background: var(--surface-1);
   border: 1px solid var(--hairline);
   box-shadow: var(--lift-3), var(--edge-strong);
@@ -42,7 +42,7 @@
   --tone-line: var(--team-line);
 }
 @media (min-width: 640px) {
-  .cw-modal { border-radius: 26px; }
+  .cw-modal { border-radius: 16px; }
 }
 @media (min-width: 960px) {
   .cw-modal { max-width: 960px; padding: 26px 28px; }
@@ -122,7 +122,7 @@
   width: 100%;
   height: 50px;
   padding: 0 15px;
-  border-radius: 14px;
+  border-radius: 10px;
   background: var(--surface-flat);
   border: 1px solid var(--hairline);
   color: var(--text-1);
@@ -218,7 +218,7 @@
   align-items: center;
   justify-content: center;
   height: 50px;
-  border-radius: 14px;
+  border-radius: 10px;
   border: 1.5px dashed var(--hairline-str);
   color: var(--text-2);
   font-size: 0.875rem;
@@ -234,7 +234,7 @@
   gap: 10px;
   height: 50px;
   padding: 0 12px 0 15px;
-  border-radius: 14px;
+  border-radius: 10px;
   background: var(--surface-flat);
   border: 1px solid var(--hairline);
 }

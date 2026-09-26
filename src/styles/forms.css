@@ -25,7 +25,7 @@
 .fm-head { margin-bottom: 22px; }
 .fm-title {
   font-family: var(--font-display);
-  font-size: clamp(1.875rem, 5vw, 2.5rem);
+  font-size: clamp(1.375rem, 2.6vw, 1.75rem);
   font-weight: 800;
   letter-spacing: -0.045em;
   line-height: 1;
@@ -36,7 +36,7 @@
 .fm-card {
   margin-bottom: 14px;
   padding: 18px;
-  border-radius: 22px;
+  border-radius: 12px;
   background: var(--surface-1);
   border: 1px solid var(--hairline);
   box-shadow: var(--lift-1), var(--edge-light);
@@ -70,7 +70,7 @@
   width: 100%;
   height: 52px;
   padding: 0 16px;
-  border-radius: 14px;
+  border-radius: 10px;
   background: var(--surface-flat);
   border: 1px solid var(--hairline);
   color: var(--text-1);
@@ -141,7 +141,7 @@
 .fm-photo {
   position: relative;
   aspect-ratio: 1;
-  border-radius: 16px;
+  border-radius: 10px;
   overflow: hidden;
   border: 1px solid var(--hairline);
 }
@@ -168,7 +168,7 @@
   justify-content: center;
   gap: 4px;
   aspect-ratio: 1;
-  border-radius: 16px;
+  border-radius: 10px;
   cursor: pointer;
   color: var(--text-2);
   background: var(--surface-flat);
@@ -200,8 +200,8 @@
   font-size: 1rem;
   font-weight: 800;
   color: #fff;
-  background: linear-gradient(180deg, var(--brand-bright), var(--brand));
-  box-shadow: 0 12px 28px var(--brand-dim), var(--edge-strong);
+  background: var(--brand);
+  box-shadow: var(--e-1);
   transition: transform var(--t-fast) var(--spring), opacity var(--t-fast) ease;
 }
 .fm-submit:active:not(:disabled) { transform: scale(0.98); }

@@ -18,7 +18,7 @@
 }
 .trk-sum {
   padding: 12px 14px;
-  border-radius: 16px;
+  border-radius: 10px;
   background: var(--surface-1);
   border: 1px solid var(--hairline);
   box-shadow: var(--edge-light);
@@ -64,7 +64,7 @@
   position: relative;
   overflow: hidden;
   padding: 16px 18px 16px 22px;
-  border-radius: 22px;
+  border-radius: 12px;
   background: var(--surface-1);
   border: 1px solid var(--hairline);
   box-shadow: var(--lift-1), var(--edge-light);

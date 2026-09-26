@@ -9,7 +9,7 @@
 .detail-card {
   margin-bottom: 14px;
   padding: clamp(18px, 3vw, 24px);
-  border-radius: 24px;
+  border-radius: 14px;
   background: var(--surface-1);
   border: 1px solid var(--hairline);
   box-shadow: var(--lift-1), var(--edge-light);
@@ -106,7 +106,7 @@
 .detail-edit-desc {
   width: 100%;
   padding: 13px 15px;
-  border-radius: 14px;
+  border-radius: 10px;
   font-family: inherit;
   font-size: 16px;
   color: var(--text-1);
@@ -132,7 +132,7 @@
 /* Comments */
 .comments-section {
   padding: clamp(18px, 3vw, 24px);
-  border-radius: 24px;
+  border-radius: 14px;
   background: var(--surface-1);
   border: 1px solid var(--hairline);
   box-shadow: var(--lift-1), var(--edge-light);
@@ -174,7 +174,7 @@
   font-size: 0.875rem;
   font-weight: 800;
   color: #fff;
-  background: linear-gradient(180deg, var(--brand-bright), var(--brand));
+  background: var(--brand);
   box-shadow: var(--edge-strong);
   transition: transform var(--t-fast) var(--spring), opacity var(--t-fast) ease;
 }
@@ -191,7 +191,7 @@
 
 .comment-card {
   padding: 14px 16px;
-  border-radius: 18px;
+  border-radius: 10px;
   background: var(--surface-flat);
   border: 1px solid var(--hairline);
 }
@@ -227,7 +227,7 @@
 .comment-edit-row { display: flex; gap: 8px; margin: 6px 0 0 42px; }
 
 @media (max-width: 600px) {
-  .detail-card, .comments-section { border-radius: 20px; }
+  .detail-card, .comments-section { border-radius: 12px; }
   .comment-text, .comment-edit-row { margin-left: 0; }
   .detail-owner-actions { width: 100%; margin-left: 0; }
 }

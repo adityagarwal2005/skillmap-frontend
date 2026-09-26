@@ -18,7 +18,7 @@
 .skel-circle     { width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0; }
 .skel-avatar-lg  { width: 80px; height: 80px; border-radius: 50%; flex-shrink: 0; }
 .skel-line       { height: 12px; border-radius: 6px; }
-.skel-tag        { width: 64px; height: 22px; border-radius: 20px; }
+.skel-tag        { width: 64px; height: 22px; border-radius: 12px; }
 .skel-btn        { width: 72px; height: 30px; border-radius: var(--radius-sm); }
 .skel-stat       { width: 64px; height: 44px; border-radius: var(--radius-sm); }
 

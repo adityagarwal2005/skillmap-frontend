@@ -35,7 +35,7 @@
   font-weight: 800;
   color: #fff;
   background: var(--brand);
-  box-shadow: 0 4px 12px var(--brand-dim);
+  box-shadow: var(--e-1);
 }
 
 /* Account card, pinned to the bottom of the rail. */
@@ -46,7 +46,7 @@
   width: 100%;
   margin-top: auto;
   padding: 10px;
-  border-radius: 16px;
+  border-radius: 10px;
   text-align: left;
   background: var(--surface-flat);
   border: 1px solid var(--hairline);

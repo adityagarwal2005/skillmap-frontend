@@ -24,7 +24,7 @@
   max-width: 440px;
   padding: clamp(26px, 5vw, 38px);
   text-align: center;
-  border-radius: 28px;
+  border-radius: 16px;
   background: var(--surface-1);
   border: 1px solid var(--hairline);
   box-shadow: var(--lift-3), var(--edge-light);
@@ -55,7 +55,7 @@
   align-items: center;
   height: 58px;
   padding: 0 18px;
-  border-radius: 16px;
+  border-radius: 10px;
   cursor: text;
   background: var(--surface-flat);
   border: 1px solid var(--hairline);
@@ -111,8 +111,8 @@
   font-size: 1rem;
   font-weight: 800;
   color: #fff;
-  background: linear-gradient(180deg, var(--brand-bright), var(--brand));
-  box-shadow: 0 12px 28px var(--brand-dim), var(--edge-strong);
+  background: var(--brand);
+  box-shadow: var(--e-1);
   transition: transform var(--t-fast) var(--spring), opacity var(--t-fast) ease;
 }
 .cu-submit:active:not(:disabled) { transform: scale(0.98); }

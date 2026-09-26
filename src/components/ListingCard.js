@@ -1,9 +1,13 @@
 import { cldAvatar } from '../utils/cloudinaryUrl';
 import '../pages/Marketplace.css';
 
-/* The two listing shapes — a gig's payout ticket and a collab's lobby —
-   shared by the feed and the create-post preview, so what a poster sees
-   while writing is exactly what people nearby will see. */
+/* The two listing shapes — a paid gig and a collab — shared by the feed and
+   the create-post preview, so what a poster sees while writing is exactly
+   what people nearby will see.
+
+   Density over decoration: these used to lead with a big tinted band and a
+   30px number, which filled a laptop screen with three listings. The money
+   still leads, but as a number in a row you can scan down. */
 
 const MIN = 60000;
 const HOUR = 3600000;
@@ -46,7 +50,7 @@ export const isUrgent = (item, now = Date.now()) => {
 
 export const money = (n) => `₹${Math.round(Number(n) || 0).toLocaleString('en-IN')}`;
 export const distance = (km) => (
-  km < 0.1 ? 'Under 100 m' : km < 1 ? `${Math.round(km * 1000)} m` : `${km} km`
+  km < 0.1 ? '<100 m' : km < 1 ? `${Math.round(km * 1000)} m` : `${km} km`
 );
 
 const svg = (paths) => (
@@ -77,16 +81,15 @@ export function Avatar({ user, className = '' }) {
   return (
     <span className={`mk-ava ${className}`}>
       {user.profile_image
-        ? <img className="ava-img" src={cldAvatar(user.profile_image)} alt="" />
+        ? <img className="ava-img" src={cldAvatar(user.profile_image, 80)} alt="" />
         : (user.username?.[0] || '?').toUpperCase()}
     </span>
   );
 }
 
-/* A collab reads as a lobby: the host's seat, then one seat per person
-   they're looking for, filled as people are accepted. */
+/* A collab's seats: the host, then one per person they're looking for. */
 export function Seats({ host, needed, filled }) {
-  const shown = Math.min(needed, 5);
+  const shown = Math.min(needed, 4);
   const taken = Math.min(filled, shown);
   return (
     <div className="mk-seats" aria-label={`${filled} of ${needed} seats filled`}>
@@ -100,7 +103,7 @@ export function Seats({ host, needed, filled }) {
   );
 }
 
-export function Skills({ skills, limit = 3 }) {
+export function Skills({ skills, limit = 2 }) {
   if (!skills?.length) return null;
   const extra = skills.length - limit;
   return (
@@ -132,8 +135,8 @@ export function MetaChips({ item, now }) {
   );
 }
 
-/* A hairline across the top of the card that burns down as the listing's
-   window runs out — how long is left, readable without reading. */
+/* A hairline across the top of the card that burns down with the listing's
+   window — how long is left, readable without reading. */
 function Fuse({ item, now }) {
   if (!item.expires_at) return null;
   return (
@@ -158,43 +161,37 @@ const cardProps = (interactive, onOpen, label) => (interactive
 export function GigCard({ item, now, isNew, saved, onSave, onOpen, style, interactive = true }) {
   const needed = item.people_needed || 1;
   const spotsLeft = Math.max(0, needed - (item.hired_count || 0));
+  const pay = Number(item.payment_amount) > 0 ? money(item.payment_amount) : '₹ —';
   return (
     <article className={`mk-card is-gig ${isNew ? 'is-new' : ''}`} style={style}
-      {...cardProps(interactive, onOpen, `Paid gig, ${money(item.payment_amount)}: ${item.title}`)}>
+      {...cardProps(interactive, onOpen, `Paid gig, ${pay}: ${item.title}`)}>
       <Fuse item={item} now={now} />
-      <div className="mk-ticket">
-        <div className="mk-payout">
-          <span className="mk-eyebrow">Payout</span>
-          <span className="mk-payout-val">
-            {Number(item.payment_amount) > 0 ? money(item.payment_amount) : '₹ —'}
-          </span>
-        </div>
-        <div className="mk-ticket-meta"><MetaChips item={item} now={now} /></div>
+      <div className="mk-head">
+        <span className="mk-pay">{pay}</span>
+        <div className="mk-head-meta"><MetaChips item={item} now={now} /></div>
+        {interactive && <SaveButton saved={saved} onClick={onSave} />}
       </div>
-      <div className="mk-perf" aria-hidden="true" />
-      <div className="mk-body">
-        <div className="mk-body-top">
-          <span className="mk-kind is-gig">Paid gig</span>
-          {isNew && <span className="mk-new">New</span>}
-          {needed > 1 && <span className="mk-cap">Hiring {needed} · {spotsLeft} left</span>}
-          {interactive && <SaveButton saved={saved} onClick={onSave} />}
-        </div>
-        <h3 className="mk-title">{item.description || item.title}</h3>
+
+      <h3 className="mk-title">{item.description || item.title}</h3>
+
+      <div className="mk-tags">
+        <span className="mk-kind is-gig">Paid gig</span>
+        {isNew && <span className="mk-new">New</span>}
+        {needed > 1 && <span className="mk-cap">{needed} needed · {spotsLeft} left</span>}
         <Skills skills={item.skills} />
-        <div className="mk-foot">
-          <span className="mk-poster">
-            <Avatar user={item.user} />
-            <span className="mk-poster-text">
-              <span className="mk-poster-name">{item.user.username}</span>
-              <span className="mk-poster-sub">
-                {item.gender_preference && item.gender_preference !== 'any'
-                  ? (item.gender_preference === 'male' ? 'Male applicants only' : 'Female applicants only')
-                  : (item.user.category || 'Independent')}
-              </span>
+      </div>
+
+      <div className="mk-foot">
+        <span className="mk-poster">
+          <Avatar user={item.user} />
+          <span className="mk-poster-name">{item.user.username}</span>
+          {item.gender_preference && item.gender_preference !== 'any' && (
+            <span className="mk-poster-note">
+              {item.gender_preference === 'male' ? 'Male only' : 'Female only'}
             </span>
-          </span>
-          <span className="mk-cta is-gig">Apply</span>
-        </div>
+          )}
+        </span>
+        <span className="mk-cta is-gig">Apply</span>
       </div>
     </article>
   );
@@ -204,40 +201,31 @@ export function TeamCard({ item, now, isNew, saved, onSave, onOpen, style, inter
   const needed = item.people_needed || 1;
   const filled = item.hired_count || 0;
   const open = Math.max(0, needed - filled);
-  const desc = item.description && item.description !== item.title ? item.description : null;
   return (
     <article className={`mk-card is-team ${isNew ? 'is-new' : ''}`} style={style}
       {...cardProps(interactive, onOpen, `Team forming, ${open} open: ${item.title}`)}>
       <Fuse item={item} now={now} />
-      <div className="mk-lobby">
-        <div className="mk-lobby-row">
-          <Seats host={item.user} needed={needed} filled={filled} />
-          <div className="mk-lobby-count">
-            <span className="mk-lobby-open">{open}</span>
-            <span className="mk-eyebrow">{open === 1 ? 'seat open' : 'seats open'}</span>
-          </div>
-        </div>
-        <div className="mk-ticket-meta"><MetaChips item={item} now={now} /></div>
+      <div className="mk-head">
+        <Seats host={item.user} needed={needed} filled={filled} />
+        <span className="mk-open">{open} of {needed} open</span>
+        <div className="mk-head-meta"><MetaChips item={item} now={now} /></div>
+        {interactive && <SaveButton saved={saved} onClick={onSave} />}
       </div>
-      <div className="mk-body">
-        <div className="mk-body-top">
-          <span className="mk-kind is-team">Team forming</span>
-          {isNew && <span className="mk-new">New</span>}
-          {interactive && <SaveButton saved={saved} onClick={onSave} />}
-        </div>
-        <h3 className="mk-title">{item.title}</h3>
-        {desc && <p className="mk-desc">{desc}</p>}
+
+      <h3 className="mk-title">{item.title}</h3>
+
+      <div className="mk-tags">
+        <span className="mk-kind is-team">Team</span>
+        {isNew && <span className="mk-new">New</span>}
         <Skills skills={item.skills} />
-        <div className="mk-foot">
-          <span className="mk-poster">
-            <Avatar user={item.user} />
-            <span className="mk-poster-text">
-              <span className="mk-poster-sub">Hosted by</span>
-              <span className="mk-poster-name">{item.user.username}</span>
-            </span>
-          </span>
-          <span className="mk-cta is-team">Apply</span>
-        </div>
+      </div>
+
+      <div className="mk-foot">
+        <span className="mk-poster">
+          <Avatar user={item.user} />
+          <span className="mk-poster-name">{item.user.username}</span>
+        </span>
+        <span className="mk-cta is-team">Apply</span>
       </div>
     </article>
   );

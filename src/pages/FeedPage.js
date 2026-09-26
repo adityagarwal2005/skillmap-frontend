@@ -311,10 +311,10 @@ export default function FeedPage() {
   const renderEmpty = () => {
     if (needsLocation) return (
       <div className="mk-locate">
-        <span className="mk-radar" aria-hidden="true"><i /><i />{I.pin}</span>
+        <span className="mk-radar" aria-hidden="true">{I.pin}</span>
         <h3>Where should we look?</h3>
         <p>DoitHere only shows gigs and collabs within your range, so it needs your location. People see how far away you are, never where.</p>
-        <button type="button" className="mk-apply is-gig mk-locate-btn" onClick={shareLocation} disabled={locating}>
+        <button type="button" className="mk-btn mk-locate-btn" onClick={shareLocation} disabled={locating}>
           {locating ? 'Finding you…' : 'Use my location'}
         </button>
       </div>
@@ -322,36 +322,36 @@ export default function FeedPage() {
     const filtered = !!(q || category || kind !== 'all');
     const wider = RANGES[RANGES.findIndex(r => r.value === range) + 1];
     const widen = wider && (
-      <button className="opp-cta ghost" onClick={() => setRange(wider.value)}>Widen to {wider.label}</button>
+      <button className="mk-btn is-quiet" onClick={() => setRange(wider.value)}>Widen to {wider.label}</button>
     );
     if (savedOnly && !filtered) return (
-      <div className="state-box">
+      <div className="mk-empty">
         <h3>Nothing saved yet</h3>
         <p>Tap the bookmark on any listing to shortlist it here while you decide.</p>
-        <div className="state-box-actions">
-          <button className="opp-cta" onClick={() => setSavedOnly(false)}>Browse everything</button>
+        <div className="mk-empty-actions">
+          <button className="mk-btn" onClick={() => setSavedOnly(false)}>Browse everything</button>
         </div>
       </div>
     );
     if (filtered || savedOnly) return (
-      <div className="state-box">
+      <div className="mk-empty">
         <h3>Nothing matches that</h3>
         <p>
           {q ? <>No listings matching “{query}”</> : 'No listings'}
           {category && <> in <strong>{categoryById(category)?.label}</strong></>} within {RANGE_LABEL[range]}.
         </p>
-        <div className="state-box-actions">
-          <button className="opp-cta" onClick={clearAll}>Clear filters</button>
+        <div className="mk-empty-actions">
+          <button className="mk-btn" onClick={clearAll}>Clear filters</button>
           {widen}
         </div>
       </div>
     );
     return (
-      <div className="state-box">
+      <div className="mk-empty">
         <h3>Nothing live within {RANGE_LABEL[range]}</h3>
         <p>Listings only show while their window is open. Post a gig or start a team and people nearby will see it.</p>
-        <div className="state-box-actions">
-          <button className="opp-cta" onClick={() => navigate('/post')}>Post a gig</button>
+        <div className="mk-empty-actions">
+          <button className="mk-btn" onClick={() => navigate('/post')}>Post a gig</button>
           {widen}
         </div>
       </div>
@@ -366,19 +366,37 @@ export default function FeedPage() {
   return (
     <AppShell active="work">
       <div className="feed-main mk">
-        <header className="mk-top">
+        {/* One toolbar: where, what, in what order. The page used to open
+            with a headline band and a wall of category tiles instead. */}
+        <header className="mk-bar">
           <label className="mk-loc">
             <span className="mk-loc-ic">{I.pin}</span>
-            <span className="mk-loc-text">
-              <span className="mk-loc-eyebrow">Work near you</span>
-              <span className="mk-loc-value">Within {RANGE_LABEL[range]} {I.chevron}</span>
-            </span>
+            <span className="mk-loc-value">Within {RANGE_LABEL[range]} {I.chevron}</span>
             <select className="mk-loc-select" value={range} aria-label="Distance"
               onChange={e => setRange(e.target.value)}>
               {RANGES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
             </select>
           </label>
-          <div className="mk-top-actions">
+
+          <label className="mk-search">
+            <span className="mk-search-ic">{I.search}</span>
+            <input className="mk-search-input" type="text" aria-label="Search listings"
+              placeholder="Search gigs, skills or people"
+              value={query} onChange={e => setQuery(e.target.value)} />
+            {query && (
+              <button type="button" className="mk-search-clear" onClick={() => setQuery('')}
+                aria-label="Clear search">{I.x}</button>
+            )}
+          </label>
+
+          <select className="mk-sort" value={sort} aria-label="Sort" onChange={e => setSort(e.target.value)}>
+            <option value="match">For you</option>
+            <option value="soon">Ending soon</option>
+            <option value="pay">Top pay</option>
+            <option value="near">Nearest</option>
+          </select>
+
+          <div className="mk-bar-actions">
             <button type="button" className={`mk-icon-btn ${savedOnly ? 'is-on' : ''}`}
               onClick={() => setSavedOnly(v => !v)} aria-pressed={savedOnly}
               aria-label={`Saved listings (${saved.size})`}>
@@ -389,152 +407,125 @@ export default function FeedPage() {
           </div>
         </header>
 
-        <div className="mk-lead">
-          <section className="mk-hero">
-            <h1 className="mk-hero-title">
-              {loading ? 'Finding work near you…'
-                : needsLocation ? 'See what’s around you'
-                : pot > 0 ? <><span className="mk-hero-money">{money(pot)}</span> in paid gigs near you</>
-                : inRange.length > 0 ? 'Work is waiting near you'
-                : 'Your area is wide open'}
-            </h1>
-            {!loading && (
-              <p className="mk-hero-sub">
-                {needsLocation ? 'Share your location to see gigs and collabs in your range'
-                  : inRange.length > 0
-                    ? <>
-                        <span className="mk-live" aria-hidden="true" />
-                        <strong>{inRange.length}</strong> live within {RANGE_LABEL[range]}
-                        {nearest != null && <> · closest <strong>{distance(nearest)}</strong> away</>}
-                      </>
-                    : 'Post the first listing around here and people nearby will see it'}
-              </p>
-            )}
-          </section>
-
-          <div className="mk-intents">
-            <button type="button" className={`mk-intent is-gig ${kind === 'freelance' ? 'is-on' : ''}`}
-              aria-pressed={kind === 'freelance'}
-              onClick={() => setKind(k => (k === 'freelance' ? 'all' : 'freelance'))}>
-              <span className="mk-intent-ic">{I.wallet}</span>
-              <span className="mk-intent-text">
-                <span className="mk-intent-name">Earn</span>
-                <span className="mk-intent-sub">
-                  {loading ? 'Paid gigs' : `${gigs.length} paid ${gigs.length === 1 ? 'gig' : 'gigs'}`}
-                </span>
-              </span>
-            </button>
-            <button type="button" className={`mk-intent is-team ${kind === 'collab' ? 'is-on' : ''}`}
-              aria-pressed={kind === 'collab'}
-              onClick={() => setKind(k => (k === 'collab' ? 'all' : 'collab'))}>
-              <span className="mk-intent-ic">{I.team}</span>
-              <span className="mk-intent-text">
-                <span className="mk-intent-name">Team up</span>
-                <span className="mk-intent-sub">
-                  {loading ? 'Teams forming' : `${teams.length} ${teams.length === 1 ? 'team' : 'teams'} forming`}
-                </span>
-              </span>
-            </button>
-          </div>
-        </div>
-
-        <div className="mk-section-head">
-          <h2 className="mk-section-title">Browse by skill</h2>
-          {category && <button type="button" className="mk-link" onClick={() => setCategory('')}>Clear</button>}
-        </div>
-        <div className="mk-rail">
-          {rail.map(c => {
-            const n = catCounts[c.id] || 0;
-            const on = category === c.id;
-            return (
-              <button key={c.id} type="button" style={{ '--cat': c.hue }} aria-pressed={on}
-                className={`mk-cat ${on ? 'is-on' : ''} ${n ? '' : 'is-empty'}`}
-                onClick={() => setCategory(on ? '' : c.id)}>
-                <span className="mk-cat-ic">
-                  {c.icon}
-                  {n > 0 && <span className="mk-cat-n">{n}</span>}
-                </span>
-                <span className="mk-cat-name">{c.label}</span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Search and sort stick on scroll; whatever filters are switched on
-            ride along underneath, so you can always see and undo them. */}
-        <div className="mk-bar">
-          <div className="mk-bar-row">
-            <label className="mk-search">
-              <span className="mk-search-ic">{I.search}</span>
-              <input className="mk-search-input" type="text" aria-label="Search listings"
-                placeholder="Search gigs or skills"
-                value={query} onChange={e => setQuery(e.target.value)} />
-              {query && (
-                <button type="button" className="mk-search-clear" onClick={() => setQuery('')}
-                  aria-label="Clear search">{I.x}</button>
+        <div className="mk-summary">
+          <span className="mk-summary-main">
+            {loading ? 'Finding work near you…'
+              : needsLocation ? 'Share your location to see gigs and collabs in your range'
+              : (
+                <>
+                  <span className="mk-fact">
+                    <span className="mk-live" aria-hidden="true" />
+                    <b>{inRange.length}</b> live within {RANGE_LABEL[range]}
+                  </span>
+                  {pot > 0 && (
+                    <span className="mk-fact">
+                      <span className="mk-dot">·</span>
+                      <span className="mk-summary-money">{money(pot)}</span> on offer
+                    </span>
+                  )}
+                  {nearest != null && (
+                    <span className="mk-fact">
+                      <span className="mk-dot">·</span> closest {distance(nearest)}
+                    </span>
+                  )}
+                </>
               )}
-            </label>
-            <select className="mk-sort" value={sort} aria-label="Sort" onChange={e => setSort(e.target.value)}>
-              <option value="match">For you</option>
-              <option value="soon">Ending soon</option>
-              <option value="pay">Top pay</option>
-              <option value="near">Nearest</option>
-            </select>
-          </div>
+          </span>
           {tokens.length > 0 && (
             <div className="mk-tokens">
               {tokens.map(t => (
                 <button key={t.key} type="button" className="mk-token" onClick={t.clear}
-                  aria-label={`Remove filter: ${t.label}`}>
-                  {t.label}{I.x}
-                </button>
+                  aria-label={`Remove filter: ${t.label}`}>{t.label}{I.x}</button>
               ))}
-              {tokens.length > 1 && <button type="button" className="mk-link" onClick={clearAll}>Clear all</button>}
+              <button type="button" className="mk-link" onClick={clearAll}>Clear all</button>
             </div>
           )}
         </div>
 
-        <div className="mk-results-head">
-          <h2 className="mk-section-title">{resultsTitle}</h2>
-          {!loading && <span className="mk-results-n">{shown.length} live</span>}
-        </div>
+        <div className="mk-body">
+          {/* Filters live in a rail on a laptop and as a scrolling strip on a
+              phone — the same rows either way. */}
+          <aside className="mk-rail" aria-label="Filters">
+            <div className="mk-rail-group">
+              <span className="mk-rail-label">Type</span>
+              {[
+                { id: 'all', label: 'Everything', n: inRange.length, icon: I.search },
+                { id: 'freelance', label: 'Paid gigs', n: gigs.length, icon: I.wallet },
+                { id: 'collab', label: 'Teams', n: teams.length, icon: I.team },
+              ].map(t => (
+                <button key={t.id} type="button" aria-pressed={kind === t.id}
+                  className={`mk-rail-row ${kind === t.id ? 'is-on' : ''}`}
+                  onClick={() => setKind(t.id)}>
+                  <span className="mk-rail-ic">{t.icon}</span>
+                  <span className="mk-rail-name">{t.label}</span>
+                  <span className="mk-rail-n">{t.n}</span>
+                </button>
+              ))}
+            </div>
 
-        {loading ? (
-          <div className="mk-grid">
-            {[0, 1, 2].map(n => (
-              <div key={n} className="mk-skel-card" style={{ animationDelay: `${n * 90}ms` }}>
-                <div className="ds-skel sk-lg" />
-                <div className="ds-skel sk-md" />
-                <div className="ds-skel sk-sm" />
-                <div className="ds-skel sk-foot" />
+            <div className="mk-rail-group">
+              <span className="mk-rail-label">Skill</span>
+              {rail.map(c => {
+                const n = catCounts[c.id] || 0;
+                const on = category === c.id;
+                return (
+                  <button key={c.id} type="button" aria-pressed={on}
+                    className={`mk-rail-row ${on ? 'is-on' : ''} ${n ? '' : 'is-empty'}`}
+                    onClick={() => setCategory(on ? '' : c.id)}>
+                    <span className="mk-rail-ic" style={on ? { color: c.hue } : undefined}>{c.icon}</span>
+                    <span className="mk-rail-name">{c.label}</span>
+                    <span className="mk-rail-n">{n}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </aside>
+
+          <div className="mk-results">
+            <div className="mk-results-head">
+              <h2 className="mk-results-title">{resultsTitle}</h2>
+              {!loading && <span className="mk-results-n">{shown.length} shown</span>}
+            </div>
+
+            {loading ? (
+              <div className="mk-grid">
+                {[0, 1, 2, 3, 4, 5].map(n => (
+                  <div key={n} className="mk-skel-card">
+                    <div className="ds-skel sk-lg" />
+                    <div className="ds-skel sk-md" />
+                    <div className="ds-skel sk-sm" />
+                    <div className="ds-skel sk-foot" />
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        ) : shown.length === 0 ? renderEmpty() : (
-          <div className="mk-grid">
-            {shown.map((item, i) => {
-              const key = `${item.kind}-${item.id}`;
-              const props = {
-                item,
-                now,
-                isNew: newIds.has(key),
-                saved: saved.has(key),
-                onSave: (e) => toggleSave(item, e),
-                onOpen: () => setViewItem(item),
-                style: { animationDelay: `${Math.min(i, 8) * 45}ms` },
-              };
-              return item.kind === 'freelance'
-                ? <GigCard key={key} {...props} />
-                : <TeamCard key={key} {...props} />;
-            })}
-          </div>
-        )}
+            ) : shown.length === 0 ? renderEmpty() : (
+              <div className="mk-grid">
+                {shown.map((item, i) => {
+                  const key = `${item.kind}-${item.id}`;
+                  const props = {
+                    item,
+                    now,
+                    isNew: newIds.has(key),
+                    saved: saved.has(key),
+                    onSave: (e) => toggleSave(item, e),
+                    onOpen: () => setViewItem(item),
+                    style: { animationDelay: `${Math.min(i, 6) * 25}ms` },
+                  };
+                  return item.kind === 'freelance'
+                    ? <GigCard key={key} {...props} />
+                    : <TeamCard key={key} {...props} />;
+                })}
+              </div>
+            )}
 
-        {!loading && hasMore && !savedOnly && (
-          <button className="load-more-btn" onClick={handleLoadMore} disabled={loadingMore}>
-            {loadingMore ? 'Loading…' : 'Load more'}
-          </button>
-        )}
+            {!loading && hasMore && !savedOnly && (
+              <button className="mk-btn is-quiet" style={{ marginTop: 14 }}
+                onClick={handleLoadMore} disabled={loadingMore}>
+                {loadingMore ? 'Loading…' : 'Load more'}
+              </button>
+            )}
+          </div>
+        </div>
       </div>
 
       {showWelcome && (

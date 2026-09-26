@@ -39,7 +39,7 @@
   padding: 14px 16px;
   background: #0d0d0d;
   border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 16px;
+  border-radius: 10px;
 }
 .apl-price {
   font-family: var(--font-display);
@@ -78,7 +78,7 @@
 .apl-card {
   background: linear-gradient(180deg, #121212, #0a0a0a);
   border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 20px;
+  border-radius: 12px;
   padding: 18px 18px 16px;
   animation: cardIn 0.3s ease both;
 }
