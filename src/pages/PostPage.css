@@ -2,7 +2,7 @@
   /* See .apl-page — .app-main is a flex column, so this needs an explicit
      width or it shrinks to its content instead of filling the screen. */
   width: 100%;
-  max-width: 720px;
+  max-width: 1080px;
   margin: 0 auto;
   padding: 28px 20px 96px;
   position: relative;

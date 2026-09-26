@@ -4,7 +4,7 @@
   /* .app-main is a flex column; a wrapper with auto side margins and no
      explicit width sizes to its content instead of its max-width. */
   width: 100%;
-  max-width: 720px;
+  max-width: 1120px;
   margin: 0 auto;
   padding: 24px clamp(16px, 4vw, 24px) 90px;
 }
@@ -218,4 +218,18 @@
   .st-invite { flex-wrap: wrap; }
   .st-invite-link { flex-basis: 100%; }
   .st-invite .st-btn { flex: 1; }
+}
+
+/* On a laptop a single 720px column of short cards left most of the screen
+   empty. The cards are independent groups, so above 1000px they sit in two
+   columns; the back link and the page header still span the full width. */
+@media (min-width: 1000px) {
+  .st-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+    column-gap: 14px;
+  }
+  .st-back,
+  .st-head { grid-column: 1 / -1; }
 }
