@@ -21,6 +21,9 @@
 }
 
 :root .app-shell .feed-main.mk {
+  /* .app-main is a flex column; a wrapper with auto side margins and no
+     explicit width sizes to its content instead of its max-width. */
+  width: 100%;
   --mk-gutter: 16px;
   max-width: 1440px;
   margin: 0 auto;

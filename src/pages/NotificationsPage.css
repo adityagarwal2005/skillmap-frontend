@@ -2,6 +2,9 @@
    Each row is typed by what it means: money and gigs carry the brand,
    finished work is green, a decline is amber, people are violet. */
 .notif-wrapper {
+  /* .app-main is a flex column; a wrapper with auto side margins and no
+     explicit width sizes to its content instead of its max-width. */
+  width: 100%;
   max-width: 680px;
   margin: 0 auto;
   padding: 28px 24px 80px;

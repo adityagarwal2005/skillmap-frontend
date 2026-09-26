@@ -1,6 +1,9 @@
 /* Settings — grouped cards, one control per row, and real switches.
    Everything is on theme tokens so the page reads the same in both. */
 .st-wrap {
+  /* .app-main is a flex column; a wrapper with auto side margins and no
+     explicit width sizes to its content instead of its max-width. */
+  width: 100%;
   max-width: 720px;
   margin: 0 auto;
   padding: 24px clamp(16px, 4vw, 24px) 90px;

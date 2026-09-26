@@ -1,4 +1,7 @@
 .apps-wrapper {
+  /* .app-main is a flex column; a wrapper with auto side margins and no
+     explicit width sizes to its content instead of its max-width. */
+  width: 100%;
   max-width: 760px;
   margin: 0 auto;
   padding: 28px 24px 60px;
