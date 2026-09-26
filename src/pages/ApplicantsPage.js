@@ -8,6 +8,7 @@ import {
 } from '../api/work';
 import { getMyCollabPosts, getCollabApplicants, respondToCollabRequest } from '../api/collab';
 import AppShell from '../components/AppShell';
+import { money } from '../components/ListingCard';
 import NotificationBell from '../components/NotificationBell';
 import './FeedPage.css';
 import './PostPage.css';
@@ -136,7 +137,7 @@ export default function ApplicantsPage() {
 
         {post && (
           <div className="apl-meta">
-            {isFreelance && <span className="apl-price">₹{post.payment_amount}</span>}
+            {isFreelance && <span className="apl-price">{money(post.payment_amount)}</span>}
             {post.status !== 'closed' && (
               <span className={`apl-time ${tl === 'Expired' ? 'is-expired' : ''}`}>
                 {tl ? `⏳ ${tl}` : 'No expiry set'}
