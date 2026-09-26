@@ -118,7 +118,7 @@
   color: var(--text-1);
   background: var(--surface-2);
   border: 1px solid var(--hairline-str);
-  box-shadow: 0 0 0 5px var(--brand-dim);
+  box-shadow: 0 0 0 3px var(--brand-dim);
 }
 .fm-avatar-pic img { width: 100%; height: 100%; object-fit: cover; }
 .fm-avatar-btn {

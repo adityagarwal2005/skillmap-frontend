@@ -39,7 +39,7 @@
 .convs-title-row { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .app-shell .convs-title {
   font-family: var(--font-display);
-  font-size: clamp(1.75rem, 6vw, 2.25rem);
+  font-size: clamp(1.375rem, 2.6vw, 1.75rem);
   font-weight: 800;
   letter-spacing: -0.045em;
   line-height: 1;
@@ -350,7 +350,7 @@
   font-size: 0.8125rem;
   font-weight: 800;
   color: #fff;
-  background: linear-gradient(180deg, var(--tone), var(--tone));
+  background: var(--tone);
   transition: transform var(--t-fast) var(--spring);
 }
 .thread-work-go:active { transform: scale(0.96); }

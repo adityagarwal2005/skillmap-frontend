@@ -84,7 +84,10 @@ export default function PublicProfilePage() {
     ? (profile.skills_detail || (profile.skills || []).map(n => ({ name: n, endorsements: 0 })))
     : [];
   const avail = profile ? AVAILABILITY[profile.status] : null;
-  const rating = Number(profile?.rating) || 0;
+  // A star without reviews behind it is a number nobody can check, so the
+  // rating only shows once at least one review exists.
+  const reviewCount = Number(profile?.review_count) || 0;
+  const rating = reviewCount > 0 ? Number(profile?.rating) || 0 : 0;
   const whatsapp = profile?.whatsapp
     ? `https://wa.me/${String(profile.whatsapp).replace(/\D/g, '')}`
     : null;
@@ -125,8 +128,8 @@ export default function PublicProfilePage() {
               <div className="pub-stat">
                 <span className="pub-stat-val">{rating > 0 ? `★ ${rating.toFixed(1)}` : 'New'}</span>
                 <span className="pub-stat-label">
-                  {profile.review_count > 0
-                    ? `${profile.review_count} review${profile.review_count === 1 ? '' : 's'}`
+                  {reviewCount > 0
+                    ? `${reviewCount} review${reviewCount === 1 ? '' : 's'}`
                     : 'No reviews yet'}
                 </span>
               </div>

@@ -388,12 +388,12 @@ body::after {
 :root .app-shell .profile-avatar {
   box-shadow:
     0 0 0 1px rgba(255,255,255,0.14),
-    0 0 0 5px rgba(239,95,38,0.14),
+    0 0 0 3px rgba(239,95,38,0.14),
     var(--lift-2);
 }
 
 :root .app-shell .profile-name {
-  font-size: clamp(1.875rem, 8vw, 2.75rem);
+  font-size: clamp(1.5rem, 3.4vw, 2rem);
   letter-spacing: -0.045em;
   line-height: 1;
 }

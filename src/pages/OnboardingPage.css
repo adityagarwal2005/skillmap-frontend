@@ -58,7 +58,7 @@
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: linear-gradient(90deg, var(--brand), var(--brand-bright));
+  background: var(--brand);
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 0.45s var(--spring-soft);
