@@ -2,6 +2,8 @@
   "buildCommand": "CI=false npm run build",
   "rewrites": [
     { "source": "/.well-known/(.*)", "destination": "/.well-known/$1" },
+    { "source": "/sitemap.xml", "destination": "/api/sitemap" },
+    { "source": "/u/:username", "destination": "/api/profile?username=:username" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
