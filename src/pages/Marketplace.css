@@ -777,3 +777,58 @@
 @media (prefers-reduced-motion: reduce) {
   .mk-card, .mk-sheet, .mk-sheet-overlay, .mk-live { animation: none; }
 }
+
+/* ── Listing photo ──────────────────────────────────────────────────
+   Most listings are text-only, so the thumbnail sits beside the title
+   rather than above it: a full-width cover on the minority of cards
+   that have a photo would leave ragged gaps across the grid rows. */
+.mk-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+}
+.mk-main-text { flex: 1; min-width: 0; }
+
+.mk-thumb {
+  position: relative;
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  margin-top: 1px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--surface-flat);
+  border: 1px solid var(--hairline);
+}
+.mk-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.mk-thumb-play {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: rgba(0,0,0,0.35);
+}
+.mk-thumb-play svg { width: 16px; height: 16px; }
+
+/* The photo narrows the text column, so allow the title a third line
+   there rather than cutting the listing off mid-phrase. */
+.mk-main:has(.mk-thumb) .mk-title { -webkit-line-clamp: 3; }
+
+.mk-rail-more {
+  margin-top: 4px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-3);
+  transition: color var(--t-fast) ease, background var(--t-fast) ease;
+}
+.mk-rail-more:hover { color: var(--text-1); background: var(--hairline); }

@@ -1,4 +1,4 @@
-import { cldAvatar } from '../utils/cloudinaryUrl';
+import { cldAvatar, cldResize } from '../utils/cloudinaryUrl';
 import '../pages/Marketplace.css';
 
 /* The two listing shapes — a paid gig and a collab — shared by the feed and
@@ -68,6 +68,7 @@ export const ICONS = {
   check:   svg(<path d="M20 6 9 17l-5-5" />),
   plus:    svg(<path d="M12 5v14M5 12h14" />),
   arrow:   svg(<path d="M5 12h14M13 6l6 6-6 6" />),
+  play:    svg(<path d="M8 5.5v13l11-6.5-11-6.5z" fill="currentColor" stroke="none" />),
 };
 
 export const Bookmark = ({ on }) => (
@@ -111,6 +112,30 @@ export function Skills({ skills, limit = 2 }) {
       {skills.slice(0, limit).map(s => <span key={s} className="mk-skill">{s}</span>)}
       {extra > 0 && <span className="mk-skill is-more">+{extra}</span>}
     </div>
+  );
+}
+
+/* The photo on a listing.
+   Posting offers up to four images and tells you "work with a photo gets
+   picked more" — and then the feed card dropped every one of them. A square
+   thumbnail keeps the grid's row rhythm (a full-width cover would leave
+   ragged gaps next to the text-only cards, which are the majority). */
+export function Thumb({ item }) {
+  const src = Array.isArray(item.media) ? item.media[0] : item.media;
+  if (!src) return null;
+  const isVideo = item.media_type === 'video' || /\.(mp4|mov|webm)(\?|$)/i.test(src);
+  if (isVideo) {
+    return (
+      <span className="mk-thumb is-video" aria-hidden="true">
+        <video className="mk-thumb-img" src={src} muted playsInline preload="metadata" />
+        <span className="mk-thumb-play">{ICONS.play}</span>
+      </span>
+    );
+  }
+  return (
+    <span className="mk-thumb" aria-hidden="true">
+      <img className="mk-thumb-img" src={cldResize(src, 160, { square: true })} alt="" loading="lazy" />
+    </span>
   );
 }
 
@@ -172,13 +197,18 @@ export function GigCard({ item, now, isNew, saved, onSave, onOpen, style, intera
         {interactive && <SaveButton saved={saved} onClick={onSave} />}
       </div>
 
-      <h3 className="mk-title">{item.description || item.title}</h3>
+      <div className="mk-main">
+        <div className="mk-main-text">
+          <h3 className="mk-title">{item.description || item.title}</h3>
 
-      <div className="mk-tags">
-        <span className="mk-kind is-gig">Paid gig</span>
-        {isNew && <span className="mk-new">New</span>}
-        {needed > 1 && <span className="mk-cap">{needed} needed · {spotsLeft} left</span>}
-        <Skills skills={item.skills} />
+          <div className="mk-tags">
+            <span className="mk-kind is-gig">Paid gig</span>
+            {isNew && <span className="mk-new">New</span>}
+            {needed > 1 && <span className="mk-cap">{needed} needed · {spotsLeft} left</span>}
+            <Skills skills={item.skills} />
+          </div>
+        </div>
+        <Thumb item={item} />
       </div>
 
       <div className="mk-foot">
@@ -212,12 +242,17 @@ export function TeamCard({ item, now, isNew, saved, onSave, onOpen, style, inter
         {interactive && <SaveButton saved={saved} onClick={onSave} />}
       </div>
 
-      <h3 className="mk-title">{item.title}</h3>
+      <div className="mk-main">
+        <div className="mk-main-text">
+          <h3 className="mk-title">{item.title}</h3>
 
-      <div className="mk-tags">
-        <span className="mk-kind is-team">Team</span>
-        {isNew && <span className="mk-new">New</span>}
-        <Skills skills={item.skills} />
+          <div className="mk-tags">
+            <span className="mk-kind is-team">Team</span>
+            {isNew && <span className="mk-new">New</span>}
+            <Skills skills={item.skills} />
+          </div>
+        </div>
+        <Thumb item={item} />
       </div>
 
       <div className="mk-foot">

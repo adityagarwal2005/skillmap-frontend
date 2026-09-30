@@ -69,6 +69,7 @@ export default function FeedPage() {
   const [query, setQuery]     = useState('');
   const [sort, setSort]       = useState('match');   // match | soon | pay | near
   const [category, setCategory] = useState('');      // SKILL_CATEGORIES id
+  const [showAllSkills, setShowAllSkills] = useState(false);
   const [saved, setSaved]     = useState(() => {
     try { return new Set(JSON.parse(localStorage.getItem('smSaved') || '[]')); }
     catch { return new Set(); }
@@ -273,6 +274,7 @@ export default function FeedPage() {
     () => [...SKILL_CATEGORIES].sort((a, b) => (catCounts[b.id] || 0) - (catCounts[a.id] || 0)),
     [catCounts],
   );
+  const emptySkillCount = rail.length - rail.filter(c => (catCounts[c.id] || 0) > 0).length;
 
   const q = query.trim().toLowerCase();
   const shown = inRange.filter(it => {
@@ -465,7 +467,12 @@ export default function FeedPage() {
 
             <div className="mk-rail-group">
               <span className="mk-rail-label">Skill</span>
-              {rail.map(c => {
+              {/* Skills nobody is hiring for right now are hidden behind the
+                  toggle. Half the rail was rows reading 0, which is a filter
+                  that can only ever empty the screen. The selected one always
+                  stays visible so a filter can't hide its own control. */}
+              {rail.filter(c => (catCounts[c.id] || 0) > 0 || category === c.id || showAllSkills)
+                   .map(c => {
                 const n = catCounts[c.id] || 0;
                 const on = category === c.id;
                 return (
@@ -478,6 +485,12 @@ export default function FeedPage() {
                   </button>
                 );
               })}
+              {emptySkillCount > 0 && (
+                <button type="button" className="mk-rail-more"
+                  onClick={() => setShowAllSkills(v => !v)} aria-expanded={showAllSkills}>
+                  {showAllSkills ? 'Show fewer' : `Show all ${rail.length} skills`}
+                </button>
+              )}
             </div>
           </aside>
 
