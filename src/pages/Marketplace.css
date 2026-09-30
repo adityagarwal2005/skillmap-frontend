@@ -832,3 +832,16 @@
   transition: color var(--t-fast) ease, background var(--t-fast) ease;
 }
 .mk-rail-more:hover { color: var(--text-1); background: var(--hairline); }
+
+/* Sits between the poster and the Apply button, so the footer reads
+   "who posted it · how crowded it is · what you can do about it". */
+.mk-applied {
+  flex-shrink: 0;
+  margin-left: auto;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.mk-foot .mk-applied + .mk-cta { margin-left: 8px; }

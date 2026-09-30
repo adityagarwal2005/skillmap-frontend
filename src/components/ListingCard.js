@@ -139,6 +139,16 @@ export function Thumb({ item }) {
   );
 }
 
+export const COLLAB_LABEL = { paid: 'Paid', equity: 'Equity', experience: 'For experience' };
+
+/* How many people already applied. On a listing that closes in hours this is
+   the difference between "worth writing a pitch" and "already crowded", and
+   the feed has always had the number without ever showing it. */
+export function Applied({ n }) {
+  if (!n) return null;
+  return <span className="mk-applied">{n} applied</span>;
+}
+
 function SaveButton({ saved, onClick }) {
   return (
     <button type="button" className={`mk-save ${saved ? 'is-saved' : ''}`} onClick={onClick}
@@ -221,6 +231,7 @@ export function GigCard({ item, now, isNew, saved, onSave, onOpen, style, intera
             </span>
           )}
         </span>
+        <Applied n={item.responses_count} />
         <span className="mk-cta is-gig">Apply</span>
       </div>
     </article>
@@ -247,7 +258,9 @@ export function TeamCard({ item, now, isNew, saved, onSave, onOpen, style, inter
           <h3 className="mk-title">{item.title}</h3>
 
           <div className="mk-tags">
-            <span className="mk-kind is-team">Team</span>
+            <span className="mk-kind is-team">
+          {COLLAB_LABEL[item.collab_type] ? `Team · ${COLLAB_LABEL[item.collab_type]}` : 'Team'}
+        </span>
             {isNew && <span className="mk-new">New</span>}
             <Skills skills={item.skills} />
           </div>
@@ -260,6 +273,7 @@ export function TeamCard({ item, now, isNew, saved, onSave, onOpen, style, inter
           <Avatar user={item.user} />
           <span className="mk-poster-name">{item.user.username}</span>
         </span>
+        <Applied n={item.applicants} />
         <span className="mk-cta is-team">Apply</span>
       </div>
     </article>
