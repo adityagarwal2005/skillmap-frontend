@@ -306,12 +306,39 @@
   border-radius: 12px;
   background: var(--surface-1);
   border: 1px solid var(--hairline);
-  transition: border-color var(--t-fast) ease, background var(--t-fast) ease;
-  animation: mkIn var(--t-med) ease both;
+  /* The card is the thing you touch most, so it answers properly: it lifts
+     off the page, picks up its own shadow, warms its border to the listing's
+     tone, and eases the photo in. Transform and box-shadow only — both are
+     compositor-driven, so a grid of thirty stays at 60fps. */
+  transition:
+    transform var(--t-med) var(--ease-spring),
+    box-shadow var(--t-med) var(--ease-out),
+    border-color var(--t-fast) ease,
+    background var(--t-fast) ease;
+  animation: mkIn 0.34s var(--ease-spring) both;
+  will-change: transform;
 }
-.mk-card:hover { border-color: var(--hairline-str); background: var(--surface-2); }
-.mk-card:focus-visible { outline: 2px solid var(--tone); outline-offset: 1px; }
+.mk-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--tone-line);
+  background: var(--surface-2);
+  box-shadow: var(--e-2);
+}
+/* Pressing it should feel like pressing something. */
+.mk-card:active { transform: translateY(-1px) scale(0.994); transition-duration: 0.08s; }
+
+.mk-card:focus-visible {
+  outline: 2px solid var(--tone);
+  outline-offset: 2px;
+  transform: translateY(-2px);
+  box-shadow: var(--e-2);
+}
 .mk-card.is-new { border-color: var(--tone-line); }
+
+/* The photo settles as the card rises. */
+.mk-thumb-img { transition: transform var(--t-slow) var(--ease-out); }
+.mk-card:hover .mk-thumb-img { transform: scale(1.06); }
+
 
 .mk-fuse {
   position: absolute;
@@ -375,9 +402,22 @@
   color: var(--text-3);
   transition: color var(--t-fast) ease, background var(--t-fast) ease;
 }
-.mk-save svg { width: 14px; height: 14px; }
+.mk-save svg {
+  width: 14px;
+  height: 14px;
+  transition: transform var(--t-med) var(--ease-spring);
+}
 .mk-save:hover { color: var(--text-1); background: var(--hairline); }
+.mk-save:active svg { transform: scale(0.8); transition-duration: 0.08s; }
 .mk-save.is-saved { color: var(--tone); }
+/* Saving something should land, not just recolour. */
+.mk-save.is-saved svg { animation: mkSave 0.42s var(--ease-spring); }
+
+@keyframes mkSave {
+  0%   { transform: scale(0.7); }
+  55%  { transform: scale(1.22); }
+  100% { transform: scale(1); }
+}
 
 .mk-title {
   font-size: 0.9375rem;
@@ -481,7 +521,8 @@
   color: var(--tone);
   background: var(--tone-dim);
   border: 1px solid var(--tone-line);
-  transition: color var(--t-fast) ease, background var(--t-fast) ease;
+  transition: color var(--t-fast) ease, background var(--t-fast) ease,
+              border-color var(--t-fast) ease;
 }
 .mk-card:hover .mk-cta, .mk-card:focus-visible .mk-cta {
   color: #fff;
@@ -845,3 +886,28 @@
   white-space: nowrap;
 }
 .mk-foot .mk-applied + .mk-cta { margin-left: 8px; }
+
+/* Anyone who has asked their system to reduce motion gets the same screen
+   without the movement — states still change, they just don't travel. */
+@media (prefers-reduced-motion: reduce) {
+  .mk-card,
+  .mk-card:hover,
+  .mk-card:active,
+  .mk-card:focus-visible { transform: none; animation: none; }
+  .mk-card:hover .mk-thumb-img { transform: none; }
+  .mk-save.is-saved svg { animation: none; }
+  .mk-live { animation: none; }
+}
+
+/* Sentinel for the sticky toolbar: zero-height, sits where the bar starts. */
+.mk-bar-sentinel { display: block; height: 1px; margin-bottom: -1px; }
+
+/* Once listings pass underneath, the toolbar separates from them. */
+.mk-bar {
+  transition: box-shadow var(--t-med) var(--ease-out),
+              border-color var(--t-med) ease;
+}
+.mk-bar.is-stuck {
+  border-bottom-color: var(--hairline-str);
+  box-shadow: var(--e-2);
+}

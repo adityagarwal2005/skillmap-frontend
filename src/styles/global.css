@@ -99,7 +99,12 @@
 html { font-size: 16px; overflow-x: hidden; }
 
 body {
-  overflow-x: hidden;
+  /* `clip`, not `hidden`: overflow-x: hidden turns body into a scroll
+     container, and a sticky descendant then sticks to that container rather
+     than to the viewport — which is why the feed's toolbar scrolled away
+     instead of staying put. `clip` cuts the same horizontal overflow without
+     creating a scrollport. html still carries hidden as the backstop. */
+  overflow-x: clip;
   background: var(--bg);
   color: var(--text-1);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
@@ -208,7 +213,13 @@ a { text-decoration: none; color: inherit; }
   to   { opacity: 1; transform: translateY(0); }
 }
 .feed-main, .profile-wrapper, .people-wrapper, .convs-panel, .notif-wrapper, .settings-wrapper, .search-wrapper, .apps-wrapper, .create-wrapper, .edit-wrapper, .detail-wrapper {
-  animation: pageIn 0.25s var(--ease-out-expo) both;
+  /* `backwards`, not `both`: `both` keeps the last keyframe applied forever,
+     so translateY(0) left a permanent transform on every page wrapper — and a
+     transformed ancestor becomes the containing block for position: sticky,
+     which silently broke the feed's sticky toolbar and the filter rail. The
+     end state here is just the element's natural one, so filling forwards
+     bought nothing. */
+  animation: pageIn 0.25s var(--ease-out-expo) backwards;
 }
 
 /* ── Primary buttons (Uber-style: white fill, black text) ─────────

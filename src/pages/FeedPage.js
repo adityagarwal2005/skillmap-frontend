@@ -70,6 +70,11 @@ export default function FeedPage() {
   const [sort, setSort]       = useState('match');   // match | soon | pay | near
   const [category, setCategory] = useState('');      // SKILL_CATEGORIES id
   const [showAllSkills, setShowAllSkills] = useState(false);
+  // The toolbar is sticky, so once listings slide under it it needs to read
+  // as the layer above them. Watching a sentinel costs nothing per frame —
+  // a scroll handler would run on the main thread the whole way down.
+  const barSentinel = useRef(null);
+  const [barStuck, setBarStuck] = useState(false);
   const [saved, setSaved]     = useState(() => {
     try { return new Set(JSON.parse(localStorage.getItem('smSaved') || '[]')); }
     catch { return new Set(); }
@@ -365,12 +370,26 @@ export default function FeedPage() {
   const viewFilled = viewItem?.hired_count || 0;
   const viewClosed = !!viewItem && !(parseTs(viewItem.expires_at) > now);
 
+  useEffect(() => {
+    const el = barSentinel.current;
+    if (!el || typeof IntersectionObserver === 'undefined') return undefined;
+    // threshold 1: the bar counts as stuck the moment the sentinel is even
+    // partly out of view, which is exactly when the bar stops moving.
+    const io = new IntersectionObserver(
+      ([entry]) => setBarStuck(!entry.isIntersecting),
+      { threshold: 1 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   return (
     <AppShell active="work">
       <div className="feed-main mk">
         {/* One toolbar: where, what, in what order. The page used to open
             with a headline band and a wall of category tiles instead. */}
-        <header className="mk-bar">
+        <span ref={barSentinel} className="mk-bar-sentinel" aria-hidden="true" />
+        <header className={`mk-bar ${barStuck ? 'is-stuck' : ''}`}>
           <label className="mk-loc">
             <span className="mk-loc-ic">{I.pin}</span>
             <span className="mk-loc-value">Within {RANGE_LABEL[range]} {I.chevron}</span>
