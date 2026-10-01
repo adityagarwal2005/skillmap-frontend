@@ -892,8 +892,10 @@
 .mk-rail-more:hover { color: var(--text-1); background: var(--hairline); }
 
 /* Sits between the poster and the Apply button, so the footer reads
-   "who posted it · how crowded it is · what you can do about it". */
-.mk-applied {
+   "who posted it · how crowded it is · what you can do about it".
+   Named -n, not .mk-applied: that one is the sheet's green "Application
+   sent" panel, and sharing the name painted the card's count as a pill. */
+.mk-applied-n {
   flex-shrink: 0;
   margin-left: auto;
   font-size: 0.72rem;
@@ -902,7 +904,7 @@
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
-.mk-foot .mk-applied + .mk-cta { margin-left: 8px; }
+.mk-foot .mk-applied-n + .mk-cta { margin-left: 8px; }
 
 /* Anyone who has asked their system to reduce motion gets the same screen
    without the movement — states still change, they just don't travel. */

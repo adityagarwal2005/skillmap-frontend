@@ -146,7 +146,7 @@ export const COLLAB_LABEL = { paid: 'Paid', equity: 'Equity', experience: 'For e
    the feed has always had the number without ever showing it. */
 export function Applied({ n }) {
   if (!n) return null;
-  return <span className="mk-applied">{n} applied</span>;
+  return <span className="mk-applied-n">{n} applied</span>;
 }
 
 function SaveButton({ saved, onClick }) {
