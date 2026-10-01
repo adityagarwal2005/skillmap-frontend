@@ -14,6 +14,8 @@ import { cldThumb } from '../utils/cloudinaryUrl';
 import { ICONS as I, money, distance, parseTs, Bookmark, Avatar, Seats, Skills, MetaChips, GigCard, TeamCard } from '../components/ListingCard';
 import { SKILL_CATEGORIES, categoriesOf, categoryById } from '../utils/skillCategories';
 import usePoll from '../hooks/usePoll';
+import useSpotlight from '../hooks/useSpotlight';
+import useCountUp from '../hooks/useCountUp';
 import useNow from '../hooks/useNow';
 import './FeedPage.css';
 import './Marketplace.css';
@@ -73,8 +75,10 @@ export default function FeedPage() {
   // The toolbar is sticky, so once listings slide under it it needs to read
   // as the layer above them. Watching a sentinel costs nothing per frame —
   // a scroll handler would run on the main thread the whole way down.
+  const gridRef = useRef(null);
   const barSentinel = useRef(null);
   const [barStuck, setBarStuck] = useState(false);
+  useSpotlight(gridRef);
   const [saved, setSaved]     = useState(() => {
     try { return new Set(JSON.parse(localStorage.getItem('smSaved') || '[]')); }
     catch { return new Set(); }
@@ -268,6 +272,10 @@ export default function FeedPage() {
   const pot = gigs.reduce((s, it) => s + (Number(it.payment_amount) || 0), 0);
   const nearest = inRange.map(it => it.distance_km).filter(d => d != null).sort((a, b) => a - b)[0];
 
+  // Declared after inRange: calling the hook above it would read a const
+  // in its temporal dead zone.
+  const liveCount = useCountUp(inRange.length);
+
   const catCounts = useMemo(() => {
     const counts = {};
     inRange.forEach(it => categoriesOf(it).forEach(id => { counts[id] = (counts[id] || 0) + 1; }));
@@ -436,7 +444,7 @@ export default function FeedPage() {
                 <>
                   <span className="mk-fact">
                     <span className="mk-live" aria-hidden="true" />
-                    <b>{inRange.length}</b> live within {RANGE_LABEL[range]}
+                    <b>{liveCount}</b> live within {RANGE_LABEL[range]}
                   </span>
                   {pot > 0 && (
                     <span className="mk-fact">
@@ -513,7 +521,7 @@ export default function FeedPage() {
             </div>
           </aside>
 
-          <div className="mk-results">
+          <div className="mk-results" ref={gridRef}>
             <div className="mk-results-head">
               <h2 className="mk-results-title">{resultsTitle}</h2>
               {!loading && <span className="mk-results-n">{shown.length} shown</span>}

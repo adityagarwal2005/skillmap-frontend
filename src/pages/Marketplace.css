@@ -936,3 +936,26 @@
   .mk-apply:active:not(:disabled) { transform: none; }
   .mk-spin { animation-duration: 1.4s; }
 }
+
+/* ── Cursor spotlight ───────────────────────────────────────────────
+   A warm highlight that tracks the pointer across the card under it.
+   Purely decorative, so it is opt-in from JS: useSpotlight only sets
+   --spot on devices with a real pointer and no reduced-motion request,
+   and without it this paints nothing at all. */
+.mk-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: var(--spot, 0);
+  transition: opacity var(--t-med) var(--ease-out);
+  background: radial-gradient(
+    240px circle at var(--mx, 50%) var(--my, 50%),
+    color-mix(in srgb, var(--tone) 13%, transparent),
+    transparent 72%
+  );
+}
+/* The card's own content sits above the wash. */
+.mk-card > * { position: relative; z-index: 1; }
