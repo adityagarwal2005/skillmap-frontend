@@ -194,7 +194,7 @@ export default function PostDetailPage() {
   };
 
   return (
-    <AppShell active="home">
+    <AppShell active="work">
       <div className="detail-wrapper">
         <button className="profile-back" onClick={() => navigate(-1)}>← Back</button>
 

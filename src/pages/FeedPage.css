@@ -336,7 +336,10 @@
   font-weight: 650;
   box-shadow: inset 0 0 0 1px rgba(255,255,255,0.07);
 }
-.sidebar-link.active .sidebar-link-ic { color: var(--cyan, #00d3f2); }
+/* The active item used to pair an orange tint with a cyan bar, a cyan icon
+   and a cyan glow — three accents arguing on one row. It's the brand colour
+   throughout now, and the bar grows in rather than appearing. */
+.sidebar-link.active .sidebar-link-ic { color: var(--brand); }
 .sidebar-link.active::before {
   content: "";
   position: absolute;
@@ -345,8 +348,25 @@
   bottom: 9px;
   width: 3px;
   border-radius: 0 3px 3px 0;
-  background: var(--cyan, #00d3f2);
-  box-shadow: 0 0 10px rgba(0,211,242,0.6);
+  background: var(--brand);
+  transform-origin: center;
+  animation: navMark 0.3s var(--ease-spring) both;
+}
+@keyframes navMark {
+  from { transform: scaleY(0); opacity: 0; }
+  to   { transform: scaleY(1); opacity: 1; }
+}
+
+/* The icon leads the hover, and the row takes a press. */
+.sidebar-link:hover .sidebar-link-ic { transform: translateX(1px); }
+.sidebar-link:active { transform: scale(0.985); }
+.sidebar-link { transition: background 0.2s var(--ease-out-expo, ease), color 0.2s ease,
+                            transform var(--t-fast) var(--ease-out); }
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar-link.active::before { animation: none; }
+  .sidebar-link:hover .sidebar-link-ic,
+  .sidebar-link:active { transform: none; }
 }
 
 .sidebar-badge {

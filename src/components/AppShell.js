@@ -35,7 +35,10 @@ const I = {
 
 const NAV = [
   { group: 'Discover', items: [
-    { id: 'home',    label: 'Home',    path: '/',       icon: I.home },
+    // id is 'work', not 'home': deriveActive('/') and the mobile tab bar
+    // both call this destination 'work', and the mismatch meant the desktop
+    // sidebar highlighted nothing at all on the feed.
+    { id: 'work',    label: 'Home',    path: '/',       icon: I.home },
     { id: 'people',  label: 'People',  path: '/people', icon: I.people },
   ]},
   { group: 'Work', items: [
