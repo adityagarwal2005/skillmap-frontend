@@ -689,6 +689,7 @@ export default function FeedPage() {
                   value={applyMsg} onChange={e => setApplyMsg(e.target.value)} />
                 <button type="button" className={`mk-apply ${isGigView ? 'is-gig' : 'is-team'}`}
                   onClick={handleApply} disabled={applying || viewClosed}>
+                  {applying && <span className="mk-spin" aria-hidden="true" />}
                   {viewClosed ? 'This listing has closed'
                     : applying ? 'Sending…' : isGigView ? `Apply · ${money(viewItem.payment_amount)}` : 'Apply to collab'}
                 </button>

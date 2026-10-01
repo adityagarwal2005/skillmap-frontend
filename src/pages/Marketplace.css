@@ -630,7 +630,7 @@
   background: var(--surface-1);
   border: 1px solid var(--hairline);
   box-shadow: var(--e-3);
-  animation: mkSheetUp 0.22s var(--ease-out) both;
+  animation: mkSheetUp 0.34s var(--ease-spring) both;
 }
 @media (min-width: 720px) {
   .mk-sheet-overlay { align-items: center; padding: 24px; }
@@ -744,6 +744,10 @@
 }
 .mk-pitch:focus { outline: none; border-color: var(--brand-line); box-shadow: 0 0 0 2px var(--brand-dim); }
 .mk-apply {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
   width: 100%;
   height: 44px;
   border-radius: 9px;
@@ -751,10 +755,23 @@
   font-weight: 700;
   color: #fff;
   background: var(--tone);
-  transition: opacity var(--t-fast) ease;
+  transition: opacity var(--t-fast) ease, transform var(--t-fast) var(--ease-out);
 }
 .mk-apply:hover:not(:disabled) { opacity: 0.92; }
+/* Sending is the one moment worth waiting on, so the button says so with
+   more than a word change. */
+.mk-apply:active:not(:disabled) { transform: scale(0.985); }
 .mk-apply:disabled { opacity: 0.5; }
+.mk-spin {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.35);
+  border-top-color: #fff;
+  animation: mkSpin 0.6s linear infinite;
+}
+@keyframes mkSpin { to { transform: rotate(360deg); } }
 .mk-applied {
   display: flex;
   align-items: center;
@@ -910,4 +927,10 @@
 .mk-bar.is-stuck {
   border-bottom-color: var(--hairline-str);
   box-shadow: var(--e-2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mk-sheet, .mk-sheet-overlay { animation: none; }
+  .mk-apply:active:not(:disabled) { transform: none; }
+  .mk-spin { animation-duration: 1.4s; }
 }
