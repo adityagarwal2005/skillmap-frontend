@@ -78,11 +78,23 @@ export const Bookmark = ({ on }) => (
   </svg>
 );
 
+/* Images arrive whenever the network says so, which made thumbnails and
+   avatars snap in mid-scroll. They fade up instead.
+
+   The ref callback matters as much as onLoad: a cached image can already be
+   complete before React attaches the handler, and onLoad would never fire —
+   leaving it invisible forever. */
+export const fadeInOnLoad = (el) => {
+  if (el && el.complete && el.naturalWidth > 0) el.classList.add('is-loaded');
+};
+export const markLoaded = (e) => e.currentTarget.classList.add('is-loaded');
+
 export function Avatar({ user, className = '' }) {
   return (
     <span className={`mk-ava ${className}`}>
       {user.profile_image
-        ? <img className="ava-img" src={cldAvatar(user.profile_image, 80)} alt="" />
+        ? <img className="ava-img" src={cldAvatar(user.profile_image, 80)} alt=""
+            ref={fadeInOnLoad} onLoad={markLoaded} />
         : (user.username?.[0] || '?').toUpperCase()}
     </span>
   );
@@ -134,7 +146,8 @@ export function Thumb({ item }) {
   }
   return (
     <span className="mk-thumb" aria-hidden="true">
-      <img className="mk-thumb-img" src={cldResize(src, 160, { square: true })} alt="" loading="lazy" />
+      <img className="mk-thumb-img" src={cldResize(src, 160, { square: true })} alt="" loading="lazy"
+        ref={fadeInOnLoad} onLoad={markLoaded} />
     </span>
   );
 }

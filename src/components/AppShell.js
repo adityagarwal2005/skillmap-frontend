@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { flushSync } from 'react-dom';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getUnreadCount } from '../api/notifications';
@@ -218,9 +219,33 @@ export default function AppShell({
     ? missing[0]
     : `${missing.slice(0, -1).join(', ')} and ${missing[missing.length - 1]}`;
 
+  // Cross-fade the page on a nav tap via the View Transitions API. Router's
+  // own `viewTransition` option only works behind a data router and this app
+  // mounts a plain <BrowserRouter>, so the transition is started here
+  // instead: startViewTransition needs the DOM already updated inside its
+  // callback, which is what flushSync guarantees.
+  //
+  // Only .app-main carries a view-transition-name, so the nav rail stays put
+  // while the page under it changes. No API support, or a reduced-motion
+  // request, and this is a plain navigate().
+  const go = (path) => {
+    const calm = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (typeof document.startViewTransition !== 'function' || calm) {
+      navigate(path);
+      return;
+    }
+    const vt = document.startViewTransition(() => flushSync(() => navigate(path)));
+    // A transition can legitimately be abandoned — the tab is hidden, or a
+    // second nav starts before this one settles — and both promises reject
+    // when it is. That is not an application error, but leaving it unhandled
+    // surfaces as one, so it is swallowed deliberately.
+    vt.ready.catch(() => {});
+    vt.finished.catch(() => {});
+  };
+
   const handleNav = (item) => {
-    if (item.id === 'profile') { navigate(`/profile/${user?.id}`); return; }
-    if (item.path) navigate(item.path);
+    if (item.id === 'profile') { go(`/profile/${user?.id}`); return; }
+    if (item.path) go(item.path);
   };
 
   return (

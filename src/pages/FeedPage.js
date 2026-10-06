@@ -276,6 +276,11 @@ export default function FeedPage() {
   // in its temporal dead zone.
   const liveCount = useCountUp(inRange.length);
 
+  // Remounting the grid when any filter changes replays the staggered
+  // entrance, so you see the screen answer you rather than the contents
+  // swapping in place.
+  const gridKey = `${kind}|${category}|${sort}|${savedOnly}|${range}`;
+
   const catCounts = useMemo(() => {
     const counts = {};
     inRange.forEach(it => categoriesOf(it).forEach(id => { counts[id] = (counts[id] || 0) + 1; }));
@@ -539,7 +544,7 @@ export default function FeedPage() {
                 ))}
               </div>
             ) : shown.length === 0 ? renderEmpty() : (
-              <div className="mk-grid">
+              <div className="mk-grid" key={gridKey}>
                 {shown.map((item, i) => {
                   const key = `${item.kind}-${item.id}`;
                   const props = {

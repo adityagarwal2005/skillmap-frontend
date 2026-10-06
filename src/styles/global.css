@@ -361,3 +361,20 @@ body { text-rendering: optimizeLegibility; }
 /* Every interactive surface gets the same press feedback. */
 .ds-press { transition: transform var(--t-fast) var(--ease-out), opacity var(--t-fast) ease; }
 .ds-press:active { transform: scale(0.97); }
+
+/* ── Route transitions ──────────────────────────────────────────────
+   Naming only the content area keeps the sidebar and tab bar out of the
+   snapshot, so they stay still while the page beneath them changes.
+   Browsers without the View Transitions API ignore all of this. */
+.app-main { view-transition-name: page; }
+
+::view-transition-old(page) { animation: vtOut 0.14s ease both; }
+::view-transition-new(page) { animation: vtIn 0.26s var(--ease-out-expo, ease) both; }
+
+@keyframes vtOut { to { opacity: 0; } }
+@keyframes vtIn  { from { opacity: 0; transform: translateY(6px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(page),
+  ::view-transition-new(page) { animation: none; }
+}

@@ -959,3 +959,18 @@
 }
 /* The card's own content sits above the wash. */
 .mk-card > * { position: relative; z-index: 1; }
+
+/* Images fade up as they decode rather than snapping in mid-scroll.
+   is-loaded is set by a ref callback as well as onLoad, so a cached image
+   that was already complete before React attached the handler still shows. */
+.mk-thumb-img,
+.mk-ava .ava-img {
+  opacity: 0;
+  transition: opacity 0.4s var(--ease-out);
+}
+.mk-thumb-img.is-loaded,
+.mk-ava .ava-img.is-loaded { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .mk-thumb-img, .mk-ava .ava-img { opacity: 1; transition: none; }
+}
