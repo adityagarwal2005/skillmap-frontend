@@ -150,11 +150,19 @@
 }
 
 .pub-stats {
-  display: flex;
-  flex-wrap: wrap;
+  /* A grid, not a wrapping flex row: with three stats a phone put two on the
+     first line and stranded the third underneath, centred on its own. This is
+     the page people share, so it holds its shape at every width. */
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
   justify-content: center;
   gap: 10px;
   margin-top: 22px;
+  width: 100%;
+  max-width: 420px;
+  margin-left: auto;
+  margin-right: auto;
 }
 .pub-stat {
   display: flex;
