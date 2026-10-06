@@ -262,7 +262,9 @@
 .sidebar-group { margin-bottom: 22px; }
 
 /* Dark-rail colour overrides */
-.sidebar .sidebar-group-label { color: rgba(245,245,247,0.4); }
+/* Was white at 40%, which lands at 3.61:1 on the rail — under the bar for
+   11px text. The token is tuned to clear it on every surface. */
+.sidebar .sidebar-group-label { color: var(--text-3); }
 
 .sidebar-post-btn {
   margin-top: auto;

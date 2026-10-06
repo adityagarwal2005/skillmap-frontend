@@ -48,13 +48,16 @@
   /* The marketplace palette was only ever given dark values, so switching
      to light in Settings left every card a dark slab while the text on it
      flipped dark too — titles were unreadable across the whole feed. */
-  --surface-1:    linear-gradient(180deg, #ffffff 0%, #fbfbfd 100%);
-  --surface-2:    linear-gradient(180deg, #f7f7f9 0%, #f2f2f5 100%);
-  --surface-flat: #f5f5f7;
-  --hairline:     rgba(0,0,0,0.09);
-  --hairline-str: rgba(0,0,0,0.17);
+  --surface-1:    #FFFFFF;
+  --surface-2:    #F4F5F7;
+  --surface-flat: #F4F5F7;
+  --hairline:     rgba(0,0,0,0.08);
+  --hairline-str: rgba(0,0,0,0.15);
   --brand-dim:    rgba(239,95,38,0.1);
   --brand-line:   rgba(239,95,38,0.32);
+  /* #ef5f26 on its own 10% tint over white is 2.95:1 — unreadable at chip
+     size. This deeper shade of the same hue reaches 4.61:1. */
+  --brand-text:   #C2410C;
   --ok-dim:       rgba(34,197,94,0.12);
   --warn-dim:     rgba(245,165,36,0.14);
   --danger-dim:   rgba(255,69,58,0.11);
@@ -64,7 +67,7 @@
 
   /* #aeaeb2 and the dark-mode amber both sat near 2:1 on a white ground —
      fine as dim text on black, unreadable once the ground flipped. */
-  --text-3: #75757a;
+  --text-3: #686D76;
   --warn:   #b45309;
 }
 
@@ -481,12 +484,15 @@ body::after {
   --team-bright: #a095ff;
   --team-dim:    rgba(123,108,246,0.16);
   --team-line:   rgba(123,108,246,0.42);
+  /* #7b6cf6 on its own tint is 3.85:1; the bright shade is 5.97:1. */
+  --team-text:   #a095ff;
 }
 [data-theme="light"] {
   --team:        #5b4be0;
   --team-bright: #6a5bf0;
   --team-dim:    rgba(91,75,224,0.1);
   --team-line:   rgba(91,75,224,0.3);
+  --team-text:   #5b4be0;   /* 5.16:1 on its own tint over white — fine as is */
 }
 
 /* ═══════════════════════════════════════════════

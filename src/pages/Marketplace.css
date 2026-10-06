@@ -9,12 +9,14 @@
    ═══════════════════════════════════════════════════════════════════ */
 .mk-card.is-gig, .mk-kind.is-gig, .mk-cta.is-gig, .mk-apply.is-gig, .mk-sheet.is-gig {
   --tone: var(--brand);
+  --tone-text: var(--brand-text);
   --tone-bright: var(--brand-bright);
   --tone-dim: var(--brand-dim);
   --tone-line: var(--brand-line);
 }
 .mk-card.is-team, .mk-kind.is-team, .mk-cta.is-team, .mk-apply.is-team, .mk-sheet.is-team {
   --tone: var(--team);
+  --tone-text: var(--team-text);
   --tone-bright: var(--team-bright);
   --tone-dim: var(--team-dim);
   --tone-line: var(--team-line);
@@ -200,7 +202,9 @@
   color: var(--text-1);
   font-variant-numeric: tabular-nums;
 }
-.mk-summary-money { color: var(--brand); font-weight: 700; font-variant-numeric: tabular-nums; }
+/* The money figure is the loudest fact on the page, so it uses the
+   on-tint brand shade — plain --brand on a light ground is 3.21:1. */
+.mk-summary-money { color: var(--brand-text); font-weight: 700; font-variant-numeric: tabular-nums; }
 .mk-live {
   display: inline-block;
   width: 6px;
@@ -442,7 +446,7 @@
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--tone);
+  color: var(--tone-text);
   background: var(--tone-dim);
 }
 .mk-new {
@@ -518,7 +522,7 @@
   border-radius: 7px;
   font-size: 0.8125rem;
   font-weight: 700;
-  color: var(--tone);
+  color: var(--tone-text);
   background: var(--tone-dim);
   border: 1px solid var(--tone-line);
   transition: color var(--t-fast) ease, background var(--t-fast) ease,

@@ -8,7 +8,11 @@
    data-theme also render dark from the first paint, no flash of light theme.
    [data-theme="light"] is the opt-in override for the theme toggle. */
 :root {
-  --bg:          #000000;
+  /* Not pure black. #000 behind white text halates on an OLED phone and
+     leaves no room below a card to read as depth — every surface has to go
+     lighter, so nothing can ever recede. A tinted near-black gives the ramp
+     somewhere to stand. */
+  --bg:          #0A0B0D;
 
   /* Legacy names, kept as aliases of the marketplace system below. Half the
      app was written against these when they were flat black-and-white, so
@@ -20,9 +24,12 @@
   --elevated:    var(--surface-flat);
   --border:      var(--hairline);
   --border-md:   var(--hairline-str);
-  --text-1:      #ffffff;
-  --text-2:      rgba(255,255,255,0.66);
-  --text-3:      rgba(255,255,255,0.42);
+  /* Solid values rather than white at an opacity: composited text over a
+     gradient surface renders muddier than a flat colour, and #fff at full
+     strength is harsher than anything print would set. */
+  --text-1:      #F2F3F5;
+  --text-2:      #A2A7B0;
+  --text-3:      #858B96;
   --accent:      #ffffff;
   --accent-low:  rgba(255,255,255,0.1);
   --navy:        #ffffff;
@@ -41,15 +48,22 @@
      Flat pure-black read as "list of things"; a talent marketplace needs
      depth and hierarchy. Surfaces are near-black gradients separated by
      hairlines, so cards feel like objects you can act on. */
-  --surface-1:   linear-gradient(180deg, #121212 0%, #0a0a0a 100%);
-  --surface-2:   linear-gradient(180deg, #171717 0%, #0e0e0e 100%);
-  --surface-flat:#101010;
-  --hairline:    rgba(255,255,255,0.10);
-  --hairline-str:rgba(255,255,255,0.20);
+  /* Flat, not gradients. A vertical gradient on every card fights the real
+     elevation cue (the hairline plus the shadow) and smears text rendering
+     on top of it. Three steps, each a measurable notch apart. */
+  --surface-1:   #141519;
+  --surface-2:   #1A1C21;
+  --surface-flat:#101115;
+  --hairline:    rgba(255,255,255,0.09);
+  --hairline-str:rgba(255,255,255,0.17);
 
   /* Accent — orange carries money, urgency and primary intent */
   --brand:       #ef5f26;
   --brand-bright:#ff8a5c;
+  /* The fill colour and the colour you set text in on a tint of that fill
+     are two different jobs. On dark the brand itself clears 4.5:1 on its own
+     14% tint; on light it only reaches 2.95:1, so light overrides this. */
+  --brand-text:  #ef5f26;
   --brand-dim:   rgba(239,95,38,0.14);
   --brand-line:  rgba(239,95,38,0.38);
 
@@ -83,10 +97,13 @@
 }
 
 [data-theme="light"] {
-  --bg:          #ffffff;
-  --text-1:      #1d1d1f;
-  --text-2:      #6e6e73;
-  --text-3:      #aeaeb2;
+  /* The page ground is a shade off white so that cards, which are pure
+     white, sit above it. Ground and card both at #fff left nothing to
+     separate them but a hairline. */
+  --bg:          #FBFBFC;
+  --text-1:      #17181B;
+  --text-2:      #5B616B;
+  --text-3:      #7C828D;
   --accent:      #1d1d1f;
   --accent-low:  rgba(0,0,0,0.05);
   --navy:        #1d1d1f;
@@ -114,6 +131,10 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11', 'ss01';
+  /* Inter is loaded with its optical-size axis (opsz 14..32) and nothing was
+     using it: the face now thickens slightly at small sizes and tightens at
+     display sizes, the way a type family is meant to be set. */
+  font-optical-sizing: auto;
   text-rendering: optimizeLegibility;
 }
 
