@@ -202,17 +202,92 @@
   background: rgba(239,95,38,0.8);
 }
 
+/* ── Aurora ─────────────────────────────────────────────────────────
+   One static glow made the hero look lit by a lamp that never moved.
+   Three blurred blobs drifting on long, mismatched cycles never repeat the
+   same arrangement, so the background reads as alive without ever asking
+   to be looked at.
+
+   They move on transform only — animating a gradient's position would
+   repaint a full-screen layer every frame; translating a composited layer
+   costs nothing. */
 .landing-hero-glow {
   position: absolute;
   z-index: 1;
-  width: 70vh;
-  height: 70vh;
-  left: 50%;
-  top: -20vh;
-  transform: translateX(-50%);
-  background: radial-gradient(circle at center,
-    rgba(239,95,38,0.34), rgba(255,138,92,0.12) 40%, transparent 68%);
-  filter: blur(24px);
+  inset: -20% -10% auto -10%;
+  height: 120vh;
+  pointer-events: none;
+  overflow: hidden;
+}
+.landing-hero-glow::before,
+.landing-hero-glow::after,
+.landing-hero::before {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  will-change: transform;
+}
+.landing-hero-glow::before {
+  width: 56vw;
+  height: 56vw;
+  left: 18%;
+  top: -14%;
+  background: radial-gradient(circle at center, rgba(239,95,38,0.40), transparent 66%);
+  animation: lpAurora1 19s ease-in-out infinite;
+}
+.landing-hero-glow::after {
+  width: 44vw;
+  height: 44vw;
+  right: 4%;
+  top: 6%;
+  background: radial-gradient(circle at center, rgba(255,138,92,0.26), transparent 64%);
+  animation: lpAurora2 24s ease-in-out infinite;
+}
+/* A cool counterweight so the warm blobs have something to sit against. */
+.landing-hero::before {
+  z-index: 1;
+  width: 40vw;
+  height: 40vw;
+  left: -6%;
+  bottom: -18%;
+  background: radial-gradient(circle at center, rgba(123,108,246,0.22), transparent 66%);
+  animation: lpAurora3 29s ease-in-out infinite;
+}
+
+@keyframes lpAurora1 {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  33%      { transform: translate3d(6vw, 5vh, 0) scale(1.12); }
+  66%      { transform: translate3d(-4vw, 9vh, 0) scale(0.94); }
+}
+@keyframes lpAurora2 {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  40%      { transform: translate3d(-7vw, 7vh, 0) scale(1.15); }
+  75%      { transform: translate3d(3vw, -4vh, 0) scale(0.9); }
+}
+@keyframes lpAurora3 {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50%      { transform: translate3d(8vw, -8vh, 0) scale(1.2); }
+}
+
+/* ── Grain ──────────────────────────────────────────────────────────
+   A touch of noise over the whole hero. Large flat gradients band on a
+   cheap panel; grain breaks the banding up and is the difference between
+   a dark page and one that looks printed. */
+.landing-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-hero-glow::before,
+  .landing-hero-glow::after,
+  .landing-hero::before { animation: none; }
 }
 
 @keyframes landingFadeUp {
@@ -1296,4 +1371,41 @@
 @media (prefers-reduced-motion: reduce) {
   .lp-tilt { transform: none !important; }
   .lp-mini.is-gig, .lp-mini.is-team, .lp-frame-top { transform: none; }
+}
+
+/* ── Headline reveal ────────────────────────────────────────────────
+   The lines rise out from behind a mask on load. The overflow clip sits
+   on .lp-line and the movement on the child, so the script face's
+   descenders are never cut while it travels. */
+.landing-hero-display .lp-line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.06em;   /* room for descenders inside the clip */
+  margin-bottom: -0.06em;
+}
+.landing-hero-display .lp-line > * {
+  display: inline-block;
+  animation: lpLineUp 0.86s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+@keyframes lpLineUp {
+  from { transform: translateY(104%) rotate(2deg); opacity: 0; }
+  to   { transform: translateY(0) rotate(0); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-hero-display .lp-line > * { animation: none; }
+}
+
+/* The magnetic pull is written straight to transform each frame; this only
+   governs the glide back to centre when the pointer leaves. */
+[data-magnetic] { transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+@media (prefers-reduced-motion: reduce) { [data-magnetic] { transition: none; } }
+
+/* Each aurora blob is a large blurred layer, and blur is the expensive part
+   of this page. A mid-range Android gets one of them rather than three —
+   the hero still has depth and the phone still scrolls at 60fps. */
+@media (max-width: 760px) {
+  .landing-hero-glow::after,
+  .landing-hero::before { display: none; }
+  .landing-hero-glow::before { filter: blur(54px); animation-duration: 26s; }
 }

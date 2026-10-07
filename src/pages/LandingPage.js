@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import usePageMeta from '../hooks/usePageMeta';
 import useTilt from '../hooks/useTilt';
+import useMagnetic from '../hooks/useMagnetic';
 import Logo from '../components/Logo';
 import GetAppButton from '../components/GetApp';
 import './LandingPage.css';
@@ -79,6 +80,7 @@ export default function LandingPage() {
   const heroRef = useRef(null);
   const tiltRef = useRef(null);
   useTilt(tiltRef);
+  useMagnetic(heroRef);
   const finalRef = useRef(null);
   const [pastHero, setPastHero] = useState(false);
   const [atFinal, setAtFinal] = useState(false);
@@ -155,8 +157,13 @@ export default function LandingPage() {
               never said what this is. A reader has to learn the category, the
               transaction and the catch in one breath: it's a marketplace, the
               work is paid, and it's close enough to walk to. */}
+          {/* Each line is its own element so they can rise in sequence. The
+              mask is on a wrapper, not the text, so descenders and the
+              script face aren't clipped mid-animation. */}
           <h1 className="landing-hero-display">
-            Get paid for<br />what you're good at.<br /><em>Within 5 km.</em>
+            <span className="lp-line"><span>Get paid for</span></span>
+            <span className="lp-line"><span style={{ animationDelay: '90ms' }}>what you're good at.</span></span>
+            <span className="lp-line"><em style={{ animationDelay: '180ms' }}>Within 5 km.</em></span>
           </h1>
           <p className="landing-hero-sub">
             DoitHere is a hyperlocal marketplace for short freelance gigs and
@@ -164,10 +171,10 @@ export default function LandingPage() {
             apply, and everything is sorted by how close it actually is.
           </p>
           <div className="landing-hero-actions">
-            <button className="landing-cta-lg" onClick={goRegister}>
+            <button className="landing-cta-lg" data-magnetic onClick={goRegister}>
               Find work near you
             </button>
-            <button className="landing-cta-ghost" onClick={goRegister}>
+            <button className="landing-cta-ghost" data-magnetic onClick={goRegister}>
               Post a gig
             </button>
           </div>
