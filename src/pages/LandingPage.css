@@ -382,10 +382,20 @@
 .lp-card:nth-child(2) { transform: rotate(-1.1deg); }
 .lp-card:nth-child(3) { transform: rotate(0.7deg) translateX(8px); }
 .lp-card:nth-child(4) { transform: rotate(-0.5deg) translateX(-6px); }
+/* The stack is a 3D scene, so a hovered card comes toward you rather than
+   just sliding up: the perspective on the parent turns translateZ into real
+   foreshortening, and the neighbours stay put behind it. */
+.lp-showcase-stack { perspective: 1100px; }
+.lp-card { transform-style: preserve-3d; }
 .lp-card:hover {
-  transform: rotate(0deg) translateX(0) translateY(-5px);
+  transform: rotate(0deg) translateX(0) translateY(-5px) translateZ(34px) rotateX(2deg);
   border-color: rgba(239,95,38,0.45);
+  box-shadow: 0 30px 70px rgba(0,0,0,0.62);
   z-index: 2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-card:hover { transform: none; }
 }
 
 .lp-card-stripe {
@@ -1265,3 +1275,25 @@
 .lp-flow-step h3 { color: #f5f5f7; letter-spacing: -0.025em; }
 .lp-flow-step p { color: rgba(245,245,247,0.62); line-height: 1.6; }
 
+
+/* ═══════════════════════════════════════════════════════════════════
+   3D — the hero mockup tilts toward the cursor.
+
+   The perspective lives on the parent and the rotation on .lp-tilt, so
+   the frame's own float keyframe keeps its transform to itself. The two
+   listing cards are pushed forward on Z: without that the tilt is just a
+   skew, and it's the parallax between the layers that reads as depth.
+   ═══════════════════════════════════════════════════════════════════ */
+@media (min-width: 1040px) {
+  .lp-hero-art { perspective: 1400px; perspective-origin: 50% 40%; }
+  .lp-tilt { transform-style: preserve-3d; will-change: transform; }
+  .lp-frame { transform-style: preserve-3d; }
+  .lp-mini.is-gig  { transform: translateZ(38px); }
+  .lp-mini.is-team { transform: translateZ(22px); }
+  .lp-frame-top    { transform: translateZ(14px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp-tilt { transform: none !important; }
+  .lp-mini.is-gig, .lp-mini.is-team, .lp-frame-top { transform: none; }
+}

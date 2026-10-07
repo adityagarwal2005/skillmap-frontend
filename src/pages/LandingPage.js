@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import usePageMeta from '../hooks/usePageMeta';
+import useTilt from '../hooks/useTilt';
 import Logo from '../components/Logo';
 import GetAppButton from '../components/GetApp';
 import './LandingPage.css';
@@ -76,6 +77,8 @@ export default function LandingPage() {
   const navigate = useNavigate();
   const [referrer, setReferrer] = useState(null);
   const heroRef = useRef(null);
+  const tiltRef = useRef(null);
+  useTilt(tiltRef);
   const finalRef = useRef(null);
   const [pastHero, setPastHero] = useState(false);
   const [atFinal, setAtFinal] = useState(false);
@@ -177,6 +180,7 @@ export default function LandingPage() {
           </div>
         </div>
         <div className="lp-hero-art" aria-hidden="true">
+          <div className="lp-tilt" ref={tiltRef}>
           <div className="lp-frame">
             <div className="lp-frame-top">
               <span className="lp-frame-pin">
@@ -221,6 +225,7 @@ export default function LandingPage() {
                 </div>
               </div>
             </article>
+          </div>
           </div>
         </div>
         <div className="landing-hero-glow" aria-hidden="true" />
