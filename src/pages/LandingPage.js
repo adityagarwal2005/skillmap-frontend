@@ -144,28 +144,36 @@ export default function LandingPage() {
           {referrer && (
             <div className="landing-invite-pill">You were invited by @{referrer}</div>
           )}
-          <div className="landing-hero-tag">Hyperlocal talent network</div>
+          <div className="landing-hero-tag">
+            <span className="landing-hero-live" aria-hidden="true" />
+            Live in Chandigarh
+          </div>
+          {/* The old headline — "Get discovered for what you actually do" —
+              never said what this is. A reader has to learn the category, the
+              transaction and the catch in one breath: it's a marketplace, the
+              work is paid, and it's close enough to walk to. */}
           <h1 className="landing-hero-display">
-            Get discovered<br />for what you<br /><em>actually</em> do.
+            Get paid for<br />what you're good at.<br /><em>Within 5 km.</em>
           </h1>
           <p className="landing-hero-sub">
-            Portfolios, gigs, and collaborators — matched to the
-            skills and people right around you, wherever you are.
+            DoitHere is a hyperlocal marketplace for short freelance gigs and
+            student project teams. Every listing shows its budget before you
+            apply, and everything is sorted by how close it actually is.
           </p>
           <div className="landing-hero-actions">
             <button className="landing-cta-lg" onClick={goRegister}>
-              Get started free
+              Find work near you
             </button>
-            <button className="landing-cta-ghost" onClick={() => navigate('/login')}>
-              Sign in
+            <button className="landing-cta-ghost" onClick={goRegister}>
+              Post a gig
             </button>
           </div>
           <div className="landing-hero-meta">
-            <span>Portfolio</span>
+            <span>Free to join</span>
             <span className="dot" />
-            <span>Gigs</span>
+            <span>No commission</span>
             <span className="dot" />
-            <span>Collab</span>
+            <span>Paid in cash, direct</span>
           </div>
         </div>
         <div className="lp-hero-art" aria-hidden="true">
@@ -383,8 +391,9 @@ export default function LandingPage() {
           <Logo size={2.6} className="lp-final-logo" />
           <h2 className="lp-final-title">Your city<br />is hiring.</h2>
           <p className="lp-final-sub">
-            The people who can pay you, team up with you, or hire you are
-            already a few minutes away. Go find them.
+            Students, designers, developers and film crews within a few
+            kilometres of you are posting paid work every week. Joining takes
+            a minute and costs nothing.
           </p>
           <div className="lp-final-actions">
             <button className="landing-cta-lg lp-final-cta" onClick={goRegister}>
