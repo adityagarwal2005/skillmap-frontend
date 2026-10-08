@@ -29,23 +29,18 @@ const CROSS = icon(<path d="M18 6 6 18M6 6l12 12" />);
 const isDone = (a) => a.completed_by_poster && a.completed_by_worker;
 
 /* Where an application stands, laid out like order tracking: what's done,
-   what's happening now, and — for a gig — what's still ahead. */
+   what's happening now, and — for a gig — what's still ahead.
+
+   Only three outcomes reach here. The server drops an application once its
+   listing's window has closed without hiring anyone, because a listing that
+   has expired can never answer you — see _application_still_matters in
+   work/views.py. */
 function trackerFor(a) {
   const gig = a.kind === 'freelance';
   const applied = { label: 'Applied', state: 'done' };
 
   if (a.status === 'declined') {
     return { tone: 'fail', line: 'Not selected this time', steps: [applied, { label: 'Not selected', state: 'failed' }] };
-  }
-  if (a.status === 'filled') {
-    return {
-      tone: 'fail',
-      line: gig ? 'Filled by someone else' : 'The team filled up',
-      steps: [applied, { label: 'Filled', state: 'failed' }],
-    };
-  }
-  if (a.status === 'closed') {
-    return { tone: 'fail', line: 'Closed before a decision', steps: [applied, { label: 'Closed', state: 'failed' }] };
   }
   if (a.status === 'pending') {
     return {
@@ -189,8 +184,8 @@ export default function ApplicationsPage() {
           <div className="loading-row"><PostCardSkeleton /><PostCardSkeleton /><PostCardSkeleton /></div>
         ) : shown.length === 0 ? (
           <div className="state-box">
-            <h3>{apps.length ? 'Nothing in this list' : 'No applications yet'}</h3>
-            <p>Apply to a gig or a team and you can follow it here, step by step.</p>
+            <h3>{apps.length ? 'Nothing in this list' : 'Nothing live right now'}</h3>
+            <p>Apply to a gig or a team and you can follow it here, step by step. Listings only run until their window closes, so anything that expired without an answer clears itself out.</p>
             <div className="state-box-actions">
               <button className="opp-cta" onClick={() => navigate('/')}>Find work near you</button>
             </div>

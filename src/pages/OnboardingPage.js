@@ -2,18 +2,12 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
-import { getCategories, addSkill, editUser, sendPhoneOTP, verifyPhoneOTP, updateStatus } from '../api/users';
+import { getCategories, addSkill, editUser, sendPhoneOTP, verifyPhoneOTP } from '../api/users';
 import Logo from '../components/Logo';
 import { SKILL_CATEGORIES, categoryByBackendName } from '../utils/skillCategories';
 import './OnboardingPage.css';
 
-const STEPS = ['You', 'Skills', 'Verify', 'Availability', 'Location'];
-
-const STATUS_OPTIONS = [
-  { value: 'open_to_freelance', label: 'Taking gigs',      desc: 'Show me paid work nearby and let people hire me', tone: 'gig' },
-  { value: 'open_to_work',      label: 'Open to work',     desc: 'Looking for part-time or full-time roles',      tone: 'work' },
-  { value: 'not_available',     label: 'Just hiring',      desc: "I'm here to post gigs and find people",          tone: 'off' },
-];
+const STEPS = ['You', 'Skills', 'Verify', 'Location'];
 
 // Until a category is picked, suggest a spread from the busiest ones.
 const STARTER_SKILLS = SKILL_CATEGORIES.slice(0, 4).flatMap(c => c.skills.slice(0, 3));
@@ -37,7 +31,6 @@ export default function OnboardingPage() {
   const [phoneVerified, setPhoneVerified] = useState(false);
   const [sendingOtp, setSendingOtp] = useState(false);
   const [verifyingOtp, setVerifyingOtp] = useState(false);
-  const [status, setStatus]         = useState(null);   // only saved if picked
   const [location, setLocation]     = useState({ lat: '', lon: '' });
   const [saving, setSaving]         = useState(false);
   const [gettingLoc, setGettingLoc] = useState(false);
@@ -108,7 +101,6 @@ export default function OnboardingPage() {
       if (selectedCat) payload.category_id = selectedCat.id;
       if (location.lat) { payload.latitude = location.lat; payload.longitude = location.lon; }
       if (Object.keys(payload).length > 0) await editUser(user.id, payload);
-      if (status) await updateStatus(status);
       for (const skill of skills) {
         try { await addSkill(user.id, skill); } catch {}
       }
@@ -266,27 +258,6 @@ export default function OnboardingPage() {
           )}
 
           {step === 3 && (
-            <>
-              <span className="ob-eyebrow">Availability</span>
-              <h1 className="ob-title">Are you taking work?</h1>
-              <p className="ob-sub">This shows on your profile. Change it any time from Settings.</p>
-              <div className="ob-options" role="radiogroup" aria-label="Availability">
-                {STATUS_OPTIONS.map(opt => (
-                  <button key={opt.value} type="button" role="radio" aria-checked={status === opt.value}
-                    className={`ob-option is-${opt.tone} ${status === opt.value ? 'is-on' : ''}`}
-                    onClick={() => setStatus(opt.value)}>
-                    <span className="ob-option-dot" aria-hidden="true" />
-                    <span className="ob-option-text">
-                      <span className="ob-option-label">{opt.label}</span>
-                      <span className="ob-option-desc">{opt.desc}</span>
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </>
-          )}
-
-          {step === 4 && (
             <>
               <span className="ob-eyebrow">Last step</span>
               <h1 className="ob-title">Where are you?</h1>

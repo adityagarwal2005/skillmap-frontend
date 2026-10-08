@@ -118,29 +118,6 @@
   color: var(--text-1);
 }
 .pub-category { margin-top: 6px; font-size: 0.9375rem; font-weight: 600; color: var(--text-2); }
-
-.pub-avail {
-  --tone: var(--brand);
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  margin-top: 12px;
-  padding: 6px 13px;
-  border-radius: 999px;
-  font-size: 0.8125rem;
-  font-weight: 800;
-  color: var(--tone);
-  background: color-mix(in srgb, var(--tone) 12%, transparent);
-  border: 1px solid color-mix(in srgb, var(--tone) 30%, transparent);
-}
-.pub-avail.is-work { --tone: var(--ok); }
-.pub-avail i {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: currentColor;
-  box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 22%, transparent);
-}
 .pub-headline {
   max-width: 46ch;
   margin-top: 14px;

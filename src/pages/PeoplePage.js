@@ -10,11 +10,6 @@ import { cldAvatar } from '../utils/cloudinaryUrl';
 import { categoryByBackendName } from '../utils/skillCategories';
 import './PeoplePage.css';
 
-const AVAILABILITY = {
-  open_to_freelance: { label: 'Taking gigs',  tone: 'gig' },
-  open_to_work:      { label: 'Open to work', tone: 'work' },
-};
-
 function Ava({ person }) {
   return (
     <span className="pp-ava">
@@ -27,7 +22,6 @@ function Ava({ person }) {
 
 function PersonCard({ person, action, onOpen, style }) {
   const meta  = person.category ? categoryByBackendName(person.category) : null;
-  const avail = AVAILABILITY[person.status];
   const rating = Number(person.rating) || 0;
   return (
     <article className="pp-card" style={style} role="link" tabIndex={0}
@@ -52,9 +46,6 @@ function PersonCard({ person, action, onOpen, style }) {
         </div>
       )}
       <div className="pp-card-foot">
-        {avail
-          ? <span className={`pp-avail is-${avail.tone}`}><i aria-hidden="true" />{avail.label}</span>
-          : <span className="pp-avail is-off">Not taking work</span>}
         {action || <span className="pp-view" aria-hidden="true">View →</span>}
       </div>
     </article>

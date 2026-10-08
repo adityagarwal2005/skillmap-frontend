@@ -11,6 +11,8 @@ import Lightbox from '../components/Lightbox';
 import Logo from '../components/Logo';
 import NotificationBell from '../components/NotificationBell';
 import { cldThumb } from '../utils/cloudinaryUrl';
+import LocationSwitcher from '../components/LocationSwitcher';
+import { locateDevice, geolocationAlreadyAllowed, readStoredPlace, storePlace } from '../utils/geo';
 import { ICONS as I, money, distance, parseTs, Bookmark, Avatar, Seats, Skills, MetaChips, GigCard, TeamCard } from '../components/ListingCard';
 import { SKILL_CATEGORIES, categoriesOf, categoryById } from '../utils/skillCategories';
 import usePoll from '../hooks/usePoll';
@@ -28,18 +30,6 @@ const RANGES = [
   { value: '10', label: '10 km' },
 ];
 const RANGE_LABEL = Object.fromEntries(RANGES.map(r => [r.value, r.label]));
-
-// One position fix, resolved to null on refusal or timeout rather than thrown.
-function locateDevice() {
-  return new Promise(resolve => {
-    if (!navigator.geolocation) { resolve(null); return; }
-    navigator.geolocation.getCurrentPosition(
-      pos => resolve({ lat: +pos.coords.latitude.toFixed(5), lon: +pos.coords.longitude.toFixed(5) }),
-      () => resolve(null),
-      { timeout: 10000, maximumAge: 300000 },
-    );
-  });
-}
 
 // "today 6:40 pm", "tomorrow 9:00 am", "Wed 11:30 am"
 function closesAt(ts) {
@@ -93,7 +83,11 @@ export default function FeedPage() {
   const [applying, setApplying] = useState(false);
   const [applied, setApplied]   = useState(false);
   const seenIds = useRef(new Set());
-  const [origin, setOrigin] = useState(null);         // a fresh device fix; null → profile location
+  // Where the feed is pointed: a saved place, a searched one, or the device.
+  // null → nothing known yet, so the server falls back to the profile location.
+  // A remembered choice is honoured before the device is ever consulted, so
+  // someone who switched to "Home" yesterday opens on Home today.
+  const [place, setPlace] = useState(readStoredPlace);
   const [originChecked, setOriginChecked] = useState(false);
   const [needsLocation, setNeedsLocation] = useState(false);
   const [locating, setLocating] = useState(false);
@@ -155,27 +149,29 @@ export default function FeedPage() {
   toast.current = showToast;
   const request = useRef(0);
 
-  // Read the device on load only when the browser already allows it, so the
-  // feed never opens on a permission prompt. Otherwise the server falls back
-  // to the location saved on the profile.
+  // With no remembered choice, read the device on load — but only when the
+  // browser already allows it, so the feed never opens on a permission prompt.
+  // Otherwise the server falls back to the location saved on the profile.
   useEffect(() => {
+    if (readStoredPlace()) { setOriginChecked(true); return undefined; }
     let alive = true;
-    const settle = (fix) => {
-      if (!alive) return;
-      if (fix) setOrigin(fix);
-      setOriginChecked(true);
-    };
-    let query = null;
-    try { query = navigator.permissions?.query({ name: 'geolocation' }); } catch { query = null; }
-    if (!query) settle(null);
-    else query.then(s => (s.state === 'granted' ? locateDevice().then(settle) : settle(null)))
-      .catch(() => settle(null));
+    geolocationAlreadyAllowed()
+      .then(allowed => (allowed ? locateDevice() : null))
+      .then(fix => {
+        if (!alive) return;
+        if (fix) setPlace({ kind: 'device', label: 'Current location', lat: fix.lat, lon: fix.lon });
+        setOriginChecked(true);
+      });
     return () => { alive = false; };
   }, []);
 
+  // Remembered across visits, so the board does not silently jump back to
+  // wherever the phone happens to be.
+  useEffect(() => { storePlace(place); }, [place]);
+
   const feedParams = useMemo(
-    () => (origin ? { radius: range, lat: origin.lat, lon: origin.lon } : { radius: range }),
-    [range, origin],
+    () => (place ? { radius: range, lat: place.lat, lon: place.lon } : { radius: range }),
+    [range, place],
   );
 
   // A new range or location refetches; `request` drops any response that
@@ -243,6 +239,18 @@ export default function FeedPage() {
     finally { setLoadingMore(false); }
   };
 
+  const pickPlace = (next) => {
+    setPlace(next);
+    // A real device fix is also written to the profile, which is what the
+    // server falls back to on any screen that has no coordinates of its own.
+    // A searched or saved place deliberately isn't: it says where you want to
+    // look, not where you are, and overwriting the profile with it would move
+    // how far away everyone else thinks you are.
+    if (next?.kind === 'device' && user?.id) {
+      editUser(user.id, { latitude: next.lat, longitude: next.lon }).catch(() => {});
+    }
+  };
+
   const shareLocation = async () => {
     setLocating(true);
     const fix = await locateDevice();
@@ -251,9 +259,7 @@ export default function FeedPage() {
       showToast('Location is blocked. Allow it for this site in your browser settings.', 'error');
       return;
     }
-    setOrigin(fix);
-    // Saved to the profile as well, so the next visit works without asking.
-    if (user?.id) editUser(user.id, { latitude: fix.lat, longitude: fix.lon }).catch(() => {});
+    pickPlace({ kind: 'device', label: 'Current location', lat: fix.lat, lon: fix.lon });
   };
 
   // Everything on the page — the headline, the tile counts, the skill rail —
@@ -326,6 +332,9 @@ export default function FeedPage() {
     : sort === 'soon' ? 'Ending soon'
     : sort === 'pay' ? 'Best paying'
     : sort === 'near' ? 'Closest to you'
+    // "near you" is a lie once you've pointed the board somewhere else, and
+    // getting that wrong is how you misread a whole screen of distances.
+    : place && place.kind !== 'device' ? `Live near ${place.label}`
     : 'Live near you';
 
   const renderEmpty = () => {
@@ -416,8 +425,9 @@ export default function FeedPage() {
             with a headline band and a wall of category tiles instead. */}
         <span ref={barSentinel} className="mk-bar-sentinel" aria-hidden="true" />
         <header className={`mk-bar ${barStuck ? 'is-stuck' : ''}`}>
+          <LocationSwitcher place={place} onPick={pickPlace} />
+
           <label className="mk-loc">
-            <span className="mk-loc-ic">{I.pin}</span>
             <span className="mk-loc-value">Within {RANGE_LABEL[range]} {I.chevron}</span>
             <select className="mk-loc-select" value={range} aria-label="Distance"
               onChange={e => setRange(e.target.value)}>

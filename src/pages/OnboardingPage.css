@@ -195,43 +195,6 @@
 .ob-chip:hover { color: var(--text-1); border-color: var(--hairline-str); }
 .ob-chip.is-on { color: var(--brand); background: var(--brand-dim); border-color: var(--brand-line); }
 
-.ob-options { display: flex; flex-direction: column; gap: 8px; }
-.ob-option {
-  --tone: var(--text-3);
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  width: 100%;
-  padding: 15px 16px;
-  border-radius: 10px;
-  text-align: left;
-  background: var(--surface-flat);
-  border: 1px solid var(--hairline);
-  transition: border-color var(--t-fast) ease, background var(--t-fast) ease;
-}
-.ob-option.is-gig  { --tone: var(--brand); }
-.ob-option.is-work { --tone: var(--green); }
-.ob-option:hover { border-color: var(--hairline-str); }
-.ob-option.is-on {
-  border-color: var(--tone);
-  background: color-mix(in srgb, var(--tone) 10%, var(--surface-flat));
-}
-.ob-option-dot {
-  flex-shrink: 0;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  border: 2px solid var(--hairline-str);
-  transition: border-color var(--t-fast) ease, box-shadow var(--t-fast) ease;
-}
-.ob-option.is-on .ob-option-dot {
-  border-color: var(--tone);
-  box-shadow: inset 0 0 0 4px var(--surface-flat), inset 0 0 0 10px var(--tone);
-}
-.ob-option-text { display: flex; flex-direction: column; gap: 2px; }
-.ob-option-label { font-size: 0.9375rem; font-weight: 800; color: var(--text-1); }
-.ob-option-desc { font-size: 0.8125rem; color: var(--text-2); }
-
 .ob-done {
   display: flex;
   align-items: center;

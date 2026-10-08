@@ -26,16 +26,9 @@ const REPORT_REASONS = [
   { value: 'other',         label: 'Other' },
 ];
 
-// The status a freelancer set in Settings, worded for someone deciding
-// whether to reach out. "Not available" shows nothing to visitors.
 const reviewDate = (ts) => {
   const d = new Date(ts);
   return Number.isNaN(d.getTime()) ? '' : d.toLocaleDateString([], { month: 'short', year: 'numeric' });
-};
-
-const AVAILABILITY = {
-  open_to_freelance: 'Available for gigs',
-  open_to_work:      'Open to work',
 };
 
 export default function ProfilePage() {
@@ -317,15 +310,6 @@ export default function ProfilePage() {
                 <div className="profile-info">
                   <h1 className="profile-name">{profile.username}</h1>
                   <p className="profile-category">{profile.category || 'Independent'}</p>
-                  {AVAILABILITY[profile.status] ? (
-                    <span className="pf-avail is-on">
-                      <span className="pf-avail-dot" />{AVAILABILITY[profile.status]}
-                    </span>
-                  ) : isOwn && (
-                    <button type="button" className="pf-avail is-off" onClick={() => navigate('/settings')}>
-                      Not taking work · Change
-                    </button>
-                  )}
                 </div>
               </div>
 

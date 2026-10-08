@@ -500,37 +500,6 @@ body::after {
 /* ═══════════════════════════════════════════════
    5f · Profile as a freelancer's card
    ═══════════════════════════════════════════════ */
-:root .app-shell .pf-avail {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  height: 26px;
-  margin-top: 8px;
-  padding: 0 11px;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  white-space: nowrap;
-}
-:root .app-shell .pf-avail.is-on {
-  color: var(--ok);
-  background: var(--ok-dim);
-  border: 1px solid color-mix(in srgb, var(--ok) 32%, transparent);
-}
-:root .app-shell .pf-avail.is-off {
-  color: var(--text-2);
-  background: var(--surface-flat);
-  border: 1px dashed var(--hairline-str);
-}
-:root .app-shell .pf-avail.is-off:hover { color: var(--text-1); border-color: var(--text-3); }
-[data-theme="light"] .app-shell .pf-avail.is-on { color: #15803d; }
-:root .app-shell .pf-avail-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--ok);
-  animation: livePulse 1.8s ease-out infinite;
-}
 :root .app-shell .pf-account-links { margin-top: 14px; }
 :root .app-shell .pf-section-head {
   display: flex;

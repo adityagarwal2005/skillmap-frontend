@@ -234,31 +234,14 @@
 .pp-card-foot {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  /* Holds only the View affordance now that the self-declared availability
+     badge is gone, so it sits on the trailing edge rather than orphaned left. */
+  justify-content: flex-end;
   gap: 10px;
   margin-top: auto;
   padding-top: 12px;
   border-top: 1px solid var(--hairline);
 }
-.pp-avail {
-  --tone: var(--text-3);
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.75rem;
-  font-weight: 800;
-  color: var(--tone);
-}
-.pp-avail i {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: currentColor;
-  box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 22%, transparent);
-}
-.pp-avail.is-gig  { --tone: var(--brand); }
-.pp-avail.is-work { --tone: var(--green); }
-.pp-avail.is-off  { font-weight: 600; }
 .pp-view { font-size: 0.8125rem; font-weight: 700; color: var(--text-3); }
 .pp-card:hover .pp-view { color: var(--text-1); }
 

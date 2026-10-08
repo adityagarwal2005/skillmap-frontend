@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import {
-  deleteUser, updateStatus, getBlockedUsers, unblockUser, getMyReferrals, getUser,
+  deleteUser, getBlockedUsers, unblockUser, getMyReferrals,
 } from '../api/users';
 import { pushSupported, isPushEnabled, enablePush, disablePush } from '../push';
 import AppShell from '../components/AppShell';
@@ -27,12 +27,6 @@ const IC = {
   phone:  ic(<><rect x="6" y="2" width="12" height="20" rx="3" /><path d="M11 18h2" /></>),
   danger: ic(<><path d="M12 9v5M12 17.5h.01" /><path d="M10.3 3.9 2.6 17.1A2 2 0 0 0 4.3 20h15.4a2 2 0 0 0 1.7-2.9L13.7 3.9a2 2 0 0 0-3.4 0z" /></>),
 };
-
-const STATUSES = [
-  { value: 'open_to_freelance', label: 'Taking gigs' },
-  { value: 'open_to_work',      label: 'Open to work' },
-  { value: 'not_available',     label: 'Not available' },
-];
 
 function Section({ icon, title, children }) {
   return (
@@ -70,7 +64,6 @@ export default function SettingsPage() {
   const navigate             = useNavigate();
 
   const [theme, setTheme]       = useState(localStorage.getItem('themeV2') || 'dark');
-  const [status, setStatus]     = useState(null);   // null until the real one loads
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [blockedUsers, setBlockedUsers] = useState([]);
   const [pushOn, setPushOn] = useState(false);
@@ -84,13 +77,6 @@ export default function SettingsPage() {
   useEffect(() => {
     getMyReferrals().then(r => setReferrals(r.data.referrals || [])).catch(() => {});
   }, []);
-
-  // The control used to open on "Not available" whatever the account
-  // actually said, so it read as a setting that had reset itself.
-  useEffect(() => {
-    if (!user?.id) return;
-    getUser(user.id).then(r => setStatus(r.data.status || 'not_available')).catch(() => {});
-  }, [user?.id]);
 
   useEffect(() => {
     getBlockedUsers().then(r => setBlockedUsers(r.data.blocked_users || [])).catch(() => {});
@@ -147,18 +133,6 @@ export default function SettingsPage() {
     } catch { showToast('Failed to unblock', 'error'); }
   };
 
-  const pickStatus = async (val) => {
-    const previous = status;
-    setStatus(val);
-    try {
-      await updateStatus(val);
-      showToast('Availability updated', 'success');
-    } catch {
-      setStatus(previous);
-      showToast('Failed to update availability', 'error');
-    }
-  };
-
   const handleDeleteAccount = async () => {
     try {
       await deleteUser(user.id);
@@ -206,22 +180,6 @@ export default function SettingsPage() {
               </div>
             </div>
           )}
-        </Section>
-
-        <Section icon={IC.wallet} title="Availability">
-          <Row label="Are you taking work?"
-            sub="Shown on your profile and next to your name." />
-          <div className="st-choices" role="radiogroup" aria-label="Availability">
-            {STATUSES.map(s => (
-              <button key={s.value} type="button" role="radio"
-                aria-checked={status === s.value}
-                className={`st-choice ${status === s.value ? 'is-on' : ''}`}
-                disabled={status === null}
-                onClick={() => pickStatus(s.value)}>
-                {s.label}
-              </button>
-            ))}
-          </div>
         </Section>
 
         <Section icon={IC.user} title="Profile & account">

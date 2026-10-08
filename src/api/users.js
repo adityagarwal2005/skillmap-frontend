@@ -41,9 +41,6 @@ export const reportContent = (reportType, targetId, reason, details = '') =>
     report_type: reportType, target_id: targetId, reason, details,
   }));
 
-export const updateStatus = (status) =>
-  API.post('/users/status/update/', new URLSearchParams({ status }));
-
 export const sendPhoneOTP = (phone) =>
   API.post('/users/phone/send-otp/', new URLSearchParams({ phone }));
 
@@ -93,3 +90,20 @@ export const getUserReviews = (userId) =>
 
 export const addReview = (revieweeId, data) =>
   API.post(`/reviews/user/${revieweeId}/add/`, new URLSearchParams(data));
+
+/* ── Saved places ────────────────────────────────────────────────────────
+   The named locations the feed can be pointed at — "Home", "PG", "Office".
+   See users.models.SavedAddress for why these exist. */
+export const getSavedAddresses = () =>
+  API.get('/users/addresses/');
+
+export const saveAddress = ({ label, address, latitude, longitude }) =>
+  API.post('/users/addresses/', new URLSearchParams({
+    label, address: address || '', latitude, longitude,
+  }));
+
+export const deleteSavedAddress = (addressId) =>
+  API.delete(`/users/addresses/${addressId}/delete/`);
+
+export const geocodeSearch = (q) =>
+  API.get('/users/geocode/', { params: { q } });

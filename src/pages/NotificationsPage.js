@@ -41,7 +41,6 @@ const TYPES = {
   proposal_accepted: { icon: GLYPH.check,   tone: 'ok',     label: 'Accepted' },
   proposal_declined: { icon: GLYPH.x,       tone: 'warn',   label: 'Declined' },
   work_assigned:     { icon: GLYPH.target,  tone: 'gig',    label: 'Hired' },
-  message:           { icon: GLYPH.chat,    tone: 'plain',  label: 'Message' },
   reaction:          { icon: GLYPH.flame,   tone: 'plain',  label: 'Reaction' },
   comment:           { icon: GLYPH.chat,    tone: 'plain',  label: 'Comment' },
   referral:          { icon: GLYPH.gift,    tone: 'ok',     label: 'Referral' },
@@ -61,7 +60,6 @@ const FALLBACK = { icon: GLYPH.bell, tone: 'plain', label: 'Update' };
 // person to rate as its actor, so it opens their profile.
 function linkFor(n, myId) {
   switch (n.type) {
-    case 'message':           return '/messages';
     case 'proposal':
     case 'application':
     case 'job_review':        return '/post';
@@ -294,7 +292,7 @@ export default function NotificationsPage() {
         ) : notifications.length === 0 ? (
           <div className="state-box">
             <h3>Nothing yet</h3>
-            <p>Applications, hires and messages all land here. Post a gig or apply to one to get things moving.</p>
+            <p>Requests, applications and hires land here — the things that need an answer from you. Chat stays in Messages.</p>
             <div className="state-box-actions">
               <button className="opp-cta" onClick={() => navigate('/')}>Find work nearby</button>
             </div>

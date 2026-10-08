@@ -12,11 +12,6 @@ const WhatsAppIcon = (
   </svg>
 );
 
-const AVAILABILITY = {
-  open_to_freelance: { label: 'Available for gigs', tone: 'gig' },
-  open_to_work:      { label: 'Open to work',       tone: 'work' },
-};
-
 const reviewDate = (ts) => {
   const d = new Date(ts);
   return Number.isNaN(d.getTime()) ? '' : d.toLocaleDateString([], { month: 'short', year: 'numeric' });
@@ -83,7 +78,6 @@ export default function PublicProfilePage() {
   const skills = profile
     ? (profile.skills_detail || (profile.skills || []).map(n => ({ name: n, endorsements: 0 })))
     : [];
-  const avail = profile ? AVAILABILITY[profile.status] : null;
   // A star without reviews behind it is a number nobody can check, so the
   // rating only shows once at least one review exists.
   const reviewCount = Number(profile?.review_count) || 0;
@@ -119,9 +113,6 @@ export default function PublicProfilePage() {
             </span>
             <h1 className="pub-name">{profile.username}</h1>
             <p className="pub-category">{profile.category || 'Independent'}</p>
-            {avail && (
-              <span className={`pub-avail is-${avail.tone}`}><i aria-hidden="true" />{avail.label}</span>
-            )}
             {profile.headline && <p className="pub-headline">{profile.headline}</p>}
 
             <div className="pub-stats">

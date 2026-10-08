@@ -1,0 +1,308 @@
+/* The place-switcher pill and its panel. Sits in the feed toolbar next to the
+   radius control: the pill answers "near where", the radius "how near". */
+
+.loc { position: relative; flex-shrink: 0; }
+.loc-scrim { display: none; }
+
+.loc-pill {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  height: 36px;
+  max-width: 230px;
+  padding: 0 11px;
+  border-radius: 8px;
+  text-align: left;
+  background: var(--surface-flat);
+  border: 1px solid var(--hairline);
+  transition: border-color var(--t-fast) ease, background var(--t-fast) ease;
+}
+.loc-pill:hover { border-color: var(--hairline-str); }
+.loc-pill.is-open { border-color: var(--brand-line, var(--hairline-str)); background: var(--surface-2); }
+
+.loc-pill-ic { display: grid; flex-shrink: 0; color: var(--brand); }
+.loc-pill-ic svg { width: 15px; height: 15px; }
+
+.loc-pill-text { display: flex; flex-direction: column; min-width: 0; line-height: 1.1; }
+.loc-pill-eyebrow {
+  font-size: 0.5625rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.loc-pill-label {
+  margin-top: 2px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--text-1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.loc-pill-chev { display: grid; flex-shrink: 0; color: var(--text-3); }
+.loc-pill-chev svg { width: 13px; height: 13px; }
+.loc-pill.is-open .loc-pill-chev { transform: rotate(180deg); }
+
+/* ── Panel ─────────────────────────────────────────────────────────────── */
+.loc-panel {
+  /* Fixed and portalled into <body>: top/left come from the pill's measured
+     position. See the comment on `anchor` in LocationSwitcher.js. */
+  position: fixed;
+  z-index: 321;
+  width: min(380px, calc(100vw - 32px));
+  /* Keeps the panel on screen when the pill sits near the right edge. */
+  max-width: calc(100vw - 32px);
+  max-height: min(70vh, 520px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 12px;
+  border-radius: var(--r-lg, 14px);
+  background: var(--surface-1);
+  border: 1px solid var(--hairline-str);
+  box-shadow: var(--e-3, 0 18px 44px rgba(0, 0, 0, 0.34));
+  animation: locIn 0.18s var(--ease-out-expo, ease) backwards;
+}
+@keyframes locIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .loc-panel { animation: none; } }
+
+.loc-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 10px 0 12px;
+  border-radius: 10px;
+  background: var(--surface-flat);
+  border: 1px solid var(--hairline);
+}
+.loc-search:focus-within { border-color: var(--hairline-str); }
+.loc-search-ic { display: grid; color: var(--text-3); }
+.loc-search-ic svg { width: 15px; height: 15px; }
+.loc-search-input {
+  flex: 1;
+  min-width: 0;
+  background: none;
+  border: 0;
+  /* 16px or iOS Safari zooms the whole page on focus. */
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-1);
+}
+.loc-search-input::placeholder { color: var(--text-3); font-weight: 500; }
+.loc-search-clear { display: grid; padding: 4px; color: var(--text-3); }
+.loc-search-clear svg { width: 14px; height: 14px; }
+.loc-search-clear:hover { color: var(--text-1); }
+
+.loc-group { margin-top: 12px; }
+.loc-group-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 2px 6px;
+}
+.loc-group-title {
+  font-size: 0.5625rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.loc-group-add {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--brand-text, var(--brand));
+}
+.loc-group-add:hover { text-decoration: underline; }
+.loc-group-add:disabled { opacity: 0.5; }
+
+.loc-note {
+  padding: 8px 4px;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--text-3);
+}
+
+/* ── Rows ──────────────────────────────────────────────────────────────── */
+.loc-row {
+  display: flex;
+  align-items: stretch;
+  gap: 4px;
+  border-radius: 10px;
+  transition: background var(--t-fast) ease;
+}
+.loc-row:hover { background: var(--hairline); }
+.loc-row.is-on { background: var(--brand-dim); }
+
+.loc-row-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 10px;
+  text-align: left;
+  border-radius: 10px;
+}
+.loc-row-main.is-wide { width: 100%; }
+.loc-row-main.is-wide:hover { background: var(--hairline); }
+.loc-row-main:disabled { opacity: 0.6; }
+
+.loc-row-ic {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  color: var(--text-2);
+  background: var(--surface-flat);
+  border: 1px solid var(--hairline);
+}
+.loc-row-ic svg { width: 15px; height: 15px; }
+.loc-row-ic.is-live { color: var(--brand); background: var(--brand-dim); border-color: var(--brand-line, var(--hairline)); }
+
+.loc-row-text { display: flex; flex-direction: column; min-width: 0; gap: 2px; }
+.loc-row-label {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text-1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.loc-row-sub {
+  font-size: 0.75rem;
+  color: var(--text-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.loc-row-side {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 36px;
+  border-radius: 10px;
+  color: var(--text-3);
+  transition: color var(--t-fast) ease, background var(--t-fast) ease;
+}
+.loc-row-side svg { width: 15px; height: 15px; }
+.loc-row-side:hover { color: var(--text-1); background: var(--surface-2); }
+.loc-row-side.is-danger:hover { color: #ff453a; background: rgba(255, 69, 58, 0.12); }
+
+/* ── Naming a place before it is saved ─────────────────────────────────── */
+.loc-naming {
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--surface-flat);
+  border: 1px solid var(--hairline-str);
+}
+.loc-naming-q {
+  display: block;
+  margin-bottom: 9px;
+  font-size: 0.8125rem;
+  font-weight: 800;
+  color: var(--text-1);
+}
+.loc-naming-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.loc-naming-input {
+  flex: 1;
+  min-width: 120px;
+  height: 36px;
+  padding: 0 11px;
+  border-radius: 9px;
+  background: var(--surface-1);
+  border: 1px solid var(--hairline-str);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-1);
+}
+.loc-naming-save {
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 999px;
+  background: var(--brand);
+  color: #fff;
+  font-size: 0.8125rem;
+  font-weight: 800;
+}
+.loc-naming-save:disabled { opacity: 0.5; }
+.loc-naming-cancel {
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid var(--hairline-str);
+  color: var(--text-2);
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+.loc-naming-sub {
+  display: block;
+  margin-top: 8px;
+  font-size: 0.75rem;
+  color: var(--text-3);
+}
+
+/* On a phone this is a bottom sheet rather than a dropdown.
+
+   As a dropdown it was anchored to a pill sitting at the left edge of a
+   crowded toolbar, so it hung off the side of the screen — and the pill
+   itself was squeezed to a few dozen pixels by the controls beside it. A
+   sheet sidesteps both: the address bar gets the full first row, the way a
+   delivery app lays it out, and the panel is positioned against the viewport
+   instead of against the pill. */
+@media (max-width: 560px) {
+  .loc { order: -1; flex-basis: 100%; }
+  .loc-pill { width: 100%; max-width: none; }
+
+  .loc-scrim {
+    display: block;
+    position: fixed;
+    inset: 0;
+    /* Over the fixed bottom nav (z 300), which would otherwise sit on top of
+       the sheet and take taps meant for the last saved place. */
+    z-index: 320;
+    background: rgba(0, 0, 0, 0.5);
+    animation: locScrimIn 0.2s ease backwards;
+  }
+
+  .loc-panel {
+    /* Overrides the measured anchor from the inline style. */
+    top: auto !important;
+    left: 0 !important;
+    right: 0;
+    bottom: 0;
+    width: auto;
+    max-width: none;
+    max-height: 82vh;
+    /* Clear of the home indicator on a gesture-nav phone. */
+    padding: 14px 14px calc(14px + env(safe-area-inset-bottom));
+    border-radius: 20px 20px 0 0;
+    border-bottom: 0;
+    animation: locSheetIn 0.26s var(--ease-out-expo, ease) backwards;
+  }
+
+  @keyframes locScrimIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes locSheetIn { from { transform: translateY(100%); } to { transform: none; } }
+}
+
+/* A handle, so the sheet reads as one on touch. */
+.loc-grab { display: none; }
+@media (max-width: 560px) {
+  .loc-grab {
+    display: block;
+    width: 38px;
+    height: 4px;
+    margin: -4px auto 12px;
+    border-radius: 999px;
+    background: var(--hairline-str);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loc-scrim, .loc-panel { animation: none; }
+}
