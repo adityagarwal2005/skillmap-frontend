@@ -206,12 +206,12 @@ const cardProps = (interactive, onOpen, label) => (interactive
   ? { tabIndex: 0, role: 'button', onClick: onOpen, onKeyDown: cardKeys(onOpen), 'aria-label': label }
   : {});
 
-export function GigCard({ item, now, isNew, saved, onSave, onOpen, style, interactive = true }) {
+export function GigCard({ item, now, isNew, saved, onSave, onOpen, style, isLead = false, interactive = true }) {
   const needed = item.people_needed || 1;
   const spotsLeft = Math.max(0, needed - (item.hired_count || 0));
   const pay = Number(item.payment_amount) > 0 ? money(item.payment_amount) : '₹ —';
   return (
-    <article className={`mk-card is-gig ${isNew ? 'is-new' : ''}`} style={style}
+    <article className={`mk-card is-gig ${isNew ? 'is-new' : ''} ${isLead ? 'is-lead' : ''}`} style={style}
       {...cardProps(interactive, onOpen, `Paid gig, ${pay}: ${item.title}`)}>
       <Fuse item={item} now={now} />
       <div className="mk-head">
@@ -251,12 +251,12 @@ export function GigCard({ item, now, isNew, saved, onSave, onOpen, style, intera
   );
 }
 
-export function TeamCard({ item, now, isNew, saved, onSave, onOpen, style, interactive = true }) {
+export function TeamCard({ item, now, isNew, saved, onSave, onOpen, style, isLead = false, interactive = true }) {
   const needed = item.people_needed || 1;
   const filled = item.hired_count || 0;
   const open = Math.max(0, needed - filled);
   return (
-    <article className={`mk-card is-team ${isNew ? 'is-new' : ''}`} style={style}
+    <article className={`mk-card is-team ${isNew ? 'is-new' : ''} ${isLead ? 'is-lead' : ''}`} style={style}
       {...cardProps(interactive, onOpen, `Team forming, ${open} open: ${item.title}`)}>
       <Fuse item={item} now={now} />
       <div className="mk-head">

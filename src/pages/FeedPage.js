@@ -552,6 +552,12 @@ export default function FeedPage() {
                     now,
                     isNew: newIds.has(key),
                     saved: saved.has(key),
+                    // The top-ranked listing is set larger than the rest. A
+                    // grid of identical cards says everything matters equally,
+                    // which is never true on a board where one gig pays six
+                    // times the next and closes tonight. Only worth doing when
+                    // there's a field to lead — below that it's just a big card.
+                    isLead: i === 0 && shown.length >= 4,
                     onSave: (e) => toggleSave(item, e),
                     onOpen: () => setViewItem(item),
                     style: { animationDelay: `${Math.min(i, 6) * 25}ms` },

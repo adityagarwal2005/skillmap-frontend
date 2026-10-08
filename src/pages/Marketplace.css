@@ -978,3 +978,65 @@
 @media (prefers-reduced-motion: reduce) {
   .mk-thumb-img, .mk-ava .ava-img { opacity: 1; transition: none; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   THE LEAD LISTING
+
+   A grid of identical cards tells the reader that everything on the page
+   carries equal weight. On this board that is never true — one gig pays
+   six times the next and closes tonight — and a layout that can't say so
+   is a layout with no opinion in it.
+
+   So the top-ranked listing is set at a different scale, not merely given
+   a wider box: the money is display-sized, the title is set like a
+   headline rather than a label, the photo is big enough to read, and it
+   gets air the dense cards don't. Everything below stays tight, which is
+   what makes the contrast legible — if the second card grew too, nothing
+   would have been said.
+   ═══════════════════════════════════════════════════════════════════ */
+@media (min-width: 720px) {
+  .mk-card.is-lead {
+    grid-column: span 2;
+    gap: 14px;
+    padding: 22px 24px 20px;
+    border-radius: 16px;
+  }
+  .mk-card.is-lead .mk-pay {
+    font-family: var(--font-display);
+    font-size: 2.25rem;
+    letter-spacing: -0.035em;
+    line-height: 1;
+  }
+  /* A team lead has no price to enlarge, so its equivalent headline — the
+     seats still open — carries the same weight the money does on a gig. */
+  .mk-card.is-lead .mk-open {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: var(--text-1);
+  }
+  .mk-card.is-lead .mk-seat,
+  .mk-card.is-lead .mk-seats .mk-ava { width: 30px; height: 30px; }
+
+  .mk-card.is-lead .mk-title {
+    font-size: 1.375rem;
+    font-weight: 650;
+    line-height: 1.22;
+    letter-spacing: -0.02em;
+    -webkit-line-clamp: 2;
+  }
+  .mk-card.is-lead .mk-main:has(.mk-thumb) .mk-title { -webkit-line-clamp: 2; }
+  .mk-card.is-lead .mk-thumb { width: 104px; height: 104px; border-radius: 12px; }
+  .mk-card.is-lead .mk-foot { padding-top: 14px; }
+  .mk-card.is-lead .mk-cta { height: 36px; padding: 0 20px; font-size: 0.875rem; }
+  .mk-card.is-lead .mk-ava { width: 28px; height: 28px; }
+  /* The countdown reads as a real timer at this size rather than a hairline. */
+  .mk-card.is-lead .mk-fuse { height: 3px; }
+}
+
+/* Three columns up, the lead spans two and leaves a gap beside it; at that
+   width it takes the full row instead so nothing sits half-empty. */
+@media (min-width: 1240px) {
+  .mk-card.is-lead { grid-column: span 2; }
+}
