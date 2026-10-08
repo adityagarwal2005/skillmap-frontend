@@ -360,3 +360,57 @@
   .pub-projects { grid-template-columns: 1fr; }
   .pub-hero-actions .pub-cta, .pub-hero-actions .pub-ghost { flex: 1; justify-content: center; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   DESKTOP: identity on the left, the work on the right.
+
+   This is the page a person sends to someone deciding whether to hire
+   them, and it was a 400px column centred in a 1440px screen with every
+   section — who they are, what they've made, what people said — set at
+   exactly the same weight. The portfolio, which is the entire argument
+   the page is making, was a row of 220px boxes.
+
+   The identity column is sticky, so their name, rating and the hire
+   button stay in view for the whole length of the work. No DOM changes:
+   the hero is pinned to column one and the sections flow down column two.
+   ═══════════════════════════════════════════════════════════════════ */
+@media (min-width: 900px) {
+  .pub-main {
+    max-width: 1180px;
+    display: grid;
+    grid-template-columns: 350px minmax(0, 1fr);
+    column-gap: clamp(36px, 4vw, 64px);
+    align-items: start;
+    padding-top: 36px;
+  }
+  .pub-hero {
+    grid-column: 1;
+    grid-row: 1 / span 20;
+    position: sticky;
+    top: 24px;
+  }
+  .pub-section,
+  .pub-final { grid-column: 2; }
+  .pub-section { margin-bottom: 36px; }
+
+  /* The work gets the room it was always supposed to have. */
+  .pub-projects { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+  .pub-project-img { height: 220px; }
+
+  /* Section headings read as chapter marks rather than tiny labels. */
+  .pub-section-title {
+    font-family: var(--font-display);
+    font-size: 1.125rem;
+    letter-spacing: -0.01em;
+    text-transform: none;
+    color: var(--text-1);
+  }
+  .pub-bio { font-size: 1.0625rem; line-height: 1.65; max-width: 62ch; }
+}
+
+/* Above this the two columns have room to breathe further apart. */
+@media (min-width: 1240px) {
+  .pub-main { grid-template-columns: 380px minmax(0, 1fr); }
+  .pub-projects { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pub-project-img { height: 250px; }
+}
