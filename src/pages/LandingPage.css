@@ -122,8 +122,14 @@
   /* Was 5rem, which ran the sentence to four lines and pushed the primary
      button to 707px — below the fold on a 1440x800 laptop. The headline is
      there to be read and acted on, not to fill the screen. */
-  font-size: clamp(2.125rem, 5.4vw, 4rem);
-  line-height: 1.04;
+  /* Bigger and much tighter. A modern display setting is not just large
+     type — it's large type with the air pulled out of it: line-height under
+     1 so the lines lock into a block, and negative tracking so the words
+     read as one mass rather than a row of separate letters. */
+  font-size: clamp(2.5rem, 6.4vw, 5.25rem);
+  line-height: 0.94;
+  letter-spacing: -0.052em;
+  font-weight: 800;
   /* Lets the browser even out the lines rather than leaving "at." stranded
      on one of its own when the forced break still overflows a phone. */
   text-wrap: balance;
@@ -132,12 +138,35 @@
   margin-bottom: 22px;
 }
 
+/* Was set in Pacifico. A casual script is the one thing on this page that
+   cannot read as modern — it belongs to a different decade than the rest of
+   the type, and it was carrying the line that matters most. Same face as the
+   headline now, at full weight, in the brand colour, with a rule under it so
+   the claim still gets its own emphasis without changing voice mid-sentence. */
 .landing-hero-display em {
-  font-family: 'Pacifico', cursive;
+  position: relative;
+  font-family: inherit;
   font-style: normal;
-  font-weight: 400;
-  font-size: 0.86em;
-  color: #ef5f26;
+  font-weight: 800;
+  font-size: 1em;
+  color: var(--brand);
+  white-space: nowrap;
+}
+.landing-hero-display em::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0.1em;
+  height: 0.07em;
+  border-radius: 999px;
+  background: var(--brand);
+  transform-origin: left center;
+  animation: lpRule 0.7s 0.5s cubic-bezier(0.16,1,0.3,1) backwards;
+}
+@keyframes lpRule { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@media (prefers-reduced-motion: reduce) {
+  .landing-hero-display em::after { animation: none; }
 }
 
 .landing-hero-sub {
@@ -1021,16 +1050,21 @@
 @media (min-width: 1040px) {
   .landing-hero {
     display: grid;
-    grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
+    /* The copy was capped at 640px inside a 1.12fr column on a 1440 screen,
+       which left roughly 400px of nothing between the sentence and the
+       mockup — the two halves were pushed apart rather than composed. The
+       columns are closer to even now and the gap is fixed rather than
+       growing with the viewport, so the page reads as one spread. */
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     align-items: center;
-    gap: clamp(32px, 5vw, 72px);
+    gap: clamp(28px, 3vw, 48px);
     text-align: left;
     padding-top: clamp(48px, 7vw, 92px);
     padding-bottom: clamp(48px, 7vw, 92px);
   }
   /* The headline needs room to break where the meaning breaks: at 560px
      "at." was orphaning onto a line of its own. */
-  .landing-hero-inner { max-width: 640px; }
+  .landing-hero-inner { max-width: 660px; }
   .landing-hero-sub { margin-left: 0; }
   .landing-hero-actions { justify-content: flex-start; }
   .landing-hero-meta { justify-content: flex-start; }
@@ -1051,7 +1085,8 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  max-width: 420px;
+  /* Larger, so the right half has as much presence as the left. */
+  max-width: 470px;
   margin-left: auto;
   padding: 16px;
   border-radius: 30px;
