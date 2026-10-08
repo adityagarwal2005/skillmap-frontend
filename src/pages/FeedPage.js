@@ -366,13 +366,26 @@ export default function FeedPage() {
         </div>
       </div>
     );
+    /* An empty board is the most common thing a new user sees, and it was a
+       small card adrift in a very large dark page with two buttons on it.
+       It gets the room instead, and a third way out: when there is no work
+       to look at, the people are the next best thing to look at — and that
+       is the one surface that is never empty. */
     return (
-      <div className="mk-empty">
-        <h3>Nothing live within {RANGE_LABEL[range]}</h3>
-        <p>Listings only show while their window is open. Post a gig or start a team and people nearby will see it.</p>
+      <div className="mk-empty is-blank">
+        <span className="mk-empty-mark" aria-hidden="true">{I.pin}</span>
+        <h3>Nothing live within {RANGE_LABEL[range]} — yet</h3>
+        <p>
+          Listings run on a timer and disappear when their window closes, so the
+          board is only ever what is open right now. Post something and people
+          nearby see it within seconds.
+        </p>
         <div className="mk-empty-actions">
           <button className="mk-btn" onClick={() => navigate('/post')}>Post a gig</button>
           {widen}
+          <button className="mk-btn is-quiet" onClick={() => navigate('/people')}>
+            See who's nearby
+          </button>
         </div>
       </div>
     );

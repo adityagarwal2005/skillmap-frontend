@@ -742,3 +742,117 @@
 .pf-review-from::before { content: '— '; }
 .pf-review-from:hover { color: var(--text-1); }
 
+
+/* ═══════════════════════════════════════════════════════════════════
+   A NEW PROFILE
+
+   "0 projects · 0 skills · no reviews", then three sections each saying
+   there is nothing in them. That is five separate ways of telling someone
+   they have nothing, on the page meant to convince a stranger to hire
+   them — and it's the page they themselves open most. Zeros are both
+   discouraging and useless: they describe a state without offering a way
+   out of it.
+
+   So a bare profile leads with the four things that decide whether anyone
+   gets in touch, in the order they matter, each a link to where it gets
+   done. The counters stay, demoted, for when they start to mean something.
+   ═══════════════════════════════════════════════════════════════════ */
+.pf-setup {
+  margin: 18px 0 16px;
+  padding: 18px;
+  border-radius: 14px;
+  text-align: left;
+  background: var(--surface-2);
+  border: 1px solid var(--hairline);
+}
+.pf-setup-head { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; }
+
+/* The ring is the progress bar — a conic sweep, so it costs one element. */
+.pf-setup-ring {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: conic-gradient(var(--brand) calc(var(--p) * 360deg), var(--hairline) 0);
+  transition: background 0.5s var(--ease-out, ease);
+}
+.pf-setup-ring::after {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border-radius: 50%;
+  background: var(--surface-2);
+}
+.pf-setup-ring span {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  font-weight: 800;
+  color: var(--text-1);
+  letter-spacing: -0.02em;
+}
+.pf-setup-ring i { font-style: normal; font-size: 0.75rem; color: var(--text-3); }
+
+.pf-setup-intro h2 {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--text-1);
+}
+.pf-setup-intro p { margin-top: 3px; font-size: 0.875rem; line-height: 1.5; color: var(--text-2); }
+
+.pf-setup-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.pf-setup-list button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 11px 12px;
+  border-radius: 10px;
+  text-align: left;
+  background: var(--surface-flat);
+  border: 1px solid var(--hairline);
+  transition: border-color var(--t-fast) ease, background var(--t-fast) ease,
+              transform var(--t-fast) var(--ease-out);
+}
+.pf-setup-list button:hover:not(:disabled) {
+  border-color: var(--brand-line);
+  background: var(--brand-dim);
+  transform: translateX(2px);
+}
+.pf-setup-list button:disabled { cursor: default; opacity: 0.6; }
+
+.pf-setup-tick {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #fff;
+  border: 1.5px solid var(--hairline-str);
+}
+.is-done .pf-setup-tick { background: var(--ok); border-color: transparent; }
+
+.pf-setup-text { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.pf-setup-text strong { font-size: 0.9375rem; font-weight: 650; color: var(--text-1); }
+.pf-setup-text em { font-style: normal; font-size: 0.8125rem; color: var(--text-3); }
+.is-done .pf-setup-text strong { text-decoration: line-through; color: var(--text-3); }
+
+.pf-setup-go { flex-shrink: 0; color: var(--text-3); font-size: 1rem; }
+
+/* Counters that all read zero shouldn't be the loudest row on the page. */
+.profile-stats.is-quiet { opacity: 0.72; }
+.profile-stats.is-quiet .profile-stat-val { font-size: 1.125rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-setup-list button:hover:not(:disabled) { transform: none; }
+  .pf-setup-ring { transition: none; }
+}

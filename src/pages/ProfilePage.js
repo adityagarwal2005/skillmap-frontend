@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
@@ -62,6 +62,30 @@ export default function ProfilePage() {
   const [submittingReport, setSubmittingReport] = useState(false);
 
   const isOwn = authUser?.id === parseInt(userId);
+
+  /* What a brand-new profile shows instead of a row of zeros.
+
+     "0 projects · 0 skills · no reviews" is three ways of telling someone
+     they have nothing, on the page meant to convince a stranger to hire
+     them — and it is also the page they see most often. These are the four
+     things that actually decide whether anyone gets in touch, in the order
+     they matter, each one a link to where it gets done. */
+  const setupSteps = useMemo(() => {
+    if (!profile) return [];
+    return [
+      { id: 'photo',  done: !!profile.profile_image,            label: 'Add a photo',
+        hint: 'Profiles with a face get replied to far more often', to: `/profile/${userId}/edit` },
+      { id: 'skills', done: (profile.skills?.length || 0) > 0,  label: 'List what you can do',
+        hint: 'Your skills are how people find you in search',    to: `/profile/${userId}/edit` },
+      { id: 'work',   done: portfolio.length > 0,               label: 'Show one piece of work',
+        hint: 'One real example beats any description',           to: `/create-post` },
+      { id: 'about',  done: !!(profile.headline || profile.bio), done2: true, label: 'Say what you do in a line',
+        hint: 'This is what shows under your name everywhere',     to: `/profile/${userId}/edit` },
+    ];
+  }, [profile, portfolio.length, userId]);
+
+  const setupDone = setupSteps.filter(s => s.done).length;
+  const profileIsBare = isOwn && setupDone < setupSteps.length;
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { loadProfile(); }, [userId]);
@@ -307,7 +331,40 @@ export default function ProfilePage() {
 
               {profile.headline && <p className="profile-headline">{profile.headline}</p>}
 
-              <div className="profile-stats">
+              {profileIsBare && (
+                <section className="pf-setup" aria-label="Finish your profile">
+                  <div className="pf-setup-head">
+                    <div className="pf-setup-ring" style={{ '--p': setupDone / setupSteps.length }}
+                      aria-hidden="true">
+                      <span>{setupDone}<i>/{setupSteps.length}</i></span>
+                    </div>
+                    <div className="pf-setup-intro">
+                      <h2>Get yourself hireable</h2>
+                      <p>
+                        {setupDone === 0
+                          ? 'Nobody can hire what they cannot see. Four things, a few minutes.'
+                          : `${setupSteps.length - setupDone} left. People decide from this page.`}
+                      </p>
+                    </div>
+                  </div>
+                  <ul className="pf-setup-list">
+                    {setupSteps.map(s => (
+                      <li key={s.id} className={s.done ? 'is-done' : ''}>
+                        <button type="button" onClick={() => navigate(s.to)} disabled={s.done}>
+                          <span className="pf-setup-tick" aria-hidden="true">{s.done ? '✓' : ''}</span>
+                          <span className="pf-setup-text">
+                            <strong>{s.label}</strong>
+                            <em>{s.hint}</em>
+                          </span>
+                          {!s.done && <span className="pf-setup-go" aria-hidden="true">→</span>}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )}
+
+              <div className={`profile-stats ${profileIsBare ? 'is-quiet' : ''}`}>
                 <div className="profile-stat">
                   <span className="profile-stat-val">
                     {profile.review_count > 0 ? `★ ${profile.rating?.toFixed(1)}` : 'New'}
