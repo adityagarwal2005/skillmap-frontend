@@ -14,6 +14,24 @@ const ic = (paths) => (
 
 /* Real skills people offer, scrolled as a marquee — reads as an actual talent
    pool rather than four abstract nouns in a row. */
+/* The work people actually pay for nearby. Photographs rather than icons:
+   a board for wedding shoots and reel edits has to look like the thing it
+   is, and nobody recognises their own trade in a line drawing.
+
+   Photos are Unsplash, whose licence permits commercial use without
+   permission or attribution, and they are served from our own /public so
+   the page never depends on someone else's CDN staying up. Ranges are the
+   real spread of what these jobs pay in a tier-2 Indian city — stated as
+   ranges because inventing a precise average would be a lie.  */
+const WORK_KINDS = [
+  { id: 'wedding',  img: '/img/work/wedding.jpg',  label: 'Wedding shoots',     pay: '₹8,000 – ₹40,000', note: 'Photo + video teams, per event', wide: true },
+  { id: 'video',    img: '/img/work/video.jpg',    label: 'Reels & editing',    pay: '₹1,500 – ₹8,000',  note: 'Per reel, shot or edited' },
+  { id: 'makeup',   img: '/img/work/makeup.jpg',   label: 'Makeup & styling',   pay: '₹2,000 – ₹15,000', note: 'Bridal, parties, shoots' },
+  { id: 'events',   img: '/img/work/events.jpg',   label: 'Event crew',         pay: '₹800 – ₹3,000',    note: 'Setup, stalls, hosting — per day' },
+  { id: 'tutoring', img: '/img/work/tutoring.jpg', label: 'Tutoring',           pay: '₹300 – ₹1,200',    note: 'Per hour, at home or online' },
+  { id: 'design',   img: '/img/work/design.jpg',   label: 'Design & branding',  pay: '₹1,000 – ₹20,000', note: 'Logos, posters, menus, decks' },
+];
+
 const SKILL_TICKER = [
   'Video editing', 'Poster design', 'Web dev', 'Photography', 'Content writing',
   'Figma', 'Tutoring', 'Music production', 'App dev', 'Public speaking',
@@ -254,6 +272,38 @@ export default function LandingPage() {
             ))}
           </div>
         </div>
+      </section>
+
+      {/* ── What the work actually is ── */}
+      <section className="lp-trades">
+        <div className="landing-section-head" data-reveal>
+          <span className="landing-eyebrow">The work</span>
+          <h2 className="landing-section-title">People near you are<br />paying for this today.</h2>
+          <p className="lp-trades-sub">
+            Not an abstract &ldquo;marketplace&rdquo;. These are the jobs posted most,
+            and what they typically pay.
+          </p>
+        </div>
+
+        <div className="lp-trade-grid">
+          {WORK_KINDS.map((k, i) => (
+            <article className={`lp-trade ${k.wide ? 'is-wide' : ''}`} key={k.id} data-reveal
+              style={{ '--i': i }}>
+              <img className="lp-trade-img" src={k.img} alt="" loading="lazy" decoding="async"
+                width="900" height="1100" />
+              <div className="lp-trade-scrim" aria-hidden="true" />
+              <div className="lp-trade-copy">
+                <span className="lp-trade-pay">{k.pay}</span>
+                <h3 className="lp-trade-label">{k.label}</h3>
+                <span className="lp-trade-note">{k.note}</span>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <button className="landing-cta-lg lp-trades-cta" onClick={goRegister}>
+          See what's live near you
+        </button>
       </section>
 
       {/* ── Show the actual product ── */}
