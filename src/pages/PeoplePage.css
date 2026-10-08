@@ -362,3 +362,40 @@ button.pp-btn.is-quiet { cursor: pointer; }
 @media (prefers-reduced-motion: reduce) {
   .pp-card, .pp-card.is-loading, .pp-spinner { animation: none; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   PEOPLE — lead with the person.
+
+   This is the page for finding a human being to work with, and it was
+   four-across rows of identical small cards where the face was a 46px
+   circle tucked beside the name, smaller than the skill chips under it.
+   On a page about people, the person should be the largest thing on the
+   card.
+
+   Fewer, wider cards; the portrait set large enough to actually recognise
+   someone; the name at a size you read rather than scan. The grid loses a
+   column, which is the trade: eight people you take in beats twelve you
+   skim past.
+   ═══════════════════════════════════════════════════════════════════ */
+@media (min-width: 700px) {
+  .pp-grid { grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr)); gap: 14px; }
+  .pp-card { padding: 20px; gap: 14px; min-height: 176px; }
+  .pp-ava {
+    width: 64px;
+    height: 64px;
+    font-size: 1.5rem;
+    /* A ring the width of a hairline reads as a frame around a portrait
+       rather than a border on a box. */
+    box-shadow: 0 0 0 1px var(--hairline-str), 0 0 0 5px var(--surface-flat);
+  }
+  .pp-name { font-size: 1.125rem; font-weight: 700; letter-spacing: -0.015em; }
+  .pp-headline { font-size: 0.875rem; line-height: 1.5; }
+}
+
+/* The portrait leans in slightly as you approach the card. */
+.pp-ava { transition: transform var(--t-med) var(--ease-spring); }
+.pp-card:hover .pp-ava { transform: scale(1.06); }
+
+@media (prefers-reduced-motion: reduce) {
+  .pp-card:hover .pp-ava { transform: none; }
+}
