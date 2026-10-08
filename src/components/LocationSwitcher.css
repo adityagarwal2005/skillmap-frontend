@@ -256,7 +256,8 @@
    delivery app lays it out, and the panel is positioned against the viewport
    instead of against the pill. */
 @media (max-width: 560px) {
-  .loc { order: -1; flex-basis: 100%; }
+  /* Width comes from the toolbar's own phone layout (.mk-bar-row); this only
+     lets the pill fill whatever track it is given. */
   .loc-pill { width: 100%; max-width: none; }
 
   .loc-scrim {

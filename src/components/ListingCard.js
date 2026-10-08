@@ -216,8 +216,13 @@ export function GigCard({ item, now, isNew, saved, onSave, onOpen, style, isLead
       <Fuse item={item} now={now} />
       <div className="mk-head">
         <span className="mk-pay">{pay}</span>
-        <div className="mk-head-meta"><MetaChips item={item} now={now} /></div>
-        {interactive && <SaveButton saved={saved} onClick={onSave} />}
+        <div className="mk-head-meta">
+          <MetaChips item={item} now={now} />
+          {/* Inside the meta group, not beside it: as a sibling of the group
+              it wrapped onto a line of its own, flush left, as soon as the
+              header ran out of room on a phone. */}
+          {interactive && <SaveButton saved={saved} onClick={onSave} />}
+        </div>
       </div>
 
       <div className="mk-main">
@@ -262,8 +267,10 @@ export function TeamCard({ item, now, isNew, saved, onSave, onOpen, style, isLea
       <div className="mk-head">
         <Seats host={item.user} needed={needed} filled={filled} />
         <span className="mk-open">{open} of {needed} open</span>
-        <div className="mk-head-meta"><MetaChips item={item} now={now} /></div>
-        {interactive && <SaveButton saved={saved} onClick={onSave} />}
+        <div className="mk-head-meta">
+          <MetaChips item={item} now={now} />
+          {interactive && <SaveButton saved={saved} onClick={onSave} />}
+        </div>
       </div>
 
       <div className="mk-main">

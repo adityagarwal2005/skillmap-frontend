@@ -856,3 +856,21 @@
   .pf-setup-list button:hover:not(:disabled) { transform: none; }
   .pf-setup-ring { transition: none; }
 }
+
+
+/* Four stat columns share ~46px each on a 320px phone, which is narrower
+   than the word "REVIEWS" — so the labels ellipsised into "4 REVIE…" and
+   "PROJEC…", which reads as a rendering fault rather than a stat. Two rows
+   of two gives each label the width of its own text several times over. */
+@media (max-width: 420px) {
+  /* .app-shell-prefixed, because nextgen.css restates `display: flex` here
+     at (0,2,0) and would otherwise win. */
+  .app-shell .profile-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px 10px;
+  }
+  /* The dividers were column rules; in a grid they would cut across rows. */
+  .app-shell .profile-stat + .profile-stat { border-left: 0; padding-left: 4px; }
+  .app-shell .profile-stat-label { letter-spacing: 0.05em; }
+}

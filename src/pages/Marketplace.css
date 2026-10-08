@@ -42,6 +42,8 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  /* Nothing in here may be pushed out of reach — see .mk-bar-row. */
+  min-width: 0;
   margin: 0 calc(-1 * var(--mk-gutter));
   padding: 10px var(--mk-gutter);
   background: var(--glass-strong);
@@ -49,6 +51,23 @@
   -webkit-backdrop-filter: var(--blur);
   border-bottom: 1px solid var(--hairline);
 }
+
+/* The toolbar is declared as two rows so a phone has somewhere to put them.
+   Wide enough and the rows dissolve — `display: contents` drops the wrapper
+   from the box tree, so the controls lay out on the one flex line they
+   always did. Narrow, they become real rows (see the phone block below).
+
+   Because the wrapper is gone on a laptop, source order alone would read
+   place → saved → bell → search → distance → order, stranding the two icon
+   buttons in the middle of the bar. `order` restores the intended line, and
+   holds inside each row on a phone too: the icons are last in row 1 and
+   search leads row 2 either way. */
+.mk-bar-row { display: contents; }
+.mk-bar .loc           { order: 1; }
+.mk-bar .mk-search     { order: 2; }
+.mk-bar .mk-loc        { order: 3; }
+.mk-bar .mk-sort       { order: 4; }
+.mk-bar .mk-bar-actions { order: 5; margin-left: auto; }
 
 .mk-loc {
   position: relative;
@@ -77,6 +96,7 @@
   white-space: nowrap;
 }
 .mk-loc-value svg { width: 13px; height: 13px; color: var(--text-3); }
+.mk-loc-word { /* dropped where the row is tight */ }
 .mk-loc-select {
   position: absolute;
   inset: 0;
@@ -124,18 +144,37 @@
 .mk-search-clear:hover { color: var(--text-1); background: var(--hairline); }
 
 .mk-sort {
+  position: relative;
+  display: flex;
+  align-items: center;
   flex-shrink: 0;
   height: 36px;
-  padding: 0 30px 0 12px;
+  padding: 0 12px;
   border-radius: 8px;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: var(--text-1);
-  background: var(--surface-flat) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 10px center / 12px;
-  border: 1px solid var(--hairline);
-  -webkit-appearance: none;
-  appearance: none;
   cursor: pointer;
+  background: var(--surface-flat);
+  border: 1px solid var(--hairline);
+  transition: border-color var(--t-fast) ease;
+}
+.mk-sort:hover { border-color: var(--hairline-str); }
+.mk-sort-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--text-1);
+  white-space: nowrap;
+}
+.mk-sort-value svg { width: 13px; height: 13px; color: var(--text-3); }
+.mk-sort-select {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  opacity: 0;
+  cursor: pointer;
+  /* Under 16px, iOS Safari zooms the page when this is tapped. */
+  font-size: 16px;
 }
 .mk-bar-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 .mk-icon-btn {
@@ -364,7 +403,11 @@
 }
 .mk-fuse.is-urgent::after { background: var(--warn); }
 
-.mk-head { display: flex; align-items: center; gap: 8px; min-height: 26px; }
+/* Wraps because nothing in this row can shrink: the pay/seats block, every
+   meta chip and the save button are all nowrap or flex-shrink: 0. On a 320px
+   phone a collab card's row ran 64px past the card edge, which put the save
+   button outside the card and out of reach. */
+.mk-head { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 8px; min-height: 26px; }
 .mk-pay {
   font-family: var(--font-display);
   font-size: 1.25rem;
@@ -376,7 +419,14 @@
 }
 .mk-open { font-size: 0.75rem; font-weight: 700; color: var(--team-bright); white-space: nowrap; }
 [data-theme="light"] .mk-open { color: var(--team); }
-.mk-head-meta { display: flex; align-items: center; gap: 5px; margin-left: auto; }
+.mk-head-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 5px;
+  margin-left: auto;
+}
 
 .mk-chip {
   display: inline-flex;
@@ -816,6 +866,11 @@
     overflow-x: auto;
     scrollbar-width: none;
     padding-bottom: 2px;
+    /* A chip sliced in half at the edge looks like a layout bug rather than
+       an invitation to scroll. Fading the last few pixels says "there is
+       more this way" without taking a row for arrows. */
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+    mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
   }
   .mk-rail::-webkit-scrollbar { display: none; }
   .mk-rail-group { flex-direction: row; align-items: center; gap: 6px; flex-shrink: 0; }
@@ -829,11 +884,57 @@
   }
   .mk-rail-row.is-on { color: var(--brand); background: var(--brand-dim); border-color: var(--brand-line); }
   .mk-rail-row.is-empty { display: none; }
-  .mk-summary { padding: 12px 0 10px; }
+  .mk-summary { padding: 10px 0 8px; }
   .mk-summary-main { font-size: 0.875rem; gap: 2px 10px; }
   .mk-summary-main b { font-size: 1.1875rem; }
   .mk-bar { gap: 8px; }
-  .mk-sort { display: none; }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   Phone toolbar — two real rows.
+
+   Row 1 is context and alerts: where the board is pointed, saved, notifications.
+   Row 2 is the query: what you're looking for, how far, in what order.
+   Everything stays on screen and tappable; nothing scrolls out of reach.
+   ══════════════════════════════════════════════════════════════════════ */
+@media (max-width: 699px) {
+  .mk-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .mk-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+  /* The place pill is the widest thing here and the one worth reading in
+     full, so it takes whatever the icons leave. */
+  .mk-bar-row.is-primary .loc { flex: 1; min-width: 0; }
+  .mk-bar-row.is-primary .loc-pill { width: 100%; max-width: none; }
+
+  .mk-search { flex: 1; min-width: 0; }
+  /* "Within 5 km" costs ~45px that row 2 does not have; the number carries
+     the meaning on its own next to a pin. */
+  .mk-loc-word { display: none; }
+  .mk-loc { flex-shrink: 0; padding: 0 10px; }
+  .mk-sort { flex-shrink: 0; }
+
+  /* A separator that lands at the start of a wrapped line reads as a typo. */
+  .mk-dot { display: none; }
+  .mk-summary-main { gap: 2px 14px; }
+}
+
+/* The sort chip sits at the head of the filter strip on a phone, kept
+   distinct from the filters it scrolls alongside. */
+@media (max-width: 699px) {
+  .mk-rail-group.is-sort {
+    padding-right: 8px;
+    margin-right: 2px;
+    border-right: 1px solid var(--hairline);
+  }
+  .mk-rail-group.is-sort .mk-sort { height: 32px; border-radius: 999px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

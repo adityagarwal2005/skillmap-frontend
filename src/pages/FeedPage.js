@@ -19,6 +19,7 @@ import usePoll from '../hooks/usePoll';
 import useSpotlight from '../hooks/useSpotlight';
 import useCountUp from '../hooks/useCountUp';
 import useNow from '../hooks/useNow';
+import useMediaQuery from '../hooks/useMediaQuery';
 import './FeedPage.css';
 import './Marketplace.css';
 
@@ -30,6 +31,14 @@ const RANGES = [
   { value: '10', label: '10 km' },
 ];
 const RANGE_LABEL = Object.fromEntries(RANGES.map(r => [r.value, r.label]));
+
+const SORTS = [
+  { value: 'match', label: 'For you' },
+  { value: 'soon',  label: 'Ending soon' },
+  { value: 'pay',   label: 'Top pay' },
+  { value: 'near',  label: 'Nearest' },
+];
+const SORT_LABEL = Object.fromEntries(SORTS.map(o => [o.value, o.label]));
 
 // "today 6:40 pm", "tomorrow 9:00 am", "Wed 11:30 am"
 function closesAt(ts) {
@@ -92,6 +101,8 @@ export default function FeedPage() {
   const [needsLocation, setNeedsLocation] = useState(false);
   const [locating, setLocating] = useState(false);
   const now = useNow(30000);
+  // Matches the toolbar's own phone breakpoint in Marketplace.css.
+  const isPhone = useMediaQuery('(max-width: 699px)');
 
   useEffect(() => { try { localStorage.setItem('smRange', range); } catch {} }, [range]);
 
@@ -418,49 +429,76 @@ export default function FeedPage() {
     return () => io.disconnect();
   }, []);
 
+  /* Defined once and rendered in one of two places. Same shape as the
+     distance control: a styled label with a transparent native select over
+     it, carrying a 16px font because iOS Safari zooms the page when you tap
+     a control smaller than that. */
+  const sortControl = (
+    <label className="mk-sort">
+      <span className="mk-sort-value">{SORT_LABEL[sort]} {I.chevron}</span>
+      <select className="mk-sort-select" value={sort} aria-label="Sort"
+        onChange={e => setSort(e.target.value)}>
+        {SORTS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+      </select>
+    </label>
+  );
+
   return (
     <AppShell active="work">
       <div className="feed-main mk">
         {/* One toolbar: where, what, in what order. The page used to open
             with a headline band and a wall of category tiles instead. */}
         <span ref={barSentinel} className="mk-bar-sentinel" aria-hidden="true" />
+        {/* Two declared rows rather than one long flex line. On a laptop the
+            rows are `display: contents`, so everything sits on one line
+            exactly as before; below 700px they become real rows. The single
+            line could not survive a phone — it overflowed a 375px screen by
+            233px with no way to scroll to them, which put the radius control,
+            the saved list and the notification bell permanently out of
+            reach and squeezed the search field down to its icon. */}
         <header className={`mk-bar ${barStuck ? 'is-stuck' : ''}`}>
-          <LocationSwitcher place={place} onPick={pickPlace} />
+          <div className="mk-bar-row is-primary">
+            <LocationSwitcher place={place} onPick={pickPlace} />
 
-          <label className="mk-loc">
-            <span className="mk-loc-value">Within {RANGE_LABEL[range]} {I.chevron}</span>
-            <select className="mk-loc-select" value={range} aria-label="Distance"
-              onChange={e => setRange(e.target.value)}>
-              {RANGES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
-            </select>
-          </label>
+            <div className="mk-bar-actions">
+              <button type="button" className={`mk-icon-btn ${savedOnly ? 'is-on' : ''}`}
+                onClick={() => setSavedOnly(v => !v)} aria-pressed={savedOnly}
+                aria-label={`Saved listings (${saved.size})`}>
+                <Bookmark on={savedOnly} />
+                {saved.size > 0 && <span className="mk-icon-badge">{saved.size}</span>}
+              </button>
+              <NotificationBell />
+            </div>
+          </div>
 
-          <label className="mk-search">
-            <span className="mk-search-ic">{I.search}</span>
-            <input className="mk-search-input" type="text" aria-label="Search listings"
-              placeholder="Search gigs, skills or people"
-              value={query} onChange={e => setQuery(e.target.value)} />
-            {query && (
-              <button type="button" className="mk-search-clear" onClick={() => setQuery('')}
-                aria-label="Clear search">{I.x}</button>
-            )}
-          </label>
+          <div className="mk-bar-row is-secondary">
+            <label className="mk-search">
+              <span className="mk-search-ic">{I.search}</span>
+              <input className="mk-search-input" type="text" aria-label="Search listings"
+                placeholder="Search gigs, skills or people"
+                value={query} onChange={e => setQuery(e.target.value)} />
+              {query && (
+                <button type="button" className="mk-search-clear" onClick={() => setQuery('')}
+                  aria-label="Clear search">{I.x}</button>
+              )}
+            </label>
 
-          <select className="mk-sort" value={sort} aria-label="Sort" onChange={e => setSort(e.target.value)}>
-            <option value="match">For you</option>
-            <option value="soon">Ending soon</option>
-            <option value="pay">Top pay</option>
-            <option value="near">Nearest</option>
-          </select>
+            <label className="mk-loc">
+              {/* "Within 5 km" on a laptop, "5 km" where the row is tight. */}
+              <span className="mk-loc-value">
+                <span className="mk-loc-word">Within </span>{RANGE_LABEL[range]} {I.chevron}
+              </span>
+              <select className="mk-loc-select" value={range} aria-label="Distance"
+                onChange={e => setRange(e.target.value)}>
+                {RANGES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
+              </select>
+            </label>
 
-          <div className="mk-bar-actions">
-            <button type="button" className={`mk-icon-btn ${savedOnly ? 'is-on' : ''}`}
-              onClick={() => setSavedOnly(v => !v)} aria-pressed={savedOnly}
-              aria-label={`Saved listings (${saved.size})`}>
-              <Bookmark on={savedOnly} />
-              {saved.size > 0 && <span className="mk-icon-badge">{saved.size}</span>}
-            </button>
-            <NotificationBell />
+            {/* On a phone this moves down into the filter strip — three
+                controls on one row left the search field too narrow to type
+                in, and a third toolbar row pushed the first listing past the
+                half-way line of the screen. */}
+            {!isPhone && sortControl}
           </div>
         </header>
 
@@ -503,6 +541,11 @@ export default function FeedPage() {
           {/* Filters live in a rail on a laptop and as a scrolling strip on a
               phone — the same rows either way. */}
           <aside className="mk-rail" aria-label="Filters">
+            {isPhone && (
+              <div className="mk-rail-group is-sort">
+                {sortControl}
+              </div>
+            )}
             <div className="mk-rail-group">
               <span className="mk-rail-label">Type</span>
               {[

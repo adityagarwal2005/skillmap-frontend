@@ -361,3 +361,21 @@
   border: 1px solid color-mix(in srgb, var(--ok) 30%, transparent);
 }
 [data-theme="light"] .mng-complete { color: #15803d; }
+
+
+/* On a phone the title column of a managed post is left with ~148px once the
+   pay and the chevron take their share, so a single ellipsised line showed
+   about four words of it. Two wrapped lines show the whole thing in almost
+   every case, and the row grows rather than the title shrinking. */
+@media (max-width: 560px) {
+  .mng-title {
+    white-space: normal;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  .mng-head { align-items: flex-start; }
+  .mng-head-right { padding-top: 2px; }
+}
