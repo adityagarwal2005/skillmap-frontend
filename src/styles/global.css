@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;0,14..32,900;1,14..32,400&family=Pacifico&family=Space+Grotesk:wght@500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;0,14..32,900;1,14..32,400&family=Pacifico&family=Archivo:wdth,wght@75..125,400..900&display=swap');
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -138,27 +138,38 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* Space Grotesk display face for big headlines — paired with Inter for body.
-   Set --font-display so heading rules across pages can opt in consistently. */
-:root { --font-display: 'Space Grotesk', 'Inter', -apple-system, sans-serif; }
+/* Display face: Archivo, variable on both weight and width.
 
+   Space Grotesk went because it is the default of the genre — it is on every
+   AI-generated startup page, which is exactly the resemblance we are trying
+   to lose. Archivo is a grotesque with a real width axis, so the same family
+   covers a dense tabular figure and a wide, heavy headline. Having an axis to
+   push is what makes type read as a decision rather than a pick.
+
+   --wide is for the few moments that should feel stretched and confident: a
+   hero line, the payout on an open listing, the live count. Used widely it
+   stops meaning anything, so it is deliberately not on every heading. */
+:root {
+  --font-display: 'Archivo', 'Inter', -apple-system, sans-serif;
+  --wide: 118%;
+}
+
+/* Headings take the display face by default.
+
+   This used to be a hand-maintained allowlist of class names, and it had
+   quietly rotted: it still named `.people-heading` and `.apps-heading`, which
+   no longer exist — the markup calls them `.pp-title` and `.apl-title`. The
+   result was that most page headings in the app were silently set in the body
+   font, which is a large part of why the UI read as unconsidered. Binding to
+   the elements instead of to a list of names cannot drift. */
+h1, h2, h3,
 .landing-hero-display,
 .convs-title,
 .section-title,
-.app-shell .post-title,
-.app-shell .wr-desc,
-.app-shell .search-heading,
-.app-shell .notif-title,
-.app-shell .create-title,
-.app-shell .settings-title,
-.app-shell .edit-title,
-.app-shell .people-heading,
-.app-shell .apps-heading,
 .profile-name {
   font-family: var(--font-display);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  font-feature-settings: 'ss01', 'ss02';
 }
 
 button  { cursor: pointer; border: none; outline: none; font-family: inherit; background: none; }

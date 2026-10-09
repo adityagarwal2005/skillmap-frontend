@@ -166,6 +166,10 @@
   flex: 1;
   min-width: 0;
   height: 44px;
+  /* An invite URL is longer than the field at most widths. Ellipsis so the
+     cut reads as deliberate — Copy is right beside it, and focusing selects
+     the whole value anyway. */
+  text-overflow: ellipsis;
   padding: 0 14px;
   border-radius: 12px;
   font-size: 0.875rem;

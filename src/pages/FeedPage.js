@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
@@ -699,13 +700,22 @@ export default function FeedPage() {
 
       {lightboxSrc && <Lightbox src={lightboxSrc} onClose={() => setLightboxSrc(null)} />}
 
-      {viewItem && (
+      {/* Portalled to <body>. Inside the shell the overlay lost the hit test to
+          the fixed mobile navigation despite a higher z-index, which made the
+          Apply button untappable on a phone — the single most important
+          control in the app sat exactly where the nav bar is. A direct child
+          of body has no ancestor stacking context to be trapped by. */}
+      {viewItem && createPortal(
         <div className="mk-sheet-overlay" onClick={() => setViewItem(null)}>
           <div className={`mk-sheet ${isGigView ? 'is-gig' : 'is-team'}`} role="dialog" aria-modal="true"
             aria-labelledby="mk-sheet-title" onClick={e => e.stopPropagation()}>
             <button type="button" className="mk-sheet-x" onClick={() => setViewItem(null)}
               aria-label="Close">{I.x}</button>
 
+            {/* Body scrolls, the decision stays put. A full-height panel whose
+                apply button floats halfway down it wastes the one thing the
+                panel is for. */}
+            <div className="mk-sheet-body">
             {isGigView ? (
               <div className="mk-sheet-hero">
                 <span className="mk-kind is-gig">Paid gig</span>
@@ -765,7 +775,9 @@ export default function FeedPage() {
               </span>
               <span className="mk-sheet-poster-go">{I.arrow}</span>
             </button>
+            </div>
 
+            <div className="mk-sheet-foot">
             {applied ? (
               <div className="mk-applied">
                 <span className="mk-applied-ic">{I.check}</span>
@@ -793,8 +805,10 @@ export default function FeedPage() {
                 </button>
               </>
             )}
+            </div>
           </div>
-        </div>
+        </div>,
+        document.body,
       )}
     </AppShell>
   );

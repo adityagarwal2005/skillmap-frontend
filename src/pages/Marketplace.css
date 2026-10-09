@@ -233,11 +233,14 @@
   gap: 5px;
   white-space: nowrap;
 }
+/* The live count is the first number on the page and the one that says
+   whether it is worth being here, so it takes the width axis. */
 .mk-summary-main b {
   font-family: var(--font-display);
-  font-size: 1.375rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-stretch: var(--wide);
+  font-size: 1.4375rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
   color: var(--text-1);
   font-variant-numeric: tabular-nums;
 }
@@ -330,7 +333,13 @@
   gap: 12px;
   margin-bottom: 10px;
 }
-.mk-results-title { font-size: 0.875rem; font-weight: 700; color: var(--text-1); }
+.mk-results-title {
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+  color: var(--text-1);
+}
 .mk-results-n { font-size: 0.75rem; color: var(--text-3); font-variant-numeric: tabular-nums; }
 
 .mk-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
@@ -663,7 +672,8 @@
 .mk-sheet-overlay {
   position: fixed;
   inset: 0;
-  z-index: 500;
+  /* Above the fixed mobile nav (300). See the portal note in FeedPage.js. */
+  z-index: 600;
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -674,10 +684,12 @@
 }
 .mk-sheet {
   position: relative;
+  display: flex;
+  flex-direction: column;
   width: 100%;
   max-width: 560px;
   max-height: 92vh;
-  overflow-y: auto;
+  min-height: 0;
   overscroll-behavior: contain;
   padding: 20px 20px calc(20px + env(safe-area-inset-bottom, 0px));
   border-radius: 14px 14px 0 0;
@@ -686,9 +698,48 @@
   box-shadow: var(--e-3);
   animation: mkSheetUp 0.34s var(--ease-spring) both;
 }
-@media (min-width: 720px) {
+/* On a laptop the listing opens as a panel against the right edge, not a
+   modal in the middle.
+
+   A centred modal says "stop what you were doing"; a panel says "look at
+   this one while the board stays where it was". That matters here because
+   scanning is the job — the board behind is a list of things that are all
+   running out, and you open four of them in a row. The panel also gets the
+   full height of the screen, so the pitch box and the apply button sit at
+   the bottom where your hand already is rather than below a fold. */
+@media (min-width: 900px) {
+  .mk-sheet-overlay {
+    align-items: stretch;
+    justify-content: flex-end;
+    /* Lighter than a modal scrim: the board behind is meant to stay readable. */
+    background: rgba(0, 0, 0, 0.38);
+  }
+  .mk-sheet {
+    max-width: 480px;
+    max-height: none;
+    height: 100%;
+    border-radius: 0;
+    border-right: 0;
+    border-top: 0;
+    border-bottom: 0;
+    padding: 22px 24px calc(22px + env(safe-area-inset-bottom, 0px));
+    box-shadow: -28px 0 70px rgba(0, 0, 0, 0.42);
+    /* `backwards`, not `both`: a finished `both` holds the to-state, and
+       even an identity transform makes this element the containing block for
+       anything fixed inside it. */
+    animation: mkSheetIn 0.32s var(--ease-out-expo, ease) backwards;
+  }
+  @keyframes mkSheetIn {
+    from { transform: translateX(26px); opacity: 0; }
+    to   { transform: none; opacity: 1; }
+  }
+}
+@media (min-width: 720px) and (max-width: 899px) {
   .mk-sheet-overlay { align-items: center; padding: 24px; }
   .mk-sheet { border-radius: 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mk-sheet, .mk-sheet-overlay { animation: none; }
 }
 .mk-sheet-x {
   position: absolute;
@@ -718,9 +769,10 @@
 }
 .mk-sheet-payout {
   font-family: var(--font-display);
-  font-size: 1.75rem;
-  font-weight: 700;
-  letter-spacing: -0.03em;
+  font-stretch: var(--wide);
+  font-size: 1.875rem;
+  font-weight: 800;
+  letter-spacing: -0.035em;
   line-height: 1;
   color: var(--tone);
   font-variant-numeric: tabular-nums;
@@ -1186,3 +1238,38 @@
   border: 1px solid var(--brand-line);
 }
 .mk-empty-mark svg { width: 24px; height: 24px; }
+
+
+/* ── Panel body and footer ───────────────────────────────────────────────
+   The listing scrolls; the thing you came to do does not move. On a phone
+   that keeps Apply on the screen instead of below a fold of skills and
+   description, and on a laptop it anchors the panel's full height. */
+.mk-sheet-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  /* Room for the footer's own top rule not to crowd the last element. */
+  padding-bottom: 4px;
+  /* Hide the scrollbar track; the fade below says there is more. */
+  scrollbar-width: thin;
+}
+.mk-sheet-foot {
+  flex-shrink: 0;
+  position: relative;
+  padding-top: 14px;
+  margin-top: 4px;
+  border-top: 1px solid var(--hairline);
+}
+/* A short fade so text scrolling under the footer rule reads as continuing
+   rather than as being cut. */
+.mk-sheet-foot::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  height: 22px;
+  background: linear-gradient(to top, var(--surface-1), transparent);
+  pointer-events: none;
+}
