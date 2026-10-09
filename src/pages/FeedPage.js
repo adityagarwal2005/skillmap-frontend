@@ -13,13 +13,15 @@ import NotificationBell from '../components/NotificationBell';
 import { cldThumb } from '../utils/cloudinaryUrl';
 import LocationSwitcher from '../components/LocationSwitcher';
 import { locateDevice, geolocationAlreadyAllowed, readStoredPlace, storePlace } from '../utils/geo';
-import { ICONS as I, money, distance, parseTs, Bookmark, Avatar, Seats, Skills, MetaChips, GigCard, TeamCard } from '../components/ListingCard';
+import { ICONS as I, money, distance, parseTs, Bookmark, Avatar, Seats, Skills, MetaChips } from '../components/ListingCard';
 import { SKILL_CATEGORIES, categoriesOf, categoryById } from '../utils/skillCategories';
 import usePoll from '../hooks/usePoll';
 import useSpotlight from '../hooks/useSpotlight';
 import useCountUp from '../hooks/useCountUp';
 import useNow from '../hooks/useNow';
 import useMediaQuery from '../hooks/useMediaQuery';
+import BoardRow from '../components/BoardRow';
+import { AXES, bandItems } from '../utils/boardBands';
 import './FeedPage.css';
 import './Marketplace.css';
 
@@ -32,13 +34,10 @@ const RANGES = [
 ];
 const RANGE_LABEL = Object.fromEntries(RANGES.map(r => [r.value, r.label]));
 
-const SORTS = [
-  { value: 'match', label: 'For you' },
-  { value: 'soon',  label: 'Ending soon' },
-  { value: 'pay',   label: 'Top pay' },
-  { value: 'near',  label: 'Nearest' },
-];
-const SORT_LABEL = Object.fromEntries(SORTS.map(o => [o.value, o.label]));
+/* The board is always cut along one axis; this picks which. It replaces a
+   sort dropdown, because sorting leaves you to work out where the list stops
+   being urgent — banding says it outright. See utils/boardBands.js. */
+const AXIS_LABEL = Object.fromEntries(AXES.map(a => [a.id, a.label]));
 
 // "today 6:40 pm", "tomorrow 9:00 am", "Wed 11:30 am"
 function closesAt(ts) {
@@ -68,7 +67,11 @@ export default function FeedPage() {
     catch { return '5'; }
   });
   const [query, setQuery]     = useState('');
-  const [sort, setSort]       = useState('match');   // match | soon | pay | near
+  // Which axis the board is banded along — closing | distance | pay.
+  const [axis, setAxis]       = useState(() => {
+    try { const v = localStorage.getItem('smAxis'); return AXES.some(a => a.id === v) ? v : 'closing'; }
+    catch { return 'closing'; }
+  });
   const [category, setCategory] = useState('');      // SKILL_CATEGORIES id
   const [showAllSkills, setShowAllSkills] = useState(false);
   // The toolbar is sticky, so once listings slide under it it needs to read
@@ -175,6 +178,8 @@ export default function FeedPage() {
       });
     return () => { alive = false; };
   }, []);
+
+  useEffect(() => { try { localStorage.setItem('smAxis', axis); } catch { /* ignore */ } }, [axis]);
 
   // Remembered across visits, so the board does not silently jump back to
   // wherever the phone happens to be.
@@ -296,7 +301,7 @@ export default function FeedPage() {
   // Remounting the grid when any filter changes replays the staggered
   // entrance, so you see the screen answer you rather than the contents
   // swapping in place.
-  const gridKey = `${kind}|${category}|${sort}|${savedOnly}|${range}`;
+  const gridKey = `${kind}|${category}|${axis}|${savedOnly}|${range}`;
 
   const catCounts = useMemo(() => {
     const counts = {};
@@ -322,12 +327,11 @@ export default function FeedPage() {
       if (!hay.includes(q)) return false;
     }
     return true;
-  }).sort((a, b) => {
-    if (sort === 'pay') return (Number(b.payment_amount) || 0) - (Number(a.payment_amount) || 0);
-    if (sort === 'near') return (a.distance_km ?? Infinity) - (b.distance_km ?? Infinity);
-    if (sort === 'soon') return parseTs(a.expires_at) - parseTs(b.expires_at);
-    return 0; // 'match' — the server's ranking: your skills and category first
   });
+
+  // The board's shape. Ordering lives inside bandItems, so what you see and
+  // the band it sits under can never disagree.
+  const bands = useMemo(() => bandItems(shown, axis, now), [shown, axis, now]);
 
   const clearAll = () => { setKind('all'); setCategory(''); setSavedOnly(false); setQuery(''); };
   const tokens = [
@@ -340,9 +344,6 @@ export default function FeedPage() {
     : category ? categoryById(category)?.label
     : kind === 'freelance' ? 'Paid gigs'
     : kind === 'collab' ? 'Teams forming'
-    : sort === 'soon' ? 'Ending soon'
-    : sort === 'pay' ? 'Best paying'
-    : sort === 'near' ? 'Closest to you'
     // "near you" is a lie once you've pointed the board somewhere else, and
     // getting that wrong is how you misread a whole screen of distances.
     : place && place.kind !== 'device' ? `Live near ${place.label}`
@@ -435,10 +436,10 @@ export default function FeedPage() {
      a control smaller than that. */
   const sortControl = (
     <label className="mk-sort">
-      <span className="mk-sort-value">{SORT_LABEL[sort]} {I.chevron}</span>
-      <select className="mk-sort-select" value={sort} aria-label="Sort"
-        onChange={e => setSort(e.target.value)}>
-        {SORTS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+      <span className="mk-sort-value">By {AXIS_LABEL[axis]} {I.chevron}</span>
+      <select className="mk-sort-select" value={axis} aria-label="Group the board by"
+        onChange={e => setAxis(e.target.value)}>
+        {AXES.map(a => <option key={a.id} value={a.id}>Group by {a.label.toLowerCase()}</option>)}
       </select>
     </label>
   );
@@ -599,39 +600,51 @@ export default function FeedPage() {
             </div>
 
             {loading ? (
-              <div className="mk-grid">
-                {[0, 1, 2, 3, 4, 5].map(n => (
-                  <div key={n} className="mk-skel-card">
-                    <div className="ds-skel sk-lg" />
-                    <div className="ds-skel sk-md" />
-                    <div className="ds-skel sk-sm" />
-                    <div className="ds-skel sk-foot" />
+              /* Shaped like the rows it becomes — a grid of card skeletons
+                 resolving into a list of rows is a visible lurch. */
+              <div className="bd">
+                <div className="bd-band">
+                  <div className="bd-band-rows">
+                    {[0, 1, 2, 3, 4, 5].map(n => (
+                      <div key={n} className="bd-skel" aria-hidden="true">
+                        <div className="ds-skel bd-skel-clock" />
+                        <div className="bd-skel-main">
+                          <div className="ds-skel bd-skel-title" />
+                          <div className="ds-skel bd-skel-meta" />
+                        </div>
+                        <div className="ds-skel bd-skel-pay" />
+                      </div>
+                    ))}
                   </div>
-                ))}
+                </div>
               </div>
             ) : shown.length === 0 ? renderEmpty() : (
-              <div className="mk-grid" key={gridKey}>
-                {shown.map((item, i) => {
-                  const key = `${item.kind}-${item.id}`;
-                  const props = {
-                    item,
-                    now,
-                    isNew: newIds.has(key),
-                    saved: saved.has(key),
-                    // The top-ranked listing is set larger than the rest. A
-                    // grid of identical cards says everything matters equally,
-                    // which is never true on a board where one gig pays six
-                    // times the next and closes tonight. Only worth doing when
-                    // there's a field to lead — below that it's just a big card.
-                    isLead: i === 0 && shown.length >= 4,
-                    onSave: (e) => toggleSave(item, e),
-                    onOpen: () => setViewItem(item),
-                    style: { animationDelay: `${Math.min(i, 6) * 25}ms` },
-                  };
-                  return item.kind === 'freelance'
-                    ? <GigCard key={key} {...props} />
-                    : <TeamCard key={key} {...props} />;
-                })}
+              /* The board. Bands re-form as the clock runs — a listing that
+                 drops under an hour moves itself into "Closing within the
+                 hour" on the next tick of useNow, without a refresh. */
+              <div className="bd" key={gridKey}>
+                {bands.map(band => (
+                  <section className={`bd-band ${band.hot ? 'is-hot' : ''}`} key={band.id}>
+                    <header className="bd-band-head">
+                      <h3 className="bd-band-title">{band.title}</h3>
+                      {band.note && <span className="bd-band-note">{band.note}</span>}
+                      <span className="bd-band-n">{band.items.length}</span>
+                    </header>
+                    <div className="bd-band-rows">
+                      {band.items.map((item, i) => {
+                        const key = `${item.kind}-${item.id}`;
+                        return (
+                          <BoardRow key={key} item={item} now={now}
+                            isNew={newIds.has(key)}
+                            saved={saved.has(key)}
+                            onSave={(e) => toggleSave(item, e)}
+                            onOpen={() => setViewItem(item)}
+                            style={{ animationDelay: `${Math.min(i, 6) * 25}ms` }} />
+                        );
+                      })}
+                    </div>
+                  </section>
+                ))}
               </div>
             )}
 
