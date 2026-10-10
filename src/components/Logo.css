@@ -1,17 +1,54 @@
 .brand-logo {
-  font-family: 'Pacifico', cursive;
-  font-weight: 400;
+  font-family: var(--font-display);
+  /* Heavy and slightly expanded: a wordmark has to hold its own at 1.4rem in
+     a sidebar and at 3rem on a landing page, and the width axis keeps it
+     from looking thin at the small end. */
+  font-weight: 800;
+  font-stretch: 104%;
+  font-size: 1.5rem;
+  letter-spacing: -0.045em;
   line-height: 1;
-  letter-spacing: 0.01em;
   display: inline-flex;
-  align-items: baseline;
-  gap: 0.28em;
+  align-items: center;
+  gap: 0.3em;
   white-space: nowrap;
   user-select: none;
 }
 .brand-logo.is-clickable { cursor: pointer; }
-.brand-logo-doit { color: #ffffff; }
-.brand-logo-here { color: #ef5f26; }
 
-/* On a light background (light theme marketing/login), keep "Doit" readable */
-:root[data-theme="light"] .brand-logo-doit { color: #0a0a0a; }
+.brand-logo-word { display: inline-flex; align-items: baseline; }
+.brand-logo-doit { color: var(--text-1); }
+/* --brand-text, not --brand: the fill gold is 1.99:1 on the light ground.
+   This is the same distinction the palette comment in global.css draws. */
+.brand-logo-here { color: var(--brand-text); }
+
+.brand-mark {
+  width: 0.98em;
+  height: 0.98em;
+  flex-shrink: 0;
+  overflow: visible;
+}
+.brand-mark-pin,
+.brand-mark-ring {
+  fill: none;
+  stroke: var(--brand);
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+.brand-mark-ring {
+  /* Circumference at r=3.3 is 20.73. A 15.2 dash leaves a 5.5 gap — just
+     over a quarter turn — and with no rotation the gap lands upper-right. */
+  stroke-dasharray: 15.2 5.5;
+}
+
+/* The ring is the moving part of the mark, so on anything clickable it
+   advances a little on hover — the countdown ticking. */
+.brand-logo.is-clickable .brand-mark-ring {
+  transition: stroke-dashoffset var(--t-slow, 0.42s) var(--ease-spring, ease);
+}
+.brand-logo.is-clickable:hover .brand-mark-ring { stroke-dashoffset: -5.2; }
+@media (prefers-reduced-motion: reduce) {
+  .brand-logo.is-clickable .brand-mark-ring { transition: none; }
+}

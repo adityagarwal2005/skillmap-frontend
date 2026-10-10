@@ -1,6 +1,6 @@
 {
   "short_name": "DoitHere",
-  "name": "DoitHere — Find Work & Talent Near You",
+  "name": "DoitHere \u2014 Find Work & Talent Near You",
   "description": "Find skilled people near you, collaborate, and get work done.",
   "icons": [
     {
@@ -29,7 +29,11 @@
   "dir": "ltr",
   "display": "standalone",
   "orientation": "portrait",
-  "theme_color": "#0a0a0a",
-  "background_color": "#0a0a0a",
-  "categories": ["business", "productivity", "social"]
+  "theme_color": "#0A0D1A",
+  "background_color": "#0A0D1A",
+  "categories": [
+    "business",
+    "productivity",
+    "social"
+  ]
 }

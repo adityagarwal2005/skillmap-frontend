@@ -81,7 +81,7 @@
   border-radius: 20px;
   background: rgba(239,95,38,0.15);
   border: 1px solid rgba(239,95,38,0.35);
-  color: #ff8a5c;
+  color: #EFC776;
   font-size: 0.8125rem;
   font-weight: 600;
 }
@@ -94,7 +94,7 @@
   font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #ff8a5c;
+  color: #EFC776;
   padding: 6px 14px;
   background: rgba(239,95,38,0.12);
   border: 1px solid rgba(239,95,38,0.35);
@@ -336,7 +336,7 @@
   font-weight: 800;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: #ff8a5c;
+  color: #EFC776;
   margin-bottom: 14px;
 }
 .landing-section-title {
@@ -451,8 +451,8 @@
   top: 8px;
   width: 6px;
   height: 3px;
-  border-left: 1.8px solid #ff8a5c;
-  border-bottom: 1.8px solid #ff8a5c;
+  border-left: 1.8px solid #EFC776;
+  border-bottom: 1.8px solid #EFC776;
   transform: rotate(-45deg);
 }
 
@@ -506,7 +506,7 @@
   position: absolute;
   left: 0; top: 0; bottom: 0;
   width: 4px;
-  background: #ef5f26;
+  background: #D8A94B;
 }
 .lp-card.is-collab .lp-card-stripe { background: #f5f5f7; }
 
@@ -523,7 +523,7 @@
   text-transform: uppercase;
   padding: 4px 10px;
   border-radius: 999px;
-  color: #ff8a5c;
+  color: #EFC776;
   background: rgba(239,95,38,0.14);
 }
 .lp-card-kind.is-collab {
@@ -566,7 +566,7 @@
   font-size: 1.5rem;
   font-weight: 800;
   letter-spacing: -0.03em;
-  color: #ef5f26;
+  color: #D8A94B;
   font-variant-numeric: tabular-nums;
 }
 .lp-card-money.is-collab { font-size: 1.0625rem; color: rgba(245,245,247,0.86); }
@@ -646,7 +646,7 @@
   justify-content: center;
   background: rgba(239,95,38,0.13);
   border: 1px solid rgba(239,95,38,0.32);
-  color: #ff8a5c;
+  color: #EFC776;
 }
 .lp-cell-ic svg { width: 20px; height: 20px; display: block; }
 
@@ -679,7 +679,7 @@
   border-radius: 12px;
   background: rgba(239,95,38,0.12);
   border: 1px solid rgba(239,95,38,0.3);
-  color: #ff8a5c;
+  color: #EFC776;
   font-variant-numeric: tabular-nums;
 }
 .lp-pay-tag.is-dim { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); color: rgba(245,245,247,0.5); }
@@ -695,7 +695,7 @@
   font-size: 0.8125rem;
   font-weight: 800;
   color: #0a0a0a;
-  background: linear-gradient(140deg, #ff9d6e, #ef5f26);
+  background: linear-gradient(140deg, #F2D293, #D8A94B);
   border: 2px solid #0d0d0d;
   margin-right: -9px;
 }
@@ -734,7 +734,7 @@
 .lp-radar-dot {
   width: 9px;
   height: 9px;
-  background: #ef5f26;
+  background: #D8A94B;
   box-shadow: 0 0 0 0 rgba(239,95,38,0.55);
   animation: lpPing 2.6s ease-out infinite;
 }
@@ -762,7 +762,7 @@
 }
 .lp-bubble.is-me {
   align-self: flex-end;
-  background: #ef5f26;
+  background: #D8A94B;
   color: #fff;
   border-bottom-right-radius: 5px;
 }
@@ -824,7 +824,7 @@
   justify-content: center;
   background: #0f0f0f;
   border: 1px solid rgba(239,95,38,0.42);
-  color: #ff8a5c;
+  color: #EFC776;
   box-shadow: 0 0 0 7px #0a0a0a, 0 10px 26px rgba(0,0,0,0.55);
 }
 .lp-flow-orb svg { width: 23px; height: 23px; display: block; }
@@ -965,7 +965,7 @@
   height: 50px;
   padding: 0 24px 0 19px;
   border-radius: 999px;
-  background: linear-gradient(180deg, #ff8a5c, #ef5f26);
+  background: linear-gradient(180deg, #EFC776, #D8A94B);
   color: #fff;
   font-weight: 800;
   font-size: 0.9375rem;
@@ -1105,7 +1105,7 @@
   width: 34px;
   height: 34px;
   border-radius: 11px;
-  color: #ff8a5c;
+  color: #EFC776;
   background: rgba(239,95,38,0.16);
   border: 1px solid rgba(239,95,38,0.34);
 }
@@ -1135,7 +1135,7 @@
   left: 0;
   width: 62%;
   height: 3px;
-  background: linear-gradient(90deg, #ef5f26, #ff8a5c);
+  background: linear-gradient(90deg, #D8A94B, #EFC776);
 }
 .lp-mini-ticket {
   display: flex;
@@ -1157,7 +1157,7 @@
   font-weight: 800;
   letter-spacing: -0.045em;
   line-height: 1;
-  color: #ef5f26;
+  color: #D8A94B;
 }
 .lp-mini-meta { margin-top: 4px; font-size: 0.72rem; font-weight: 700; color: rgba(245,245,247,0.52); }
 
@@ -1206,7 +1206,7 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
-.lp-mini-kind.is-gig { color: #ff8a5c; background: rgba(239,95,38,0.16); }
+.lp-mini-kind.is-gig { color: #EFC776; background: rgba(239,95,38,0.16); }
 .lp-mini-kind.is-team { color: #a095ff; background: rgba(123,108,246,0.18); }
 .lp-mini-body h3 {
   font-family: var(--font-display);
@@ -1260,7 +1260,7 @@
   font-size: 0.75rem;
   font-weight: 800;
   color: #fff;
-  background: linear-gradient(180deg, #ff8a5c, #ef5f26);
+  background: linear-gradient(180deg, #EFC776, #D8A94B);
 }
 .lp-mini-apply.is-team { background: linear-gradient(180deg, #a095ff, #7b6cf6); }
 
@@ -1312,7 +1312,7 @@
   font-weight: 800;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: #ff8a5c;
+  color: #EFC776;
 }
 .landing-section-title {
   font-family: var(--font-display);
@@ -1347,7 +1347,7 @@
 .lp-cell-proof::after { background: radial-gradient(120% 90% at 0% 0%, rgba(34,197,94,0.13), transparent 62%); }
 
 .lp-cell-ic {
-  color: #ff8a5c;
+  color: #EFC776;
   background: rgba(239,95,38,0.15);
   border: 1px solid rgba(239,95,38,0.32);
 }
@@ -1371,7 +1371,7 @@
   opacity: 0.9;
 }
 .lp-flow-orb {
-  color: #ff8a5c;
+  color: #EFC776;
   background: linear-gradient(180deg, rgba(32,32,34,0.98), rgba(18,18,19,0.98));
   border: 1px solid rgba(239,95,38,0.34);
   box-shadow: 0 12px 30px rgba(0,0,0,0.5), 0 0 0 6px rgba(239,95,38,0.07);
@@ -1541,7 +1541,7 @@
   font-size: 0.9375rem;
   font-weight: 700;
   letter-spacing: -0.01em;
-  color: #ff8a5c;
+  color: #EFC776;
   font-variant-numeric: tabular-nums;
 }
 .lp-trade-label {
