@@ -39,7 +39,7 @@
   --green:       var(--ok);
   --green-low:   rgba(255,255,255,0.06);
   --red:         #ff453a;
-  --blue:        #FFFFFF;
+  --blue:        var(--brand-text);
   --radius-sm:   var(--r-sm);
   --radius-md:   var(--r-md);
   --radius-lg:   var(--r-lg);
@@ -134,7 +134,7 @@
   --green:       var(--ok);
   --green-low:   rgba(255,255,255,0.048);
   --red:         #ff3b30;
-  --blue:        #FFFFFF;}
+  --blue:        var(--brand-text);}
 
 html { font-size: 16px; overflow-x: hidden; }
 
@@ -225,7 +225,10 @@ a { text-decoration: none; color: inherit; }
    Nothing above is renamed, so existing pages are unaffected.
    ────────────────────────────────────────────────────────── */
 :root {
-  --font-mono:      ui-monospace, 'SF Mono', 'Menlo', 'Monaco', monospace;
+  /* The body face already is a monospace, so this alias has to point at
+     it — anything still asking for --font-mono was rendering in the system
+     mono and looked like the theme had skipped it. */
+  --font-mono:      var(--font-body);
   --fs-display:     clamp(2.75rem, 6vw, 4.75rem);
   --fs-h1:          clamp(2rem, 4vw, 3rem);
   --fs-h2:          clamp(1.5rem, 2.6vw, 2rem);
@@ -243,8 +246,8 @@ a { text-decoration: none; color: inherit; }
   --dur-fast:  0.15s;
   --dur:       0.3s;
   --dur-slow:  0.6s;
-  --cyan:        #FFFFFF;
-  --accent-2:    #FFFFFF;
+  --cyan:        var(--brand-text);
+  --accent-2:    var(--brand-text);
   --accent-orange-low: rgba(255,255,255,0.077);
   --radius-pill: 999px;
   --ink:        #000000;

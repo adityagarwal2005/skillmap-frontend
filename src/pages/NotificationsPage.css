@@ -64,13 +64,16 @@
   font-variant-numeric: tabular-nums;
 }
 .notif-filter:hover { color: var(--text-1); }
+/* The selected tab is a brand fill, so everything inside it — including the
+   count — has to invert, not just the label. */
 .notif-filter.is-on {
   color: var(--on-brand);
   background: var(--brand);
   border-color: transparent;
   box-shadow: var(--edge-strong);
 }
-.notif-filter.is-on span { color: rgba(255,255,255,0.8); }
+/* Was white-on-white once the tab fill became the brand. */
+.notif-filter.is-on span { color: var(--on-brand); opacity: 0.72; }
 
 .notif-group { margin-bottom: 24px; }
 .notif-group-title {
@@ -199,7 +202,7 @@
   transition: opacity var(--t-fast) ease, background var(--t-fast) ease;
 }
 .notif-action-btn:disabled { opacity: 0.6; cursor: default; }
-.notif-action-btn.is-accept { color: #fff; background: var(--ok); }
+.notif-action-btn.is-accept { color: var(--on-brand); background: var(--ok); }
 .notif-action-btn.is-accept:hover:not(:disabled) { opacity: 0.9; }
 .notif-action-btn.is-decline {
   color: var(--text-2);

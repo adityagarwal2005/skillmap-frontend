@@ -450,7 +450,7 @@
   word-break: break-word;
   white-space: pre-wrap;
 }
-.msg-bubble.own .msg-text { color: #fff; }
+.msg-bubble.own .msg-text { color: var(--on-brand); }
 
 .msg-media {
   display: block;
@@ -471,9 +471,10 @@ video.msg-media { cursor: default; }
   font-variant-numeric: tabular-nums;
   color: var(--text-3);
 }
-.msg-bubble.own .msg-time { color: rgba(255,255,255,0.75); }
+.msg-bubble.own .msg-time { color: var(--on-brand); opacity: 0.7; }
 .msg-tick { margin-left: 4px; letter-spacing: -1px; }
-.msg-tick.is-read { color: #7cd4ff; }
+/* Was a cyan that belongs to no palette we have had in weeks. */
+.msg-tick.is-read { color: var(--on-brand); opacity: 1; font-weight: 700; }
 
 .typing-bubble { padding: 12px 14px; }
 .typing-dots { display: inline-flex; align-items: center; gap: 4px; }

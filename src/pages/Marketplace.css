@@ -606,7 +606,7 @@
 }
 .mk-seats .mk-seat:first-child { margin-left: 0; }
 .mk-seats .mk-seat svg { width: 11px; height: 11px; }
-.mk-seats .mk-seat.is-filled { color: #fff; background: var(--team); }
+.mk-seats .mk-seat.is-filled { color: var(--on-brand); background: var(--team); }
 .mk-seats .mk-seat.is-open {
   color: var(--team-bright);
   background: var(--team-dim);
@@ -894,7 +894,7 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  color: #fff;
+  color: var(--on-brand);
   background: var(--ok);
 }
 .mk-applied-ic svg { width: 15px; height: 15px; }
