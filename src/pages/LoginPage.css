@@ -103,7 +103,7 @@
   border-radius: 999px;
   font-size: 0.8125rem;
   font-weight: 800;
-  color: #fff;
+  color: var(--on-brand);
   background: var(--brand);
 }
 
@@ -151,7 +151,7 @@
 }
 .auth-tab:hover { color: var(--text-1); }
 .auth-tab.is-on {
-  color: #fff;
+  color: var(--on-brand);
   background: var(--brand);
   box-shadow: var(--edge-strong);
 }
@@ -266,7 +266,7 @@
   border-radius: 999px;
   font-size: 1rem;
   font-weight: 800;
-  color: #fff;
+  color: var(--on-brand);
   background: var(--brand);
   box-shadow: var(--e-1);
   transition: transform var(--t-fast) var(--spring), opacity var(--t-fast) ease;

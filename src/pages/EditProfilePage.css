@@ -160,7 +160,7 @@
 }
 .pwd-update-btn:hover:not(:disabled) { background: var(--elevated); border-color: var(--text-3); }
 .pwd-update-btn:disabled { opacity: 0.5; cursor: default; }
-.pwd-update-btn.is-done { background: var(--green, #34c759); border-color: var(--green, #34c759); color: #fff; }
+.pwd-update-btn.is-done { background: var(--green, var(--ok)); border-color: var(--green, var(--ok)); color: #fff; }
 
 /* Actions */
 .edit-actions {

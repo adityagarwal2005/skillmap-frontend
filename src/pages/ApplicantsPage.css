@@ -174,8 +174,8 @@
   border: 1.5px solid;
   transition: background 0.15s, transform 0.14s ease;
 }
-.apl-tick  { color: #22c55e; border-color: rgba(34,197,94,0.5); }
-.apl-tick:hover  { background: rgba(34,197,94,0.14); }
+.apl-tick  { color: var(--ok); border-color: rgba(255,255,255,0.3); }
+.apl-tick:hover  { background: rgba(255,255,255,0.084); }
 .apl-cross { color: #ff453a; border-color: rgba(255,69,58,0.5); }
 .apl-cross:hover { background: rgba(255,69,58,0.14); }
 .apl-tick:active, .apl-cross:active { transform: scale(0.97); }
@@ -196,7 +196,7 @@
   font-weight: 800;
   color: #fff;
 }
-.apl-confirm.ok { background: #22c55e; }
+.apl-confirm.ok { background: var(--ok); }
 .apl-confirm.no { background: #ff453a; }
 .apl-confirm:disabled { opacity: 0.6; }
 .apl-cancel {
@@ -273,7 +273,7 @@
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
-.apl-slots.is-full { color: var(--ok); background: var(--ok-dim); border-color: rgba(34,197,94,0.4); }
+.apl-slots.is-full { color: var(--ok); background: var(--ok-dim); border-color: rgba(255,255,255,0.24); }
 .apl-tick:disabled { opacity: 0.4; cursor: not-allowed; }
 .apl-tick:disabled:hover { background: none; }
 

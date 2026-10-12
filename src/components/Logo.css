@@ -3,10 +3,10 @@
   /* Heavy and slightly expanded: a wordmark has to hold its own at 1.4rem in
      a sidebar and at 3rem on a landing page, and the width axis keeps it
      from looking thin at the small end. */
-  font-weight: 800;
-  font-stretch: 104%;
+  font-weight: 900;
+  font-stretch: 112%;
   font-size: 1.5rem;
-  letter-spacing: -0.045em;
+  letter-spacing: -0.055em;
   line-height: 1;
   display: inline-flex;
   align-items: center;
@@ -18,9 +18,10 @@
 
 .brand-logo-word { display: inline-flex; align-items: baseline; }
 .brand-logo-doit { color: var(--text-1); }
-/* --brand-text, not --brand: the fill gold is 1.99:1 on the light ground.
-   This is the same distinction the palette comment in global.css draws. */
-.brand-logo-here { color: var(--brand-text); }
+/* One colour now. The two-tone wordmark existed to show off the accent;
+   with no accent left, splitting the word in two just made it look unsure.
+   "Here" keeps its own span so a future accent can land there again. */
+.brand-logo-here { color: var(--text-1); }
 
 .brand-mark {
   width: 0.98em;
@@ -31,8 +32,8 @@
 .brand-mark-pin,
 .brand-mark-ring {
   fill: none;
-  stroke: var(--brand);
-  stroke-width: 1.9;
+  stroke: var(--text-1);
+  stroke-width: 2.1;
   stroke-linecap: round;
   stroke-linejoin: round;
   vector-effect: non-scaling-stroke;

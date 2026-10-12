@@ -12,10 +12,10 @@
   /* Glass — chrome and sheets float above content instead of butting
      against it. Kept off ordinary cards: backdrop-filter on a long
      scrolling list is the fastest way to make a phone stutter. */
-  --glass:        rgba(16,21,36,0.68);
-  --glass-strong: rgba(10,13,26,0.88);
-  --glass-brd:    rgba(206,218,255,0.12);
-  --blur:         saturate(180%) blur(22px);
+  --glass:        #000000;
+  --glass-strong: #000000;
+  --glass-brd:    rgba(255,255,255,0.14);
+  --blur:         none;
 
   /* A single hairline of light along a surface's top edge is what makes
      it read as a physical object rather than a filled rectangle. */
@@ -26,7 +26,7 @@
   --lift-1: 0 1px 2px rgba(0,0,0,0.4), 0 2px 8px rgba(0,0,0,0.28);
   --lift-2: 0 2px 4px rgba(0,0,0,0.4), 0 10px 28px rgba(0,0,0,0.42);
   --lift-3: 0 4px 8px rgba(0,0,0,0.45), 0 22px 56px rgba(0,0,0,0.55);
-  --lift-brand: 0 6px 22px rgba(239,95,38,0.3), 0 2px 6px rgba(239,95,38,0.22);
+  --lift-brand: 0 6px 22px rgba(255,255,255,0.165), 0 2px 6px rgba(255,255,255,0.121);
 
   /* Springs with real overshoot, for things that should feel physical. */
   --spring:      cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -36,46 +36,45 @@
 }
 
 [data-theme="light"] {
-  --glass:        rgba(247,245,240,0.74);
-  --glass-strong: rgba(253,252,249,0.92);
-  --glass-brd:    rgba(20,23,43,0.09);
+  --glass:        #FFFFFF;
+  --glass-strong: #FFFFFF;
+  --glass-brd:    rgba(0,0,0,0.11);
   --edge-light:   inset 0 1px 0 rgba(255,255,255,0.9);
   --edge-strong:  inset 0 1px 0 rgba(255,255,255,1);
-  --lift-1: 0 1px 2px rgba(0,0,0,0.05), 0 2px 8px rgba(0,0,0,0.04);
-  --lift-2: 0 2px 4px rgba(0,0,0,0.06), 0 10px 28px rgba(0,0,0,0.07);
-  --lift-3: 0 4px 8px rgba(0,0,0,0.07), 0 22px 56px rgba(0,0,0,0.1);
+  --lift-1: none;
+  --lift-2: none;
+  --lift-3: 0 0 0 1px rgba(0,0,0,0.10), 0 24px 70px rgba(0,0,0,0.22);
 
   /* The marketplace palette was only ever given dark values, so switching
      to light in Settings left every card a dark slab while the text on it
      flipped dark too — titles were unreadable across the whole feed. */
   --surface-1:    #FFFFFF;
-  --surface-2:    #F1EEE7;
-  --surface-flat: #F1EEE7;
-  --hairline:     rgba(20,23,43,0.09);
-  --hairline-str: rgba(20,23,43,0.17);
-  --brand-dim:    rgba(216,169,75,0.16);
-  --brand-line:   rgba(216,169,75,0.42);
-  /* The gold fill is far too light to set text in on a pale ground — it
-     lands near 2:1. This antique shade of the same hue clears AA both on
-     the ivory ground (5.9:1) and, which is the harder case, on the gold
-     tint the chips and badges sit on (5.06:1) — a gold tint *darkens* a
-     pale ground, so the badge is where this bottoms out, not the page. */
-  --brand-text:   #7F5C12;
-  --ok-dim:       rgba(5,150,105,0.13);
-  --warn-dim:     rgba(190,24,70,0.11);
+  --surface-2:    #F2F2F2;
+  --surface-flat: #F6F6F6;
+  --hairline:     rgba(0,0,0,0.11);
+  --hairline-str: rgba(0,0,0,0.22);
+  --brand-dim:    rgba(0,0,0,0.07);
+  --brand-line:   rgba(0,0,0,0.24);
+  /* Inverted: on light, the brand fill is black and text on it is white. */
+  --brand:        #000000;
+  --brand-bright: #000000;
+  --brand-text:   #000000;
+  --on-brand:     #FFFFFF;
+  --ok:           #000000;
+  --ok-dim:       rgba(0,0,0,0.07);
+  --warn-dim:     rgba(215,38,28,0.11);
   --danger-dim:   rgba(255,69,58,0.11);
-  --e-1: 0 1px 2px rgba(0,0,0,0.05);
-  --e-2: 0 4px 16px rgba(0,0,0,0.07);
-  --e-3: 0 14px 38px rgba(0,0,0,0.1);
+  --e-1: none;
+  --e-2: none;
+  --e-3: 0 0 0 1px rgba(0,0,0,0.10), 0 24px 70px rgba(0,0,0,0.22);
 
   /* #aeaeb2 and the dark-mode amber both sat near 2:1 on a white ground —
      fine as dim text on black, unreadable once the ground flipped. */
   /* Must match global.css's light --text-3; this block loads later and
-     would otherwise quietly win with the lighter, sub-AA value. */
-  --text-3: #606778;
-  /* Ruby, to match the dark theme's urgency and stay clear of the gold. */
-  --warn:   #BE184D;
-  --ok:     #059669;
+     would otherwise quietly win. */
+  --text-3: #636363;
+  /* The one colour, darkened enough to read on white. */
+  --warn:   #D7261C;
 }
 
 /* Chips and skeletons hardcode white-on-dark washes that vanish on a
@@ -88,7 +87,7 @@
 /* The dock hardcodes white labels, which disappear on a light ground. */
 [data-theme="light"] .app-shell .mobile-nav-btn { color: rgba(0,0,0,0.5); }
 [data-theme="light"] .app-shell .mobile-nav-btn.active { color: #1d1d1f; }
-[data-theme="light"] .app-shell .mobile-nav-btn.is-create { color: #fff; }
+[data-theme="light"] .app-shell .mobile-nav-btn.is-create { color: var(--on-brand); }
 [data-theme="light"] .app-shell .mobile-nav-btn.active::before { background: rgba(0,0,0,0.06); }
 /* The desktop rail hardcodes white labels, icons and hover fills for the
    dark theme, so on a light ground its whole nav went blank. */
@@ -97,8 +96,10 @@
 [data-theme="light"] .app-shell .sidebar-link-ic { color: var(--text-3); }
 [data-theme="light"] .app-shell .sidebar-link:hover { background: rgba(0,0,0,0.05); color: var(--text-1); }
 [data-theme="light"] .app-shell .sidebar-link:hover .sidebar-link-ic { color: var(--text-1); }
-[data-theme="light"] .app-shell .sidebar-link.active { background: rgba(239,95,38,0.1); color: var(--text-1); }
-[data-theme="light"] .app-shell .sidebar-post-btn { background: var(--text-1); color: #fff; }
+/* A white wash on a white ground is nothing. The active nav item needs
+   the ink tint on light, the paper tint on dark. */
+[data-theme="light"] .app-shell .sidebar-link.active { background: rgba(0,0,0,0.065); color: var(--text-1); }
+[data-theme="light"] .app-shell .sidebar-post-btn { background: var(--text-1); color: var(--on-brand); }
 /* The nudge banner painted itself solid black, which the light palette
    then wrote near-black text onto. */
 [data-theme="light"] .app-shell .profile-nudge {
@@ -121,9 +122,9 @@ body::before {
   z-index: -2;
   pointer-events: none;
   background:
-    radial-gradient(38% 30% at 12% 6%,  rgba(239,95,38,0.16), transparent 70%),
+    radial-gradient(38% 30% at 12% 6%,  rgba(255,255,255,0.088), transparent 70%),
     radial-gradient(34% 26% at 88% 14%, rgba(120,90,255,0.10), transparent 72%),
-    radial-gradient(46% 34% at 62% 92%, rgba(239,95,38,0.09), transparent 70%);
+    radial-gradient(46% 34% at 62% 92%, rgba(255,255,255,0.05), transparent 70%);
   filter: blur(38px);
   animation: ngDrift 34s ease-in-out infinite alternate;
 }
@@ -140,7 +141,7 @@ body::after {
 
 [data-theme="light"] body::before {
   background:
-    radial-gradient(38% 30% at 12% 6%,  rgba(239,95,38,0.09), transparent 70%),
+    radial-gradient(38% 30% at 12% 6%,  rgba(255,255,255,0.05), transparent 70%),
     radial-gradient(34% 26% at 88% 14%, rgba(120,90,255,0.06), transparent 72%);
 }
 [data-theme="light"] body::after { opacity: 0.018; }
@@ -224,7 +225,10 @@ body::after {
     background: var(--brand);
     box-shadow: var(--lift-brand), var(--edge-strong);
   }
-  .app-shell .mobile-nav-btn.is-create { color: #fff; }
+  /* The pill behind this is the brand fill, which is now white on dark
+     and black on light — the label has to invert with it or the app's
+     primary action is the same colour as the button under it. */
+  .app-shell .mobile-nav-btn.is-create { color: var(--on-brand); }
 
   /* Clear the floating dock plus its shadow. */
   .app-shell .app-main { padding-bottom: 92px; }
@@ -290,7 +294,7 @@ body::after {
 .app-shell textarea:focus-visible {
   outline: none;
   border-color: var(--brand-line);
-  box-shadow: 0 0 0 3px rgba(239,95,38,0.16), var(--edge-light);
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.088), var(--edge-light);
 }
 
 /* Primary actions carry the brand glow. */
@@ -391,7 +395,7 @@ body::after {
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(50% 60% at 22% 30%, rgba(239,95,38,0.3), transparent 70%),
+    radial-gradient(50% 60% at 22% 30%, rgba(255,255,255,0.165), transparent 70%),
     radial-gradient(46% 56% at 82% 12%, rgba(120,90,255,0.16), transparent 72%);
   filter: blur(26px);
 }
@@ -400,7 +404,7 @@ body::after {
 :root .app-shell .profile-avatar {
   box-shadow:
     0 0 0 1px rgba(255,255,255,0.14),
-    0 0 0 3px rgba(239,95,38,0.14),
+    0 0 0 3px rgba(255,255,255,0.077),
     var(--lift-2);
 }
 
@@ -489,19 +493,21 @@ body::after {
    lesser option rather than a different one.
    ═══════════════════════════════════════════════ */
 :root {
-  --team:        #8B7BF0;
-  --team-bright: #B3A6FF;
-  --team-dim:    rgba(139,123,240,0.17);
-  --team-line:   rgba(139,123,240,0.44);
-  /* The fill is 3.9:1 on its own tint; the bright shade clears AA. */
-  --team-text:   #B3A6FF;
+  /* No second hue. A gig and a team are told apart by weight and shape now
+     — a filled badge against an outlined one — because two colours is how
+     every template signals two categories. */
+  --team:        #FFFFFF;
+  --team-bright: #FFFFFF;
+  --team-dim:    rgba(255,255,255,0.09);
+  --team-line:   rgba(255,255,255,0.34);
+  --team-text:   #FFFFFF;
 }
 [data-theme="light"] {
-  --team:        #5b4be0;
-  --team-bright: #6a5bf0;
-  --team-dim:    rgba(91,75,224,0.1);
-  --team-line:   rgba(91,75,224,0.3);
-  --team-text:   #5b4be0;   /* 5.16:1 on its own tint over white — fine as is */
+  --team:        #000000;
+  --team-bright: #000000;
+  --team-dim:    rgba(0,0,0,0.06);
+  --team-line:   rgba(0,0,0,0.22);
+  --team-text:   #000000;
 }
 
 /* ═══════════════════════════════════════════════

@@ -33,22 +33,27 @@
   z-index: 5;
   display: flex;
   align-items: baseline;
-  gap: 10px;
-  padding: 8px 2px 9px;
+  gap: 12px;
+  padding: 12px 2px 12px;
   background: var(--glass-strong, var(--bg));
   backdrop-filter: var(--blur);
   -webkit-backdrop-filter: var(--blur);
 }
+/* The band head is the loudest thing on the page. With no colour to rank
+   things by, size and weight have to do all of it — a 15px label could not
+   hold the top of a section against a screen of white text. */
 .bd-band-title {
   font-family: var(--font-display);
-  font-size: 0.9375rem;
-  font-weight: 800;
-  letter-spacing: -0.015em;
+  font-stretch: 112%;
+  font-size: clamp(1.375rem, 2.4vw, 1.75rem);
+  font-weight: 900;
+  letter-spacing: -0.035em;
+  line-height: 1;
   color: var(--text-1);
   white-space: nowrap;
 }
 .bd-band-note {
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   color: var(--text-3);
   white-space: nowrap;
   overflow: hidden;
@@ -57,8 +62,9 @@
 .bd-band-n {
   margin-left: auto;
   flex-shrink: 0;
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 800;
   color: var(--text-3);
   font-variant-numeric: tabular-nums;
 }
@@ -83,8 +89,8 @@
   position: relative;
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 14px 14px 14px 12px;
+  gap: 18px;
+  padding: 18px 14px 18px 14px;
   border-bottom: 1px solid var(--hairline);
   cursor: pointer;
   text-align: left;
@@ -117,16 +123,16 @@
 
 /* ── The clock ───────────────────────────────────────────────────────── */
 .bd-clock {
-  flex: 0 0 76px;
+  flex: 0 0 96px;
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 .bd-clock-val {
   font-family: var(--font-display);
-  font-size: 1.0625rem;
-  font-weight: 800;
-  letter-spacing: -0.03em;
+  font-size: 1.375rem;
+  font-weight: 900;
+  letter-spacing: -0.04em;
   color: var(--text-1);
   font-variant-numeric: tabular-nums;
   line-height: 1;
@@ -157,11 +163,12 @@
 .bd-main { flex: 1; min-width: 0; display: flex; align-items: flex-start; gap: 12px; }
 .bd-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
 .bd-title {
-  font-size: 0.9375rem;
-  font-weight: 650;
-  line-height: 1.35;
+  font-family: var(--font-display);
+  font-size: 1.1875rem;
+  font-weight: 600;
+  line-height: 1.25;
   color: var(--text-1);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.022em;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
@@ -170,24 +177,36 @@
 }
 .bd-row:hover .bd-title { color: var(--text-1); }
 .bd-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 8px; }
+/* Two categories, one colour. A paid gig is a solid block; a team-up is an
+   outline. Shape survives monochrome where a second hue cannot, and it is
+   also how you tell them apart at a glance in a photo of the screen. */
 .bd-kind {
-  font-size: 0.625rem;
+  font-size: 0.6875rem;
   font-weight: 800;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
-  padding: 3px 7px;
-  border-radius: 5px;
-  color: var(--tone);
-  background: var(--tone-dim);
+  padding: 4px 8px;
+  border-radius: 4px;
   white-space: nowrap;
 }
-[data-theme="light"] .bd-kind.is-gig { color: var(--brand-text); }
-[data-theme="light"] .bd-kind.is-team { color: var(--team-text); }
-.bd-seats-n { font-size: 0.75rem; font-weight: 700; color: var(--text-3); white-space: nowrap; }
+.bd-kind.is-gig {
+  color: var(--on-brand);
+  background: var(--text-1);
+}
+.bd-kind.is-team {
+  color: var(--text-1);
+  background: none;
+  box-shadow: inset 0 0 0 1.5px var(--hairline-str);
+}
+/* A team's spine reads lighter than a gig's, same reasoning. */
+.bd-row.is-team::before { opacity: 0; }
+.bd-band.is-hot .bd-row.is-team::before { opacity: 0.4; }
+.bd-row.is-team:hover::before { opacity: 0.7; }
+.bd-seats-n { font-size: 0.8125rem; font-weight: 700; color: var(--text-3); white-space: nowrap; }
 
 /* ── Figures ─────────────────────────────────────────────────────────── */
 .bd-figures {
-  flex: 0 0 104px;
+  flex: 0 0 136px;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -195,18 +214,19 @@
 }
 .bd-pay {
   font-family: var(--font-display);
-  font-size: 1.125rem;
-  font-weight: 800;
-  letter-spacing: -0.025em;
+  font-stretch: 110%;
+  font-size: 1.6875rem;
+  font-weight: 900;
+  letter-spacing: -0.04em;
   color: var(--brand);
   font-variant-numeric: tabular-nums;
   line-height: 1;
   white-space: nowrap;
 }
 .bd-pay.is-none {
-  font-size: 0.8125rem;
-  font-weight: 700;
-  letter-spacing: 0;
+  font-size: 0.9375rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
   color: var(--team-bright);
 }
 [data-theme="light"] .bd-pay { color: var(--brand-text); }
@@ -214,8 +234,8 @@
 .bd-dist {
   display: inline-flex;
   align-items: center;
-  gap: 3px;
-  font-size: 0.75rem;
+  gap: 4px;
+  font-size: 0.8125rem;
   font-weight: 600;
   color: var(--text-3);
   white-space: nowrap;
@@ -284,9 +304,22 @@
   /* The phone toolbar is two rows, so the band heads stick lower. */
   .bd { gap: 20px; --bd-stick: 107px; }
 
+  /* The band head is a nowrap flex row, which was fine at 15px and forced
+     the whole page 105px wider than a 375px screen once the title grew to
+     22px. The title wraps now, and the note drops to its own line. */
+  .bd-band-head { flex-wrap: wrap; row-gap: 3px; }
+  .bd-band-title {
+    white-space: normal;
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: clamp(1.25rem, 6vw, 1.5rem);
+  }
+  .bd-band-n { order: 2; }
+  .bd-band-note { order: 3; flex-basis: 100%; white-space: normal; }
+
   .bd-row {
     display: grid;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: auto minmax(0, 1fr) auto;
     grid-template-areas:
       "clock figures save"
       "main  main    main";
@@ -301,7 +334,7 @@
     gap: 8px;
     flex-basis: auto;
   }
-  .bd-clock-val { font-size: 0.875rem; }
+  .bd-clock-val { font-size: 1.125rem; }
   /* Beside the value rather than beneath it, where the row is two lines. */
   .bd-clock-bar { width: 48px; flex-shrink: 0; }
 
@@ -318,7 +351,7 @@
     align-items: baseline;
     gap: 10px;
   }
-  .bd-pay { font-size: 1rem; }
+  .bd-pay { font-size: 1.375rem; }
   .bd-row::before { top: 8px; bottom: 8px; }
   .bd-row .mk-thumb { width: 40px; height: 40px; }
 }

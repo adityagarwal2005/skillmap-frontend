@@ -45,7 +45,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(120% 90% at 100% 0%, rgba(239,95,38,0.16), transparent 60%);
+  background: radial-gradient(120% 90% at 100% 0%, rgba(255,255,255,0.088), transparent 60%);
   opacity: 0;
   transition: opacity var(--t-med) ease;
   pointer-events: none;
@@ -135,7 +135,7 @@
 .mng-sub { font-size: 0.8125rem; color: var(--text-2); font-weight: 600; font-variant-numeric: tabular-nums; }
 .mng-sub.is-urgent { color: var(--warn); }
 .mng-sub.is-progress { color: var(--ok); }
-[data-theme="light"] .mng-sub.is-progress { color: #15803d; }
+[data-theme="light"] .mng-sub.is-progress { color: var(--ok); }
 .mng-head-right { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
 .mng-price {
   font-family: var(--font-display);
@@ -232,8 +232,8 @@
   border: 1.5px solid;
   transition: transform 0.14s var(--ease-out-expo, ease), background 0.15s;
 }
-.mng-tick { color: #22c55e; border-color: rgba(34,197,94,0.5); }
-.mng-tick:hover { background: rgba(34,197,94,0.14); }
+.mng-tick { color: var(--ok); border-color: rgba(255,255,255,0.3); }
+.mng-tick:hover { background: rgba(255,255,255,0.084); }
 .mng-cross { color: #ff453a; border-color: rgba(255,69,58,0.5); }
 .mng-cross:hover { background: rgba(255,69,58,0.14); }
 .mng-tick:active, .mng-cross:active { transform: scale(0.9); }
@@ -248,7 +248,7 @@
   font-weight: 800;
   color: #fff;
 }
-.mng-confirm-btn.ok { background: #22c55e; }
+.mng-confirm-btn.ok { background: var(--ok); }
 .mng-confirm-btn.no { background: #ff453a; }
 .mng-confirm-btn:disabled { opacity: 0.6; }
 .mng-confirm-cancel {
@@ -360,7 +360,7 @@
   background: var(--ok-dim);
   border: 1px solid color-mix(in srgb, var(--ok) 30%, transparent);
 }
-[data-theme="light"] .mng-complete { color: #15803d; }
+[data-theme="light"] .mng-complete { color: var(--ok); }
 
 
 /* On a phone the title column of a managed post is left with ~148px once the

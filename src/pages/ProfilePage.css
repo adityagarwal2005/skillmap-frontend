@@ -554,7 +554,7 @@
   position: absolute;
   top: -80px; left: -60px;
   width: 260px; height: 260px;
-  background: radial-gradient(circle, rgba(239,95,38,0.16), transparent 68%);
+  background: radial-gradient(circle, rgba(255,255,255,0.088), transparent 68%);
   pointer-events: none;
 }
 

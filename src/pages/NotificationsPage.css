@@ -65,7 +65,7 @@
 }
 .notif-filter:hover { color: var(--text-1); }
 .notif-filter.is-on {
-  color: #fff;
+  color: var(--on-brand);
   background: var(--brand);
   border-color: transparent;
   box-shadow: var(--edge-strong);

@@ -96,7 +96,7 @@
 .st-btn:hover { background: var(--hairline); }
 .st-btn:active { transform: scale(0.97); }
 .st-btn.is-primary {
-  color: #fff;
+  color: var(--on-brand);
   background: var(--brand);
   border-color: transparent;
   box-shadow: var(--edge-strong);
@@ -153,7 +153,7 @@
 }
 .st-choice:hover:not(:disabled) { color: var(--text-1); }
 .st-choice.is-on {
-  color: #fff;
+  color: var(--on-brand);
   background: var(--brand);
   border-color: transparent;
   box-shadow: var(--edge-strong);
