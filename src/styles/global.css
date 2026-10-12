@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;0,14..32,900;1,14..32,400&family=Archivo:wdth,wght@75..125,400..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Road+Rage&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -12,7 +12,7 @@
      leaves no room below a card to read as depth — every surface has to go
      lighter, so nothing can ever recede. A tinted near-black gives the ramp
      somewhere to stand. */
-  --bg:          #000000;
+  --bg:          #0B0908;
 
   /* Legacy names, kept as aliases of the marketplace system below. Half the
      app was written against these when they were flat black-and-white, so
@@ -27,9 +27,11 @@
   /* Solid values rather than white at an opacity: composited text over a
      gradient surface renders muddier than a flat colour, and #fff at full
      strength is harsher than anything print would set. */
-  --text-1:      #FFFFFF;
-  --text-2:      #ADADAD;
-  --text-3:      #8E8E8E;
+  --text-1:      #F8F8F8;
+  --text-2:      #A49D99;
+  /* Between the template's base-600 and base-700: base-600 came to 4.28:1
+     on a chip's own surface, just under AA. */
+  --text-3:      #968E88;
   --accent:      #ffffff;
   --accent-low:  rgba(255,255,255,0.1);
   --navy:        #ffffff;
@@ -51,11 +53,11 @@
   /* Flat, not gradients. A vertical gradient on every card fights the real
      elevation cue (the hairline plus the shadow) and smears text rendering
      on top of it. Three steps, each a measurable notch apart. */
-  --surface-1:   #0C0C0C;
-  --surface-2:   #161616;
-  --surface-flat:#080808;
-  --hairline:    rgba(255,255,255,0.13);
-  --hairline-str:rgba(255,255,255,0.26);
+  --surface-1:   #1B1816;
+  --surface-2:   #272322;
+  --surface-flat:#121010;
+  --hairline:    rgba(248,248,248,0.15);
+  --hairline-str:rgba(248,248,248,0.32);
 
   /* There is no accent colour. White is the brand.
 
@@ -69,10 +71,10 @@
      --on-brand is the text colour on a brand fill. It used to be a hardcoded
      #fff, which was fine while the brand was orange and is white-on-white
      now. */
-  --brand:       #FFFFFF;
+  --brand:       #F8F8F8;
   --brand-bright:#FFFFFF;
-  --brand-text:  #FFFFFF;
-  --on-brand:    #000000;
+  --brand-text:  #F8F8F8;
+  --on-brand:    #0B0908;
   --brand-dim:   rgba(255,255,255,0.10);
   --brand-line:  rgba(255,255,255,0.26);
 
@@ -83,7 +85,7 @@
      single thing that has to shout across a monochrome screen, so red is
      spent there and nowhere else — the moment it appears anywhere decorative
      it stops meaning "hurry". */
-  --warn:        #FF3B30;
+  --warn:        #E5342B;
   --warn-dim:    rgba(255,59,48,0.14);
   --danger:      #ff453a;
   --danger-dim:  rgba(255,69,58,0.13);
@@ -94,10 +96,10 @@
      default, and it reads soft. Uber's surfaces are barely rounded, and the
      hardness is most of why their screens look built rather than assembled.
      Pills survive only where a thing really is a pill — a filter chip. */
-  --r-sm: 2px;
-  --r-md: 4px;
-  --r-lg: 6px;
-  --r-xl: 8px;
+  --r-sm: 0px;
+  --r-md: 0px;
+  --r-lg: 0px;
+  --r-xl: 2px;
   --r-pill: 999px;
 
   /* Flat. Separation comes from a hairline and from space, not from a glow
@@ -121,10 +123,10 @@
   /* The page ground is a shade off white so that cards, which are pure
      white, sit above it. Ground and card both at #fff left nothing to
      separate them but a hairline. */
-  --bg:          #FFFFFF;
-  --text-1:      #000000;
-  --text-2:      #545454;
-  --text-3:      #636363;
+  --bg:          #F8F8F8;
+  --text-1:      #0B0908;
+  --text-2:      #56524C;
+  --text-3:      #645D58;
   --accent:      #1d1d1f;
   --accent-low:  rgba(0,0,0,0.05);
   --navy:        #1d1d1f;
@@ -143,10 +145,14 @@ body {
      instead of staying put. `clip` cuts the same horizontal overflow without
      creating a scrollport. html still carries hidden as the backstop. */
   overflow-x: clip;
-  background: var(--bg);
+  /* The template's ground: a dusty film-scan texture, fixed so it does not
+     travel with the content, over the warm near-black. The image is almost
+     entirely black — it is dust and scratches, not a picture — so text sits
+     on it as safely as on a flat fill. */
+  background: var(--bg) url('../assets/grain.jpg') center / cover fixed no-repeat;
   color: var(--text-1);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
-  font-size: 15px;
+  font-family: var(--font-body);
+  font-size: 14px;
   line-height: 1.5;
   letter-spacing: -0.006em;
   -webkit-font-smoothing: antialiased;
@@ -159,20 +165,18 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* Display face: Archivo, variable on both weight and width.
+/* Two faces, after the Grunge template (MIT, Jess Gaspar / ThemeWagon):
+   Road Rage for every heading, JetBrains Mono for everything else. There is
+   no third face and no sans-serif body — the mono *is* the body copy, which
+   is most of why the thing reads as a printed zine rather than a web app.
 
-   Space Grotesk went because it is the default of the genre — it is on every
-   AI-generated startup page, which is exactly the resemblance we are trying
-   to lose. Archivo is a grotesque with a real width axis, so the same family
-   covers a dense tabular figure and a wide, heavy headline. Having an axis to
-   push is what makes type read as a decision rather than a pick.
-
-   --wide is for the few moments that should feel stretched and confident: a
-   hero line, the payout on an open listing, the live count. Used widely it
-   stops meaning anything, so it is deliberately not on every heading. */
+   Road Rage ships a single weight. Asking for 700 or 900 makes the browser
+   synthesise a fake bold, which smears a face that is already rough, so
+   headings stay at 400 and get their weight from size instead. */
 :root {
-  --font-display: 'Archivo', 'Inter', -apple-system, sans-serif;
-  --wide: 118%;
+  --font-display: 'Road Rage', 'Impact', sans-serif;
+  --font-body: 'JetBrains Mono', ui-monospace, monospace;
+  --wide: 100%;
 }
 
 /* Headings take the display face by default.
@@ -189,6 +193,12 @@ h1, h2, h3,
 .section-title,
 .profile-name {
   font-family: var(--font-display);
+  /* The template's heading rule, verbatim in spirit: uppercase, tracking
+     tight, leading none. Road Rage has no lowercase worth setting. */
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height: 0.92;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -430,4 +440,69 @@ body { text-rendering: optimizeLegibility; }
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-old(page),
   ::view-transition-new(page) { animation: none; }
+}
+
+
+/* ══════════════════════════════════════════════════════════════════════
+   Grunge surface treatment
+   After the Grunge template (MIT, Jess Gaspar / ThemeWagon). Its whole
+   look is four things: a grain ground, a noise veil over it, hard square
+   2px rules instead of soft cards, and buttons that invert on hover.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* The noise veil. The template uses a Tailwind plugin; this is the same
+   idea as an inline SVG so it costs no request and scales to any screen.
+   pointer-events none so it never eats a click. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.22;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+[data-theme="light"] body::before { opacity: 0.30; mix-blend-mode: multiply; }
+@media (prefers-reduced-motion: reduce) { body::before { opacity: 0.14; } }
+
+/* Everything the app renders sits above the veil. */
+#root { position: relative; z-index: 1; }
+
+/* The grain is a near-black photograph, so on the light theme it put dark
+   text on a dark ground — the page was unreadable. Light gets paper instead
+   of film: no photograph, and the noise veil switches to multiply over the
+   off-white, which is the same texture read the other way up. */
+[data-theme="light"] body {
+  background-image: none;
+  background-color: var(--bg);
+}
+
+/* Buttons are a 2px rule that fills in on hover — the template's one
+   interaction idea, and the reason its pages feel printed rather than
+   rendered. Applied to the app's primary button classes. */
+.mk-btn,
+.mk-apply,
+.opp-cta,
+.st-btn,
+.landing-cta-lg,
+.landing-cta-ghost,
+.pp-btn,
+.trk-btn {
+  border-radius: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-family: var(--font-body);
+  font-weight: 700;
+  transition: background var(--t-fast) ease, color var(--t-fast) ease,
+              border-color var(--t-fast) ease;
+}
+.mk-btn:hover,
+.opp-cta:hover,
+.st-btn:hover,
+.pp-btn:hover,
+.trk-btn:hover {
+  background: var(--text-1);
+  color: var(--bg);
+  border-color: var(--text-1);
 }

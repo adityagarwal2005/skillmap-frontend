@@ -236,11 +236,10 @@
 /* The live count is the first number on the page and the one that says
    whether it is worth being here, so it takes the width axis. */
 .mk-summary-main b {
-  font-family: var(--font-display);
-  font-stretch: 114%;
-  font-size: clamp(2rem, 4vw, 2.75rem);
-  font-weight: 900;
-  letter-spacing: -0.045em;
+  font-family: var(--font-body);
+  font-size: clamp(1.75rem, 3.4vw, 2.25rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
   color: var(--text-1);
   font-variant-numeric: tabular-nums;
 }
@@ -335,11 +334,10 @@
 }
 .mk-results-title {
   font-family: var(--font-display);
-  font-stretch: 112%;
-  font-size: clamp(1.5rem, 3vw, 2.125rem);
-  font-weight: 900;
-  letter-spacing: -0.04em;
-  line-height: 1;
+  font-size: clamp(2.25rem, 5vw, 3.5rem);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 0.9;
   color: var(--text-1);
 }
 .mk-results-n { font-size: 0.875rem; color: var(--text-3); font-variant-numeric: tabular-nums; }

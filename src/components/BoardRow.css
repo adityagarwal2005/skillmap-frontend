@@ -45,10 +45,10 @@
 .bd-band-title {
   font-family: var(--font-display);
   font-stretch: 112%;
-  font-size: clamp(1.375rem, 2.4vw, 1.75rem);
-  font-weight: 900;
-  letter-spacing: -0.035em;
-  line-height: 1;
+  font-size: clamp(1.75rem, 3.4vw, 2.5rem);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 0.92;
   color: var(--text-1);
   white-space: nowrap;
 }
@@ -162,13 +162,18 @@
 /* ── Title and meta ──────────────────────────────────────────────────── */
 .bd-main { flex: 1; min-width: 0; display: flex; align-items: flex-start; gap: 12px; }
 .bd-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+/* Content, not a heading. The template sets its headings in Road Rage and
+   everything you actually read in the mono — a listing title is the latter,
+   and Road Rage uppercase at 19px in a dense list is close to unreadable.
+   It is an <h3>, so it has to opt out of the global heading rule. */
 .bd-title {
-  font-family: var(--font-display);
-  font-size: 1.1875rem;
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
   font-weight: 600;
-  line-height: 1.25;
+  line-height: 1.45;
   color: var(--text-1);
-  letter-spacing: -0.022em;
+  letter-spacing: -0.01em;
+  text-transform: none;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
@@ -312,7 +317,7 @@
     white-space: normal;
     flex: 1 1 auto;
     min-width: 0;
-    font-size: clamp(1.25rem, 6vw, 1.5rem);
+    font-size: clamp(1.5rem, 7vw, 2rem);
   }
   .bd-band-n { order: 2; }
   .bd-band-note { order: 3; flex-basis: 100%; white-space: normal; }
