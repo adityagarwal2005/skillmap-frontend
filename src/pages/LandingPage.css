@@ -1486,10 +1486,13 @@
   .lp-trade.is-wide { grid-column: span 2; grid-row: span 2; }
 }
 
+/* Square, like everything else in this theme. An 18px radius was the one
+   place on the page still rounded, which is exactly the kind of leftover
+   that makes a design read as half-applied. */
 .lp-trade {
   position: relative;
   overflow: hidden;
-  border-radius: 18px;
+  border-radius: 0;
   min-height: 240px;
   isolation: isolate;
   cursor: default;
@@ -1510,16 +1513,36 @@
      subject in a portrait sits above the middle — a centre crop put the
      wedding tile's dark foliage on screen and left the couple outside it. */
   object-position: 50% 38%;
-  /* Slightly desaturated and darkened at rest so white type always has a
-     ground to sit on; the colour comes back as you approach it. */
-  filter: saturate(0.82) brightness(0.74);
-  transform: scale(1.02);
-  transition: transform 0.8s cubic-bezier(0.16,1,0.3,1), filter 0.5s ease;
+  /* Photocopied, not photographed. Grayscale with the contrast pushed is
+     how a photograph looks after it has been through a zine — it stops being
+     a stock picture dropped into a layout and becomes part of the printing.
+     A little colour returns as you approach, so the people stay human.
+
+     Scaled well past the frame to leave room for the parallax to travel in,
+     and deliberately *not* transitioned: --pY is written every frame while
+     you scroll, and a transition on transform would smear it. */
+  filter: grayscale(1) contrast(1.28) brightness(0.68);
+  transform: translate3d(0, var(--pY, 0px), 0) scale(1.16);
+  transition: filter 0.5s ease;
+  will-change: transform;
 }
-.lp-trade:hover .lp-trade-img { transform: scale(1.09); filter: saturate(1) brightness(0.86); }
+.lp-trade:hover .lp-trade-img { filter: grayscale(0.35) contrast(1.12) brightness(0.86); }
 
 /* The scrim is what makes type over photography legible no matter what the
    photograph happens to be doing underneath it. */
+/* The same noise the page carries, laid over the photograph so the two are
+   in one print pass rather than a picture sitting on top of a texture. */
+.lp-trade::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.30;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+}
+
 .lp-trade-scrim {
   position: absolute;
   inset: 0;
@@ -1581,3 +1604,22 @@
       rgba(8,8,9,0.94) 0%, rgba(8,8,9,0.55) 40%, rgba(8,8,9,0.05) 75%);
   }
 }
+
+
+/* ── Scroll progress ──────────────────────────────────────────────────────
+   A hairline across the very top that fills as you move down the page. On a
+   long landing page it is the cheapest possible answer to "am I getting
+   anywhere", and it puts the money colour on screen from the first pixel. */
+.lp-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: 400;
+  pointer-events: none;
+  transform-origin: 0 50%;
+  transform: scaleX(var(--sp, 0));
+  background: var(--money);
+}
+@media (prefers-reduced-motion: reduce) { .lp-progress { display: none; } }

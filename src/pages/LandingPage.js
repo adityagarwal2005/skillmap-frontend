@@ -5,6 +5,7 @@ import useTilt from '../hooks/useTilt';
 import useMagnetic from '../hooks/useMagnetic';
 import Logo from '../components/Logo';
 import GetAppButton from '../components/GetApp';
+import useScrollParallax, { useScrollProgress } from '../hooks/useScrollParallax';
 import './LandingPage.css';
 
 const ic = (paths) => (
@@ -113,6 +114,12 @@ export default function LandingPage() {
     setReferrer(localStorage.getItem('smReferredBy'));
   }, []);
 
+  // The photographs drift against their tiles as the page moves, so the
+  // section keeps responding to the scroll instead of animating once and
+  // then sitting still. See the hook for why it is one listener, not six.
+  useScrollParallax('.lp-trade-img', 26);
+  useScrollProgress();
+
   // Reveal-on-scroll. Everything starts hidden via CSS only when the
   // observer is available, so a browser without it still shows the page.
   useEffect(() => {
@@ -153,6 +160,7 @@ export default function LandingPage() {
 
   return (
     <div className="landing-page">
+      <div className="lp-progress" aria-hidden="true" />
       <header className="landing-nav">
         <Logo size={1.75} onClick={() => navigate('/')} />
         <div className="landing-nav-actions">
