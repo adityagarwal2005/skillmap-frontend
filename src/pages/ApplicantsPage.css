@@ -17,7 +17,7 @@
   font-weight: 800;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--cyan);
+  color: var(--money);
   margin: 12px 0 8px;
 }
 
@@ -45,7 +45,7 @@
   font-family: var(--font-display);
   font-size: 1.25rem;
   font-weight: 800;
-  color: var(--cyan);
+  color: var(--money);
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
 }
@@ -239,7 +239,8 @@
   border-radius: var(--r-pill);
 }
 .apl-meta { background: var(--surface-flat); border: 1px solid var(--hairline); border-radius: var(--r-lg); }
-.apl-price { color: var(--brand); }
+/* A later override that would have put the figure back to plain white. */
+.apl-price { color: var(--money); }
 .apl-tick, .apl-cross, .apl-confirm, .apl-cancel, .apl-dm { border-radius: var(--r-pill); }
 
 /* ── Loading skeletons, shaped like the real applicant card ── */

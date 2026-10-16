@@ -141,7 +141,7 @@
   font-family: var(--font-display);
   font-size: 1.125rem;
   font-weight: 800;
-  color: var(--brand);
+  color: var(--money);
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
 }

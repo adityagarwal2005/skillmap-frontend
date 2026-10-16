@@ -245,7 +245,7 @@
 }
 /* The money figure is the loudest fact on the page, so it uses the
    on-tint brand shade — plain --brand on a light ground is 3.21:1. */
-.mk-summary-money { color: var(--brand-text); font-weight: 700; font-variant-numeric: tabular-nums; }
+.mk-summary-money { color: var(--money); font-weight: 700; font-variant-numeric: tabular-nums; }
 .mk-live {
   display: inline-block;
   width: 6px;
@@ -422,7 +422,7 @@
   font-size: 1.25rem;
   font-weight: 700;
   letter-spacing: -0.02em;
-  color: var(--brand);
+  color: var(--money);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
@@ -774,7 +774,7 @@
   font-weight: 800;
   letter-spacing: -0.035em;
   line-height: 1;
-  color: var(--tone);
+  color: var(--money);
   font-variant-numeric: tabular-nums;
 }
 .mk-eyebrow {

@@ -113,7 +113,7 @@
   font-family: var(--font-display);
   font-size: 1.0625rem;
   font-weight: 800;
-  color: var(--tone);
+  color: var(--money);
   font-variant-numeric: tabular-nums;
 }
 .trk-ago { margin-left: auto; font-size: 0.75rem; color: var(--text-3); white-space: nowrap; }

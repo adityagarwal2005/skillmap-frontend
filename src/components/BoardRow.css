@@ -84,8 +84,8 @@
 
 /* ── A row ───────────────────────────────────────────────────────────── */
 .bd-row {
-  --tone: var(--brand);
-  --tone-dim: var(--brand-dim);
+  --tone: var(--money);
+  --tone-dim: var(--money-dim);
   position: relative;
   display: flex;
   align-items: center;
@@ -98,6 +98,10 @@
   animation: bdIn var(--t-med) var(--ease-spring, ease) backwards;
 }
 .bd-row.is-team { --tone: var(--team); --tone-dim: var(--team-dim); }
+/* Both spines show without hover now that they carry meaning, not just
+   decoration — the colour is the fastest read of what kind of thing it is. */
+.bd-row::before { opacity: 0.85; }
+.bd-row:hover::before { opacity: 1; }
 .bd-row:last-child { border-bottom: 0; }
 .bd-row:hover { background: var(--surface-flat); }
 .bd-row:focus-visible { outline: 2px solid var(--tone); outline-offset: -2px; border-radius: 10px; }
@@ -194,14 +198,16 @@
   border-radius: 4px;
   white-space: nowrap;
 }
+/* Filled against outlined still carries the distinction without colour; the
+   hue makes it readable from across the row rather than on inspection. */
 .bd-kind.is-gig {
   color: var(--on-brand);
-  background: var(--text-1);
+  background: var(--money);
 }
 .bd-kind.is-team {
-  color: var(--text-1);
+  color: var(--team-text);
   background: none;
-  box-shadow: inset 0 0 0 1.5px var(--hairline-str);
+  box-shadow: inset 0 0 0 1.5px var(--team-line);
 }
 /* A team's spine reads lighter than a gig's, same reasoning. */
 .bd-row.is-team::before { opacity: 0; }
@@ -217,25 +223,28 @@
   align-items: flex-end;
   gap: 5px;
 }
+/* Money is the one fact on a row that decides whether you read the rest, so
+   it carries the spot colour. Road Rage is a display face with no figures
+   worth setting, so the figure stays in the mono and gets its weight from
+   size and hue instead. */
 .bd-pay {
-  font-family: var(--font-display);
-  font-stretch: 110%;
-  font-size: 1.6875rem;
-  font-weight: 900;
-  letter-spacing: -0.04em;
-  color: var(--brand);
+  font-family: var(--font-body);
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  color: var(--money);
   font-variant-numeric: tabular-nums;
   line-height: 1;
   white-space: nowrap;
 }
+/* A collab pays in something other than money, so it takes the team
+   colour rather than a blank where the figure would be. */
 .bd-pay.is-none {
   font-size: 0.9375rem;
   font-weight: 800;
   letter-spacing: -0.01em;
-  color: var(--team-bright);
+  color: var(--team-text);
 }
-[data-theme="light"] .bd-pay { color: var(--brand-text); }
-[data-theme="light"] .bd-pay.is-none { color: var(--team-text); }
 .bd-dist {
   display: inline-flex;
   align-items: center;

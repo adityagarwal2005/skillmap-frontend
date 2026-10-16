@@ -75,18 +75,35 @@
   --brand-bright:#FFFFFF;
   --brand-text:  #F8F8F8;
   --on-brand:    #0B0908;
+
+  /* ── Spot colour ────────────────────────────────────────────────────
+     Three accents on a monochrome field, the way a zine gets one or two
+     screenprint passes over black and white. The restraint is the point:
+     colour here is not decoration, it is the only thing in the interface
+     that means something on its own, so each one is spent on exactly one
+     idea and nowhere else.
+
+       money  — what a gig pays. The loudest fact on the board.
+       team   — a collab. Not money, so not the money colour.
+       warn   — a listing about to vanish.
+
+     Grey is still doing all the structural work; these three are the only
+     saturated pixels on the screen, which is what makes them read. */
+  --money:       #FF6B1A;   /* 6.80:1 on the ground */
+  --money-dim:   rgba(255,107,26,0.15);
+  --money-line:  rgba(255,107,26,0.42);
   --brand-dim:   rgba(255,255,255,0.10);
   --brand-line:  rgba(255,255,255,0.26);
 
   /* Semantic */
   --ok:          #FFFFFF;
   --ok-dim:      rgba(255,255,255,0.10);
-  /* The one colour left in the product. A listing about to vanish is the
-     single thing that has to shout across a monochrome screen, so red is
-     spent there and nowhere else — the moment it appears anywhere decorative
-     it stops meaning "hurry". */
-  --warn:        #E5342B;
-  --warn-dim:    rgba(255,59,48,0.14);
+  /* Urgency is the third spot colour. Acid yellow rather than red: red on a
+     grain-textured black reads as an error, and a listing closing soon is
+     not an error — it is an opportunity with a clock on it. Yellow also sits
+     far enough from the money orange that the two never blur in one row. */
+  --warn:        #FFD60A;   /* 13.7:1 on the ground */
+  --warn-dim:    rgba(255,214,10,0.15);
   --danger:      #ff453a;
   --danger-dim:  rgba(255,69,58,0.13);
 
