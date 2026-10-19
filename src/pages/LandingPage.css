@@ -1592,13 +1592,16 @@
 @media (prefers-reduced-motion: reduce) {
   .lp-trade, .lp-trade-img { transition: none; }
   .lp-trade:hover { transform: none; }
-  .lp-trade:hover .lp-trade-img { transform: scale(1.02); }
+  .lp-trade:hover .lp-trade-img { transform: scale(1.16); }
 }
 
 /* A phone tile is short and wide, so the scrim covers proportionally more of
-   the photograph. Lifting it back keeps the image readable under the type. */
+   the photograph. Lifting it back keeps the image readable under the type —
+   but it must stay the same printed grayscale as the desktop tiles, which it
+   did not: this rule predated the grunge treatment and silently reverted it,
+   so phones were the one place the photographs were still in colour. */
 @media (max-width: 680px) {
-  .lp-trade-img { filter: saturate(0.9) brightness(0.86); }
+  .lp-trade-img { filter: grayscale(1) contrast(1.22) brightness(0.80); }
   .lp-trade-scrim {
     background: linear-gradient(to top,
       rgba(8,8,9,0.94) 0%, rgba(8,8,9,0.55) 40%, rgba(8,8,9,0.05) 75%);
