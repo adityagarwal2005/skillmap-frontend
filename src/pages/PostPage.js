@@ -284,7 +284,7 @@ export default function PostPage() {
   const sections = [
     {
       key: 'gigs', title: 'Live gigs', items: liveJobs,
-      empty: 'Nothing live. Post a gig and it shows to people nearby for up to 48 hours.',
+      empty: 'Nothing live. Post a gig and it shows to people nearby for up to 5 days.',
       row: j => renderRow('freelance', j, j.description, <span className="mng-price">{money(j.payment_amount)}</span>, 'live'),
     },
     activeJobs.length > 0 && {

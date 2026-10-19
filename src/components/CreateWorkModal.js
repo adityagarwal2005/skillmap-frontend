@@ -13,8 +13,10 @@ const VISIBILITY_OPTIONS = [
   { label: '2 hours',  hours: 2 },
   { label: '6 hours',  hours: 6 },
   { label: '12 hours', hours: 12 },
-  { label: '24 hours', hours: 24 },
-  { label: '48 hours', hours: 48 },
+  { label: '1 day',    hours: 24 },
+  { label: '2 days',   hours: 48 },
+  { label: '3 days',   hours: 72 },
+  { label: '5 days',   hours: 120 },
 ];
 const RANGE_OPTIONS = [0.5, 1, 2, 5, 10, 50];
 const BUDGETS = [300, 500, 1000, 2000, 5000];
