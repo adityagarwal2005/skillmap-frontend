@@ -7,7 +7,8 @@ import {
   blockUser, unblockUser, getBlockedUsers, reportContent,
   sendFriendRequest, respondFriendRequest, removeFriend,
 } from '../api/users';
-import { startConversation } from '../api/work';
+import { startConversation, getMyHistory } from '../api/work';
+import { COLLAB_LABEL } from '../components/ListingCard';
 import { endorseSkill, addReview, getUserReviews } from '../api/users';
 import { ProfileHeaderSkeleton } from '../components/Skeleton';
 import AppShell from '../components/AppShell';
@@ -45,6 +46,9 @@ export default function ProfilePage() {
   const [skillInput, setSkillInput] = useState('');
   const [addingSkill, setAddingSkill] = useState(false);
   const [avatarBroken, setAvatarBroken] = useState(false);
+  // Closed listings the user posted. Own profile only — this record names
+  // the people they hired, which is theirs to see and nobody else's.
+  const [history, setHistory] = useState([]);
   const [isBlocked, setIsBlocked] = useState(false);
   const [blocking, setBlocking] = useState(false);
   const [friendStatus, setFriendStatus] = useState('none'); // none|request_sent|request_received|friends|self
@@ -63,6 +67,11 @@ export default function ProfilePage() {
      them — and it is also the page they see most often. These are the four
      things that actually decide whether anyone gets in touch, in the order
      they matter, each one a link to where it gets done. */
+  useEffect(() => {
+    if (!isOwn) { setHistory([]); return; }
+    getMyHistory().then(r => setHistory(r.data.history || [])).catch(() => {});
+  }, [isOwn, userId]);
+
   const setupSteps = useMemo(() => {
     if (!profile) return [];
     return [
@@ -600,6 +609,46 @@ export default function ProfilePage() {
                   ))}
                 </div>
               )}
+            </div>
+            )}
+
+            {/* History — what the Post screen drops once a window closes.
+                Deliberately terse: a closed listing is a receipt, not a
+                listing, so it carries only what you would want to remember. */}
+            {isOwn && history.length > 0 && (
+            <div className="profile-skills-section">
+              <div className="pf-section-head">
+                <h3 className="section-title">History</h3>
+                <span className="pf-hist-count">{history.length} closed</span>
+              </div>
+              <ul className="pf-hist">
+                {history.map(h => (
+                  <li className={`pf-hist-row is-${h.kind}`} key={`${h.kind}-${h.id}`}>
+                    <div className="pf-hist-main">
+                      <span className="pf-hist-title">{h.title}</span>
+                      {h.description && h.description !== h.title && (
+                        <span className="pf-hist-desc">{h.description}</span>
+                      )}
+                      <span className="pf-hist-meta">
+                        {h.hired.length > 0 ? (
+                          <span className="pf-hist-who">
+                            {h.kind === 'freelance' ? 'Hired' : 'Joined'} {h.hired.join(', ')}
+                          </span>
+                        ) : (
+                          <span className="pf-hist-none">Closed with no one taken on</span>
+                        )}
+                        <span className="pf-hist-dot">·</span>
+                        <span>{h.applicants} applied</span>
+                      </span>
+                    </div>
+                    <span className="pf-hist-pay">
+                      {h.kind === 'freelance' && Number(h.payment_amount) > 0
+                        ? `₹${Math.round(h.payment_amount).toLocaleString('en-IN')}`
+                        : (COLLAB_LABEL[h.collab_type] || 'Team')}
+                    </span>
+                  </li>
+                ))}
+              </ul>
             </div>
             )}
           </>

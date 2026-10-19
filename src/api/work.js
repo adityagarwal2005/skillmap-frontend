@@ -35,6 +35,10 @@ export const closeWorkRequest = (wrId) =>
 export const completeWorkRequest = (wrId) =>
   API.post(`/work/requests/${wrId}/complete/`);
 
+/* Closed listings you posted — the complement of the Post screen. */
+export const getMyHistory = () =>
+  API.get('/my-history/');
+
 export const getMyApplications = () =>
   API.get('/my-applications/');
 
