@@ -73,7 +73,7 @@ function linkFor(n, myId) {
     case 'reaction':
     case 'comment':           return myId ? `/profile/${myId}` : null;
     case 'friend_request':
-    case 'friend_accepted':   return n.actor_id ? `/profile/${n.actor_id}` : '/people';
+    case 'friend_accepted':   return n.actor_id ? `/profile/${n.actor_id}` : '/';
     case 'referral':          return '/settings';
     default:                  return null;
   }

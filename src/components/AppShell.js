@@ -22,7 +22,6 @@ const svg = (children) => (
 
 const I = {
   home:          svg(<><path d="M3 10.5 12 3l9 7.5" /><path d="M5 9.5V21h14V9.5" /></>),
-  people:        svg(<><circle cx="9" cy="8" r="3.2" /><path d="M3.5 20a5.5 5.5 0 0 1 11 0" /><path d="M16 5.2a3 3 0 0 1 0 5.6" /><path d="M17.5 20a5.2 5.2 0 0 0-2.3-4.3" /></>),
   freelance:     svg(<><rect x="3" y="7.5" width="18" height="12.5" rx="2" /><path d="M8 7.5V5.5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /><path d="M3 12.5h18" /></>),
   collab:        svg(<><path d="M12 3 3 7.5l9 4.5 9-4.5L12 3z" /><path d="M3 12.5l9 4.5 9-4.5" /><path d="M3 17l9 4.5 9-4.5" /></>),
   messages:      svg(<path d="M21 11.5a8 8 0 0 1-11.5 7.2L4 20l1.3-4.5A8 8 0 1 1 21 11.5z" />),
@@ -40,7 +39,6 @@ const NAV = [
     // both call this destination 'work', and the mismatch meant the desktop
     // sidebar highlighted nothing at all on the feed.
     { id: 'work',    label: 'Home',    path: '/',       icon: I.home },
-    { id: 'people',  label: 'People',  path: '/people', icon: I.people },
   ]},
   { group: 'Work', items: [
     // Freelance/Collab no longer have their own board pages — browsing both
@@ -71,7 +69,6 @@ function deriveActive(pathname) {
   if (pathname === '/') return 'work';
   if (pathname.startsWith('/post'))          return 'post';
   if (pathname.startsWith('/search'))        return 'search';
-  if (pathname.startsWith('/people'))        return 'people';
   if (pathname.startsWith('/messages'))      return 'messages';
   if (pathname.startsWith('/profile'))       return 'profile';
   if (pathname.startsWith('/applications'))  return 'applications';

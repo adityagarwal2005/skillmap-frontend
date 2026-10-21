@@ -389,10 +389,9 @@ export default function FeedPage() {
       </div>
     );
     /* An empty board is the most common thing a new user sees, and it was a
-       small card adrift in a very large dark page with two buttons on it.
-       It gets the room instead, and a third way out: when there is no work
-       to look at, the people are the next best thing to look at — and that
-       is the one surface that is never empty. */
+       small card adrift in a very large dark page. It gets the room instead,
+       and the way out is to post the first thing rather than to go looking at
+       who else is here. */
     return (
       <div className="mk-empty is-blank">
         <span className="mk-empty-mark" aria-hidden="true">{I.pin}</span>
@@ -405,9 +404,6 @@ export default function FeedPage() {
         <div className="mk-empty-actions">
           <button className="mk-btn" onClick={() => navigate('/post')}>Post a gig</button>
           {widen}
-          <button className="mk-btn is-quiet" onClick={() => navigate('/people')}>
-            See who's nearby
-          </button>
         </div>
       </div>
     );
@@ -664,7 +660,7 @@ export default function FeedPage() {
           <div className="welcome-card" onClick={e => e.stopPropagation()}>
             <Logo size={2.2} className="welcome-badge-logo" />
             <h2 className="welcome-title">Welcome 👋</h2>
-            <p className="welcome-sub">Your local talent network. Here are 3 quick ways to start:</p>
+            <p className="welcome-sub">Your local talent network. Two quick ways to start:</p>
 
             <button className="welcome-step" onClick={() => welcomeGo(`/profile/${user?.id}/edit`)}>
               <span className="welcome-step-num">1</span>
@@ -675,17 +671,8 @@ export default function FeedPage() {
               <span className="welcome-step-arrow">→</span>
             </button>
 
-            <button className="welcome-step" onClick={() => welcomeGo('/people')}>
-              <span className="welcome-step-num">2</span>
-              <span className="welcome-step-text">
-                <span className="welcome-step-name">Find people near you</span>
-                <span className="welcome-step-desc">Look people up by username and message them</span>
-              </span>
-              <span className="welcome-step-arrow">→</span>
-            </button>
-
             <button className="welcome-step" onClick={() => welcomeGo('/post')}>
-              <span className="welcome-step-num">3</span>
+              <span className="welcome-step-num">2</span>
               <span className="welcome-step-text">
                 <span className="welcome-step-name">Post a gig or start a team</span>
                 <span className="welcome-step-desc">Hire someone nearby, or find people to build with</span>

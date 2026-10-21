@@ -32,7 +32,6 @@ const PostPage         = lazyRetry(() => import('./pages/PostPage'));
 const ProfilePage      = lazyRetry(() => import('./pages/ProfilePage'));
 const CreatePostPage   = lazyRetry(() => import('./pages/CreatePostPage'));
 const PostDetailPage   = lazyRetry(() => import('./pages/PostDetailPage'));
-const PeoplePage       = lazyRetry(() => import('./pages/PeoplePage'));
 const MessagesPage     = lazyRetry(() => import('./pages/MessagesPage'));
 const NotificationsPage = lazyRetry(() => import('./pages/NotificationsPage'));
 const SettingsPage     = lazyRetry(() => import('./pages/SettingsPage'));
@@ -101,7 +100,10 @@ function App() {
             <Route path="/create-post"              element={user ? <CreatePostPage /> : <Navigate to="/login" />} />
             <Route path="/post"                     element={user ? <PostPage /> : <Navigate to="/login" />} />
             <Route path="/post/:itemId"             element={user ? <PostDetailPage /> : <Navigate to="/login" />} />
-            <Route path="/people"                   element={user ? <PeoplePage /> : <Navigate to="/login" />} />
+            {/* The People directory was removed: a "who's on DoitHere" list
+                only advertised how new the network is. Any old link lands on
+                the board instead of a 404. */}
+            <Route path="/people"                   element={<Navigate to="/" replace />} />
             {/* /freelance and /collab are gone — browsing both happens on
                 Work (/), and posting/managing on Post (/post). Redirect any
                 old links (or a bookmarked board) instead of 404-ing. */}
