@@ -77,6 +77,22 @@ export default function LoginPage() {
   useEffect(() => {
     if (!GOOGLE_CLIENT_ID || mode === 'forgot') return undefined;
     let cancelled = false;
+    // GIS renders an iframe button at a fixed pixel width (max 400) that CSS
+    // can't stretch. A hardcoded 320 left it narrower than the full-width
+    // fields below and overflowed the card on a small phone, and the light
+    // `outline` theme clashed with the dark sheet. Match the container width
+    // and re-render on resize; dark pill theme to sit with the other buttons.
+    const render = () => {
+      const el = googleBtnRef.current;
+      if (cancelled || !el || !window.google?.accounts?.id) return;
+      el.innerHTML = '';
+      const w = Math.min(400, Math.max(240, Math.floor(el.clientWidth || 320)));
+      window.google.accounts.id.renderButton(el, {
+        theme: 'filled_black', size: 'large', shape: 'pill', width: w,
+        text: mode === 'register' ? 'signup_with' : 'signin_with',
+        logo_alignment: 'center',
+      });
+    };
     const tryInit = () => {
       if (cancelled) return;
       if (!window.google?.accounts?.id) { setTimeout(tryInit, 200); return; }
@@ -84,16 +100,12 @@ export default function LoginPage() {
         client_id: GOOGLE_CLIENT_ID,
         callback: handleGoogleCredential,
       });
-      if (googleBtnRef.current) {
-        googleBtnRef.current.innerHTML = '';
-        window.google.accounts.id.renderButton(googleBtnRef.current, {
-          theme: 'outline', size: 'large', width: 320,
-          text: mode === 'register' ? 'signup_with' : 'signin_with',
-        });
-      }
+      render();
     };
     tryInit();
-    return () => { cancelled = true; };
+    const onResize = () => render();
+    window.addEventListener('resize', onResize);
+    return () => { cancelled = true; window.removeEventListener('resize', onResize); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, location.lat]);
 

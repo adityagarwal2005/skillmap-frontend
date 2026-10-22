@@ -4,7 +4,10 @@
 .cw-overlay {
   position: fixed;
   inset: 0;
-  z-index: 400;
+  /* Above the fixed bottom nav (z 300). The modal is portaled onto <body>, so
+     this now compares in the root stacking context and genuinely wins — the
+     nav no longer intercepts taps on the submit button. */
+  z-index: 600;
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -22,6 +25,11 @@
   --tone-bright: var(--brand-bright);
   --tone-dim: var(--brand-dim);
   --tone-line: var(--brand-line);
+  /* Text that sits ON a --tone fill. For a gig the tone is --brand, which is
+     near-white on dark — so a hardcoded white label (the old value) vanished
+     into the "Post gig" button and the selected people-count. --on-brand is
+     the dark ink that belongs on it; the collab tone is purple, so white. */
+  --on-tone: var(--on-brand);
   width: 100%;
   max-width: 560px;
   max-height: 94vh;
@@ -40,6 +48,7 @@
   --tone-bright: var(--team-bright);
   --tone-dim: var(--team-dim);
   --tone-line: var(--team-line);
+  --on-tone: #fff;  /* team tone is purple in both themes — white reads on it */
 }
 @media (min-width: 640px) {
   .cw-modal { border-radius: 16px; }
@@ -207,7 +216,7 @@
 }
 .cw-seg button:active { transform: scale(0.94); }
 .cw-seg button.is-on {
-  color: #fff;
+  color: var(--on-tone);
   background: var(--tone);
   border-color: transparent;
   box-shadow: var(--edge-strong);
@@ -267,6 +276,21 @@
 .cw-preview-card .mk-card { animation: none; }
 
 .cw-actions { display: flex; gap: 12px; }
+/* Phone: pin the submit bar to the bottom of the sheet. The form is taller
+   than the screen, so otherwise "Post gig" sat far below the fold, past the
+   live preview, and read as unreachable. Negative margins let the bar span
+   the sheet's full width and sit flush at its padded bottom edge. */
+@media (max-width: 639px) {
+  .cw-actions {
+    position: sticky;
+    bottom: 0;
+    z-index: 3;
+    margin: 6px -20px calc(-22px - env(safe-area-inset-bottom, 0px));
+    padding: 12px 20px calc(16px + env(safe-area-inset-bottom, 0px));
+    background: var(--surface-1);
+    border-top: 1px solid var(--hairline);
+  }
+}
 .cw-cancel {
   height: 52px;
   padding: 0 22px;
@@ -283,7 +307,7 @@
   border-radius: 999px;
   font-size: 1rem;
   font-weight: 800;
-  color: #fff;
+  color: var(--on-tone);
   background: var(--tone);
   box-shadow: var(--e-1);
   transition: transform var(--t-fast) var(--spring), opacity var(--t-fast) ease;

@@ -8,6 +8,12 @@
    data-theme also render dark from the first paint, no flash of light theme.
    [data-theme="light"] is the opt-in override for the theme toggle. */
 :root {
+  /* Dark-first, so native controls are dark too. Without this a tapped
+     <select> (the km and sort pickers) opens an OS dropdown with a light
+     background, and our near-white option text vanished into it — white on
+     white. Declaring the scheme makes the browser paint those popups, the
+     scrollbars and the caret to match. [data-theme="light"] flips it back. */
+  color-scheme: dark;
   /* Not pure black. #000 behind white text halates on an OLED phone and
      leaves no room below a card to read as depth — every surface has to go
      lighter, so nothing can ever recede. A tinted near-black gives the ramp
@@ -137,6 +143,7 @@
 }
 
 [data-theme="light"] {
+  color-scheme: light;
   /* The page ground is a shade off white so that cards, which are pure
      white, sit above it. Ground and card both at #fff left nothing to
      separate them but a hairline. */
@@ -153,14 +160,17 @@
   --red:         #ff3b30;
   --blue:        var(--brand-text);}
 
-html { font-size: 16px; overflow-x: hidden; }
+/* `clip`, not `hidden`. overflow-x: hidden forces the computed overflow-y to
+   `auto` (CSS leaves no axis `visible` once the other is hidden), which turns
+   <html> into its own scroll container. A sticky descendant then sticks to
+   that container, and on iOS Safari sticky inside such a root fails outright —
+   so the feed's location + search toolbar scrolled away with the page instead
+   of pinning. `clip` cuts the same horizontal overflow without creating a
+   scrollport, leaving the viewport as the scroller and sticky working. */
+html { font-size: 16px; overflow-x: clip; }
 
 body {
-  /* `clip`, not `hidden`: overflow-x: hidden turns body into a scroll
-     container, and a sticky descendant then sticks to that container rather
-     than to the viewport — which is why the feed's toolbar scrolled away
-     instead of staying put. `clip` cuts the same horizontal overflow without
-     creating a scrollport. html still carries hidden as the backstop. */
+  /* Same reason as html above: clip, never hidden, or the toolbar unsticks. */
   overflow-x: clip;
   /* The template's ground: a dusty film-scan texture, fixed so it does not
      travel with the content, over the warm near-black. The image is almost

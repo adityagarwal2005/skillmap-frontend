@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { useToast } from '../context/ToastContext';
 import { useAuth } from '../context/AuthContext';
 import { prepareMediaFile } from '../utils/mediaUpload';
@@ -181,7 +182,12 @@ export default function CreateWorkModal({ kind, onClose, onCreated }) {
     if (prepared) setMedia(prepared);
   };
 
-  return (
+  // Rendered through a portal on <body>, not inline. Inline, the overlay sits
+  // inside .app-main, which owns a stacking context (view-transition-name), so
+  // its z-index can't rise above the fixed bottom nav — the nav then won the
+  // hit test over the "Post gig" button and the form couldn't be submitted on
+  // a phone. On body it's a sibling of the nav and genuinely on top.
+  return createPortal(
     <div className="cw-overlay" onClick={onClose}>
       <div className={`cw-modal ${isFreelance ? 'is-gig' : 'is-team'}`} role="dialog" aria-modal="true"
         aria-labelledby="cw-title" onClick={e => e.stopPropagation()}>
@@ -336,6 +342,7 @@ export default function CreateWorkModal({ kind, onClose, onCreated }) {
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

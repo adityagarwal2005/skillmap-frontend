@@ -7,6 +7,7 @@ import {
 } from '../api/users';
 import { pushSupported, isPushEnabled, enablePush, disablePush } from '../push';
 import AppShell from '../components/AppShell';
+import GetAppButton from '../components/GetApp';
 import { cldAvatar } from '../utils/cloudinaryUrl';
 import useInstallPrompt from '../hooks/useInstallPrompt';
 import './FeedPage.css';
@@ -70,7 +71,7 @@ export default function SettingsPage() {
   const [pushBusy, setPushBusy] = useState(false);
   const [referrals, setReferrals] = useState([]);
   const [copiedInvite, setCopiedInvite] = useState(false);
-  const { canInstall, installed, promptInstall } = useInstallPrompt();
+  const { installed } = useInstallPrompt();
 
   useEffect(() => { isPushEnabled().then(setPushOn).catch(() => {}); }, []);
 
@@ -203,16 +204,18 @@ export default function SettingsPage() {
           </Section>
         )}
 
-        {(canInstall || installed) && (
-          <Section icon={IC.phone} title="App">
-            <Row label="Install DoitHere"
-              sub={installed ? 'Already installed on this device' : 'Full screen, and faster to open'}>
-              {!installed && (
-                <button type="button" className="st-btn is-primary" onClick={promptInstall}>Install</button>
-              )}
-            </Row>
-          </Section>
-        )}
+        {/* Always offered (unless already installed), not just where the
+            browser fires its own install prompt. iOS Safari never fires one,
+            so the old gate hid this row on every iPhone — GetAppButton falls
+            back to a how-to sheet there instead of vanishing. */}
+        <Section icon={IC.phone} title="App">
+          <Row label="Install DoitHere"
+            sub={installed ? 'Already installed on this device' : 'Full screen, and faster to open — on iPhone or Android'}>
+            {!installed && (
+              <GetAppButton className="st-btn is-primary">Get the app</GetAppButton>
+            )}
+          </Row>
+        </Section>
 
         <Section icon={IC.moon} title="Appearance">
           <Row label="Theme" sub="Light or dark, on this device." />
