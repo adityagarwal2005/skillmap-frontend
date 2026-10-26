@@ -764,7 +764,9 @@
 .lp-bubble.is-me {
   align-self: flex-end;
   background: #FFFFFF;
-  color: #fff;
+  /* The bubble is always white, so its text is a literal dark — not a theme
+     token that would flip to white and vanish. Was #fff: white on white. */
+  color: #0B0908;
   border-bottom-right-radius: 5px;
 }
 

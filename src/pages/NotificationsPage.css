@@ -96,6 +96,7 @@
   --tone: var(--text-3);
   --tone-dim: var(--surface-flat);
   --tone-line: var(--hairline);
+  --on-tone: #fff;  /* text/glyph on a --tone fill; overridden where --tone is pale */
   position: relative;
   display: flex;
   align-items: flex-start;
@@ -118,10 +119,10 @@
 }
 .notif-card:active { transform: scale(0.995); }
 .notif-card:focus-visible { outline: 2px solid var(--tone); outline-offset: 2px; }
-.notif-card.is-gig  { --tone: var(--brand); --tone-dim: var(--brand-dim); --tone-line: var(--brand-line); }
+.notif-card.is-gig  { --tone: var(--brand); --tone-dim: var(--brand-dim); --tone-line: var(--brand-line); --on-tone: var(--on-brand); }
 .notif-card.is-team { --tone: var(--team);  --tone-dim: var(--team-dim);  --tone-line: var(--team-line); }
 .notif-card.is-ok   { --tone: var(--ok);    --tone-dim: var(--ok-dim);    --tone-line: color-mix(in srgb, var(--ok) 32%, transparent); }
-.notif-card.is-warn { --tone: var(--warn);  --tone-dim: var(--warn-dim);  --tone-line: color-mix(in srgb, var(--warn) 32%, transparent); }
+.notif-card.is-warn { --tone: var(--warn);  --tone-dim: var(--warn-dim);  --tone-line: color-mix(in srgb, var(--warn) 32%, transparent); --on-tone: var(--on-brand); }
 
 /* Unread reads as unread without shouting: a tinted edge and a dot. */
 .notif-card.unread { border-color: var(--tone-line); background: var(--surface-2); }
@@ -159,7 +160,7 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  color: #fff;
+  color: var(--on-tone);
   background: var(--tone);
   box-shadow: 0 0 0 2px var(--bg);
 }

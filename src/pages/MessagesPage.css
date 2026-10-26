@@ -293,6 +293,7 @@
   --tone: var(--brand);
   --tone-dim: var(--brand-dim);
   --tone-line: var(--brand-line);
+  --on-tone: var(--on-brand);  /* text on a --tone fill — dark on the white gig tone */
   display: flex;
   align-items: center;
   gap: 10px;
@@ -301,7 +302,7 @@
   background: linear-gradient(180deg, var(--tone-dim), transparent);
   border-bottom: 1px solid var(--hairline);
 }
-.thread-work.is-team { --tone: var(--team); --tone-dim: var(--team-dim); --tone-line: var(--team-line); }
+.thread-work.is-team { --tone: var(--team); --tone-dim: var(--team-dim); --tone-line: var(--team-line); --on-tone: #fff; }
 .thread-work-main { display: flex; flex-direction: column; min-width: 0; flex: 1; }
 .thread-work-label {
   font-size: 0.625rem;
@@ -349,7 +350,7 @@
   border-radius: 999px;
   font-size: 0.8125rem;
   font-weight: 800;
-  color: #fff;
+  color: var(--on-tone);
   background: var(--tone);
   transition: transform var(--t-fast) var(--spring);
 }

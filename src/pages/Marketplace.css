@@ -13,6 +13,10 @@
   --tone-bright: var(--brand-bright);
   --tone-dim: var(--brand-dim);
   --tone-line: var(--brand-line);
+  /* Text/icons that sit ON a --tone fill. The gig tone is --brand, near-white
+     on dark, so a hardcoded white label vanished — the "Apply" button and the
+     card CTA on hover were white-on-white. --on-brand is the dark ink for it. */
+  --on-tone: var(--on-brand);
 }
 .mk-card.is-team, .mk-kind.is-team, .mk-cta.is-team, .mk-apply.is-team, .mk-sheet.is-team {
   --tone: var(--team);
@@ -20,6 +24,7 @@
   --tone-bright: var(--team-bright);
   --tone-dim: var(--team-dim);
   --tone-line: var(--team-line);
+  --on-tone: #fff;  /* team tone is purple in both themes — white reads on it */
 }
 
 :root .app-shell .feed-main.mk {
@@ -588,7 +593,7 @@
               border-color var(--t-fast) ease;
 }
 .mk-card:hover .mk-cta, .mk-card:focus-visible .mk-cta {
-  color: #fff;
+  color: var(--on-tone);
   background: var(--tone);
   border-color: transparent;
 }
@@ -859,7 +864,7 @@
   border-radius: 9px;
   font-size: 0.9375rem;
   font-weight: 700;
-  color: #fff;
+  color: var(--on-tone);
   background: var(--tone);
   transition: opacity var(--t-fast) ease, transform var(--t-fast) var(--ease-out);
 }
@@ -873,8 +878,11 @@
   height: 15px;
   flex-shrink: 0;
   border-radius: 50%;
-  border: 2px solid rgba(255,255,255,0.35);
-  border-top-color: #fff;
+  /* currentColor, not #fff: the spinner lives inside .mk-apply, whose text is
+     now --on-tone (dark on the white gig button, white on the purple collab
+     one). A hardcoded white ring was invisible while a gig application sent. */
+  border: 2px solid color-mix(in srgb, currentColor 30%, transparent);
+  border-top-color: currentColor;
   animation: mkSpin 0.6s linear infinite;
 }
 @keyframes mkSpin { to { transform: rotate(360deg); } }

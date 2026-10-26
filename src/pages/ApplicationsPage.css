@@ -71,6 +71,7 @@
   --tone: var(--brand);
   --tone-bright: var(--brand-bright);
   --tone-dim: var(--brand-dim);
+  --on-tone: var(--on-brand);  /* text on a --tone fill — dark on the white gig tone */
   position: relative;
   overflow: hidden;
   padding: 16px 18px 16px 22px;
@@ -84,6 +85,7 @@
   --tone: var(--team);
   --tone-bright: var(--team-bright);
   --tone-dim: var(--team-dim);
+  --on-tone: #fff;
 }
 .trk-card::before {
   content: '';
@@ -169,12 +171,14 @@
   border-radius: 50%;
   display: grid;
   place-items: center;
-  color: #fff;
+  color: var(--text-2);
   background: var(--surface-flat);
   border: 2px solid var(--hairline-str);
 }
 .trk-dot svg { width: 12px; height: 12px; }
-.trk-step.is-done .trk-dot { background: var(--tone); border-color: var(--tone); }
+/* Done step: dot fills with the tone, so its glyph needs the on-tone ink —
+   on a gig the tone is near-white and a white glyph disappeared. */
+.trk-step.is-done .trk-dot { background: var(--tone); border-color: var(--tone); color: var(--on-tone); }
 .trk-step.is-current .trk-dot {
   border-color: var(--tone);
   animation: trkPulse 1.8s ease-in-out infinite;
@@ -221,7 +225,7 @@
   border-radius: 999px;
   font-size: 0.8125rem;
   font-weight: 800;
-  color: #fff;
+  color: var(--on-tone);
   background: linear-gradient(180deg, var(--tone-bright), var(--tone));
   box-shadow: var(--edge-strong);
 }
