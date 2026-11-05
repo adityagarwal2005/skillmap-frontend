@@ -179,9 +179,14 @@ body {
   background: var(--bg) url('../assets/grain.jpg') center / cover fixed no-repeat;
   color: var(--text-1);
   font-family: var(--font-body);
-  font-size: 14px;
-  line-height: 1.5;
-  letter-spacing: -0.006em;
+  /* JetBrains Mono is a wide, dense face: at 14px with tight tracking and a
+     1.5 leading it read as a cramped wall of text. A slightly larger size,
+     more generous leading, and neutral-to-open tracking give it room to
+     breathe everywhere at once — the headline faces keep their own tight
+     metrics below. */
+  font-size: 14.5px;
+  line-height: 1.62;
+  letter-spacing: 0.005em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11', 'ss01';

@@ -240,10 +240,10 @@ export default function CreateWorkModal({ kind, onClose, onCreated }) {
 
             <div className="cw-field">
               <label className="cw-label" htmlFor="cw-skills">
-                Skills {isFreelance ? null : <span className="cw-hint">optional</span>}
+                Skills <span className="cw-hint">optional</span>
                 <span className="cw-hint">comma separated</span>
               </label>
-              <input id="cw-skills" className="cw-input" required={isFreelance}
+              <input id="cw-skills" className="cw-input"
                 placeholder="React, Figma, Video editing"
                 value={form.skills} onChange={e => set('skills', e.target.value)} />
               <div className="cw-chips">

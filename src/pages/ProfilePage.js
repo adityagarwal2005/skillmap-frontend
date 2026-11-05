@@ -368,6 +368,12 @@ export default function ProfilePage() {
                       : 'No reviews'}
                   </span>
                 </div>
+                {(isOwn || (profile.experience_points || 0) > 0) && (
+                  <div className="profile-stat">
+                    <span className="profile-stat-val">{profile.experience_points || 0}</span>
+                    <span className="profile-stat-label">XP earned</span>
+                  </div>
+                )}
                 {(isOwn || portfolio.length > 0) && (
                   <div className="profile-stat">
                     <span className="profile-stat-val">{portfolio.length}</span>

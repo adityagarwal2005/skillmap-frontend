@@ -116,12 +116,17 @@ export function Seats({ host, needed, filled }) {
   );
 }
 
+// Placeholder words people used to type to get past the old required-skills
+// field. They are never real skills, and they showed up as tags on the board.
+const JUNK_SKILL = new Set(['null', 'undefined', 'n/a', 'na', 'none', '-', '.', 'nil']);
+
 export function Skills({ skills, limit = 2 }) {
-  if (!skills?.length) return null;
-  const extra = skills.length - limit;
+  const real = (skills || []).filter(s => s && !JUNK_SKILL.has(String(s).trim().toLowerCase()));
+  if (!real.length) return null;
+  const extra = real.length - limit;
   return (
     <div className="mk-skills">
-      {skills.slice(0, limit).map(s => <span key={s} className="mk-skill">{s}</span>)}
+      {real.slice(0, limit).map(s => <span key={s} className="mk-skill">{s}</span>)}
       {extra > 0 && <span className="mk-skill is-more">+{extra}</span>}
     </div>
   );

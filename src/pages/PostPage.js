@@ -271,14 +271,14 @@ export default function PostPage() {
     );
   };
 
-  // Only what's current. A post is live while it's open and inside its
-  // window. A gig with people hired stays on as "in progress" past its window
-  // until it's completed or closed, since that's where completion happens.
-  // Everything else (closed, or ran out with nobody hired) drops off.
+  // "Live" means still waiting on applicants: open, inside its window, and
+  // nobody hired yet. The moment you accept someone the gig becomes work in
+  // motion, so it moves to "In progress" (where completion happens) and stays
+  // there until it closes — even if a second spot is still open. Closed, or
+  // expired with nobody hired, drops off.
   const inWindow = (p) => parseTs(p.expires_at) > now;
-  const liveJobs = jobs.filter(j => j.status === 'open' && inWindow(j));
-  const activeJobs = jobs.filter(j => !(j.status === 'open' && inWindow(j))
-    && j.status !== 'closed' && (j.hired_count || 0) > 0);
+  const liveJobs = jobs.filter(j => j.status === 'open' && inWindow(j) && (j.hired_count || 0) === 0);
+  const activeJobs = jobs.filter(j => j.status !== 'closed' && (j.hired_count || 0) > 0);
   const liveCollabs = collabs.filter(c => c.status === 'open' && inWindow(c));
 
   const sections = [
