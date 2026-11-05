@@ -137,7 +137,7 @@
 .app-shell .conv-ava,
 .app-shell .msg-ava,
 .app-shell .post-ava {
-  background: #0d0d0d;
+  background: var(--surface-2);
   color: #f5f5f7;
   border: none;
 }
@@ -253,8 +253,8 @@
   top: 0;
   height: 100vh;
   overflow-y: auto;
-  background: #0a0a0a;
-  border-right: 1px solid rgba(255,255,255,0.08);
+  background: var(--bg);
+  border-right: 1px solid var(--hairline);
   display: flex;
   flex-direction: column;
 }
@@ -329,8 +329,8 @@
 .sidebar-link-ic svg { width: 19px; height: 19px; display: block; }
 .sidebar-link-label { flex: 1; }
 
-.sidebar-link:hover { background: #0d0d0d; color: #ffffff; }
-.sidebar-link:hover .sidebar-link-ic { color: #ffffff; }
+.sidebar-link:hover { background: var(--surface-2); color: var(--text-1); }
+.sidebar-link:hover .sidebar-link-ic { color: var(--text-1); }
 
 .sidebar-link.active {
   background: rgba(255,255,255,0.088);
@@ -534,7 +534,7 @@
 
 .type-filter-btn:hover { background: var(--elevated); color: var(--text-1); }
 .type-filter-btn.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
-[data-theme="light"] .type-filter-btn.active { background: #000000; }
+[data-theme="light"] .type-filter-btn.active { background: var(--brand); }
 
 /* ── The app-wide nudge bar (finish your profile / install / notifications).
    It was a pure-black bar with white text, which sat outside the card
@@ -673,8 +673,8 @@
   height: 30px;
   flex-shrink: 0;
   border-radius: 50%;
-  background: #000000;
-  color: #fff;
+  background: var(--brand);
+  color: var(--on-brand);
   font-weight: 800;
   font-size: 0.875rem;
   display: flex;

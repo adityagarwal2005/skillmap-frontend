@@ -70,7 +70,7 @@
   height: 38px;
   padding: 0 18px;
   border-radius: var(--radius-sm);
-  background: #000000;
+  background: var(--brand);
   color: #fff;
   font-weight: 700;
   font-size: 0.8125rem;
