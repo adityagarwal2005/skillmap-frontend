@@ -1,4 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Road+Rage&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
+/* Nova type system, self-hosted: Satoshi for body/UI, Gambarino (a warm
+   serif display) for headings. Replaces the Grunge pairing of Road Rage +
+   JetBrains Mono. Files live in public/fonts, served at /fonts. */
+@font-face { font-family: 'Satoshi'; font-style: normal; font-weight: 400; font-display: swap; src: url('../assets/fonts/satoshi-400.woff2') format('woff2'); }
+@font-face { font-family: 'Satoshi'; font-style: normal; font-weight: 500; font-display: swap; src: url('../assets/fonts/satoshi-500.woff2') format('woff2'); }
+@font-face { font-family: 'Satoshi'; font-style: normal; font-weight: 700; font-display: swap; src: url('../assets/fonts/satoshi-700.woff2') format('woff2'); }
+@font-face { font-family: 'Satoshi'; font-style: normal; font-weight: 900; font-display: swap; src: url('../assets/fonts/satoshi-900.woff2') format('woff2'); }
+@font-face { font-family: 'Gambarino'; font-style: normal; font-weight: 400; font-display: swap; src: url('../assets/fonts/gambarino-400.woff2') format('woff2'); }
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -13,38 +20,62 @@
      background, and our near-white option text vanished into it — white on
      white. Declaring the scheme makes the browser paint those popups, the
      scrollbars and the caret to match. [data-theme="light"] flips it back. */
-  color-scheme: dark;
-  /* Not pure black. #000 behind white text halates on an OLED phone and
-     leaves no room below a card to read as depth — every surface has to go
-     lighter, so nothing can ever recede. A tinted near-black gives the ramp
-     somewhere to stand. */
-  --bg:          #0B0908;
+  color-scheme: light;
 
-  /* Legacy names, kept as aliases of the marketplace system below. Half the
-     app was written against these when they were flat black-and-white, so
-     older screens sat a generation behind the newer ones — same component,
-     different depth. Pointing them at the real tokens brings every screen
-     onto one surface language in both themes, without touching 22 files. */
-  --bg2:         var(--bg);
+  /* ── Nova palette ───────────────────────────────────────────────────
+     A warm cream ground, near-black warm ink, and a single clay accent.
+     Light-only, matching the Nova reference; the old dark Grunge values are
+     gone. Every token name is preserved so components resolve unchanged. */
+  --bg:          #FFFDF9;   /* warm cream page */
+  --bg2:         #F4F0E9;   /* cream, one step down */
+
+  --surface-1:   #FFFFFF;   /* a card — white lifts gently off the cream */
+  --surface-2:   #F4F0E9;   /* inset / container */
+  --surface-flat:#F6F2EC;   /* flat input fields */
   --surface:     var(--surface-1);
-  --elevated:    var(--surface-flat);
+  --elevated:    #FFFFFF;
   --border:      var(--hairline);
   --border-md:   var(--hairline-str);
-  /* Solid values rather than white at an opacity: composited text over a
-     gradient surface renders muddier than a flat colour, and #fff at full
-     strength is harsher than anything print would set. */
-  --text-1:      #F8F8F8;
-  --text-2:      #A49D99;
-  /* Between the template's base-600 and base-700: base-600 came to 4.28:1
-     on a chip's own surface, just under AA. */
-  --text-3:      #968E88;
-  --accent:      #ffffff;
-  --accent-low:  rgba(255,255,255,0.1);
-  --navy:        #ffffff;
-  --navy-bright: #ffffff;
+
+  --text-1:      #161616;   /* warm near-black */
+  --text-2:      #68635D;   /* warm grey */
+  --text-3:      #8C857D;   /* muted */
+
+  --hairline:    rgba(22,22,22,0.10);
+  --hairline-str:rgba(22,22,22,0.18);
+
+  /* Brand is the near-black (Nova brand-primary); --on-brand is the cream
+     that sits on a brand fill. */
+  --brand:       #161616;
+  --brand-bright:#000000;
+  --brand-text:  #161616;
+  --on-brand:    #FFFDF9;
+  --brand-dim:   rgba(22,22,22,0.06);
+  --brand-line:  rgba(22,22,22,0.22);
+
+  /* Nova runs on one accent — clay. It carries money, the loudest fact on
+     the board. */
+  --money:       #B98B6E;
+  --money-dim:   rgba(185,139,110,0.15);
+  --money-line:  rgba(185,139,110,0.42);
+
+  /* Semantic, all pulled to Nova's muted warm key. team is a quiet green so
+     a collab still reads apart from money; warn is amber; error red. */
+  --ok:          #2F6B4F;
+  --ok-dim:      rgba(47,107,79,0.12);
   --green:       var(--ok);
-  --green-low:   rgba(255,255,255,0.06);
-  --red:         #ff453a;
+  --green-low:   rgba(47,107,79,0.08);
+  --warn:        #9A621B;
+  --warn-dim:    rgba(154,98,27,0.15);
+  --danger:      #B42318;
+  --danger-dim:  rgba(180,35,24,0.12);
+  --red:         #B42318;
+
+  /* Legacy aliases, pointed at the new system. */
+  --accent:      #161616;
+  --accent-low:  rgba(22,22,22,0.05);
+  --navy:        #161616;
+  --navy-bright: #000000;
   --blue:        var(--brand-text);
   --radius-sm:   var(--r-sm);
   --radius-md:   var(--r-md);
@@ -52,87 +83,18 @@
   --shadow-sm:   var(--e-1);
   --shadow-md:   var(--e-2);
 
-  /* ── Marketplace design system ──────────────────────────────
-     Flat pure-black read as "list of things"; a talent marketplace needs
-     depth and hierarchy. Surfaces are near-black gradients separated by
-     hairlines, so cards feel like objects you can act on. */
-  /* Flat, not gradients. A vertical gradient on every card fights the real
-     elevation cue (the hairline plus the shadow) and smears text rendering
-     on top of it. Three steps, each a measurable notch apart. */
-  --surface-1:   #1B1816;
-  --surface-2:   #272322;
-  --surface-flat:#121010;
-  --hairline:    rgba(248,248,248,0.15);
-  --hairline-str:rgba(248,248,248,0.32);
+  /* Radii — Nova is generously rounded; buttons are pills. */
+  --r-sm:  10px;
+  --r-md:  14px;
+  --r-lg:  20px;
+  --r-xl:  28px;
+  --r-pill:9999px;
 
-  /* There is no accent colour. White is the brand.
-
-     Gold lasted a day; orange before it. Both were attempts to make the
-     interface interesting with hue, which is the thing that reads as a
-     template. Black and white cannot look like anyone else's palette
-     because it is not a palette — the interest has to come from type size,
-     weight and space, which is exactly where Uber puts it and exactly what
-     this app was missing.
-
-     --on-brand is the text colour on a brand fill. It used to be a hardcoded
-     #fff, which was fine while the brand was orange and is white-on-white
-     now. */
-  --brand:       #F8F8F8;
-  --brand-bright:#FFFFFF;
-  --brand-text:  #F8F8F8;
-  --on-brand:    #0B0908;
-
-  /* ── Spot colour ────────────────────────────────────────────────────
-     Three accents on a monochrome field, the way a zine gets one or two
-     screenprint passes over black and white. The restraint is the point:
-     colour here is not decoration, it is the only thing in the interface
-     that means something on its own, so each one is spent on exactly one
-     idea and nowhere else.
-
-       money  — what a gig pays. The loudest fact on the board.
-       team   — a collab. Not money, so not the money colour.
-       warn   — a listing about to vanish.
-
-     Grey is still doing all the structural work; these three are the only
-     saturated pixels on the screen, which is what makes them read. */
-  --money:       #FF6B1A;   /* 6.80:1 on the ground */
-  --money-dim:   rgba(255,107,26,0.15);
-  --money-line:  rgba(255,107,26,0.42);
-  --brand-dim:   rgba(255,255,255,0.10);
-  --brand-line:  rgba(255,255,255,0.26);
-
-  /* Semantic */
-  --ok:          #FFFFFF;
-  --ok-dim:      rgba(255,255,255,0.10);
-  /* Urgency is the third spot colour. Acid yellow rather than red: red on a
-     grain-textured black reads as an error, and a listing closing soon is
-     not an error — it is an opportunity with a clock on it. Yellow also sits
-     far enough from the money orange that the two never blur in one row. */
-  --warn:        #FFD60A;   /* 13.7:1 on the ground */
-  --warn-dim:    rgba(255,214,10,0.15);
-  --danger:      #ff453a;
-  --danger-dim:  rgba(255,69,58,0.13);
-
-  /* Radii + elevation */
-  /* Near-square. Rounded corners are the single biggest tell of a template:
-     12-16px radius on every surface is what a component library gives you by
-     default, and it reads soft. Uber's surfaces are barely rounded, and the
-     hardness is most of why their screens look built rather than assembled.
-     Pills survive only where a thing really is a pill — a filter chip. */
-  --r-sm: 0px;
-  --r-md: 0px;
-  --r-lg: 0px;
-  --r-xl: 2px;
-  --r-pill: 999px;
-
-  /* Flat. Separation comes from a hairline and from space, not from a glow
-     under every card — stacked soft shadows are the other half of the
-     template look, and on a pure black ground they are invisible anyway.
-     Only things that genuinely float (the sheet, the location panel) lift. */
-  --e-1: none;
-  --e-2: none;
-  --e-3: 0 0 0 1px rgba(255,255,255,0.10), 0 24px 70px rgba(0,0,0,0.75);
-  --e-brand: 0 2px 10px rgba(255,255,255,0.14);
+  /* Elevation — soft, wide, low-opacity (Nova's two steps). */
+  --e-1: 0 1px 2px rgba(22,22,22,0.05);
+  --e-2: 0 14px 40px -24px rgba(22,22,22,0.28);
+  --e-3: 0 28px 80px -32px rgba(22,22,22,0.38);
+  --e-brand: 0 12px 34px -20px rgba(22,22,22,0.34);
 
   /* Motion — one spring for everything that moves */
   --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
@@ -142,22 +104,21 @@
   --t-slow: 0.42s;
 }
 
+/* Nova is light-only; the theme toggle keeps the same cream palette so
+   nothing reverts to the old values when data-theme is set either way. */
 [data-theme="light"] {
   color-scheme: light;
-  /* The page ground is a shade off white so that cards, which are pure
-     white, sit above it. Ground and card both at #fff left nothing to
-     separate them but a hairline. */
-  --bg:          #F8F8F8;
-  --text-1:      #0B0908;
-  --text-2:      #56524C;
-  --text-3:      #645D58;
-  --accent:      #1d1d1f;
-  --accent-low:  rgba(0,0,0,0.05);
-  --navy:        #1d1d1f;
-  --navy-bright: #1d1d1f;
+  --bg:          #FFFDF9;
+  --text-1:      #161616;
+  --text-2:      #68635D;
+  --text-3:      #8C857D;
+  --accent:      #161616;
+  --accent-low:  rgba(22,22,22,0.05);
+  --navy:        #161616;
+  --navy-bright: #000000;
   --green:       var(--ok);
-  --green-low:   rgba(255,255,255,0.048);
-  --red:         #ff3b30;
+  --green-low:   rgba(47,107,79,0.08);
+  --red:         #B42318;
   --blue:        var(--brand-text);}
 
 /* `clip`, not `hidden`. overflow-x: hidden forces the computed overflow-y to
@@ -172,28 +133,17 @@ html { font-size: 16px; overflow-x: clip; }
 body {
   /* Same reason as html above: clip, never hidden, or the toolbar unsticks. */
   overflow-x: clip;
-  /* The template's ground: a dusty film-scan texture, fixed so it does not
-     travel with the content, over the warm near-black. The image is almost
-     entirely black — it is dust and scratches, not a picture — so text sits
-     on it as safely as on a flat fill. */
-  background: var(--bg) url('../assets/grain.jpg') center / cover fixed no-repeat;
+  /* Nova's ground is a flat warm cream — no grain, no texture. */
+  background: var(--bg);
   color: var(--text-1);
   font-family: var(--font-body);
-  /* JetBrains Mono is a wide, dense face: at 14px with tight tracking and a
-     1.5 leading it read as a cramped wall of text. A slightly larger size,
-     more generous leading, and neutral-to-open tracking give it room to
-     breathe everywhere at once — the headline faces keep their own tight
-     metrics below. */
-  font-size: 14.5px;
-  line-height: 1.62;
-  letter-spacing: 0.005em;
+  /* Satoshi is a clean humanist sans; 15px on a generous 1.6 leading, the
+     way Nova sets its body copy. */
+  font-size: 15px;
+  line-height: 1.6;
+  letter-spacing: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11', 'ss01';
-  /* Inter is loaded with its optical-size axis (opsz 14..32) and nothing was
-     using it: the face now thickens slightly at small sizes and tightens at
-     display sizes, the way a type family is meant to be set. */
-  font-optical-sizing: auto;
   text-rendering: optimizeLegibility;
 }
 
@@ -206,8 +156,8 @@ body {
    synthesise a fake bold, which smears a face that is already rough, so
    headings stay at 400 and get their weight from size instead. */
 :root {
-  --font-display: 'Road Rage', 'Impact', sans-serif;
-  --font-body: 'JetBrains Mono', ui-monospace, monospace;
+  --font-display: 'Gambarino', Georgia, 'Times New Roman', serif;
+  --font-body: 'Satoshi', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --wide: 100%;
 }
 
@@ -225,12 +175,11 @@ h1, h2, h3,
 .section-title,
 .profile-name {
   font-family: var(--font-display);
-  /* The template's heading rule, verbatim in spirit: uppercase, tracking
-     tight, leading none. Road Rage has no lowercase worth setting. */
+  /* Nova headings: Gambarino, mixed-case, tight editorial tracking, a normal
+     leading. The old uppercase/0.92 Grunge treatment is gone. */
   font-weight: 400;
-  text-transform: uppercase;
-  letter-spacing: -0.01em;
-  line-height: 0.92;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -280,13 +229,14 @@ a { text-decoration: none; color: inherit; }
   --dur-slow:  0.6s;
   --cyan:        var(--brand-text);
   --accent-2:    var(--brand-text);
-  --accent-orange-low: rgba(255,255,255,0.077);
+  --accent-orange-low: rgba(185,139,110,0.10);
   --radius-pill: 999px;
-  --ink:        #000000;
-  --steel-1:     #000000;
-  --steel-2:     #000000;
-  --steel-3:     #000000;
-  --steel-solid: #000000;
+  --ink:        #161616;
+  /* "steel" panels are now plain cream surfaces (Nova has no metal). */
+  --steel-1:     #FFFFFF;
+  --steel-2:     #F6F2EC;
+  --steel-3:     #F4F0E9;
+  --steel-solid: #F4F0E9;
   --steel-panel: linear-gradient(157deg, var(--steel-1) 0%, var(--steel-2) 55%, var(--steel-3) 100%);
 }
 
@@ -296,10 +246,10 @@ a { text-decoration: none; color: inherit; }
    so whichever is declared LAST in the file wins; putting it earlier would
    have been silently overridden by the :root values below it. */
 [data-theme="light"] {
-  --steel-1:    #edecee;
-  --steel-2:    #e4e3e6;
-  --steel-3:    #e9e8ea;
-  --steel-solid: #e9e8ea;
+  --steel-1:    #FFFFFF;
+  --steel-2:    #F6F2EC;
+  --steel-3:    #F4F0E9;
+  --steel-solid: #F4F0E9;
   --steel-panel: linear-gradient(157deg, var(--steel-1) 0%, var(--steel-2) 55%, var(--steel-3) 100%);
 }
 
@@ -488,18 +438,8 @@ body { text-rendering: optimizeLegibility; }
 /* The noise veil. The template uses a Tailwind plugin; this is the same
    idea as an inline SVG so it costs no request and scales to any screen.
    pointer-events none so it never eats a click. */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0.22;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
-}
-[data-theme="light"] body::before { opacity: 0.30; mix-blend-mode: multiply; }
-@media (prefers-reduced-motion: reduce) { body::before { opacity: 0.14; } }
+/* Nova has no grain or noise veil — the ground is flat cream. */
+body::before { content: none; }
 
 /* Everything the app renders sits above the veil. */
 #root { position: relative; z-index: 1; }
@@ -513,9 +453,8 @@ body::before {
   background-color: var(--bg);
 }
 
-/* Buttons are a 2px rule that fills in on hover — the template's one
-   interaction idea, and the reason its pages feel printed rather than
-   rendered. Applied to the app's primary button classes. */
+/* Nova buttons are pills in the Satoshi face — rounded, mixed-case, with a
+   quiet hover rather than the Grunge invert. */
 .mk-btn,
 .mk-apply,
 .opp-cta,
@@ -524,20 +463,19 @@ body::before {
 .landing-cta-ghost,
 .pp-btn,
 .trk-btn {
-  border-radius: 0;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  border-radius: var(--r-pill);
   font-family: var(--font-body);
-  font-weight: 700;
+  font-weight: 600;
+  letter-spacing: 0;
   transition: background var(--t-fast) ease, color var(--t-fast) ease,
-              border-color var(--t-fast) ease;
+              border-color var(--t-fast) ease, opacity var(--t-fast) ease,
+              transform var(--t-fast) var(--ease-out);
 }
 .mk-btn:hover,
 .opp-cta:hover,
 .st-btn:hover,
 .pp-btn:hover,
 .trk-btn:hover {
-  background: var(--text-1);
-  color: var(--bg);
-  border-color: var(--text-1);
+  opacity: 0.9;
+  transform: translateY(-1px);
 }
