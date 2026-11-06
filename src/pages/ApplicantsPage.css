@@ -174,7 +174,7 @@
   border: 1.5px solid;
   transition: background 0.15s, transform 0.14s ease;
 }
-.apl-tick  { color: var(--ok); border-color: rgba(255,255,255,0.3); }
+.apl-tick  { color: var(--ok); border-color: var(--hairline-str); }
 .apl-tick:hover  { background: rgba(255,255,255,0.084); }
 .apl-cross { color: #ff453a; border-color: rgba(255,69,58,0.5); }
 .apl-cross:hover { background: rgba(255,69,58,0.14); }
@@ -274,7 +274,7 @@
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
-.apl-slots.is-full { color: var(--ok); background: var(--ok-dim); border-color: rgba(255,255,255,0.24); }
+.apl-slots.is-full { color: var(--ok); background: var(--ok-dim); border-color: var(--hairline-str); }
 .apl-tick:disabled { opacity: 0.4; cursor: not-allowed; }
 .apl-tick:disabled:hover { background: none; }
 

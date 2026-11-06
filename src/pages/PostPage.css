@@ -232,7 +232,7 @@
   border: 1.5px solid;
   transition: transform 0.14s var(--ease-out-expo, ease), background 0.15s;
 }
-.mng-tick { color: var(--ok); border-color: rgba(255,255,255,0.3); }
+.mng-tick { color: var(--ok); border-color: var(--hairline-str); }
 .mng-tick:hover { background: rgba(255,255,255,0.084); }
 .mng-cross { color: #ff453a; border-color: rgba(255,69,58,0.5); }
 .mng-cross:hover { background: rgba(255,69,58,0.14); }
