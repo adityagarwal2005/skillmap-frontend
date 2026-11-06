@@ -9,24 +9,15 @@ import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
 import ErrorBoundary from './components/ErrorBoundary';
 
-/* Apply the saved theme before the first paint.
-
-   data-theme was only ever set inside AppShell, so every page that doesn't
-   mount the shell — the public profile a shared link opens, login,
-   onboarding, the legal pages — ignored the preference entirely and fell
-   back to the dark :root defaults. Someone who had chosen light got it on
-   the feed and lost it the moment they opened their own profile link.
-
-   Setting it here rather than in a React effect also means the correct
-   palette is on the element before anything renders, so there is no flash
-   of the wrong theme on load. A storage read can throw in a locked-down
-   browser, so it is guarded. */
-try {
-  const saved = localStorage.getItem('themeV2');
-  if (saved === 'light' || saved === 'dark') {
-    document.documentElement.setAttribute('data-theme', saved);
-  }
-} catch { /* private mode or blocked storage — keep the default palette */ }
+/* Nova is a single light theme. Pin data-theme="light" before the first
+   paint so every page — including the ones that don't mount AppShell (a
+   shared profile link, login, onboarding, legal) — gets the cream palette
+   and the light-scoped component rules, with no flash. We also overwrite any
+   stale themeV2="dark" left in a returning visitor's storage, so the old
+   dark theme can never resurface. Storage can throw in a locked-down
+   browser, so it's guarded; the attribute is set regardless. */
+document.documentElement.setAttribute('data-theme', 'light');
+try { localStorage.setItem('themeV2', 'light'); } catch { /* blocked storage */ }
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

@@ -64,7 +64,7 @@ export default function SettingsPage() {
   const { showToast }        = useToast();
   const navigate             = useNavigate();
 
-  const [theme, setTheme]       = useState(localStorage.getItem('themeV2') || 'dark');
+  const [theme]                 = useState('light');  // Nova is light-only
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [blockedUsers, setBlockedUsers] = useState([]);
   const [pushOn, setPushOn] = useState(false);
@@ -215,19 +215,6 @@ export default function SettingsPage() {
               <GetAppButton className="st-btn is-primary">Get the app</GetAppButton>
             )}
           </Row>
-        </Section>
-
-        <Section icon={IC.moon} title="Appearance">
-          <Row label="Theme" sub="Light or dark, on this device." />
-          <div className="st-choices" role="radiogroup" aria-label="Theme">
-            {['light', 'dark'].map(t => (
-              <button key={t} type="button" role="radio" aria-checked={theme === t}
-                className={`st-choice ${theme === t ? 'is-on' : ''}`}
-                onClick={() => setTheme(t)}>
-                {t === 'light' ? 'Light' : 'Dark'}
-              </button>
-            ))}
-          </div>
         </Section>
 
         <Section icon={IC.shield} title="Privacy & safety">

@@ -102,7 +102,7 @@ export default function AppShell({
 
   // Read-only now — the theme toggle lived in the old topbar; this just
   // re-applies whatever was last stored (Settings still writes it).
-  const [theme] = useState(localStorage.getItem('themeV2') || 'dark');
+  const [theme] = useState('light');  // Nova is light-only
   const [unread, setUnread] = useState(0);
   const [msgUnread, setMsgUnread] = useState(0);
   const [profile, setProfile] = useState(null);
