@@ -31,6 +31,7 @@ const I = {
   settings:      svg(<><line x1="4" y1="21" x2="4" y2="13" /><line x1="4" y1="9" x2="4" y2="3" /><line x1="12" y1="21" x2="12" y2="12" /><line x1="12" y1="8" x2="12" y2="3" /><line x1="20" y1="21" x2="20" y2="15" /><line x1="20" y1="11" x2="20" y2="3" /><line x1="1.5" y1="13" x2="6.5" y2="13" /><line x1="9.5" y1="8" x2="14.5" y2="8" /><line x1="17.5" y1="15" x2="22.5" y2="15" /></>),
   create:        svg(<><circle cx="12" cy="12" r="9" /><path d="M12 8v8M8 12h8" /></>),
   applications:  svg(<><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" /><path d="M14 3v6h6" /><path d="M9 14l2 2 4-4" /></>),
+  videos:        svg(<><rect x="3" y="5" width="18" height="14" rx="3" /><path d="M10 9l5 3-5 3z" fill="currentColor" stroke="none" /></>),
 };
 
 const NAV = [
@@ -39,6 +40,7 @@ const NAV = [
     // both call this destination 'work', and the mismatch meant the desktop
     // sidebar highlighted nothing at all on the feed.
     { id: 'work',    label: 'Home',    path: '/',       icon: I.home },
+    { id: 'videos',  label: 'Videos',  path: '/videos', icon: I.videos },
   ]},
   { group: 'Work', items: [
     // Freelance/Collab no longer have their own board pages — browsing both
@@ -60,6 +62,7 @@ const NAV = [
 // enough volume to need it.
 const MOBILE = [
   { id: 'work',     label: 'Work',     path: '/',         icon: I.freelance },
+  { id: 'videos',   label: 'Videos',   path: '/videos',   icon: I.videos },
   { id: 'post',     label: 'Post',     path: '/post',     icon: I.create },
   { id: 'messages', label: 'Messages', path: '/messages', icon: I.messages },
   { id: 'profile',  label: 'Profile',  path: null,        icon: I.profile },
@@ -68,6 +71,7 @@ const MOBILE = [
 function deriveActive(pathname) {
   if (pathname === '/') return 'work';
   if (pathname.startsWith('/post'))          return 'post';
+  if (pathname.startsWith('/videos'))        return 'videos';
   if (pathname.startsWith('/search'))        return 'search';
   if (pathname.startsWith('/messages'))      return 'messages';
   if (pathname.startsWith('/profile'))       return 'profile';
@@ -172,7 +176,12 @@ export default function AppShell({
   // The welcome modal only ever renders on the feed route ('/'), so only
   // suppress the nudge there — no reason to hold it back on other pages.
   const welcomeShowing = location.pathname === '/' && welcomePending;
-  const showNudge = missing.length > 0 && !nudgeDismissed && !onEditFlow && !welcomeShowing;
+  // The Videos feed is an immersive, full-height surface; any banner above it
+  // would push the player and its caption off-screen, so every dismissible
+  // banner is held back there.
+  const immersive = activeId === 'videos';
+  const showNudge = missing.length > 0 && !nudgeDismissed && !onEditFlow && !welcomeShowing
+    && !immersive;
 
   const dismissNudge = () => {
     setNudgeDismissed(true);
@@ -181,7 +190,8 @@ export default function AppShell({
 
   // Only one dismissible banner at a time — the profile-completion nudge
   // takes priority since it's about actually using the product.
-  const showInstallBanner = canInstall && !installDismissed && !showNudge && !welcomeShowing;
+  const showInstallBanner = canInstall && !installDismissed && !showNudge && !welcomeShowing
+    && !immersive;
 
   const dismissInstall = () => {
     setInstallDismissed(true);
@@ -196,7 +206,7 @@ export default function AppShell({
   }, []);
 
   const showPushPrompt = pushSupported() && !pushAlreadyOn && !pushPromptDismissed
-    && !showNudge && !showInstallBanner && !welcomeShowing;
+    && !showNudge && !showInstallBanner && !welcomeShowing && !immersive;
 
   const dismissPush = () => {
     setPushPromptDismissed(true);

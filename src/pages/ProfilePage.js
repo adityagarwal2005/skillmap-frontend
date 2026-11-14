@@ -8,6 +8,7 @@ import {
   sendFriendRequest, respondFriendRequest, removeFriend,
 } from '../api/users';
 import { startConversation, getMyHistory } from '../api/work';
+import { getUserVideos } from '../api/videos';
 import { COLLAB_LABEL } from '../components/ListingCard';
 import { endorseSkill, addReview, getUserReviews } from '../api/users';
 import { ProfileHeaderSkeleton } from '../components/Skeleton';
@@ -40,6 +41,7 @@ export default function ProfilePage() {
 
   const [profile, setProfile]       = useState(null);
   const [portfolio, setPortfolio]   = useState([]);
+  const [videos, setVideos]         = useState([]);
   const [reviews, setReviews]       = useState([]);
   const [allReviews, setAllReviews] = useState(false);
   const [loading, setLoading]       = useState(true);
@@ -95,14 +97,16 @@ export default function ProfilePage() {
   const loadProfile = async () => {
     try {
       setLoading(true);
-      const [uRes, pRes, rRes] = await Promise.all([
+      const [uRes, pRes, rRes, vRes] = await Promise.all([
         getUser(userId),
         getUserPortfolio(userId).catch(() => ({ data: { items: [] } })),
         getUserReviews(userId).catch(() => ({ data: { reviews: [] } })),
+        getUserVideos(userId).catch(() => ({ data: { videos: [] } })),
       ]);
       setProfile(uRes.data);
       setFriendStatus(uRes.data.friendship_status || 'none');
       setPortfolio(pRes.data.items || []);
+      setVideos(vRes.data.videos || []);
       // Newest first — the endpoint returns them oldest-first.
       setReviews([...(rRes.data.reviews || [])].reverse());
       setAvatarBroken(false);
@@ -612,6 +616,48 @@ export default function ProfilePage() {
                         </div>
                       </div>
                     </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            )}
+
+            {/* Videos — proof of work, pulled straight from the in-app reels
+                feed. Same ghost-town guard as Projects: only shown when there's
+                something to show, or it's your own profile to post to. */}
+            {(isOwn || videos.length > 0) && (
+            <div className="profile-skills-section">
+              <div className="pf-section-head">
+                <h3 className="section-title">Videos</h3>
+                {isOwn && (
+                  <button type="button" className="pf-add" onClick={() => navigate('/videos')}>
+                    + Post a video
+                  </button>
+                )}
+              </div>
+              {videos.length === 0 ? (
+                <p className="no-skills">
+                  {isOwn
+                    ? "No videos yet. Post a short clip of your work — proof beats a résumé."
+                    : 'No videos yet.'}
+                </p>
+              ) : (
+                <div className="pf-videos-grid">
+                  {videos.map(v => (
+                    <button key={v.id} type="button" className="pf-video-card"
+                      onClick={() => navigate('/videos')} aria-label={v.caption || 'Watch video'}>
+                      <video className="pf-video-thumb"
+                        src={`${v.url}#t=0.1`}
+                        poster={v.thumbnail || undefined}
+                        muted playsInline preload="metadata" />
+                      <span className="pf-video-play" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                          <path d="M8 5v14l11-7z" />
+                        </svg>
+                      </span>
+                      <span className="pf-video-views">{v.views} views</span>
+                      {v.caption && <span className="pf-video-cap">{v.caption}</span>}
+                    </button>
                   ))}
                 </div>
               )}
