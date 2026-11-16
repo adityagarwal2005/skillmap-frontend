@@ -395,6 +395,7 @@ export default function MessagesPage() {
                             msg.media_type === 'video'
                               ? <video className="msg-media" src={msg.media_url} controls playsInline />
                               : <img className="msg-media" src={cldThumb(msg.media_url, 480)} alt=""
+                                  loading="lazy" decoding="async"
                                   onClick={() => setLightboxSrc(msg.media_url)} />
                           )}
                           {msg.text && <p className="msg-text">{msg.text}</p>}

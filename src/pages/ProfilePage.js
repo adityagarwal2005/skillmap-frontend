@@ -601,7 +601,7 @@ export default function ProfilePage() {
                     <div key={p.id} className="portfolio-card"
                       onClick={() => navigate(`/post/${p.id}`)}>
                       {p.media?.[0]?.url && p.media[0].media_type === 'image' && (
-                        <img src={cldThumb(p.media[0].url, 500)} alt={p.title} className="portfolio-card-img" />
+                        <img src={cldThumb(p.media[0].url, 500)} alt={p.title} className="portfolio-card-img" loading="lazy" decoding="async" />
                       )}
                       <div className="portfolio-card-body">
                         <div className="portfolio-card-top">

@@ -576,3 +576,25 @@ body::after {
   .app-shell .post-new-card:hover,
   .app-shell .apl-card:hover { transform: none; }
 }
+
+/* ═══════════════════════════════════════════════
+   Touch-device performance
+
+   The frosted-glass chrome (the floating tab bar, the rail, the message
+   composer) sits over a near-opaque cream surface — the strong glass is in
+   fact fully opaque. So the backdrop-blur adds almost nothing visible, yet
+   the GPU re-samples and blurs the whole bar on every single scroll frame.
+   That per-frame cost is the biggest source of scroll jank on mid-range
+   phones. On touch / narrow screens, drop the blur entirely and lean on a
+   more opaque glass so the chrome still reads as solid. Pointer devices
+   (laptops/desktops) keep the full frosted look.
+   ═══════════════════════════════════════════════ */
+@media (hover: none), (max-width: 768px) {
+  :root,
+  :root[data-theme="light"],
+  :root[data-theme="dark"],
+  [data-theme="light"] {
+    --blur: none;
+    --glass: rgba(255,253,249,0.94);
+  }
+}

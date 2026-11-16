@@ -20,6 +20,10 @@ import { useEffect } from 'react';
 export default function useScrollParallax(selector, distance = 28) {
   useEffect(() => {
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return undefined;
+    // Touch devices get no parallax: the per-frame layout reads it needs cost
+    // more than the depth is worth on a phone, and smooth scrolling wins. The
+    // CSS leaves --pY at its 0 default, so sections simply sit still.
+    if (window.matchMedia?.('(pointer: coarse)').matches) return undefined;
 
     let nodes = [];
     let frame = 0;

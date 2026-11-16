@@ -94,7 +94,7 @@ export function Avatar({ user, className = '' }) {
     <span className={`mk-ava ${className}`}>
       {user.profile_image
         ? <img className="ava-img" src={cldAvatar(user.profile_image, 80)} alt=""
-            ref={fadeInOnLoad} onLoad={markLoaded} />
+            loading="lazy" decoding="async" ref={fadeInOnLoad} onLoad={markLoaded} />
         : (user.username?.[0] || '?').toUpperCase()}
     </span>
   );
