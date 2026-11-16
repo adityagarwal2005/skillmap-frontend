@@ -17,7 +17,7 @@ const DEMO_VIDEOS = [
     url: 'https://res.cloudinary.com/demo/video/upload/cld-sample-video.mp4',
     caption: 'a day-in-the-life edit for a skincare brand ✨',
     views: 142, likes: 18,
-    user: { username: 'riya.makes', category: 'Content' },
+    user: { username: 'anjali.makes', category: 'Content' },
   },
   {
     id: 'demo-2',
