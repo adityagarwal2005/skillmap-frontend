@@ -45,11 +45,20 @@ export default function VideosPage() {
         return incoming;
       });
     } catch {
-      if (!offset) showToast('Could not load videos', 'error');
+      // Feed unreachable — most often the backend video endpoints aren't
+      // deployed yet, or a transient network blip. Don't strand the viewer on
+      // a dead "could not load" screen: fall back to the sample clips so
+      // there's still a feed to scroll. First page only; a failed "load more"
+      // just stops quietly.
+      if (!offset) {
+        console.warn('[videos] feed request failed — falling back to sample clips');
+        setVideos(DEMO_VIDEOS);
+        setHasMore(false);
+      }
     } finally {
       setLoading(false);
     }
-  }, [showToast]);
+  }, []);
 
   useEffect(() => { load(0); }, [load]);
 
