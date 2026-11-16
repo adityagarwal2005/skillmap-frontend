@@ -15,6 +15,20 @@ import { pushSupported, isPushEnabled, enablePush } from '../push';
 import '../pages/FeedPage.css';
 import '../styles/shell.css';
 
+// iOS can never fire `beforeinstallprompt`, so the Android install banner
+// (which is gated on that event) never appears there. The only route onto an
+// iPhone home screen is Safari's "Add to Home Screen", so iOS gets its own
+// hint instead. iPadOS reports itself as a Mac — touch points give it away.
+const IS_IOS = typeof navigator !== 'undefined' && (
+  /iphone|ipad|ipod/i.test(navigator.userAgent || '')
+  || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+);
+// Already launched from the home screen → nothing to install.
+const IS_STANDALONE = typeof window !== 'undefined' && (
+  !!window.matchMedia?.('(display-mode: standalone)').matches
+  || window.navigator.standalone === true
+);
+
 const svg = (children) => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
     strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">{children}</svg>
@@ -117,6 +131,9 @@ export default function AppShell({
   const [installDismissed, setInstallDismissed] = useState(
     () => localStorage.getItem('smInstallDismissed') === '1'
   );
+  const [iosInstallDismissed, setIosInstallDismissed] = useState(
+    () => localStorage.getItem('smIosInstallDismissed') === '1'
+  );
   const [pushPromptDismissed, setPushPromptDismissed] = useState(
     () => localStorage.getItem('smPushDismissed') === '1'
   );
@@ -211,6 +228,17 @@ export default function AppShell({
   const dismissPush = () => {
     setPushPromptDismissed(true);
     localStorage.setItem('smPushDismissed', '1');
+  };
+
+  // The iOS home-screen hint. Same single-banner etiquette as the rest: it
+  // stands down for the profile nudge, the Android install prompt and the
+  // push prompt, and never shows once the app is already installed.
+  const showIosInstall = IS_IOS && !IS_STANDALONE && !iosInstallDismissed
+    && !showNudge && !showInstallBanner && !showPushPrompt && !welcomeShowing && !immersive;
+
+  const dismissIosInstall = () => {
+    setIosInstallDismissed(true);
+    localStorage.setItem('smIosInstallDismissed', '1');
   };
 
   const handleEnablePush = async () => {
@@ -351,6 +379,19 @@ export default function AppShell({
                   {pushEnabling ? 'Enabling…' : 'Enable'}
                 </button>
                 <button className="profile-nudge-x" onClick={dismissPush}
+                  aria-label="Dismiss">×</button>
+              </div>
+            </div>
+          )}
+          {showIosInstall && (
+            <div className="profile-nudge">
+              <div className="profile-nudge-text">
+                <strong>Add DoitHere to your Home Screen</strong>
+                <span>Tap Share, then “Add to Home Screen” — it opens full-screen, like an app.</span>
+              </div>
+              <div className="profile-nudge-actions">
+                <GetAppButton className="profile-nudge-cta">Show me how</GetAppButton>
+                <button className="profile-nudge-x" onClick={dismissIosInstall}
                   aria-label="Dismiss">×</button>
               </div>
             </div>
