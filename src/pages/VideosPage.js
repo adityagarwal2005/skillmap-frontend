@@ -3,6 +3,7 @@ import AppShell from '../components/AppShell';
 import { useToast } from '../context/ToastContext';
 import { prepareMediaFile } from '../utils/mediaUpload';
 import { getVideoFeed, createVideo, likeVideo, viewVideo } from '../api/videos';
+import DEMO_VIDEOS from '../data/demoVideos';
 import './VideosPage.css';
 
 const Avatar = ({ user }) => (
@@ -28,8 +29,21 @@ export default function VideosPage() {
     try {
       const r = await getVideoFeed(offset);
       const incoming = r.data.videos || [];
-      setVideos(prev => offset ? [...prev, ...incoming] : incoming);
       setHasMore(r.data.has_more);
+      setVideos(prev => {
+        if (offset) return [...prev, ...incoming];
+        // Fresh load. Once we've reached the end of the real feed and there
+        // still aren't many clips, top it up with sample clips so a visitor
+        // never lands on a dead, empty feed. They sit after the real ones and
+        // fall away on their own as real uploads arrive.
+        if (!r.data.has_more && incoming.length < 6) {
+          const seen = new Set(incoming.map(v => v.url));
+          const fill = DEMO_VIDEOS.filter(d => !seen.has(d.url))
+            .slice(0, Math.max(0, 10 - incoming.length));
+          return [...incoming, ...fill];
+        }
+        return incoming;
+      });
     } catch {
       if (!offset) showToast('Could not load videos', 'error');
     } finally {
@@ -48,7 +62,10 @@ export default function VideosPage() {
         if (e.isIntersecting && e.intersectionRatio >= 0.6) {
           el.play().catch(() => {});
           const id = el.dataset.id;
-          if (!viewed.current.has(id)) { viewed.current.add(id); viewVideo(id).catch(() => {}); }
+          if (!viewed.current.has(id)) {
+            viewed.current.add(id);
+            if (!el.dataset.demo) viewVideo(id).catch(() => {});   // sample clips aren't counted
+          }
         } else {
           el.pause();
         }
@@ -63,6 +80,7 @@ export default function VideosPage() {
   const toggleLike = async (v) => {
     setVideos(list => list.map(x => x.id === v.id
       ? { ...x, liked: !x.liked, likes: x.likes + (x.liked ? -1 : 1) } : x));
+    if (v.demo) return;   // sample clip — the like is local-only, nothing to persist
     try { await likeVideo(v.id); }
     catch { setVideos(list => list.map(x => x.id === v.id
       ? { ...x, liked: v.liked, likes: v.likes } : x)); }
@@ -122,6 +140,7 @@ export default function VideosPage() {
                 <video
                   className="rv-video"
                   data-id={v.id}
+                  data-demo={v.demo ? '1' : undefined}
                   ref={el => { videoEls.current[v.id] = el; }}
                   src={v.url}
                   poster={v.thumbnail || undefined}
