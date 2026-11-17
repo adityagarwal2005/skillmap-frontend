@@ -34,6 +34,7 @@ const CreatePostPage   = lazyRetry(() => import('./pages/CreatePostPage'));
 const PostDetailPage   = lazyRetry(() => import('./pages/PostDetailPage'));
 const MessagesPage     = lazyRetry(() => import('./pages/MessagesPage'));
 const VideosPage       = lazyRetry(() => import('./pages/VideosPage'));
+const DashboardPage    = lazyRetry(() => import('./pages/DashboardPage'));
 const NotificationsPage = lazyRetry(() => import('./pages/NotificationsPage'));
 const SettingsPage     = lazyRetry(() => import('./pages/SettingsPage'));
 const OnboardingPage   = lazyRetry(() => import('./pages/OnboardingPage'));
@@ -112,6 +113,8 @@ function App() {
             <Route path="/collab"                   element={<Navigate to="/post" replace />} />
             <Route path="/messages"                 element={user ? <MessagesPage /> : <Navigate to="/login" />} />
             <Route path="/videos"                   element={user ? <VideosPage /> : <Navigate to="/login" />} />
+            {/* Private founder dashboard — gated server-side on FOUNDER_EMAILS. */}
+            <Route path="/dashboard"                element={user ? <DashboardPage /> : <Navigate to="/login" />} />
             <Route path="/notifications"            element={user ? <NotificationsPage /> : <Navigate to="/login" />} />
             <Route path="/settings"                 element={user ? <SettingsPage /> : <Navigate to="/login" />} />
             <Route path="/search"                   element={<Navigate to="/" replace />} />

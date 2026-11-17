@@ -1,0 +1,84 @@
+/* Private founder dashboard — Nova cream editorial, one clay accent. */
+.db-wrap { width: 100%; max-width: 920px; margin: 0 auto; padding: 8px 4px 48px; }
+
+.db-head {
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 16px;
+  flex-wrap: wrap; margin-bottom: 22px;
+}
+.db-title { font-family: var(--font-display); font-size: clamp(2rem, 5vw, 2.6rem); line-height: 1; color: var(--text-1); }
+.db-sub { margin-top: 6px; color: var(--text-3); font-size: 0.9375rem; }
+.db-refresh {
+  flex-shrink: 0; height: 40px; padding: 0 18px; border-radius: 999px;
+  background: var(--surface); border: 1px solid var(--border-md); color: var(--text-1);
+  font-weight: 600; font-size: 0.9rem; transition: background .15s ease, transform .15s ease;
+}
+.db-refresh:hover { background: var(--bg); transform: translateY(-1px); }
+.db-refresh:disabled { opacity: 0.55; }
+
+.db-state {
+  display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center;
+  padding: 72px 20px; color: var(--text-2);
+}
+.db-state strong { font-family: var(--font-display); font-size: 1.5rem; color: var(--text-1); }
+
+/* Hero — the one dark panel, so today's signups land first. */
+.db-hero {
+  display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+  background: var(--text-1); color: #FFFDF9;
+  border-radius: var(--radius-lg); padding: 28px 30px; margin-bottom: 16px;
+  box-shadow: var(--shadow-md);
+}
+.db-hero-main { display: flex; flex-direction: column; }
+.db-hero-num { font-family: var(--font-display); font-size: clamp(3.2rem, 9vw, 4.6rem); line-height: 0.95; color: #FFFDF9; }
+.db-hero-label { margin-top: 6px; font-size: 1.0625rem; color: var(--money); font-weight: 600; letter-spacing: 0.01em; }
+.db-hero-side { display: flex; gap: 30px; }
+.db-hero-side div { display: flex; flex-direction: column; }
+.db-hero-side strong { font-size: 1.75rem; font-weight: 800; color: #FFFDF9; line-height: 1; }
+.db-hero-side span { margin-top: 5px; font-size: 0.8125rem; color: rgba(255,253,249,0.6); }
+
+/* Panels (chart, recent) */
+.db-panel {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 20px 22px; margin-bottom: 16px; box-shadow: var(--shadow-sm);
+}
+.db-panel-head { margin-bottom: 16px; }
+.db-panel-head h2 { font-family: var(--font-display); font-size: 1.25rem; color: var(--text-1); font-weight: 400; }
+
+/* Bar chart */
+.db-chart { display: flex; align-items: flex-end; gap: 6px; height: 168px; }
+.db-col { flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: flex-end; min-width: 0; }
+.db-col-n { font-size: 0.6875rem; font-weight: 700; color: var(--text-3); margin-bottom: 4px; height: 1em; }
+.db-bar {
+  width: 100%; max-width: 30px; border-radius: 6px 6px 3px 3px;
+  background: var(--money); opacity: 0.55; transition: opacity .15s ease;
+}
+.db-col:hover .db-bar { opacity: 0.8; }
+.db-bar.is-today { background: var(--text-1); opacity: 1; }
+.db-col-x { margin-top: 7px; font-size: 0.6875rem; color: var(--text-3); }
+
+/* Metric cards */
+.db-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
+@media (max-width: 760px) { .db-grid { grid-template-columns: repeat(2, 1fr); } }
+.db-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md);
+  padding: 16px 16px 18px; box-shadow: var(--shadow-sm); min-width: 0;
+}
+.db-card-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-3); }
+.db-card-val { font-family: var(--font-display); font-size: 2.1rem; line-height: 1.05; color: var(--text-1); margin: 8px 0 4px; }
+.db-card-sub { font-size: 0.8125rem; color: var(--text-2); }
+
+/* Recent signups */
+.db-recent { display: flex; flex-direction: column; }
+.db-recent li {
+  display: flex; align-items: center; gap: 12px; padding: 11px 0;
+  border-bottom: 1px solid var(--border);
+}
+.db-recent li:last-child { border-bottom: none; }
+.db-recent-ava {
+  flex-shrink: 0; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--bg); border: 1px solid var(--border); color: var(--text-1); font-weight: 700; font-size: 0.85rem;
+}
+.db-recent-name { font-weight: 700; color: var(--text-1); font-size: 0.9375rem; }
+.db-recent-cat { color: var(--text-3); font-size: 0.875rem; }
+.db-recent-time { margin-left: auto; color: var(--text-3); font-size: 0.8125rem; flex-shrink: 0; }
+.db-empty { color: var(--text-3); font-size: 0.9375rem; }
