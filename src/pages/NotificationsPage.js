@@ -137,6 +137,13 @@ export default function NotificationsPage() {
       // Baseline of what we've seen — a full (re)load never flashes anything.
       seenIds.current = new Set(fresh.map(n => n.id));
       setNewIds(new Set());
+      // Opening the screen counts as seeing them: clear the global unread badge
+      // now and mark them read on the server so it stays cleared. The per-item
+      // dots stay for this visit so you can still see what's new; gone next time.
+      if (fresh.some(n => !n.is_read)) {
+        markAllAsRead().catch(() => {});
+        window.dispatchEvent(new Event('sm:notifications-read'));
+      }
     } catch { showToast('Failed to load notifications', 'error'); }
     finally { setLoading(false); }
   };
@@ -161,6 +168,7 @@ export default function NotificationsPage() {
     try {
       await markAsRead(id);
       setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
+      window.dispatchEvent(new Event('sm:notifications-read'));
     } catch {}
   };
 
@@ -174,6 +182,7 @@ export default function NotificationsPage() {
     try {
       await markAllAsRead();
       setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
+      window.dispatchEvent(new Event('sm:notifications-read'));
       showToast('All marked as read', 'success');
     } catch { showToast('Failed to mark all as read', 'error'); }
   };

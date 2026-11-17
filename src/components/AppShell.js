@@ -151,6 +151,14 @@ export default function AppShell({
     return () => window.removeEventListener('sm:welcome-dismissed', onWelcomeDismissed);
   }, []);
 
+  // When the notifications screen marks everything read, clear the badge right
+  // away instead of waiting on the 60s poll.
+  useEffect(() => {
+    const clearNotifBadge = () => setUnread(0);
+    window.addEventListener('sm:notifications-read', clearNotifBadge);
+    return () => window.removeEventListener('sm:notifications-read', clearNotifBadge);
+  }, []);
+
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem('themeV2', theme);

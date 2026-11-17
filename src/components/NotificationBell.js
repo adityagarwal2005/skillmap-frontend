@@ -25,6 +25,13 @@ export default function NotificationBell({ className = '' }) {
   useEffect(() => { refresh(); }, []);
   usePoll(refresh, 25000);
 
+  // Clear instantly when the notifications screen marks everything read.
+  useEffect(() => {
+    const clear = () => setUnread(0);
+    window.addEventListener('sm:notifications-read', clear);
+    return () => window.removeEventListener('sm:notifications-read', clear);
+  }, []);
+
   return (
     <button className={`notif-bell ${className}`} aria-label="Notifications"
       onClick={() => navigate('/notifications')}>
