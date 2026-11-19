@@ -479,3 +479,17 @@ body::before { content: none; }
   opacity: 0.9;
   transform: translateY(-1px);
 }
+
+/* One-tap WhatsApp invite — deliberately WhatsApp-green so it's instantly
+   recognised as "share on WhatsApp"; a utility CTA, not brand chrome. */
+.wa-invite-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+  width: 100%; height: 48px; padding: 0 22px;
+  border: none; border-radius: var(--r-pill, 999px);
+  background: #25D366; color: #fff; font-weight: 700; font-size: 1rem;
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.15s ease;
+}
+.wa-invite-btn:hover { filter: brightness(1.04); transform: translateY(-1px); }
+.wa-invite-btn svg { flex-shrink: 0; }
+.wa-invite-btn.is-inline { width: auto; height: 42px; font-size: 0.9375rem; padding: 0 18px; }

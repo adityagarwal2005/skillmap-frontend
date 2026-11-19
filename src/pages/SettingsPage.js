@@ -8,6 +8,7 @@ import {
 import { pushSupported, isPushEnabled, enablePush, disablePush } from '../push';
 import AppShell from '../components/AppShell';
 import GetAppButton from '../components/GetApp';
+import InviteButton from '../components/InviteButton';
 import { cldAvatar } from '../utils/cloudinaryUrl';
 import useInstallPrompt from '../hooks/useInstallPrompt';
 import './FeedPage.css';
@@ -156,6 +157,9 @@ export default function SettingsPage() {
             The network is only as good as who's on it. Share your link — anyone who joins
             with it shows up here.
           </p>
+          <div style={{ margin: '4px 0 14px' }}>
+            <InviteButton>Invite on WhatsApp</InviteButton>
+          </div>
           <div className="st-invite">
             <input className="st-invite-link" readOnly value={inviteLink}
               aria-label="Your invite link" onFocus={e => e.target.select()} />

@@ -14,6 +14,7 @@ import { endorseSkill, addReview, getUserReviews } from '../api/users';
 import { ProfileHeaderSkeleton } from '../components/Skeleton';
 import AppShell from '../components/AppShell';
 import NotificationBell from '../components/NotificationBell';
+import InviteButton from '../components/InviteButton';
 import { cldAvatar, cldThumb } from '../utils/cloudinaryUrl';
 import './FeedPage.css';
 import './ProfilePage.css';
@@ -408,6 +409,7 @@ export default function ProfilePage() {
 
               {isOwn ? (
                 <div className="profile-actions">
+                  <InviteButton>Invite friends on WhatsApp</InviteButton>
                   <div className="profile-action-row">
                     <button className="profile-primary-btn" onClick={() => navigate(`/profile/${userId}/edit`)}>
                       Edit profile
